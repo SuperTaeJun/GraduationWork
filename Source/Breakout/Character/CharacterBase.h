@@ -24,12 +24,16 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
+	void UpdateSprintCamera(float DeltaTime);
+	void UpdateStamina(float DeltaTime);
 	//캐릭터 상태
 	UPROPERTY(EditAnywhere, Category = "Player Stats")
 	float MaxHealth = 100.f;
 	UPROPERTY(EditAnywhere, Category = "Player Stats")
 	float Health = 100.f;
-
+	UPROPERTY(EditAnywhere, Category = "Player Stats")
+	float Stamina = 100.f;
+	bool StaminaExhaustionState;
 	ECharacterState CharacterState;
 
 private:

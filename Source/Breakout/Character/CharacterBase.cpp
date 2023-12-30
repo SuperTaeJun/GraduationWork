@@ -7,7 +7,9 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
-
+#include "CameraShake/Sprint.h"
+#include "CameraShake/Jog.h"
+#include "Kismet/GameplayStatics.h"
 ACharacterBase::ACharacterBase()
 {
 	PrimaryActorTick.bCanEverTick = true;
@@ -15,17 +17,21 @@ ACharacterBase::ACharacterBase()
 	CharacterState = ECharacterState::DEFAULT;
 
 	Movement = GetCharacterMovement();
-
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
 	CameraBoom->SetupAttachment(GetMesh());
-	CameraBoom->TargetArmLength = 800.f;
+	CameraBoom->TargetArmLength = 500.f;
 	CameraBoom->bUsePawnControlRotation = true;
-
+	CameraBoom->bEnableCameraLag;
+	CameraBoom->bEnableCameraRotationLag;
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
 	FollowCamera->SetupAttachment(CameraBoom);
 	FollowCamera->bUsePawnControlRotation = false;
 
-	Health = 100.f;
+	//스테이트
+	MaxHealth = 100.f;
+	Health = MaxHealth;
+	Stamina = 100.f;
+	StaminaExhaustionState = false;
 }
 
 void ACharacterBase::BeginPlay()
@@ -40,6 +46,44 @@ void ACharacterBase::BeginPlay()
 		}
 	}
 }
+
+void ACharacterBase::UpdateSprintCamera(float DeltaTime)
+{
+	if(CameraBoom->TargetArmLength>=300.f && CharacterState == ECharacterState::SPRINT)
+		CameraBoom->TargetArmLength -= DeltaTime * 400;
+	else if (CameraBoom->TargetArmLength <= 500.f && CharacterState == ECharacterState::RUN)
+		CameraBoom->TargetArmLength += DeltaTime * 400;
+}
+void ACharacterBase::UpdateStamina(float DeltaTime)
+{
+	if (StaminaExhaustionState == false)
+	{
+		if (CharacterState == ECharacterState::SPRINT && Stamina >= 0.f)
+		{
+			//Stamina -= 0.5f;
+			if (Stamina <= 0.f)
+			{
+				StaminaExhaustionState = true;
+			}
+		}
+		else 	if ((CharacterState == ECharacterState::RUN || CharacterState == ECharacterState::IDLE) && Stamina <= 100.f)
+		{
+			Stamina += 0.2f;
+		}
+	}
+	else	if (StaminaExhaustionState == true)
+	{
+		if (Stamina < 50.f)
+		{
+			Stamina += 0.2f;
+		}
+		else if (Stamina >= 50.f)
+		{
+			StaminaExhaustionState = false;
+		}
+	}
+}
+
 
 void ACharacterBase::Move(const FInputActionValue& Value)
 {
@@ -67,35 +111,50 @@ void ACharacterBase::Look(const FInputActionValue& Value)
 
 void ACharacterBase::Sprint_S(const FInputActionValue& Value)
 {
-	CharacterState = ECharacterState::SPRINT;
+	if (!StaminaExhaustionState)
+	{
+		CharacterState = ECharacterState::SPRINT;
+	}
+	else
+		CharacterState = ECharacterState::RUN;
 }
 void ACharacterBase::Sprint_E(const FInputActionValue& Value)
 {
 	CharacterState = ECharacterState::RUN;
+	Movement->MaxWalkSpeed = 400;
 }
 // Called every frame
 void ACharacterBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
+	if (GetVelocity().Size() <= 0.f)
+		CharacterState = ECharacterState::IDLE;
 	switch (CharacterState)
 	{
 	case ECharacterState::IDLE:
-		Movement->MaxWalkSpeed = 0;
 		break;
 	case ECharacterState::RUN:
-		Movement->MaxWalkSpeed = 400;
+		Movement->MaxWalkSpeed = 400.f;
+		bUseControllerRotationYaw = false;
+		UGameplayStatics::GetPlayerCameraManager(GetWorld(), 0)->StartCameraShake(UJog::StaticClass());
 		break;
 	case ECharacterState::SPRINT:
-		Movement->MaxWalkSpeed = 600;
+		if (StaminaExhaustionState == false)
+		{
+			Movement->MaxWalkSpeed = 600.f;
+			bUseControllerRotationYaw = true;
+			UGameplayStatics::GetPlayerCameraManager(GetWorld(), 0)->StartCameraShake(USprint::StaticClass());
+		}
 		break;
 	case ECharacterState::FALLING:
 		break;
 	case ECharacterState::DEFAULT:
-		Movement->MaxWalkSpeed = 400;
+		Movement->MaxWalkSpeed = 400.f;
 		break;
 	}
-
+	UpdateStamina(DeltaTime);
+	UpdateSprintCamera(DeltaTime);
+	UE_LOG(LogTemp, Warning, TEXT("Float : %f "), Stamina);
 }
 
 // Called to bind functionality to input
