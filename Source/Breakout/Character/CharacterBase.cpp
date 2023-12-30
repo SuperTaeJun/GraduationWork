@@ -23,6 +23,7 @@ ACharacterBase::ACharacterBase()
 	CameraBoom->bUsePawnControlRotation = true;
 	CameraBoom->bEnableCameraLag;
 	CameraBoom->bEnableCameraRotationLag;
+
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
 	FollowCamera->SetupAttachment(CameraBoom);
 	FollowCamera->bUsePawnControlRotation = false;
@@ -60,11 +61,9 @@ void ACharacterBase::UpdateStamina(float DeltaTime)
 	{
 		if (CharacterState == ECharacterState::SPRINT && Stamina >= 0.f)
 		{
-			//Stamina -= 0.5f;
+			Stamina -= 0.4f;
 			if (Stamina <= 0.f)
-			{
 				StaminaExhaustionState = true;
-			}
 		}
 		else 	if ((CharacterState == ECharacterState::RUN || CharacterState == ECharacterState::IDLE) && Stamina <= 100.f)
 		{
