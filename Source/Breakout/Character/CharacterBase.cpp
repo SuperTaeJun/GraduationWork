@@ -10,13 +10,19 @@
 #include "CameraShake/Sprint.h"
 #include "CameraShake/Jog.h"
 #include "Kismet/GameplayStatics.h"
+#include "Kismet/KismetMathLibrary.h"
 ACharacterBase::ACharacterBase()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
-	CharacterState = ECharacterState::DEFAULT;
+	TurningType = ETurningInPlace::ETIP_NotTurning;
+
+	CharacterState = ECharacterState::ECS_DEFAULT;
 
 	Movement = GetCharacterMovement();
+	Movement->bOrientRotationToMovement = false;
+	bUseControllerRotationYaw = true;
+
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
 	CameraBoom->SetupAttachment(GetMesh());
 	CameraBoom->TargetArmLength = 500.f;
@@ -50,22 +56,22 @@ void ACharacterBase::BeginPlay()
 
 void ACharacterBase::UpdateSprintCamera(float DeltaTime)
 {
-	if(CameraBoom->TargetArmLength>=300.f && CharacterState == ECharacterState::SPRINT)
+	if(CameraBoom->TargetArmLength>=300.f && CharacterState == ECharacterState::ECS_SPRINT)
 		CameraBoom->TargetArmLength -= DeltaTime * 400;
-	else if (CameraBoom->TargetArmLength <= 500.f && CharacterState == ECharacterState::RUN)
+	else if (CameraBoom->TargetArmLength <= 500.f && CharacterState == ECharacterState::ECS_RUN)
 		CameraBoom->TargetArmLength += DeltaTime * 400;
 }
 void ACharacterBase::UpdateStamina(float DeltaTime)
 {
 	if (StaminaExhaustionState == false)
 	{
-		if (CharacterState == ECharacterState::SPRINT && Stamina >= 0.f)
+		if (CharacterState == ECharacterState::ECS_SPRINT && Stamina >= 0.f)
 		{
 			Stamina -= 0.4f;
 			if (Stamina <= 0.f)
 				StaminaExhaustionState = true;
 		}
-		else 	if ((CharacterState == ECharacterState::RUN || CharacterState == ECharacterState::IDLE) && Stamina <= 100.f)
+		else 	if ((CharacterState == ECharacterState::ECS_RUN || CharacterState == ECharacterState::ECS_IDLE) && Stamina <= 100.f)
 		{
 			Stamina += 0.2f;
 		}
@@ -80,6 +86,64 @@ void ACharacterBase::UpdateStamina(float DeltaTime)
 		{
 			StaminaExhaustionState = false;
 		}
+	}
+}
+
+void ACharacterBase::TurnInPlace(float DeltaTime)
+{
+	if (AO_Yaw > 90.f)
+	{
+		TurningType = ETurningInPlace::ETIP_Right;
+	}
+	else if (AO_Yaw < -90.f)
+	{
+		TurningType = ETurningInPlace::ETIP_Left;
+	}
+	if (TurningType != ETurningInPlace::ETIP_NotTurning)
+	{
+		InterpAO_Yaw = FMath::FInterpTo(InterpAO_Yaw, 0.f, DeltaTime, 4.f);
+		AO_Yaw = InterpAO_Yaw;
+		if (FMath::Abs(AO_Yaw) < 15.f)
+		{
+			TurningType = ETurningInPlace::ETIP_NotTurning;
+			StartingAimRotation = FRotator(0.f, GetBaseAimRotation().Yaw, 0.f);
+		}
+	}
+}
+
+void ACharacterBase::AimOffset(float DeltaTime)
+{
+	FVector Velocity = GetVelocity();
+	Velocity.Z = 0.f;
+	float Speed = Velocity.Size();
+	bool IsFalling = GetCharacterMovement()->IsFalling();
+	UE_LOG(LogTemp, Log, TEXT("%f"), AO_Yaw);
+	if (!IsFalling && Speed == 0.f) //점프 아니고 서있을때
+	{
+		//UE_LOG(LogTemp, Log, TEXT("%f"), Speed);
+		FRotator CurAimRotation = FRotator(0.f, GetBaseAimRotation().Yaw, 0.f);
+		FRotator DeltaRotation = UKismetMathLibrary::NormalizedDeltaRotator(CurAimRotation, StartingAimRotation);
+		AO_Yaw = DeltaRotation.Yaw;
+		if (TurningType == ETurningInPlace::ETIP_NotTurning)
+		{
+			InterpAO_Yaw = AO_Yaw;
+		}
+		bUseControllerRotationYaw = true;
+		TurnInPlace(DeltaTime);
+	}
+	if (IsFalling || Speed > 0.f) // 뛰거나 점프일때
+	{
+		StartingAimRotation = FRotator(0.f, GetBaseAimRotation().Yaw, 0.f);
+		AO_Yaw = 0.f;
+		bUseControllerRotationYaw = true;
+		TurningType = ETurningInPlace::ETIP_NotTurning;
+	}
+	AO_Pitch = GetBaseAimRotation().Pitch;
+	if (AO_Pitch > 90.f && !IsLocallyControlled())
+	{
+		FVector2D InRange(270.f, 360.f);
+		FVector2D OutRange(-90.f, 0.f);
+		AO_Pitch = FMath::GetMappedRangeValueClamped(InRange, OutRange, AO_Pitch);
 	}
 }
 
@@ -112,48 +176,53 @@ void ACharacterBase::Sprint_S(const FInputActionValue& Value)
 {
 	if (!StaminaExhaustionState)
 	{
-		CharacterState = ECharacterState::SPRINT;
+		CharacterState = ECharacterState::ECS_SPRINT;
+		Movement->bOrientRotationToMovement = true;
 	}
 	else
-		CharacterState = ECharacterState::RUN;
+	{
+		CharacterState = ECharacterState::ECS_RUN;
+		Movement->bOrientRotationToMovement = false;
+	}
 }
 void ACharacterBase::Sprint_E(const FInputActionValue& Value)
 {
-	CharacterState = ECharacterState::RUN;
+	CharacterState = ECharacterState::ECS_RUN;
 	Movement->MaxWalkSpeed = 400;
+	Movement->bOrientRotationToMovement = false;
 }
 // Called every frame
 void ACharacterBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	if (GetVelocity().Size() <= 0.f)
-		CharacterState = ECharacterState::IDLE;
+		CharacterState = ECharacterState::ECS_IDLE;
 	switch (CharacterState)
 	{
-	case ECharacterState::IDLE:
+	case ECharacterState::ECS_IDLE:
 		break;
-	case ECharacterState::RUN:
+	case ECharacterState::ECS_RUN:
 		Movement->MaxWalkSpeed = 400.f;
-		bUseControllerRotationYaw = false;
 		UGameplayStatics::GetPlayerCameraManager(GetWorld(), 0)->StartCameraShake(UJog::StaticClass());
 		break;
-	case ECharacterState::SPRINT:
+	case ECharacterState::ECS_SPRINT:
 		if (StaminaExhaustionState == false)
 		{
 			Movement->MaxWalkSpeed = 600.f;
-			bUseControllerRotationYaw = true;
 			UGameplayStatics::GetPlayerCameraManager(GetWorld(), 0)->StartCameraShake(USprint::StaticClass());
 		}
 		break;
-	case ECharacterState::FALLING:
+	case ECharacterState::ECS_FALLING:
 		break;
-	case ECharacterState::DEFAULT:
+	case ECharacterState::ECS_DEFAULT:
 		Movement->MaxWalkSpeed = 400.f;
 		break;
 	}
 	UpdateStamina(DeltaTime);
 	UpdateSprintCamera(DeltaTime);
-	UE_LOG(LogTemp, Warning, TEXT("Float : %f "), Stamina);
+	AimOffset(DeltaTime);
+
+	//UE_LOG(LogTemp, Log, TEXT("%d"), TurningType);
 }
 
 // Called to bind functionality to input
@@ -167,7 +236,7 @@ void ACharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ACharacterBase::Look);
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Triggered, this, &ACharacter::Jump);
 		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Triggered, this, &ACharacterBase::Sprint_S);
-		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::None, this, &ACharacterBase::Sprint_E);
+		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Completed, this, &ACharacterBase::Sprint_E);
 	}
 }
 

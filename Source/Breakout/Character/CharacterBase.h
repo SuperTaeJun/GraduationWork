@@ -1,10 +1,9 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "InputActionValue.h"
+#include "Type/TurningType.h"
 #include "CharacterBase.generated.h"
 
 class UInputAction;
@@ -20,6 +19,12 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	FORCEINLINE ETurningInPlace GetTurningType() { return TurningType; }
+
+	FORCEINLINE float GetAO_Yaw() const { return AO_Yaw; }
+	FORCEINLINE float GetAO_Pitch() const { return AO_Pitch; }
+
 
 protected:
 	virtual void BeginPlay() override;
@@ -46,6 +51,16 @@ private:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Character, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UCharacterMovementComponent> Movement;
+
+	ETurningInPlace TurningType;
+	void TurnInPlace(float DeltaTime);
+
+	void AimOffset(float DeltaTime);
+	float AO_Yaw;
+	float InterpAO_Yaw;
+	float AO_Pitch;
+	FRotator StartingAimRotation;
+
 
 	//ÀÔ·Â°ª
 protected:
@@ -77,10 +92,10 @@ protected:
 UENUM(BlueprintType)
 enum class ECharacterState : uint8
 {
-	IDLE UMETA(DisplayName = "Idle"),
-	RUN UMETA(DisplayName = "Run"),
-	SPRINT UMETA(DisplayName = "Sprint"),
-	FALLING UMETA(DisplayName = "Falling"),
+	ECS_IDLE UMETA(DisplayName = "Idle"),
+	ECS_RUN UMETA(DisplayName = "Run"),
+	ECS_SPRINT UMETA(DisplayName = "Sprint"),
+	ECS_FALLING UMETA(DisplayName = "Falling"),
 
-	DEFAULT UMETA(DisplayName = "Default")
+	ECS_DEFAULT UMETA(DisplayName = "Default")
 };
