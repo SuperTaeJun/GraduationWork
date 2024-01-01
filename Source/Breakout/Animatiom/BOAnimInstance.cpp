@@ -23,5 +23,24 @@ void UBOAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 
 		bIsFalling = Movement->IsFalling();
 		bIsAccelerating = BaseCharacter->GetCharacterMovement()->GetCurrentAcceleration().Size() > 0.f ? true : false;
+		TurningType = BaseCharacter->GetTurningType();
+		//Yaw오프셋 값
+		FRotator AimRotation = BaseCharacter->GetBaseAimRotation();
+		FRotator MovementRotation = UKismetMathLibrary::MakeRotFromX(BaseCharacter->GetVelocity());
+		FRotator DeltaRot = UKismetMathLibrary::NormalizedDeltaRotator(MovementRotation, AimRotation);
+		DeltaRotation = FMath::RInterpTo(DeltaRotation, DeltaRot, DeltaSeconds, 6.f);
+		YawOffset = DeltaRotation.Yaw;
+
+		//Lean오프셋 값
+		CharacterRotationLastFrame = CharacterRotation;
+		CharacterRotation = BaseCharacter->GetActorRotation();
+		const FRotator Delta = UKismetMathLibrary::NormalizedDeltaRotator(CharacterRotation, CharacterRotationLastFrame);
+		const float Target = Delta.Yaw / DeltaSeconds;
+		const float Interp = FMath::FInterpTo(Lean, Target, DeltaSeconds, 6.f);
+		Lean = FMath::Clamp(Interp, -90.f, 90.f);
+
+		AO_Yaw = BaseCharacter->GetAO_Yaw();
+		AO_Pitch = BaseCharacter->GetAO_Pitch();
+
 	}
 }
