@@ -118,6 +118,8 @@ void ACharacterBase::AimOffset(float DeltaTime)
 	float Speed = Velocity.Size();
 	bool IsFalling = GetCharacterMovement()->IsFalling();
 	UE_LOG(LogTemp, Log, TEXT("%f"), AO_Yaw);
+
+
 	if (!IsFalling && Speed == 0.f) //점프 아니고 서있을때
 	{
 		//UE_LOG(LogTemp, Log, TEXT("%f"), Speed);
@@ -178,11 +180,13 @@ void ACharacterBase::Sprint_S(const FInputActionValue& Value)
 	{
 		CharacterState = ECharacterState::ECS_SPRINT;
 		Movement->bOrientRotationToMovement = true;
+		bUseControllerRotationYaw = false;
 	}
 	else
 	{
 		CharacterState = ECharacterState::ECS_RUN;
 		Movement->bOrientRotationToMovement = false;
+		bUseControllerRotationYaw = true;
 	}
 }
 void ACharacterBase::Sprint_E(const FInputActionValue& Value)
@@ -190,6 +194,7 @@ void ACharacterBase::Sprint_E(const FInputActionValue& Value)
 	CharacterState = ECharacterState::ECS_RUN;
 	Movement->MaxWalkSpeed = 400;
 	Movement->bOrientRotationToMovement = false;
+	bUseControllerRotationYaw = true;
 }
 // Called every frame
 void ACharacterBase::Tick(float DeltaTime)
