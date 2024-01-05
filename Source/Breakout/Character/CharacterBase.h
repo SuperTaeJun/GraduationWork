@@ -42,6 +42,7 @@ protected:
 	bool StaminaExhaustionState;
 	ECharacterState CharacterState;
 
+	void SetWeapon(class AWeaponBase* _Weapon);
 private:
 	UPROPERTY(VisibleAnywhere, Category = Camera)
 	TObjectPtr<class USpringArmComponent> CameraBoom;
@@ -52,14 +53,25 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Character, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UCharacterMovementComponent> Movement;
 
+	TObjectPtr<class AWeaponBase> Weapon;
+
+	//idle turn
 	ETurningInPlace TurningType;
 	void TurnInPlace(float DeltaTime);
 
+	//에임오프셋
 	void AimOffset(float DeltaTime);
 	float AO_Yaw;
 	float InterpAO_Yaw;
 	float AO_Pitch;
 	FRotator StartingAimRotation;
+
+	//fire
+	bool bFirePressed;
+	FTimerHandle FireTimer;
+	void StartFireTimer();
+	void FireTimerFinished();
+	void Fire();
 
 
 	//입력값
@@ -87,6 +99,8 @@ protected:
 	void Look(const FInputActionValue& Value);
 	void Sprint_S(const FInputActionValue& Value);
 	void Sprint_E(const FInputActionValue& Value);
+	void Fire_S(const FInputActionValue& Value);
+	void Fire_E(const FInputActionValue& Value);
 };
 
 UENUM(BlueprintType)

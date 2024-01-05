@@ -11,6 +11,8 @@
 #include "CameraShake/Jog.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Weapon/WeaponBase.h"
+#include "Engine/SkeletalMeshSocket.h"
 ACharacterBase::ACharacterBase()
 {
 	PrimaryActorTick.bCanEverTick = true;
@@ -89,6 +91,18 @@ void ACharacterBase::UpdateStamina(float DeltaTime)
 	}
 }
 
+void ACharacterBase::SetWeapon(AWeaponBase* _Weapon)
+{
+	Weapon = _Weapon;
+	const USkeletalMeshSocket* WeaponSocket = GetMesh()->GetSocketByName(FName("WeaponSocket"));
+	if (WeaponSocket)
+	{
+		WeaponSocket->AttachActor(Weapon, GetMesh());
+	}
+	Weapon->SetOwner(this);
+
+}
+
 void ACharacterBase::TurnInPlace(float DeltaTime)
 {
 	if (AO_Yaw > 90.f)
@@ -149,6 +163,27 @@ void ACharacterBase::AimOffset(float DeltaTime)
 	}
 }
 
+void ACharacterBase::StartFireTimer()
+{
+	GetWorldTimerManager().SetTimer(FireTimer, this, &ACharacterBase::FireTimerFinished, 0.15f);
+}
+
+void ACharacterBase::FireTimerFinished()
+{
+	if (bFirePressed)
+		Fire();
+	else
+		return;
+}
+
+void ACharacterBase::Fire()
+{
+
+
+
+
+	StartFireTimer();
+}
 
 void ACharacterBase::Move(const FInputActionValue& Value)
 {
@@ -196,7 +231,14 @@ void ACharacterBase::Sprint_E(const FInputActionValue& Value)
 	Movement->bOrientRotationToMovement = false;
 	bUseControllerRotationYaw = true;
 }
-// Called every frame
+void ACharacterBase::Fire_S(const FInputActionValue& Value)
+{
+	bFirePressed = true;
+}
+void ACharacterBase::Fire_E(const FInputActionValue& Value)
+{
+	bFirePressed = false;
+}
 void ACharacterBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
@@ -230,7 +272,6 @@ void ACharacterBase::Tick(float DeltaTime)
 	//UE_LOG(LogTemp, Log, TEXT("%d"), TurningType);
 }
 
-// Called to bind functionality to input
 void ACharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
