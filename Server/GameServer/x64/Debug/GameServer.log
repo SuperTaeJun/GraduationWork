@@ -1,0 +1,5 @@
+﻿  IOCPServer.cpp
+C:\Users\sejin\Downloads\GraduationWork\Server\GameServer\IOCPServer.cpp(109,63): warning C4311: '형식 캐스트': 'stSOCKETINFO *'에서 'DWORD'(으)로 포인터가 잘립니다.
+C:\Users\sejin\Downloads\GraduationWork\Server\GameServer\IOCPServer.cpp(109,63): warning C4302: '형식 캐스트': 'stSOCKETINFO *'에서 'DWORD'(으)로 잘립니다.
+C:\Users\sejin\Downloads\GraduationWork\Server\GameServer\IOCPServer.cpp(160,10): warning C4101: 'sendBytes' :참조되지 않은 지역 변수입니다.
+  GameServer.vcxproj -> C:\Users\sejin\Downloads\GraduationWork\Server\Binary\Debug\GameServer.exe
