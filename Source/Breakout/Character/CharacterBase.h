@@ -7,6 +7,8 @@
 #include "CharacterBase.generated.h"
 
 class UInputAction;
+#define DEFAULTCAMERALENGTH 300
+#define SPRINTCAMERALENGTH 200
 
 UCLASS()
 class BREAKOUT_API ACharacterBase : public ACharacter
@@ -31,6 +33,7 @@ protected:
 
 	void UpdateSprintCamera(float DeltaTime);
 	void UpdateStamina(float DeltaTime);
+	void SetHUDCrosshair(float DeltaTime);
 
 	//캐릭터 상태
 	UPROPERTY(EditAnywhere, Category = "Player Stats")
@@ -42,7 +45,14 @@ protected:
 	bool StaminaExhaustionState;
 	ECharacterState CharacterState;
 
-	void SetWeapon(class AWeaponBase* _Weapon);
+public:
+	void SetWeapon(TSubclassOf<class AWeaponBase> Weapon);
+	void SetbInRespon(bool _bInRespon) { bInRespon = _bInRespon; }
+	bool GetbInRespon() { return bInRespon; }
+	void SetbShowSelect(bool _bShowSelect) {bShowSelectUi = _bShowSelect;}
+	class AWeaponBase* GetWeapon() { return CurWeapon; }
+
+	void PlayFireActionMontage(bool bAiming);
 private:
 	UPROPERTY(VisibleAnywhere, Category = Camera)
 	TObjectPtr<class USpringArmComponent> CameraBoom;
@@ -53,7 +63,14 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Character, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UCharacterMovementComponent> Movement;
 
-	TObjectPtr<class AWeaponBase> Weapon;
+	TObjectPtr<class AWeaponBase> CurWeapon;
+
+	TObjectPtr<class AMainHUD> MainHUD;
+	TObjectPtr<class ACharacterController> MainController;
+
+	UPROPERTY(EditAnywhere, Category = Animation)
+	TObjectPtr<class UAnimMontage> FireActionMontage;
+
 
 	//idle turn
 	ETurningInPlace TurningType;
@@ -67,12 +84,33 @@ private:
 	FRotator StartingAimRotation;
 
 	//fire
+	bool bCanFire;
 	bool bFirePressed;
 	FTimerHandle FireTimer;
 	void StartFireTimer();
 	void FireTimerFinished();
 	void Fire();
+	void FirePressd(bool _Pressd);
+	void TraceUnderCrossHiar(FHitResult& TraceHitResult);
 
+
+	//조준선
+	UPROPERTY(EditAnywhere, Category = Crosshair)
+	TObjectPtr<class UTexture2D> CrosshairsCenter;
+	UPROPERTY(EditAnywhere, Category = Crosshair)
+	TObjectPtr<class UTexture2D> CrosshairsLeft;
+	UPROPERTY(EditAnywhere, Category = Crosshair)
+	TObjectPtr<class UTexture2D> CrosshairsRight;
+	UPROPERTY(EditAnywhere, Category = Crosshair)
+	TObjectPtr<class UTexture2D> CrosshairsTop;
+	UPROPERTY(EditAnywhere, Category = Crosshair)
+	TObjectPtr<class UTexture2D> CrosshairsBottom;
+	FVector HitTarget;
+
+
+
+	bool bInRespon;
+	bool bShowSelectUi;
 
 	//입력값
 protected:
@@ -101,6 +139,7 @@ protected:
 	void Sprint_E(const FInputActionValue& Value);
 	void Fire_S(const FInputActionValue& Value);
 	void Fire_E(const FInputActionValue& Value);
+	void Inter(const FInputActionValue& Value);
 };
 
 UENUM(BlueprintType)

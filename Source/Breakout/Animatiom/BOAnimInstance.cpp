@@ -4,6 +4,7 @@
 #include "Animatiom/BOAnimInstance.h"
 #include "Character/CharacterBase.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Weapon/WeaponBase.h"
 #include "Kismet/KismetMathLibrary.h"
 void UBOAnimInstance::NativeInitializeAnimation()
 {
@@ -24,6 +25,8 @@ void UBOAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 		bIsFalling = Movement->IsFalling();
 		bIsAccelerating = BaseCharacter->GetCharacterMovement()->GetCurrentAcceleration().Size() > 0.f ? true : false;
 		TurningType = BaseCharacter->GetTurningType();
+		EquipWeapon = BaseCharacter->GetWeapon();
+
 		//Yaw오프셋 값
 		FRotator AimRotation = BaseCharacter->GetBaseAimRotation();
 		FRotator MovementRotation = UKismetMathLibrary::MakeRotFromX(BaseCharacter->GetVelocity());
@@ -42,5 +45,15 @@ void UBOAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 		AO_Yaw = BaseCharacter->GetAO_Yaw();
 		AO_Pitch = BaseCharacter->GetAO_Pitch();
 
+		if (EquipWeapon)
+		{
+			LeftHandTransform = EquipWeapon->GetWeaponMesh()->GetSocketTransform(FName("LeftHandSocket"), ERelativeTransformSpace::RTS_World);
+			FVector OutPosition;
+			FRotator OutRotation;
+			BaseCharacter->GetMesh()->TransformToBoneSpace(FName("hand_r"), LeftHandTransform.GetLocation(), FRotator::ZeroRotator, OutPosition, OutRotation);
+			LeftHandTransform.SetLocation(OutPosition);
+			LeftHandTransform.SetRotation(FQuat(OutRotation));
+
+		}
 	}
 }
