@@ -45,7 +45,8 @@ ACharacterBase::ACharacterBase()
 	//스테이트
 	MaxHealth = 100.f;
 	Health = MaxHealth;
-	Stamina = 100.f;
+	MaxStamina = 100.f;
+	Stamina = MaxStamina;
 	StaminaExhaustionState = false;
 	bCanFire = true;
 
@@ -74,6 +75,9 @@ void ACharacterBase::BeginPlay()
 	//bShowSelectUi = true;
 	MainController->bShowMouseCursor = true;
 	MainController->bEnableMouseOverEvents = true;
+
+	UpdateHpHUD();
+	UpdateStaminaHUD();
 }
 
 void ACharacterBase::UpdateSprintCamera(float DeltaTime)
@@ -93,7 +97,7 @@ void ACharacterBase::UpdateStamina(float DeltaTime)
 			if (Stamina <= 0.f)
 				StaminaExhaustionState = true;
 		}
-		else 	if ((CharacterState == ECharacterState::ECS_RUN || CharacterState == ECharacterState::ECS_IDLE) && Stamina <= 100.f)
+		else 	if ((CharacterState == ECharacterState::ECS_RUN || CharacterState == ECharacterState::ECS_IDLE) && Stamina < MaxStamina)
 		{
 			Stamina += 0.2f;
 		}
@@ -109,6 +113,7 @@ void ACharacterBase::UpdateStamina(float DeltaTime)
 			StaminaExhaustionState = false;
 		}
 	}
+	UpdateStaminaHUD();
 }
 
 void ACharacterBase::SetHUDCrosshair(float DeltaTime)
@@ -125,6 +130,22 @@ void ACharacterBase::SetHUDCrosshair(float DeltaTime)
 	HUDPackage.CrosshairBottom = CrosshairsBottom;
 
 	MainHUD->SetHUDPackage(HUDPackage);
+}
+
+void ACharacterBase::UpdateHpHUD()
+{
+	if (MainController)
+	{
+		MainController->SetHUDHealth(FMath::Clamp(Health,0.f,100.f), MaxHealth);
+	}
+}
+
+void ACharacterBase::UpdateStaminaHUD()
+{
+	if (MainController)
+	{
+		MainController->SetHUDStamina(FMath::Clamp(Stamina, 0.f, 100.f) , MaxStamina);
+	}
 }
 
 void ACharacterBase::SetWeapon(TSubclassOf<class AWeaponBase> Weapon)

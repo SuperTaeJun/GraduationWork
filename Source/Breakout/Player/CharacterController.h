@@ -17,4 +17,11 @@ class BREAKOUT_API ACharacterController : public APlayerController
 protected:
 	virtual void BeginPlay() override;
 
+public:
+	void SetHUDHealth(float Health, float MaxHealth);
+	void SetHUDStamina(float Stamina, float MaxStamina);
+	void SetHUDAmmo(int32 Ammo);
+	virtual void OnPossess(APawn* InPawn) override;
+private:
+	TObjectPtr<class AMainHUD> MainHUD;
 };
