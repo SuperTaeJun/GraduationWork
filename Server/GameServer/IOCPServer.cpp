@@ -127,13 +127,11 @@ void IOCompletionPort::StartServer() {
 }
 
 bool IOCompletionPort::CreateWorkerThread() {
-	unsigned int threadId;
+	unsigned int threaddId;
 	// 시스템 정보 가져옴
-	SYSTEM_INFO sysInfo;
-	GetSystemInfo(&sysInfo);
-	cout <<"CPU 갯수 : " << sysInfo.dwNumberOfProcessors << endl;
-	// 적절한 작업 스레드의 갯수는 (CPU * 2) + 1
-	int nThreadCnt = sysInfo.dwNumberOfProcessors * 2;
+	unsigned int numCores = std::thread::hardware_concurrency();
+	cout <<"CPU 갯수 : " << numCores << endl;
+	int nThreadCnt = numCores * 2;
 
 	// thread handler 선언
 	hWorkerHandle = new HANDLE[nThreadCnt];
