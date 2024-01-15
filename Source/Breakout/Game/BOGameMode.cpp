@@ -6,7 +6,4 @@
 ABOGameMode::ABOGameMode()
 {
 
-	static ConstructorHelpers::FClassFinder<APawn> BaseCharacterRef(TEXT("/Game/BP/Character/BP_CharacterBase.BP_CharacterBase_C"));
-
-	DefaultPawnClass = BaseCharacterRef.Class;
 }

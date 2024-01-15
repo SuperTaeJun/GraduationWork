@@ -9,23 +9,31 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "CameraShake/Sprint.h"
 #include "CameraShake/Jog.h"
+#include "CameraShake/Shoot.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Weapon/WeaponBase.h"
+#include "Engine/SkeletalMeshSocket.h"
+#include "HUD/MainHUD.h"
+#include "Player/CharacterController.h"
+#include "GameFramework/PlayerController.h"
 ACharacterBase::ACharacterBase()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
 	TurningType = ETurningInPlace::ETIP_NotTurning;
-
 	CharacterState = ECharacterState::ECS_DEFAULT;
 
+	GetMesh()->SetRelativeLocationAndRotation(FVector(0.f, 0.f, -90.f), FRotator(0.f, -90.f, 0.f));
+
 	Movement = GetCharacterMovement();
+	Movement->MaxWalkSpeed = 400.f;
 	Movement->bOrientRotationToMovement = false;
 	bUseControllerRotationYaw = true;
 
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
 	CameraBoom->SetupAttachment(GetMesh());
-	CameraBoom->TargetArmLength = 500.f;
+	CameraBoom->TargetArmLength = DEFAULTCAMERALENGTH;
 	CameraBoom->bUsePawnControlRotation = true;
 	CameraBoom->bEnableCameraLag;
 	CameraBoom->bEnableCameraRotationLag;
@@ -37,8 +45,12 @@ ACharacterBase::ACharacterBase()
 	//스테이트
 	MaxHealth = 100.f;
 	Health = MaxHealth;
-	Stamina = 100.f;
+	MaxStamina = 100.f;
+	Stamina = MaxStamina;
 	StaminaExhaustionState = false;
+	bCanFire = true;
+
+	//bShowSelectUi = false;
 }
 
 void ACharacterBase::BeginPlay()
@@ -52,13 +64,27 @@ void ACharacterBase::BeginPlay()
 			Subsystem->AddMappingContext(DefalutMappingContext, 0);
 		}
 	}
+
+	//무기선택 ui생성
+	MainController = Cast<ACharacterController>(Controller);
+	MainHUD = Cast<AMainHUD>(MainController->GetHUD());
+	FInputModeUIOnly UiGameInput;
+	MainController->SetInputMode(UiGameInput);
+	MainController->DisableInput(MainController);
+	MainHUD->AddSelectWeapon();
+	//bShowSelectUi = true;
+	MainController->bShowMouseCursor = true;
+	MainController->bEnableMouseOverEvents = true;
+
+	UpdateHpHUD();
+	UpdateStaminaHUD();
 }
 
 void ACharacterBase::UpdateSprintCamera(float DeltaTime)
 {
-	if(CameraBoom->TargetArmLength>=300.f && CharacterState == ECharacterState::ECS_SPRINT)
+	if(CameraBoom->TargetArmLength>= SPRINTCAMERALENGTH && CharacterState == ECharacterState::ECS_SPRINT)
 		CameraBoom->TargetArmLength -= DeltaTime * 400;
-	else if (CameraBoom->TargetArmLength <= 500.f && CharacterState == ECharacterState::ECS_RUN)
+	else if (CameraBoom->TargetArmLength <= DEFAULTCAMERALENGTH && CharacterState == ECharacterState::ECS_RUN)
 		CameraBoom->TargetArmLength += DeltaTime * 400;
 }
 void ACharacterBase::UpdateStamina(float DeltaTime)
@@ -71,7 +97,7 @@ void ACharacterBase::UpdateStamina(float DeltaTime)
 			if (Stamina <= 0.f)
 				StaminaExhaustionState = true;
 		}
-		else 	if ((CharacterState == ECharacterState::ECS_RUN || CharacterState == ECharacterState::ECS_IDLE) && Stamina <= 100.f)
+		else 	if ((CharacterState == ECharacterState::ECS_RUN || CharacterState == ECharacterState::ECS_IDLE) && Stamina < MaxStamina)
 		{
 			Stamina += 0.2f;
 		}
@@ -86,6 +112,85 @@ void ACharacterBase::UpdateStamina(float DeltaTime)
 		{
 			StaminaExhaustionState = false;
 		}
+	}
+	UpdateStaminaHUD();
+}
+
+void ACharacterBase::SetHUDCrosshair(float DeltaTime)
+{
+	MainController = MainController == nullptr ? Cast<ACharacterController>(Controller) : MainController;
+	MainHUD = MainHUD == nullptr ? Cast<AMainHUD>(MainController->GetHUD()) : MainHUD;
+
+	FCrosshairPackage HUDPackage;
+
+	HUDPackage.CrosshairCenter = CrosshairsCenter;
+	HUDPackage.CrosshairLeft = CrosshairsLeft;
+	HUDPackage.CrosshairRight = CrosshairsRight;
+	HUDPackage.CrosshairTop = CrosshairsTop;
+	HUDPackage.CrosshairBottom = CrosshairsBottom;
+
+	MainHUD->SetHUDPackage(HUDPackage);
+}
+
+void ACharacterBase::UpdateHpHUD()
+{
+	if (MainController)
+	{
+		MainController->SetHUDHealth(FMath::Clamp(Health,0.f,100.f), MaxHealth);
+	}
+}
+
+void ACharacterBase::UpdateStaminaHUD()
+{
+	if (MainController)
+	{
+		MainController->SetHUDStamina(FMath::Clamp(Stamina, 0.f, 100.f) , MaxStamina);
+	}
+}
+
+void ACharacterBase::SetWeapon(TSubclassOf<class AWeaponBase> Weapon)
+{
+	//if (!CurWeapon)
+	//{
+	AActor* SpawnWeapon = GetWorld()->SpawnActor<AWeaponBase>(Weapon);
+	CurWeapon = Cast<AWeaponBase>(SpawnWeapon);
+
+	const USkeletalMeshSocket* WeaponSocket = GetMesh()->GetSocketByName(FName("WeaponSocket"));
+
+
+	if (WeaponSocket && SpawnWeapon)
+	{
+		WeaponSocket->AttachActor(SpawnWeapon, GetMesh());
+	}
+	SpawnWeapon->SetOwner(this);
+	//}
+	//else
+	//{
+	//	CurWeapon = nullptr;
+	//	AActor* SpawnWeapon = GetWorld()->SpawnActor<AWeaponBase>(Weapon);
+	//	CurWeapon = Cast<AWeaponBase>(SpawnWeapon);
+
+	//	const USkeletalMeshSocket* WeaponSocket = GetMesh()->GetSocketByName(FName("WeaponSocket"));
+
+	//	if (WeaponSocket && SpawnWeapon)
+	//	{
+	//		//UE_LOG(LogTemp, Log, TEXT("WEAONEQP"));
+	//		WeaponSocket->AttachActor(SpawnWeapon, GetMesh());
+	//	}
+
+	//}
+
+
+}
+
+void ACharacterBase::PlayFireActionMontage(bool bAiming)
+{
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+	if (AnimInstance && FireActionMontage)
+	{
+		AnimInstance->Montage_Play(FireActionMontage);
+		FName SectionName = FName("RifleHip");
+		AnimInstance->Montage_JumpToSection(SectionName);
 	}
 }
 
@@ -117,7 +222,9 @@ void ACharacterBase::AimOffset(float DeltaTime)
 	Velocity.Z = 0.f;
 	float Speed = Velocity.Size();
 	bool IsFalling = GetCharacterMovement()->IsFalling();
-	UE_LOG(LogTemp, Log, TEXT("%f"), AO_Yaw);
+	//UE_LOG(LogTemp, Log, TEXT("%f"), AO_Yaw);
+
+
 	if (!IsFalling && Speed == 0.f) //점프 아니고 서있을때
 	{
 		//UE_LOG(LogTemp, Log, TEXT("%f"), Speed);
@@ -147,6 +254,88 @@ void ACharacterBase::AimOffset(float DeltaTime)
 	}
 }
 
+void ACharacterBase::StartFireTimer()
+{
+	GetWorldTimerManager().SetTimer(FireTimer, this, &ACharacterBase::FireTimerFinished, CurWeapon->GetFirerate());
+}
+
+void ACharacterBase::FireTimerFinished()
+{
+	bCanFire = true;
+	if (bFirePressed)
+		Fire();
+}
+
+void ACharacterBase::Fire()
+{
+	//UE_LOG(LogTemp, Log, TEXT("FIRE"));
+	if (bCanFire == true)
+	{
+		bCanFire = false;
+		if (CurWeapon) {
+			CurWeapon->Fire(HitTarget);
+		}
+		PlayFireActionMontage(false);
+
+		UGameplayStatics::GetPlayerCameraManager(GetWorld(), 0)->StartCameraShake(UShoot::StaticClass());
+
+		StartFireTimer();
+	}
+}
+
+void ACharacterBase::FirePressd(bool _Pressd)
+{
+	if (_Pressd && CharacterState!= ECharacterState::ECS_SPRINT)
+	{
+		Fire();
+	}
+}
+
+void ACharacterBase::TraceUnderCrossHiar(FHitResult& TraceHitResult)
+{
+	FVector2D ViewportSize;
+	if (GEngine && GEngine->GameViewport)
+	{
+		GEngine->GameViewport->GetViewportSize(ViewportSize);
+	}
+	FVector2D CrossHairLocation(ViewportSize.X / 2.f, ViewportSize.Y / 2.f);
+	FVector CrossHairPostion;
+	FVector CrossHairDirection;
+	bool bScreenToWorld = UGameplayStatics::DeprojectScreenToWorld
+	(
+		UGameplayStatics::GetPlayerController(this, 0),
+		CrossHairLocation,
+		CrossHairPostion,
+		CrossHairDirection
+	);
+	if (bScreenToWorld)
+	{
+		FVector Start = CrossHairPostion;
+		if (this)
+		{
+			float DistanceToCharacter = (this->GetActorLocation() - Start).Size();
+			Start += CrossHairDirection * (DistanceToCharacter + 100.f);
+		}
+
+		FVector End = Start + CrossHairDirection * 10000.f;
+
+		GetWorld()->LineTraceSingleByChannel(
+			TraceHitResult,
+			Start,
+			End,
+			ECollisionChannel::ECC_Visibility
+		);
+
+		if (!TraceHitResult.bBlockingHit)
+		{
+			TraceHitResult.ImpactPoint = End;
+		}
+		else
+		{
+			DrawDebugSphere(GetWorld(), TraceHitResult.ImpactPoint, 12.f, 12, FColor::Red);
+		}
+	}
+}
 
 void ACharacterBase::Move(const FInputActionValue& Value)
 {
@@ -178,11 +367,13 @@ void ACharacterBase::Sprint_S(const FInputActionValue& Value)
 	{
 		CharacterState = ECharacterState::ECS_SPRINT;
 		Movement->bOrientRotationToMovement = true;
+		bUseControllerRotationYaw = false;
 	}
 	else
 	{
 		CharacterState = ECharacterState::ECS_RUN;
 		Movement->bOrientRotationToMovement = false;
+		bUseControllerRotationYaw = true;
 	}
 }
 void ACharacterBase::Sprint_E(const FInputActionValue& Value)
@@ -190,8 +381,52 @@ void ACharacterBase::Sprint_E(const FInputActionValue& Value)
 	CharacterState = ECharacterState::ECS_RUN;
 	Movement->MaxWalkSpeed = 400;
 	Movement->bOrientRotationToMovement = false;
+	bUseControllerRotationYaw = true;
 }
-// Called every frame
+void ACharacterBase::Fire_S(const FInputActionValue& Value)
+{
+	bFirePressed = true;
+	FirePressd(bFirePressed);
+}
+void ACharacterBase::Fire_E(const FInputActionValue& Value)
+{
+	bFirePressed = false;
+	FirePressd(bFirePressed);
+}
+void ACharacterBase::Inter(const FInputActionValue& Value)
+{
+	//MainController = Cast<ACharacterController>(Controller);
+	//MainHUD = Cast<AMainHUD>(MainController->GetHUD());
+	////UE_LOG(LogTemp, Log, TEXT("hahah"));
+	//if (bInRespon)
+	//{
+	//	if (!bShowSelectUi)
+	//	{
+	//		//UE_LOG(LogTemp, Log, TEXT("TESTTEST"));
+	//
+	//		FInputModeGameAndUI UiAndGameInput;
+	//		MainController->SetInputMode(UiAndGameInput);
+
+	//		MainHUD->AddSelectWeapon();
+	//		bShowSelectUi = true;
+	//		MainController->bShowMouseCursor = true;
+	//		MainController->bEnableMouseOverEvents = true;
+	//	}
+	//	else
+	//	{
+	//		//UE_LOG(LogTemp, Log, TEXT("TESTTEST"));
+	//		FInputModeGameOnly GameOnlyInput;
+	//		MainController->SetInputMode(GameOnlyInput);
+
+	//		MainHUD->RemoveSelectWeapon();
+	//		bShowSelectUi = false;
+	//		MainController->bShowMouseCursor = false;
+	//		MainController->bEnableMouseOverEvents = false;
+
+
+	//	}
+	//}
+}
 void ACharacterBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
@@ -206,7 +441,7 @@ void ACharacterBase::Tick(float DeltaTime)
 		UGameplayStatics::GetPlayerCameraManager(GetWorld(), 0)->StartCameraShake(UJog::StaticClass());
 		break;
 	case ECharacterState::ECS_SPRINT:
-		if (StaminaExhaustionState == false)
+		if (!StaminaExhaustionState)
 		{
 			Movement->MaxWalkSpeed = 600.f;
 			UGameplayStatics::GetPlayerCameraManager(GetWorld(), 0)->StartCameraShake(USprint::StaticClass());
@@ -221,11 +456,13 @@ void ACharacterBase::Tick(float DeltaTime)
 	UpdateStamina(DeltaTime);
 	UpdateSprintCamera(DeltaTime);
 	AimOffset(DeltaTime);
-
+	SetHUDCrosshair(DeltaTime);
 	//UE_LOG(LogTemp, Log, TEXT("%d"), TurningType);
+	FHitResult HitResult;
+	TraceUnderCrossHiar(HitResult);
+	HitTarget = HitResult.ImpactPoint;
 }
 
-// Called to bind functionality to input
 void ACharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
@@ -237,6 +474,9 @@ void ACharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Triggered, this, &ACharacter::Jump);
 		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Triggered, this, &ACharacterBase::Sprint_S);
 		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Completed, this, &ACharacterBase::Sprint_E);
+		EnhancedInputComponent->BindAction(InterAction, ETriggerEvent::Started, this, &ACharacterBase::Inter);
+		EnhancedInputComponent->BindAction(FireAction, ETriggerEvent::Triggered, this, &ACharacterBase::Fire_S);
+		EnhancedInputComponent->BindAction(FireAction, ETriggerEvent::Completed, this, &ACharacterBase::Fire_E);
 	}
 }
 
