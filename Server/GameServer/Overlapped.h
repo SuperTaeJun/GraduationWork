@@ -10,7 +10,7 @@ enum IO_type
 	IO_RECV,
 	IO_SEND,
 	IO_ACCEPT,
-	IO_CONNECT,
+	//IO_CONNECT,
 };
 
 class Overlapped {

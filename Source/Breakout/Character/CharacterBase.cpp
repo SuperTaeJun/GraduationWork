@@ -4,6 +4,14 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 
+#include "Windows/AllowWindowsPlatformTypes.h"
+#include "Windows/PreWindowsApi.h"
+#pragma comment(lib, "ws2_32.lib")
+#include <WinSock2.h>
+#include <WS2tcpip.h>
+#include "Windows/PostWindowsApi.h"
+#include "Windows/HideWindowsPlatformTypes.h"
+
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -78,6 +86,13 @@ void ACharacterBase::BeginPlay()
 
 	UpdateHpHUD();
 	UpdateStaminaHUD();
+	WSADATA WsaData;
+	if (WSAStartup(MAKEWORD(2, 2), &WsaData) != 0)
+	{
+		UE_LOG(LogTemp, Error, TEXT("INITAILAIZING ERROR"));
+		return;
+	}
+
 }
 
 void ACharacterBase::UpdateSprintCamera(float DeltaTime)
@@ -461,6 +476,62 @@ void ACharacterBase::Tick(float DeltaTime)
 	FHitResult HitResult;
 	TraceUnderCrossHiar(HitResult);
 	HitTarget = HitResult.ImpactPoint;
+	WSADATA WsaData;
+	if (WSAStartup(MAKEWORD(2, 2), &WsaData) != 0)
+	{
+		UE_LOG(LogTemp, Error, TEXT("INITAILAIZING ERROR"));
+		return;
+	}
+
+	// 서버의 IP 주소와 포트 번호를 설정합니다.
+	FString ServerIP = TEXT("127.0.0.1");
+	int32 ServerPort = 12345; // 서버의 포트 번호
+
+	// 소켓 생성
+	SOCKET ClientSocket = socket(AF_INET, SOCK_STREAM, 0);
+	if (ClientSocket == INVALID_SOCKET)
+	{
+		UE_LOG(LogTemp, Error, TEXT("SOCKET PRODUCE FAILED"));
+		WSACleanup(); // 소켓 초기화 정리
+		return;
+	}
+
+	// 서버 정보 설정
+	sockaddr_in ServerAddress;
+	ServerAddress.sin_family = AF_INET;
+	ServerAddress.sin_port = htons(ServerPort);
+	ServerAddress.sin_addr.s_addr = inet_addr(TCHAR_TO_UTF8(*ServerIP));
+
+	// 서버에 연결
+	if (connect(ClientSocket, (sockaddr*)&ServerAddress, sizeof(ServerAddress)) == SOCKET_ERROR)
+	{
+		//UE_LOG(LogTemp, Error, TEXT("FAILED."));
+		//closesocket(ClientSocket); // 소켓 닫기
+		//WSACleanup(); // 소켓 초기화 정리
+		//return;
+	}
+	// 캐릭터의 현재 위치를 얻습니다.
+	FVector CharacterLocation = GetActorLocation();
+
+	// 위치 정보를 문자열로 변환합니다.
+	FString LocationString = FString::Printf(TEXT("X=%f, Y=%f, Z=%f"), CharacterLocation.X, CharacterLocation.Y, CharacterLocation.Z);
+	// 문자열을 바이트 배열로 변환
+	TArray<uint8> SendData;
+	FTCHARToUTF8 Convert(*LocationString);
+	SendData.Append(reinterpret_cast<const uint8*>(Convert.Get()), Convert.Length());
+	// 데이터 전송
+	int32 BytesSent = send(ClientSocket, (const char*)SendData.GetData(), SendData.Num(), 0);
+	if (BytesSent == SOCKET_ERROR)
+	{
+		UE_LOG(LogTemp, Error, TEXT("FAILED"));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("SUCCESS : %s"), *LocationString);
+	}
+
+	// 소켓 닫기
+	closesocket(ClientSocket);
 }
 
 void ACharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
