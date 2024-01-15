@@ -12,11 +12,25 @@ APropBase::APropBase()
 	ProceduralMesh = CreateDefaultSubobject<UProceduralMeshComponent>(TEXT("ProceduralMesh"));
 	SetRootComponent(ProceduralMesh);
 
+	//static ConstructorHelpers::FObjectFinder<UStaticMesh> Mesh1Asset(TEXT("/Game/FPS_Weapon_Bundle/Weapons/Meshes/Accessories/SM_Scope_25x56_X.SM_Scope_25x56_X"));
+
+
 	//메쉬 데이터에 스테틱 메쉬 데이터 넣기
-	GetMeshDataFromStaticMesh(Mesh1, &Data1, 0,0,false);
+	if (Mesh1)
+	{
+		UE_LOG(LogTemp, Log, TEXT("HAHAHAHA"));
+	}
+	GetMeshDataFromStaticMesh(Mesh1, &Data1, 0, 0, true);
 	UnifyTri(Data1);
-	GetMeshDataFromStaticMesh(Mesh2, &Data2, 0, 0, false);
+	GetMeshDataFromStaticMesh(Mesh2, &Data2, 0, 0, true);
 	UnifyTri(Data2);
+
+	FTransform Transform;
+	Transform.SetRotation(FQuat(FRotator(45.f, 45.f, 45.f)));
+	Transform.SetScale3D(FVector(1.f, 1.f, 1.f));
+	TransformMeshData(Data1, Transform, FVector(0.f, 0.f, 0.f));
+
+	ProceduralMesh->CreateMeshSection(0, Data1.Verts, Data1.Tris, Data1.Normals, Data1.UVs, TArray<FColor>(), TArray<FProcMeshTangent>(), true);
 
 }
 
@@ -24,30 +38,8 @@ APropBase::APropBase()
 void APropBase::BeginPlay()
 {
 	Super::BeginPlay();
-	TArray<FVector> Vertices;
-	TArray<int32> Triangles;
-	TArray<FVector2D> UVs;
 
-	Vertices.Add(FVector(-50, 0, 50));
-	Vertices.Add(FVector(-50, 0, -50));
-	Vertices.Add(FVector(50, 0, 50));
-	Vertices.Add(FVector(50, 0, -50));
-
-	UVs.Add(FVector2D(0, 0));
-	UVs.Add(FVector2D(0, 1));
-	UVs.Add(FVector2D(1, 0));
-	UVs.Add(FVector2D(1, 1));
-
-	//Triangle1
-	Triangles.Add(0);
-	Triangles.Add(1);
-	Triangles.Add(2);
-
-	//Triangle2
-	Triangles.Add(2);
-	Triangles.Add(1);
-	Triangles.Add(3);
-	ProceduralMesh->CreateMeshSection(0, Vertices, Triangles, TArray<FVector>(), UVs, TArray<FColor>(), TArray<FProcMeshTangent>(), true);
+	
 }
 
 void APropBase::GetMeshDataFromStaticMesh(UStaticMesh* Mesh, FMeshData* Data, int32 LODIndex, int32 SectionIndex, bool GetAllSections)
@@ -85,13 +77,17 @@ void APropBase::GetMeshDataFromStaticMesh(UStaticMesh* Mesh, FMeshData* Data, in
 				vi = Indices[i];
 				NewIndexPtr = MeshToSectionVertMap.Find(vi);
 				if (NewIndexPtr != nullptr) { svi = *NewIndexPtr; }
-				else {
+				else 
+				{
 					Data->Verts.Emplace(LOD.VertexBuffers.PositionVertexBuffer.VertexPosition(vi));
 					Data->Verts.Emplace(LOD.VertexBuffers.PositionVertexBuffer.VertexPosition(vi));
 					Data->Normals.Emplace(LOD.VertexBuffers.StaticMeshVertexBuffer.VertexTangentZ(vi));
 					Data->UVs.Emplace(LOD.VertexBuffers.StaticMeshVertexBuffer.GetVertexUV(vi, 0));
 					Data->Sects.Emplace(sec);
-					if (hasColors) { Data->Colors.Emplace(LOD.VertexBuffers.ColorVertexBuffer.VertexColor(vi)); }
+					if (hasColors) 
+					{ 
+						Data->Colors.Emplace(LOD.VertexBuffers.ColorVertexBuffer.VertexColor(vi)); 
+					}
 					svi = n;
 					MeshToSectionVertMap.Emplace(vi, n);
 					++n;
@@ -148,6 +144,30 @@ void APropBase::SplitVertexes(FMeshData& Data)
 			Data.Tris[x] = vl;
 			++vl;
 		}
+	}
+}
+
+void APropBase::TransformMeshData(FMeshData& Data, FTransform Transform, FVector Pivot)
+{
+	const FVector ZeroVector = FVector(0.0f, 0.0f, 0.0f);
+	FMeshData newdata;
+	FMeshData* pres = &newdata;
+	if (InPlace) { pres = &Data; }
+	else { newdata = Data; }
+	FMeshData& res = *pres;
+	const FVector loc = Transform.GetLocation();
+	const FRotator rot = Transform.Rotator();
+	const FVector scale = Transform.GetScale3D();
+	bool skiprot = (rot == FRotator(0.0f, 0.0f, 0.0f));
+	bool skipscale = (scale == FVector(1.0f, 1.0f, 1.0f));
+	bool skippiv = (Pivot == ZeroVector);
+	int x = 0, l = res.Verts.Num(), nl = res.Normals.Num();
+	bool hasNormals = (nl >= l);
+	for (x = 0; x < l; ++x) {
+		FVector& v = res.Verts[x];
+		if (skippiv) { if (skipscale) { if (skiprot) { v += loc; } else { v = rot.RotateVector(v) + loc; } } else { v = rot.RotateVector(v * scale) + loc; } }
+		else { if (skipscale) { v = rot.RotateVector((v - Pivot)) + Pivot + loc; } else { v = rot.RotateVector(((v - Pivot) * scale)) + Pivot + loc; } }
+		if (hasNormals) { if (!skiprot) { FVector& n = res.Normals[x]; n = rot.RotateVector(n); } }
 	}
 }
 

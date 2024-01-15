@@ -13,15 +13,12 @@ struct FMeshData
 
 	FMeshData(TArray<FVector> v = {}, TArray<int32> t = {}, TArray<FVector> n = {}, TArray<FVector2D> u = {}, TArray<FLinearColor> c = {}) : Verts(v), Tris(t), Normals(n), UVs(u), Colors(c) {}
 
-	/** All Vertexes for the mesh. Vertexes can be stored in any order, but the order of every array but the Tris array must match. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MeshOps")
 	TArray<FVector> Verts = {};
 
-	/** All Triangles for the mesh. Each element cooresponds to indexes in the Verts array. Every 3 elements makes a triangle. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MeshOps")
 	TArray<int32> Tris = {};
 
-	/** All Normals for the mesh. These can be different from the face direction. Use SetNormalsToFace() to automatically set these up to match the face direction. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MeshOps")
 	TArray<FVector> Normals = {};
 
@@ -131,16 +128,14 @@ protected:
 	void GetMeshDataFromStaticMesh(class UStaticMesh* Mesh, FMeshData* Data, int32 LODIndex, int32 SectionIndex, bool GetAllSections);
 	void UnifyTri(FMeshData& Data);
 	void SplitVertexes(FMeshData& Data);
-
+	void TransformMeshData(FMeshData& Data, FTransform Transform, FVector Pivot);
 private:
 	TObjectPtr<class UProceduralMeshComponent> ProceduralMesh;
 
 	FMeshData Data1;
 	FMeshData Data2;
 
-	UPROPERTY(EditAnywhere)
-	TObjectPtr<class UStaticMesh> Mesh1;
-	UPROPERTY(EditAnywhere)
-	TObjectPtr<class UStaticMesh> Mesh2;
+	TObjectPtr<UStaticMesh> Mesh1;
+	TObjectPtr<UStaticMesh> Mesh2;
 
 };
