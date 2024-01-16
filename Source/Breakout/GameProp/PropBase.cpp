@@ -128,7 +128,7 @@ void APropBase::SplitVertexes(FMeshData& Data)
 {
 	TMap<int, int> Visited = {};
 	int vl = Data.Verts.Num();
-	FVector vec; FVector2D uv; FLinearColor col; int sect; //can't Emplace from same array so have to make copies
+	FVector vec; FVector2D uv; FLinearColor col; int sect; 
 	const bool hasNormals = Data.Normals.Num() >= vl, hasUVs = Data.UVs.Num() >= vl, hasColors = Data.Colors.Num() >= vl, hasSects = Data.Sects.Num() >= vl;
 	int x = 0, l = Data.Tris.Num();
 	for (x = 0; x < l; ++x) {
