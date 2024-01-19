@@ -16,10 +16,11 @@ enum IO_type
 class Overlapped {
 public:
 	WSAOVERLAPPED	overlapped;
-	IO_type			type;
-	WSABUF			dataBuf;
+	WSABUF			wsabuf;
 	SOCKET			socket;
-	unsigned char	messageBuffer[buffsize];
+	char			recvBuffer[buffsize + 1];
 	int				recvBytes;
 	int				sendBytes;
+	IO_type			type; // read, write, accept, connect ...
 };
+
