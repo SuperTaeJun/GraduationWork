@@ -26,7 +26,7 @@ bool lOCPServer::Init()
 	::memset(&serverAddr, 0, sizeof(serverAddr));
 	serverAddr.sin_family = AF_INET;
 	serverAddr.sin_addr.s_addr = ::htonl(INADDR_ANY);
-	serverAddr.sin_port = ::htons(9000);
+	serverAddr.sin_port = ::htons(12345);
 	if (::bind(listensocket, (SOCKADDR*)&serverAddr, sizeof(serverAddr)) == SOCKET_ERROR)
 		return 0;
 	if (::listen(listensocket, SOMAXCONN) == SOCKET_ERROR)
@@ -71,8 +71,11 @@ void lOCPServer::Start()
 			&(overlap->overlapped),
 			NULL
 		);
+		if (result == SOCKET_ERROR && WSAGetLastError() != WSA_IO_PENDING) {
+			printf_s("[ERROR] IO Pending ½ÇÆÐ : %d", WSAGetLastError());
+			return;
+		}
 	}
-
 }
 
 bool lOCPServer::CreateWorkerThreads()

@@ -7,7 +7,7 @@ ABOGameMode::ABOGameMode()
 {
 	Socket = ClientSocket::GetSingleton();
 	Socket->InitSocket();
-	bIsConnected = Socket->Connect("127.0.0.1", 9000);
+	bIsConnected = Socket->Connect("127.0.0.1", 12345);
 	if (bIsConnected) {
 		UE_LOG(LogClass, Log, TEXT("IOCP Server connect success!"));
 		Socket->SetGameMode(this);
