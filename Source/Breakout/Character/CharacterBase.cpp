@@ -17,6 +17,9 @@
 #include "HUD/MainHUD.h"
 #include "Player/CharacterController.h"
 #include "GameFramework/PlayerController.h"
+#include "Game/BOGameInstance.h"
+#include "GameProp/PropBase.h"
+
 ACharacterBase::ACharacterBase()
 {
 	PrimaryActorTick.bCanEverTick = true;
@@ -51,6 +54,7 @@ ACharacterBase::ACharacterBase()
 	bCanFire = true;
 
 	//bShowSelectUi = false;
+	ObtainedEscapeToolNum = 0;
 }
 
 void ACharacterBase::BeginPlay()
@@ -63,6 +67,23 @@ void ACharacterBase::BeginPlay()
 		{
 			Subsystem->AddMappingContext(DefalutMappingContext, 0);
 		}
+	}
+
+	//캐릭터 선택 (게임룸에서 선택한 정보를 게임인스턴스에서 가져와서 선택)
+	switch (Cast<UBOGameInstance>(GetWorld()->GetGameInstance())->GetCharacterType())
+	{
+	case ECharacterType::ECharacter1:
+		GetMesh()->SetSkeletalMeshAsset(Character1);
+		break;
+	case ECharacterType::ECharacter2:
+		GetMesh()->SetSkeletalMeshAsset(Character2);
+		break;
+	case ECharacterType::ECharacter3:
+		GetMesh()->SetSkeletalMeshAsset(Character3);
+		break;
+	case ECharacterType::ECharacter4:
+		GetMesh()->SetSkeletalMeshAsset(Character4);
+		break;
 	}
 
 	//무기선택 ui생성
@@ -78,6 +99,7 @@ void ACharacterBase::BeginPlay()
 
 	UpdateHpHUD();
 	UpdateStaminaHUD();
+	UpdateObtainedEscapeTool();
 }
 
 void ACharacterBase::UpdateSprintCamera(float DeltaTime)
@@ -148,6 +170,14 @@ void ACharacterBase::UpdateStaminaHUD()
 	}
 }
 
+void ACharacterBase::UpdateObtainedEscapeTool()
+{
+	if (MainController)
+	{
+		MainController->SetHUDEscapeTool(ObtainedEscapeToolNum);
+	}
+}
+
 void ACharacterBase::SetWeapon(TSubclassOf<class AWeaponBase> Weapon)
 {
 	//if (!CurWeapon)
@@ -182,6 +212,13 @@ void ACharacterBase::SetWeapon(TSubclassOf<class AWeaponBase> Weapon)
 
 
 }
+
+void ACharacterBase::SetbCanObtainEscapeTool(bool _bCanObtain)
+{
+	bCanObtainEscapeTool = _bCanObtain;
+}
+
+
 
 void ACharacterBase::PlayFireActionMontage(bool bAiming)
 {
@@ -395,37 +432,13 @@ void ACharacterBase::Fire_E(const FInputActionValue& Value)
 }
 void ACharacterBase::Inter(const FInputActionValue& Value)
 {
-	//MainController = Cast<ACharacterController>(Controller);
-	//MainHUD = Cast<AMainHUD>(MainController->GetHUD());
-	////UE_LOG(LogTemp, Log, TEXT("hahah"));
-	//if (bInRespon)
-	//{
-	//	if (!bShowSelectUi)
-	//	{
-	//		//UE_LOG(LogTemp, Log, TEXT("TESTTEST"));
-	//
-	//		FInputModeGameAndUI UiAndGameInput;
-	//		MainController->SetInputMode(UiAndGameInput);
+	if (bCanObtainEscapeTool)
+	{
+		ObtainedEscapeToolNum += 1;
+		UpdateObtainedEscapeTool();
+		OverlappingEscapeTool->Destroy();
 
-	//		MainHUD->AddSelectWeapon();
-	//		bShowSelectUi = true;
-	//		MainController->bShowMouseCursor = true;
-	//		MainController->bEnableMouseOverEvents = true;
-	//	}
-	//	else
-	//	{
-	//		//UE_LOG(LogTemp, Log, TEXT("TESTTEST"));
-	//		FInputModeGameOnly GameOnlyInput;
-	//		MainController->SetInputMode(GameOnlyInput);
-
-	//		MainHUD->RemoveSelectWeapon();
-	//		bShowSelectUi = false;
-	//		MainController->bShowMouseCursor = false;
-	//		MainController->bEnableMouseOverEvents = false;
-
-
-	//	}
-	//}
+	}
 }
 void ACharacterBase::Tick(float DeltaTime)
 {

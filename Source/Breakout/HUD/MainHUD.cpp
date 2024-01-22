@@ -82,5 +82,5 @@ void AMainHUD::AddSelectWeapon()
 
 void AMainHUD::RemoveSelectWeapon()
 {
-	SelectWeapon->RemoveFromViewport();
+	SelectWeapon->RemoveFromParent();
 }

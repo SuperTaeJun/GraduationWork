@@ -122,6 +122,8 @@ class BREAKOUT_API APropBase : public AActor
 public:	
 	APropBase();
 	virtual void Tick(float DeltaTime) override;
+	void Destroy();
+
 protected:
 	virtual void BeginPlay() override;
 
@@ -129,8 +131,29 @@ protected:
 	void UnifyTri(FMeshData& Data);
 	void SplitVertexes(FMeshData& Data);
 	void TransformMeshData(FMeshData& Data, FTransform Transform, FVector Pivot);
+
+
+	UFUNCTION()
+	virtual void OnSphereOverlap(
+		UPrimitiveComponent* OverlappedComponent,
+		AActor* OtherActor,
+		UPrimitiveComponent* OtherComp,
+		int32 OtherBodyIndex,
+		bool bFromSweep,
+		const FHitResult& SweepResult
+	);
+	UFUNCTION()
+	void OnSphereEndOverlap(
+		UPrimitiveComponent* OverlappedComponent,
+		AActor* OtherActor,
+		UPrimitiveComponent* OtherComp,
+		int32 OtherBodyIndex);
+
 private:
 	TObjectPtr<class UProceduralMeshComponent> ProceduralMesh;
+
+	UPROPERTY(VisibleAnywhere, Category = "Mesh")
+	TObjectPtr<class USphereComponent>AreaSphere;
 
 	FMeshData Data1;
 	FMeshData Data2;

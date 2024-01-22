@@ -3,14 +3,20 @@
 
 #include "GameProp/PropBase.h"
 #include "ProceduralMeshComponent.h"
-
+#include "Components/SphereComponent.h"
+#include "Character/CharacterBase.h"
 // Sets default values
 APropBase::APropBase()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
+	AreaSphere = CreateDefaultSubobject<USphereComponent>(TEXT("AreaSphere"));
+	SetRootComponent(AreaSphere);
+	AreaSphere->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Overlap);
+	AreaSphere->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+
 	ProceduralMesh = CreateDefaultSubobject<UProceduralMeshComponent>(TEXT("ProceduralMesh"));
-	SetRootComponent(ProceduralMesh);
+	//ProceduralMesh->SetupAttachment(RootComponent);
 
 	//static ConstructorHelpers::FObjectFinder<UStaticMesh> Mesh1Asset(TEXT("/Game/FPS_Weapon_Bundle/Weapons/Meshes/Accessories/SM_Scope_25x56_X.SM_Scope_25x56_X"));
 
@@ -39,7 +45,8 @@ void APropBase::BeginPlay()
 {
 	Super::BeginPlay();
 
-	
+	AreaSphere->OnComponentBeginOverlap.AddDynamic(this, &APropBase::OnSphereOverlap);
+	AreaSphere->OnComponentEndOverlap.AddDynamic(this, &APropBase::OnSphereEndOverlap);
 }
 
 void APropBase::GetMeshDataFromStaticMesh(UStaticMesh* Mesh, FMeshData* Data, int32 LODIndex, int32 SectionIndex, bool GetAllSections)
@@ -171,6 +178,20 @@ void APropBase::TransformMeshData(FMeshData& Data, FTransform Transform, FVector
 	}
 }
 
+void APropBase::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	ACharacterBase* CharacterBase = Cast<ACharacterBase>(OtherActor);
+
+	CharacterBase->SetbCanObtainEscapeTool(true);
+	CharacterBase->OverlappingEscapeTool = this;
+	//UE_LOG(LogTemp, Log, TEXT("OBTAIN"));
+}
+
+void APropBase::OnSphereEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
+	Cast<ACharacterBase>(OtherActor)->SetbCanObtainEscapeTool(false);
+}
+
 
 
 // Called every frame
@@ -178,5 +199,10 @@ void APropBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+}
+
+void APropBase::Destroy()
+{
+	Super::Destroy();
 }
 

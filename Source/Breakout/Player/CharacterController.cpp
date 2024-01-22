@@ -13,6 +13,7 @@ void ACharacterController::BeginPlay()
 	SetInputMode(GameOnlyInput);
 
 	MainHUD = Cast<AMainHUD>(GetHUD());
+
 }
 
 void ACharacterController::SetHUDHealth(float Health, float MaxHealth)
@@ -44,6 +45,15 @@ void ACharacterController::SetHUDAmmo(int32 Ammo)
 	{
 		FString AmmoText = FString::Printf(TEXT("%d"), Ammo);
 		MainHUD->CharacterUi->AmmoAmount->SetText(FText::FromString(AmmoText));
+	}
+}
+
+void ACharacterController::SetHUDEscapeTool(int32 EscapeTool)
+{
+	if (MainHUD)
+	{
+		FString EscapeToolText = FString::Printf(TEXT("%d"), EscapeTool);
+		MainHUD->CharacterUi->ToolAmount->SetText(FText::FromString(EscapeToolText));
 	}
 }
 

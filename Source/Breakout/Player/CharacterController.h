@@ -21,6 +21,7 @@ public:
 	void SetHUDHealth(float Health, float MaxHealth);
 	void SetHUDStamina(float Stamina, float MaxStamina);
 	void SetHUDAmmo(int32 Ammo);
+	void SetHUDEscapeTool(int32 EscapeTool);
 	virtual void OnPossess(APawn* InPawn) override;
 private:
 	TObjectPtr<class AMainHUD> MainHUD;

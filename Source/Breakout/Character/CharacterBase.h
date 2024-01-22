@@ -36,6 +36,8 @@ protected:
 	void SetHUDCrosshair(float DeltaTime);
 	void UpdateHpHUD();
 	void UpdateStaminaHUD();
+	void UpdateObtainedEscapeTool();
+
 	//캐릭터 상태
 	UPROPERTY(EditAnywhere, Category = "Player Stats")
 	float MaxHealth = 100.f;
@@ -47,12 +49,15 @@ protected:
 	float Stamina = 100.f;
 	bool StaminaExhaustionState;
 	ECharacterState CharacterState;
+	int32 ObtainedEscapeToolNum;
+
 
 public:
 	void SetWeapon(TSubclassOf<class AWeaponBase> Weapon);
 	void SetbInRespon(bool _bInRespon) { bInRespon = _bInRespon; }
 	bool GetbInRespon() { return bInRespon; }
 	void SetbShowSelect(bool _bShowSelect) {bShowSelectUi = _bShowSelect;}
+	void SetbCanObtainEscapeTool(bool _bCanObtain);
 	class AWeaponBase* GetWeapon() { return CurWeapon; }
 	FORCEINLINE float GetHealth() const { return Health; }
 	FORCEINLINE float MaxGetHealth() const { return MaxHealth; }
@@ -60,7 +65,19 @@ public:
 	FORCEINLINE float MaxGetStamina() const { return MaxStamina; }
 	void PlayFireActionMontage(bool bAiming);
 
+	TObjectPtr<class APropBase> OverlappingEscapeTool;
+
 private:
+	//character 종류
+	UPROPERTY(EditAnywhere, Category = Mesh)
+	TObjectPtr<class USkeletalMesh> Character1;
+	UPROPERTY(EditAnywhere, Category = Mesh)
+	TObjectPtr<class USkeletalMesh> Character2;
+	UPROPERTY(EditAnywhere, Category = Mesh)
+	TObjectPtr<class USkeletalMesh> Character3;
+	UPROPERTY(EditAnywhere, Category = Mesh)
+	TObjectPtr<class USkeletalMesh> Character4;
+
 	UPROPERTY(VisibleAnywhere, Category = Camera)
 	TObjectPtr<class USpringArmComponent> CameraBoom;
 
@@ -101,6 +118,11 @@ private:
 	void TraceUnderCrossHiar(FHitResult& TraceHitResult);
 
 
+
+	bool bInRespon;
+	bool bShowSelectUi;
+	bool bCanObtainEscapeTool;
+
 	//조준선
 	UPROPERTY(EditAnywhere, Category = Crosshair)
 	TObjectPtr<class UTexture2D> CrosshairsCenter;
@@ -113,11 +135,6 @@ private:
 	UPROPERTY(EditAnywhere, Category = Crosshair)
 	TObjectPtr<class UTexture2D> CrosshairsBottom;
 	FVector HitTarget;
-
-
-
-	bool bInRespon;
-	bool bShowSelectUi;
 
 	//입력값
 protected:

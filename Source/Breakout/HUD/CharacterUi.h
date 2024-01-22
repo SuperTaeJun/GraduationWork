@@ -27,8 +27,10 @@ public:
 	UPROPERTY(meta = (BindWidget))
 	class UTextBlock* StaminaText;
 
-
 	UPROPERTY(meta = (BindWidget))
 	class UTextBlock* AmmoAmount;
+
+	UPROPERTY(meta = (BindWidget))
+	class UTextBlock* ToolAmount;
 
 };

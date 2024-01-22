@@ -4,17 +4,15 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameMode.h"
-#include "BOGameMode.generated.h"
+#include "GameRoomMode.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class BREAKOUT_API ABOGameMode : public AGameMode
+class BREAKOUT_API AGameRoomMode : public AGameMode
 {
 	GENERATED_BODY()
-	
 public:
-	ABOGameMode();
-
+	AGameRoomMode();
 };
