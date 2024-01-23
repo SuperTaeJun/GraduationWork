@@ -32,6 +32,7 @@ void USelectWeaponUi::RifleButtonPressed()
 	Controller->bEnableMouseOverEvents = false;
 
 	Character->SetWeapon(Rifle);
+	Controller->SetHUDAmmo(30);
 }
 
 void USelectWeaponUi::ShotgunButtonPressed()
@@ -48,6 +49,7 @@ void USelectWeaponUi::ShotgunButtonPressed()
 	Controller->bEnableMouseOverEvents = false;
 
 	Character->SetWeapon(ShotGun);
+	Controller->SetHUDAmmo(5);
 }
 
 void USelectWeaponUi::LancherButtonPressed()
@@ -64,4 +66,5 @@ void USelectWeaponUi::LancherButtonPressed()
 	Controller->bEnableMouseOverEvents = false;
 
 	Character->SetWeapon(Lancher);
+	Controller->SetHUDAmmo(2);
 }

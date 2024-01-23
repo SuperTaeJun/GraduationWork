@@ -30,11 +30,13 @@ void AResponRegion::BeginPlay()
 void AResponRegion::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	//UE_LOG(LogTemp, Log, TEXT("OVERLAP"));
-	TObjectPtr<ACharacterBase> CharacterBase = Cast<ACharacterBase>(OtherActor);
-	if (CharacterBase)
-	{
-		CharacterBase->SetbInRespon(true);
-	}
+	//TObjectPtr<ACharacterBase> CharacterBase = Cast<ACharacterBase>(OtherActor);
+	//if (CharacterBase)
+	//{
+	//	CharacterBase->SetbInRespon(true);
+	//}
+
+	Destroy();
 }
 
 void AResponRegion::OnSphereEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)

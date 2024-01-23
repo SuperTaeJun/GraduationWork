@@ -305,6 +305,9 @@ void ACharacterBase::FireTimerFinished()
 
 void ACharacterBase::Fire()
 {
+	if (CurWeapon->CurAmmo <= 0)
+		bCanFire = false;
+
 	//UE_LOG(LogTemp, Log, TEXT("FIRE"));
 	if (bCanFire == true)
 	{
@@ -315,6 +318,9 @@ void ACharacterBase::Fire()
 		PlayFireActionMontage(false);
 
 		UGameplayStatics::GetPlayerCameraManager(GetWorld(), 0)->StartCameraShake(UShoot::StaticClass());
+
+		CurWeapon->CurAmmo -= 1;
+		MainController->SetHUDAmmo(CurWeapon->CurAmmo );
 
 		StartFireTimer();
 	}
@@ -422,7 +428,14 @@ void ACharacterBase::Sprint_E(const FInputActionValue& Value)
 }
 void ACharacterBase::Fire_S(const FInputActionValue& Value)
 {
-	bFirePressed = true;
+	if (CurWeapon->CurAmmo <= 0)
+	{
+		bFirePressed = false;
+	}
+	else
+	{
+		bFirePressed = true;
+	}
 	FirePressd(bFirePressed);
 }
 void ACharacterBase::Fire_E(const FInputActionValue& Value)
@@ -432,14 +445,23 @@ void ACharacterBase::Fire_E(const FInputActionValue& Value)
 }
 void ACharacterBase::Inter(const FInputActionValue& Value)
 {
-	if (bCanObtainEscapeTool)
+	if (bCanObtainEscapeTool && OverlappingEscapeTool)
 	{
 		ObtainedEscapeToolNum += 1;
 		UpdateObtainedEscapeTool();
-		OverlappingEscapeTool->Destroy();
-
+		OverlappingEscapeTool->SetHideMesh();
+		OverlappingEscapeTool = nullptr;
 	}
 }
+void ACharacterBase::Reroad(const FInputActionValue& Value)
+{
+	if (CurWeapon)
+	{
+		CurWeapon->CurAmmo = CurWeapon->MaxAmmo;
+		MainController->SetHUDAmmo(CurWeapon->CurAmmo);
+	}
+}
+
 void ACharacterBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
@@ -490,6 +512,7 @@ void ACharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 		EnhancedInputComponent->BindAction(InterAction, ETriggerEvent::Started, this, &ACharacterBase::Inter);
 		EnhancedInputComponent->BindAction(FireAction, ETriggerEvent::Triggered, this, &ACharacterBase::Fire_S);
 		EnhancedInputComponent->BindAction(FireAction, ETriggerEvent::Completed, this, &ACharacterBase::Fire_E);
+		EnhancedInputComponent->BindAction(ReRoadAction, ETriggerEvent::Triggered, this, &ACharacterBase::Reroad);
 	}
 }
 

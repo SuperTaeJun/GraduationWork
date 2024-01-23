@@ -157,6 +157,8 @@ protected:
 	TObjectPtr<UInputAction> SkillAction;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
 	TObjectPtr<UInputAction> InterAction;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
+	TObjectPtr<UInputAction> ReRoadAction;
 	void Move(const FInputActionValue& Value);
 	void Look(const FInputActionValue& Value);
 	void Sprint_S(const FInputActionValue& Value);
@@ -164,6 +166,7 @@ protected:
 	void Fire_S(const FInputActionValue& Value);
 	void Fire_E(const FInputActionValue& Value);
 	void Inter(const FInputActionValue& Value);
+	void Reroad(const FInputActionValue& Value);
 };
 
 UENUM(BlueprintType)

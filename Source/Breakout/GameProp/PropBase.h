@@ -122,15 +122,14 @@ class BREAKOUT_API APropBase : public AActor
 public:	
 	APropBase();
 	virtual void Tick(float DeltaTime) override;
-	void Destroy();
-
+	void SetHideMesh();
 protected:
 	virtual void BeginPlay() override;
 
-	void GetMeshDataFromStaticMesh(class UStaticMesh* Mesh, FMeshData* Data, int32 LODIndex, int32 SectionIndex, bool GetAllSections);
-	void UnifyTri(FMeshData& Data);
-	void SplitVertexes(FMeshData& Data);
-	void TransformMeshData(FMeshData& Data, FTransform Transform, FVector Pivot);
+	//void GetMeshDataFromStaticMesh(class UStaticMesh* Mesh, FMeshData* Data, int32 LODIndex, int32 SectionIndex, bool GetAllSections);
+	//void UnifyTri(FMeshData& Data);
+	//void SplitVertexes(FMeshData& Data);
+	//void TransformMeshData(FMeshData& Data, FTransform Transform, FVector Pivot);
 
 
 	UFUNCTION()
@@ -154,6 +153,10 @@ private:
 
 	UPROPERTY(VisibleAnywhere, Category = "Mesh")
 	TObjectPtr<class USphereComponent>AreaSphere;
+
+	UPROPERTY(VisibleAnywhere, Category = "Mesh")
+	TObjectPtr<class UStaticMeshComponent>Mesh;
+
 
 	FMeshData Data1;
 	FMeshData Data2;
