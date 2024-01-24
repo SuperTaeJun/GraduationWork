@@ -178,14 +178,14 @@ void ACharacterBase::UpdateObtainedEscapeTool()
 	}
 }
 
-void ACharacterBase::SetWeapon(TSubclassOf<class AWeaponBase> Weapon)
+void ACharacterBase::SetWeapon(TSubclassOf<class AWeaponBase> Weapon, FName SocketName)
 {
 	//if (!CurWeapon)
 	//{
 	AActor* SpawnWeapon = GetWorld()->SpawnActor<AWeaponBase>(Weapon);
 	CurWeapon = Cast<AWeaponBase>(SpawnWeapon);
 
-	const USkeletalMeshSocket* WeaponSocket = GetMesh()->GetSocketByName(FName("WeaponSocket"));
+	const USkeletalMeshSocket* WeaponSocket = GetMesh()->GetSocketByName(SocketName);
 
 
 	if (WeaponSocket && SpawnWeapon)

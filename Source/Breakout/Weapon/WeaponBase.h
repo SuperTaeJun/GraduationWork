@@ -28,6 +28,8 @@ public:
 private:
 	UPROPERTY(EditAnywhere, Category = "Weapon Properties")
 	TObjectPtr<class USkeletalMeshComponent> WeaponMesh;
+	UPROPERTY(EditAnywhere, Category = "Weapon Properties")
+	TObjectPtr<class UStaticMeshComponent> StaticMesh;
 
 	//√—æÀ »Â≈Õ¡¸ ø‰º“µÈ
 	UPROPERTY(EditAnywhere, Category = "Weapon Scatter")

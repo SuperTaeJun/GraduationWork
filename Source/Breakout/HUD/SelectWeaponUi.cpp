@@ -31,7 +31,8 @@ void USelectWeaponUi::RifleButtonPressed()
 	Controller->bShowMouseCursor = false;
 	Controller->bEnableMouseOverEvents = false;
 
-	Character->SetWeapon(Rifle);
+	FName RifleSocketName = FName("RifleSocket");
+	Character->SetWeapon(Rifle, RifleSocketName);
 	Controller->SetHUDAmmo(30);
 }
 
@@ -48,7 +49,9 @@ void USelectWeaponUi::ShotgunButtonPressed()
 	Controller->bShowMouseCursor = false;
 	Controller->bEnableMouseOverEvents = false;
 
-	Character->SetWeapon(ShotGun);
+	FName ShotguSocketName = FName("ShotgunSocket");
+
+	Character->SetWeapon(ShotGun,ShotguSocketName);
 	Controller->SetHUDAmmo(5);
 }
 
@@ -65,6 +68,8 @@ void USelectWeaponUi::LancherButtonPressed()
 	Controller->bShowMouseCursor = false;
 	Controller->bEnableMouseOverEvents = false;
 
-	Character->SetWeapon(Lancher);
+	FName LancherSocketName = FName("LancherSocket");
+
+	Character->SetWeapon(Lancher, LancherSocketName);
 	Controller->SetHUDAmmo(2);
 }
