@@ -23,6 +23,38 @@ class ABOGameMode;
 class ACharacterController;
 using namespace std;
 
+enum OPTYPE { OP_SEND, OP_RECV, OP_DO_MOVE };
+
+class Overlap {
+public:
+	WSAOVERLAPPED   _wsa_over;
+	OPTYPE         _op;
+	WSABUF         _wsa_buf;
+	unsigned char   _net_buf[1024];
+	int32            _target;
+public:
+	Overlap(OPTYPE _op, char num_bytes, void* mess) : _op(_op)
+	{
+		ZeroMemory(&_wsa_over, sizeof(_wsa_over));
+		_wsa_buf.buf = reinterpret_cast<char*>(_net_buf);
+		_wsa_buf.len = num_bytes;
+		memcpy(_net_buf, mess, num_bytes);
+	}
+
+	Overlap(OPTYPE _op) : _op(_op) {}
+
+	Overlap()
+	{
+		_op = OP_RECV;
+	}
+
+	~Overlap()
+	{
+	}
+};
+
+
+
 // 플레이어 클래스 
 class Player
 {
@@ -103,12 +135,38 @@ public:
 	// 스레드 시작 및 종료
 	bool StartListen();
 	void StopListen();
+	void RecvPacket()
+	{
 
+		DWORD recv_flag = 0;
+		ZeroMemory(&_recv_over._wsa_over, sizeof(_recv_over._wsa_over));
+		_recv_over._wsa_buf.buf = reinterpret_cast<char*>(_recv_over._net_buf + _prev_size);
+		_recv_over._wsa_buf.len = sizeof(_recv_over._net_buf) - _prev_size;
+		int ret = WSARecv(_socket, &_recv_over._wsa_buf, 1, 0, &recv_flag, &_recv_over._wsa_over, NULL);
+		if (SOCKET_ERROR == ret) {
+			int error_num = WSAGetLastError();
+		}
+	};
+	void SendPacket(void* packet)
+	{
+		//MYLOG(Warning, TEXT("Send to Server!"));
+		int psize = reinterpret_cast<unsigned char*>(packet)[0];
+		Overlap* ex_over = new Overlap(OP_SEND, psize, packet);
+		int ret = WSASend(_socket, &ex_over->_wsa_buf, 1, 0, 0, &ex_over->_wsa_over, NULL);
+		if (SOCKET_ERROR == ret) {
+			int error_num = WSAGetLastError();
+			//if (ERROR_IO_PENDING != error_num)
+				//error_display(error_num);
+		}
+	};
 	// 싱글턴 객체 가져오기
 	static ClientSocket* GetSingleton() {
 		static ClientSocket ins;
 		return &ins;
 	}
+	Overlap _recv_over;
+	int      _prev_size = 0;
+	SOCKET _socket;
 private:
 	SOCKET ServerSocket;
 	char recvBuffer[MAX_BUFFER];
