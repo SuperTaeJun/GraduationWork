@@ -23,7 +23,10 @@ class ABOGameMode;
 class ACharacterController;
 using namespace std;
 
-enum OPTYPE { OP_SEND, OP_RECV, OP_DO_MOVE };
+enum OPTYPE {
+	OP_SEND, 
+	OP_RECV, 
+};
 
 class Overlap {
 public:
@@ -155,8 +158,8 @@ public:
 		int ret = WSASend(_socket, &ex_over->_wsa_buf, 1, 0, 0, &ex_over->_wsa_over, NULL);
 		if (SOCKET_ERROR == ret) {
 			int error_num = WSAGetLastError();
-			//if (ERROR_IO_PENDING != error_num)
-				//error_display(error_num);
+			if (ERROR_IO_PENDING != error_num)
+				WSAGetLastError();
 		}
 	};
 	// ΩÃ±€≈œ ∞¥√º ∞°¡Æø¿±‚
