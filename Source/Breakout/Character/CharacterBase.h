@@ -48,6 +48,11 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Player Stats")
 	float Stamina = 100.f;
 	bool StaminaExhaustionState;
+
+	int32 GrendeNum;
+	int32 WallGrendeNum;
+	int32 BoobyTrapNum;
+
 	ECharacterState CharacterState;
 	int32 ObtainedEscapeToolNum;
 
@@ -67,6 +72,13 @@ public:
 
 	TObjectPtr<class APropBase> OverlappingEscapeTool;
 
+	void GrandeThrow();
+
+	UFUNCTION(BlueprintCallable)
+	void GrandeThrowFinish();
+
+	UFUNCTION(BlueprintCallable)
+	void HideGrande();
 private:
 	//character Á¾·ù
 	UPROPERTY(EditAnywhere, Category = Mesh)
@@ -94,6 +106,14 @@ private:
 
 	UPROPERTY(EditAnywhere, Category = Animation)
 	TObjectPtr<class UAnimMontage> FireActionMontage;
+	UPROPERTY(EditAnywhere, Category = Animation)
+	TObjectPtr<class UAnimMontage> GrenadeMontage;
+
+	FName RightSocketName;
+
+	//¼ö·ùÅº
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<class UStaticMeshComponent> Grenade;
 
 
 	//idle turn
@@ -159,6 +179,8 @@ protected:
 	TObjectPtr<UInputAction> InterAction;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
 	TObjectPtr<UInputAction> ReRoadAction;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
+	TObjectPtr<UInputAction> GrandeFireAction;
 	void Move(const FInputActionValue& Value);
 	void Look(const FInputActionValue& Value);
 	void Sprint_S(const FInputActionValue& Value);
@@ -167,6 +189,8 @@ protected:
 	void Fire_E(const FInputActionValue& Value);
 	void Inter(const FInputActionValue& Value);
 	void Reroad(const FInputActionValue& Value);
+	void GrandeFire(const FInputActionValue& Value);
+
 };
 
 UENUM(BlueprintType)

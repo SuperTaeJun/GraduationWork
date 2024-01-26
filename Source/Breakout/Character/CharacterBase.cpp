@@ -45,6 +45,11 @@ ACharacterBase::ACharacterBase()
 	FollowCamera->SetupAttachment(CameraBoom);
 	FollowCamera->bUsePawnControlRotation = false;
 
+	Grenade = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Grenade"));
+	Grenade->SetupAttachment(GetMesh(), FName("GrandeSocket"));
+	Grenade->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	Grenade->bHiddenInGame = true;
+
 	//스테이트
 	MaxHealth = 100.f;
 	Health = MaxHealth;
@@ -52,7 +57,9 @@ ACharacterBase::ACharacterBase()
 	Stamina = MaxStamina;
 	StaminaExhaustionState = false;
 	bCanFire = true;
-
+	GrendeNum = 10;
+	WallGrendeNum = 10;
+	BoobyTrapNum = 10;
 	//bShowSelectUi = false;
 	ObtainedEscapeToolNum = 0;
 }
@@ -182,6 +189,8 @@ void ACharacterBase::SetWeapon(TSubclassOf<class AWeaponBase> Weapon, FName Sock
 {
 	//if (!CurWeapon)
 	//{
+	RightSocketName = SocketName;
+
 	AActor* SpawnWeapon = GetWorld()->SpawnActor<AWeaponBase>(Weapon);
 	CurWeapon = Cast<AWeaponBase>(SpawnWeapon);
 
@@ -231,6 +240,38 @@ void ACharacterBase::PlayFireActionMontage(bool bAiming)
 	}
 }
 
+void ACharacterBase::GrandeThrow()
+{
+	Grenade->bHiddenInGame = false;
+
+	const USkeletalMeshSocket* WeaponSocket = GetMesh()->GetSocketByName(FName("LeftHandSocket"));
+
+	if (WeaponSocket && CurWeapon)
+	{
+		WeaponSocket->AttachActor(CurWeapon, GetMesh());
+	}
+
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+	if(AnimInstance && GrenadeMontage)
+		AnimInstance->Montage_Play(GrenadeMontage);
+
+	GrendeNum -= 1;
+}
+void ACharacterBase::GrandeThrowFinish()
+{
+	const USkeletalMeshSocket* WeaponSocket = GetMesh()->GetSocketByName(RightSocketName);
+
+	if (WeaponSocket && CurWeapon)
+	{
+		WeaponSocket->AttachActor(CurWeapon, GetMesh());
+	}
+
+}
+void ACharacterBase::HideGrande()
+{
+	Grenade->bHiddenInGame = true;
+
+}
 void ACharacterBase::TurnInPlace(float DeltaTime)
 {
 	if (AO_Yaw > 90.f)
@@ -462,6 +503,12 @@ void ACharacterBase::Reroad(const FInputActionValue& Value)
 	}
 }
 
+void ACharacterBase::GrandeFire(const FInputActionValue& Value)
+{
+	if(GrendeNum>0)
+		GrandeThrow();
+}
+
 void ACharacterBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
@@ -513,6 +560,7 @@ void ACharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 		EnhancedInputComponent->BindAction(FireAction, ETriggerEvent::Triggered, this, &ACharacterBase::Fire_S);
 		EnhancedInputComponent->BindAction(FireAction, ETriggerEvent::Completed, this, &ACharacterBase::Fire_E);
 		EnhancedInputComponent->BindAction(ReRoadAction, ETriggerEvent::Triggered, this, &ACharacterBase::Reroad);
+		EnhancedInputComponent->BindAction(GrandeFireAction, ETriggerEvent::Triggered, this, &ACharacterBase::GrandeFire);
 	}
 }
 
