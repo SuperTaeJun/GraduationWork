@@ -6,7 +6,7 @@
 AProjectileGrenade::AProjectileGrenade()
 {
 	ProjectileMovementComponent->bShouldBounce = true;
-
+	ProjectileMovementComponent->InitialSpeed = 500.f;
 	DestroyTime = 3.f;
 }
 

@@ -19,7 +19,7 @@
 #include "GameFramework/PlayerController.h"
 #include "Game/BOGameInstance.h"
 #include "GameProp/PropBase.h"
-
+#include "Weapon/ProjectileBase.h"
 ACharacterBase::ACharacterBase()
 {
 	PrimaryActorTick.bCanEverTick = true;
@@ -255,7 +255,6 @@ void ACharacterBase::GrandeThrow()
 	if(AnimInstance && GrenadeMontage)
 		AnimInstance->Montage_Play(GrenadeMontage);
 
-	GrendeNum -= 1;
 }
 void ACharacterBase::GrandeThrowFinish()
 {
@@ -265,39 +264,30 @@ void ACharacterBase::GrandeThrowFinish()
 	{
 		WeaponSocket->AttachActor(CurWeapon, GetMesh());
 	}
-
+	GrendeNum -= 1;
 }
 void ACharacterBase::SpawnGrenade()
 {
+	UE_LOG(LogTemp, Log, TEXT("GRENDADE SPAWN"));
 
-	//APawn* InstigatorPawn = Cast<APawn>(this);
-	//const USkeletalMeshSocket* MuzzleFlashSocket = GetMesh()->GetSocketByName(FName("MuzzleFlash"));
-	//if (MuzzleFlashSocket)
-	//{
-	//	FTransform SocketTransform = MuzzleFlashSocket->GetSocketTransform(GetMesh());
-	//	FVector ToTarget = HitTarget - SocketTransform.GetLocation();
-	//	FRotator TargetRotation = ToTarget.Rotation();
-	//	if (ProjectileClass && InstigatorPawn)
-	//	{
-	//		FActorSpawnParameters SpawnParameters;
-	//		SpawnParameters.Owner = GetOwner();
-	//		SpawnParameters.Instigator = InstigatorPawn;
-	//		UWorld* World = GetWorld();
-	//		if (World)
-	//		{
-	//			World->SpawnActor<AProjectileBase>(ProjectileClass, SocketTransform.GetLocation(), TargetRotation, SpawnParameters);
-	//		}
-	//	}
-	//}
-
-
-
-}
-void ACharacterBase::HideGrande()
-{
 	Grenade->bHiddenInGame = true;
 
+	if (ProjectileClass && Grenade)
+	{
+		const FVector StartLocation = GetMesh()->GetSocketLocation(FName("GrandeSocket"));
+		FVector ToHitTarget = HitTarget - StartLocation;
+		FActorSpawnParameters SpawnParms;
+		SpawnParms.Owner = this;
+		SpawnParms.Instigator = this;
+		TObjectPtr<UWorld> World = GetWorld();
+		if (World)
+		{
+			World->SpawnActor<AProjectileBase>(ProjectileClass, StartLocation, ToHitTarget.Rotation(), SpawnParms);
+		}
+	}
+
 }
+
 void ACharacterBase::TurnInPlace(float DeltaTime)
 {
 	if (AO_Yaw > 90.f)
@@ -531,8 +521,10 @@ void ACharacterBase::Reroad(const FInputActionValue& Value)
 
 void ACharacterBase::GrandeFire(const FInputActionValue& Value)
 {
-	if(GrendeNum>0)
+	if (GrendeNum > 0)
+	{
 		GrandeThrow();
+	}
 }
 
 void ACharacterBase::Tick(float DeltaTime)

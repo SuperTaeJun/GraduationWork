@@ -49,7 +49,7 @@ protected:
 	float Stamina = 100.f;
 	bool StaminaExhaustionState;
 
-	int32 GrendeNum;
+	int32 GrendeNum=10;
 	int32 WallGrendeNum;
 	int32 BoobyTrapNum;
 
@@ -79,9 +79,6 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void SpawnGrenade();
-
-	UFUNCTION(BlueprintCallable)
-	void HideGrande();
 private:
 	//character Á¾·ù
 	UPROPERTY(EditAnywhere, Category = Mesh)
@@ -118,8 +115,8 @@ private:
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<class UStaticMeshComponent> Grenade;
 
-	//UPROPERTY(EditAnywhere)
-	//TSubclassOf<class AProjectileBase> ProjectileClass;
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class AProjectileBase> ProjectileClass;
 
 	//idle turn
 	ETurningInPlace TurningType;
