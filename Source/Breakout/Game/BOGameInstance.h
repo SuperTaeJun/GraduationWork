@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Engine/GameInstance.h"
+#include "ClientSocket.h"
 #include "BOGameInstance.generated.h"
 
 UENUM(BlueprintType)
@@ -21,10 +22,17 @@ UCLASS()
 class BREAKOUT_API UBOGameInstance : public UGameInstance
 {
 	GENERATED_BODY()
-	
+
 public:
 	ECharacterType CharacterType;
 
-	void SetCharacterType(ECharacterType _CharacterType) {CharacterType = _CharacterType;}
+	void SetCharacterType(ECharacterType _CharacterType) { CharacterType = _CharacterType; }
 	ECharacterType GetCharacterType() { return CharacterType; }
+
+	UFUNCTION(BlueprintCallable)
+	void ConnectToServer();
+
+public:
+	ClientSocket* m_Socket;
+	bool connect;
 };

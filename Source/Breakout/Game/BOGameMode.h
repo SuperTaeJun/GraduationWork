@@ -3,7 +3,6 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "ClientSocket.h"
 #include "GameFramework/GameMode.h"
 #include "BOGameMode.generated.h"
 
@@ -17,9 +16,9 @@ class BREAKOUT_API ABOGameMode : public AGameMode
 	
 public:
 	ABOGameMode();
-	virtual void BeginPlay() override;
+	//virtual void BeginPlay() override;
 
-private:
-	ClientSocket* m_Socket;
-	bool connect;
+//private:
+//	ClientSocket* m_Socket;
+//	bool connect;
 };
