@@ -78,6 +78,9 @@ public:
 	void GrandeThrowFinish();
 
 	UFUNCTION(BlueprintCallable)
+	void SpawnGrenade();
+
+	UFUNCTION(BlueprintCallable)
 	void HideGrande();
 private:
 	//character Á¾·ù
@@ -115,6 +118,8 @@ private:
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<class UStaticMeshComponent> Grenade;
 
+	//UPROPERTY(EditAnywhere)
+	//TSubclassOf<class AProjectileBase> ProjectileClass;
 
 	//idle turn
 	ETurningInPlace TurningType;

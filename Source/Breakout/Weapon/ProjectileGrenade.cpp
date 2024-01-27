@@ -5,8 +5,6 @@
 #include "GameFramework/ProjectileMovementComponent.h"
 AProjectileGrenade::AProjectileGrenade()
 {
-	ProjectileMovementComponent = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileMovementComponent"));
-	ProjectileMovementComponent->bRotationFollowsVelocity = true;
 	ProjectileMovementComponent->bShouldBounce = true;
 
 	DestroyTime = 3.f;

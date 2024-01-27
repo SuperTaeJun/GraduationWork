@@ -13,6 +13,10 @@ AProjectile::AProjectile()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
+	ProjectileMesh= CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ProjectileMesh"));
+	ProjectileMesh->SetupAttachment(RootComponent);
+	ProjectileMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
 	CollisionBox = CreateDefaultSubobject<UBoxComponent>(TEXT("CollisionBox"));
 	SetRootComponent(CollisionBox);
 	CollisionBox->SetCollisionObjectType(ECollisionChannel::ECC_WorldDynamic);
@@ -23,7 +27,7 @@ AProjectile::AProjectile()
 	CollisionBox->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Block);
 
 	ProjectileMovementComponent = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileMovementComponent"));
-	ProjectileMovementComponent->bRotationFollowsVelocity = true;
+	//ProjectileMovementComponent->bRotationFollowsVelocity = true;
 }
 
 // Called when the game starts or when spawned

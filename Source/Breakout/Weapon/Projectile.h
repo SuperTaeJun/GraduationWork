@@ -29,6 +29,13 @@ protected:
 
 
 private:
+	FTimerHandle DestroyTimer;	
+	UPROPERTY(EditAnywhere)
+	float DestroyTime = 3.f;
+protected:
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<class UStaticMeshComponent> ProjectileMesh;
+
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<class UBoxComponent> CollisionBox;
 	UPROPERTY(VisibleAnywhere)

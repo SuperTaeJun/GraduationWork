@@ -267,6 +267,32 @@ void ACharacterBase::GrandeThrowFinish()
 	}
 
 }
+void ACharacterBase::SpawnGrenade()
+{
+
+	//APawn* InstigatorPawn = Cast<APawn>(this);
+	//const USkeletalMeshSocket* MuzzleFlashSocket = GetMesh()->GetSocketByName(FName("MuzzleFlash"));
+	//if (MuzzleFlashSocket)
+	//{
+	//	FTransform SocketTransform = MuzzleFlashSocket->GetSocketTransform(GetMesh());
+	//	FVector ToTarget = HitTarget - SocketTransform.GetLocation();
+	//	FRotator TargetRotation = ToTarget.Rotation();
+	//	if (ProjectileClass && InstigatorPawn)
+	//	{
+	//		FActorSpawnParameters SpawnParameters;
+	//		SpawnParameters.Owner = GetOwner();
+	//		SpawnParameters.Instigator = InstigatorPawn;
+	//		UWorld* World = GetWorld();
+	//		if (World)
+	//		{
+	//			World->SpawnActor<AProjectileBase>(ProjectileClass, SocketTransform.GetLocation(), TargetRotation, SpawnParameters);
+	//		}
+	//	}
+	//}
+
+
+
+}
 void ACharacterBase::HideGrande()
 {
 	Grenade->bHiddenInGame = true;
