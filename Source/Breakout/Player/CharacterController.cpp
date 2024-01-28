@@ -57,6 +57,23 @@ void ACharacterController::SetHUDEscapeTool(int32 EscapeTool)
 	}
 }
 
+void ACharacterController::SetHUDCrosshair(const FCrosshairPackage& Package)
+{
+	if (MainHUD)
+	{
+		MainHUD->SetHUDPackage(Package);
+	}
+}
+
+void ACharacterController::showWeaponSelect()
+{
+	if (MainHUD)
+	{
+		MainHUD->AddSelectWeapon();
+	}
+}
+
+
 void ACharacterController::OnPossess(APawn* InPawn)
 {
 	Super::OnPossess(InPawn);

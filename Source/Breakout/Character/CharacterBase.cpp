@@ -20,6 +20,9 @@
 #include "Game/BOGameInstance.h"
 #include "GameProp/PropBase.h"
 #include "Weapon/ProjectileBase.h"
+#include "Game/BOGameMode.h"
+#include "Components/CapsuleComponent.h"
+
 ACharacterBase::ACharacterBase()
 {
 	PrimaryActorTick.bCanEverTick = true;
@@ -70,44 +73,58 @@ void ACharacterBase::BeginPlay()
 
 	if (APlayerController* PlayerController = Cast<APlayerController>(GetController()))
 	{
+		//입력시스템 매핑
 		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
 		{
 			Subsystem->AddMappingContext(DefalutMappingContext, 0);
 		}
 	}
 
-	//캐릭터 선택 (게임룸에서 선택한 정보를 게임인스턴스에서 가져와서 선택)
-	switch (Cast<UBOGameInstance>(GetWorld()->GetGameInstance())->GetCharacterType())
+	//무기선택 ui생성
+	MainController = MainController == nullptr ? Cast<ACharacterController>(Controller) : MainController;
+	if (MainController)
 	{
-	case ECharacterType::ECharacter1:
-		GetMesh()->SetSkeletalMeshAsset(Character1);
-		break;
-	case ECharacterType::ECharacter2:
-		GetMesh()->SetSkeletalMeshAsset(Character2);
-		break;
-	case ECharacterType::ECharacter3:
-		GetMesh()->SetSkeletalMeshAsset(Character3);
-		break;
-	case ECharacterType::ECharacter4:
-		GetMesh()->SetSkeletalMeshAsset(Character4);
-		break;
+		FInputModeUIOnly UiGameInput;
+		MainController->SetInputMode(UiGameInput);
+		MainController->DisableInput(MainController);
+		//bShowSelectUi = true;
+		MainController->bShowMouseCursor = true;
+		MainController->bEnableMouseOverEvents = true;
+
+		MainController->showWeaponSelect();
 	}
 
-	//무기선택 ui생성
-	MainController = Cast<ACharacterController>(Controller);
-	MainHUD = Cast<AMainHUD>(MainController->GetHUD());
-	FInputModeUIOnly UiGameInput;
-	MainController->SetInputMode(UiGameInput);
-	MainController->DisableInput(MainController);
-	MainHUD->AddSelectWeapon();
-	//bShowSelectUi = true;
-	MainController->bShowMouseCursor = true;
-	MainController->bEnableMouseOverEvents = true;
+	if (MainController&& GetWorld()->GetGameInstance())
+	{
+		//캐릭터 선택 (게임룸에서 선택한 정보를 게임인스턴스에서 가져와서 선택)
+		switch (Cast<UBOGameInstance>(GetWorld()->GetGameInstance())->GetCharacterType())
+		{
+		case ECharacterType::ECharacter1:
+			GetMesh()->SetSkeletalMeshAsset(Character1);
+			break;
+		case ECharacterType::ECharacter2:
+			GetMesh()->SetSkeletalMeshAsset(Character2);
+			break;
+		case ECharacterType::ECharacter3:
+			GetMesh()->SetSkeletalMeshAsset(Character3);
+			break;
+		case ECharacterType::ECharacter4:
+			GetMesh()->SetSkeletalMeshAsset(Character4);
+			break;
+
+		default:
+			GetMesh()->SetSkeletalMeshAsset(Character1);
+			break;
+		}
+	}
+	
+	OnTakeAnyDamage.AddDynamic(this, &ACharacterBase::ReciveDamage);
 
 	UpdateHpHUD();
 	UpdateStaminaHUD();
 	UpdateObtainedEscapeTool();
 }
+
 
 void ACharacterBase::UpdateSprintCamera(float DeltaTime)
 {
@@ -148,21 +165,26 @@ void ACharacterBase::UpdateStamina(float DeltaTime)
 void ACharacterBase::SetHUDCrosshair(float DeltaTime)
 {
 	MainController = MainController == nullptr ? Cast<ACharacterController>(Controller) : MainController;
-	MainHUD = MainHUD == nullptr ? Cast<AMainHUD>(MainController->GetHUD()) : MainHUD;
+	//MainHUD = MainHUD == nullptr ? Cast<AMainHUD>(MainController->GetHUD()) : MainHUD;
 
-	FCrosshairPackage HUDPackage;
+	if (MainController)
+	{
+		FCrosshairPackage HUDPackage;
 
-	HUDPackage.CrosshairCenter = CrosshairsCenter;
-	HUDPackage.CrosshairLeft = CrosshairsLeft;
-	HUDPackage.CrosshairRight = CrosshairsRight;
-	HUDPackage.CrosshairTop = CrosshairsTop;
-	HUDPackage.CrosshairBottom = CrosshairsBottom;
+		HUDPackage.CrosshairCenter = CrosshairsCenter;
+		HUDPackage.CrosshairLeft = CrosshairsLeft;
+		HUDPackage.CrosshairRight = CrosshairsRight;
+		HUDPackage.CrosshairTop = CrosshairsTop;
+		HUDPackage.CrosshairBottom = CrosshairsBottom;
 
-	MainHUD->SetHUDPackage(HUDPackage);
+		MainController->SetHUDCrosshair(HUDPackage);
+	}
+
 }
 
 void ACharacterBase::UpdateHpHUD()
 {
+	MainController = MainController == nullptr ? Cast<ACharacterController>(Controller) : MainController;
 	if (MainController)
 	{
 		MainController->SetHUDHealth(FMath::Clamp(Health,0.f,100.f), MaxHealth);
@@ -171,6 +193,7 @@ void ACharacterBase::UpdateHpHUD()
 
 void ACharacterBase::UpdateStaminaHUD()
 {
+	MainController = MainController == nullptr ? Cast<ACharacterController>(Controller) : MainController;
 	if (MainController)
 	{
 		MainController->SetHUDStamina(FMath::Clamp(Stamina, 0.f, 100.f) , MaxStamina);
@@ -179,6 +202,7 @@ void ACharacterBase::UpdateStaminaHUD()
 
 void ACharacterBase::UpdateObtainedEscapeTool()
 {
+	MainController = MainController == nullptr ? Cast<ACharacterController>(Controller) : MainController;
 	if (MainController)
 	{
 		MainController->SetHUDEscapeTool(ObtainedEscapeToolNum);
@@ -265,6 +289,37 @@ void ACharacterBase::GrandeThrowFinish()
 		WeaponSocket->AttachActor(CurWeapon, GetMesh());
 	}
 	GrendeNum -= 1;
+}
+
+void ACharacterBase::ReciveDamage(AActor* DamagedActor, float Damage, const UDamageType* DamageType, class AController* InstigatorController, AActor* DamageCauser)
+{
+	Health = FMath::Clamp(Health - Damage, 0.f, MaxHealth);
+	UpdateHpHUD();
+
+
+	if (Health <= 0.0f)
+	{
+		ABOGameMode* GameMode = GetWorld()->GetAuthGameMode<ABOGameMode>();
+		if (GameMode)
+		{
+			MainController = MainController == nullptr ? Cast<ACharacterController>(Controller) : MainController;
+			ACharacterController* AttackerController = Cast<ACharacterController>(InstigatorController);
+			GameMode->PlayerRemove(this, MainController, AttackerController);
+		}
+	}
+}
+
+void ACharacterBase::Dead()
+{
+
+	GetMesh()->SetSimulatePhysics(true);
+	GetMesh()->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
+	GetCharacterMovement()->DisableMovement();
+	GetCharacterMovement()->StopMovementImmediately();
+	if (MainController)
+		DisableInput(MainController);
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
 }
 void ACharacterBase::SpawnGrenade()
 {
@@ -385,7 +440,7 @@ void ACharacterBase::Fire()
 
 void ACharacterBase::FirePressd(bool _Pressd)
 {
-	if (_Pressd && CharacterState!= ECharacterState::ECS_SPRINT)
+	if (_Pressd && CharacterState!= ECharacterState::ECS_SPRINT && CurWeapon)
 	{
 		Fire();
 	}
@@ -426,15 +481,17 @@ void ACharacterBase::TraceUnderCrossHiar(FHitResult& TraceHitResult)
 			ECollisionChannel::ECC_Visibility
 		);
 
+
 		if (!TraceHitResult.bBlockingHit)
 		{
 			TraceHitResult.ImpactPoint = End;
 		}
 		else
 		{
-			DrawDebugSphere(GetWorld(), TraceHitResult.ImpactPoint, 12.f, 12, FColor::Red);
+			//DrawDebugSphere(GetWorld(), TraceHitResult.ImpactPoint, 12.f, 12, FColor::Red);
 		}
 	}
+	
 }
 
 void ACharacterBase::Move(const FInputActionValue& Value)
@@ -485,15 +542,20 @@ void ACharacterBase::Sprint_E(const FInputActionValue& Value)
 }
 void ACharacterBase::Fire_S(const FInputActionValue& Value)
 {
-	if (CurWeapon->CurAmmo <= 0)
+	if (CurWeapon)
 	{
-		bFirePressed = false;
+		if (CurWeapon->CurAmmo <= 0)
+		{
+			bFirePressed = false;
+		}
+		else if (CurWeapon->CurAmmo >= 1)
+		{
+			bFirePressed = true;
+		}
+		FirePressd(bFirePressed);
+
 	}
-	else
-	{
-		bFirePressed = true;
-	}
-	FirePressd(bFirePressed);
+
 }
 void ACharacterBase::Fire_E(const FInputActionValue& Value)
 {
@@ -556,9 +618,10 @@ void ACharacterBase::Tick(float DeltaTime)
 	UpdateStamina(DeltaTime);
 	UpdateSprintCamera(DeltaTime);
 	AimOffset(DeltaTime);
+
 	SetHUDCrosshair(DeltaTime);
-	//UE_LOG(LogTemp, Log, TEXT("%d"), TurningType);
 	FHitResult HitResult;
+
 	TraceUnderCrossHiar(HitResult);
 	HitTarget = HitResult.ImpactPoint;
 }

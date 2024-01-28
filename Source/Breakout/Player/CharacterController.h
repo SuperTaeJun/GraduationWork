@@ -22,6 +22,8 @@ public:
 	void SetHUDStamina(float Stamina, float MaxStamina);
 	void SetHUDAmmo(int32 Ammo);
 	void SetHUDEscapeTool(int32 EscapeTool);
+	void SetHUDCrosshair(const struct FCrosshairPackage& Package);
+	void showWeaponSelect();
 	virtual void OnPossess(APawn* InPawn) override;
 private:
 	TObjectPtr<class AMainHUD> MainHUD;

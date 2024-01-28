@@ -5,10 +5,12 @@
 #include "GameFramework/PlayerController.h"
 #include "HUD/SelectWeaponUi.h"
 #include "HUD/CharacterUi.h"
+
 void AMainHUD::BeginPlay()
 {
 	APlayerController* PlayerController = GetOwningPlayerController();
-	SelectWeapon = CreateWidget<USelectWeaponUi>(PlayerController, SelectWeaponClass);
+	if(PlayerController)
+		SelectWeapon = CreateWidget<USelectWeaponUi>(PlayerController, SelectWeaponClass);
 
 	AddCharacterOverlay();
 }

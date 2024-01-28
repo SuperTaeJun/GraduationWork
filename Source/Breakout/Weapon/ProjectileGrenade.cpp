@@ -2,7 +2,9 @@
 
 
 #include "Weapon/ProjectileGrenade.h"
+#include "Kismet/GameplayStatics.h"
 #include "GameFramework/ProjectileMovementComponent.h"
+
 AProjectileGrenade::AProjectileGrenade()
 {
 	ProjectileMovementComponent->bShouldBounce = true;
@@ -22,6 +24,28 @@ void AProjectileGrenade::StartDestroyTimer()
 
 void AProjectileGrenade::DestroyTimerFinished()
 {
+	APawn* FiringPawn = GetInstigator();
+	if (FiringPawn)
+	{
+		AController* FiringController = FiringPawn->GetController();
+		if (FiringController)
+		{
+			UGameplayStatics::ApplyRadialDamageWithFalloff(
+				this, // World context object
+				Damage, // BaseDamage
+				10.f, // MinimumDamage
+				GetActorLocation(), // Origin
+				200.f, // DamageInnerRadius
+				500.f, // DamageOuterRadius
+				1.f, // DamageFalloff
+				UDamageType::StaticClass(), // DamageTypeClass
+				TArray<AActor*>(), // IgnoreActors
+				this, // DamageCauser
+				FiringController // InstigatorController
+			);
+		}
+	}
+
 	Destroy();
 }
 

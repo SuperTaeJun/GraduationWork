@@ -56,7 +56,6 @@ protected:
 	ECharacterState CharacterState;
 	int32 ObtainedEscapeToolNum;
 
-
 public:
 	void SetWeapon(TSubclassOf<class AWeaponBase> Weapon, FName SocketName);
 	void SetbInRespon(bool _bInRespon) { bInRespon = _bInRespon; }
@@ -70,6 +69,9 @@ public:
 	FORCEINLINE float MaxGetStamina() const { return MaxStamina; }
 	void PlayFireActionMontage(bool bAiming);
 
+	UFUNCTION()
+	void ReciveDamage(AActor* DamagedActor, float Damage, const UDamageType* DamageType, class AController* InstigatorController, AActor* DamageCauser);
+
 	TObjectPtr<class APropBase> OverlappingEscapeTool;
 
 	void GrandeThrow();
@@ -79,6 +81,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void SpawnGrenade();
+
+	void Dead();
+
 private:
 	//character Á¾·ù
 	UPROPERTY(EditAnywhere, Category = Mesh)

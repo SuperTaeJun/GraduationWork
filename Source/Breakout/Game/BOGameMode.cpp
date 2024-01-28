@@ -4,6 +4,7 @@
 #include "Game/BOGameMode.h"
 #include "Character/CharacterBase.h"
 #include "Game/BOGameInstance.h"
+#include "Character/CharacterBase.h"
 ABOGameMode::ABOGameMode()
 {
 	/*m_Socket = ClientSocket::GetSingleton();
@@ -19,6 +20,14 @@ ABOGameMode::ABOGameMode()
 	{
 		UE_LOG(LogClass, Warning, TEXT("IOCP Server connect FAIL!"));
 	}*/
+}
+
+void ABOGameMode::PlayerRemove(ACharacterBase* RemovedCharacter, ACharacterController* RemovedCharacterController, ACharacterController* AttackerController)
+{
+	if (RemovedCharacter)
+	{
+		RemovedCharacter->Dead();
+	}
 }
 
 //void ABOGameMode::BeginPlay()
