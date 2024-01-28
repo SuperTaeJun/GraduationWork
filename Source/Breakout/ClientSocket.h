@@ -123,13 +123,11 @@ public:
 	virtual ~ClientSocket();
 	bool InitSocket();
 	bool Connect(const char* s_IP, int port);
-	// 소켓이 속한 게임모드를 세팅해주는 함수
-	void SetGameMode(ABOGameMode* pGameMode);
-
 	void CloseSocket();
-
-	FRunnableThread* Thread;
-	FThreadSafeCounter StopTaskCounter;
+	
+	void PacketProcess(const char* ptr);
+	void Send_Login_Info(char* id, char* pw);
+	
 	virtual bool Init();
 	virtual uint32 Run();
 	virtual void Stop();
@@ -138,40 +136,20 @@ public:
 	// 스레드 시작 및 종료
 	bool StartListen();
 	void StopListen();
-	void RecvPacket()
-	{
-
-		DWORD recv_flag = 0;
-		ZeroMemory(&_recv_over._wsa_over, sizeof(_recv_over._wsa_over));
-		_recv_over._wsa_buf.buf = reinterpret_cast<char*>(_recv_over._net_buf + _prev_size);
-		_recv_over._wsa_buf.len = sizeof(_recv_over._net_buf) - _prev_size;
-		int ret = WSARecv(_socket, &_recv_over._wsa_buf, 1, 0, &recv_flag, &_recv_over._wsa_over, NULL);
-		if (SOCKET_ERROR == ret) {
-			int error_num = WSAGetLastError();
-		}
-	};
-	void SendPacket(void* packet)
-	{
-		//MYLOG(Warning, TEXT("Send to Server!"));
-		int psize = reinterpret_cast<unsigned char*>(packet)[0];
-		Overlap* ex_over = new Overlap(OP_SEND, psize, packet);
-		int ret = WSASend(_socket, &ex_over->_wsa_buf, 1, 0, 0, &ex_over->_wsa_over, NULL);
-		if (SOCKET_ERROR == ret) {
-			int error_num = WSAGetLastError();
-			if (ERROR_IO_PENDING != error_num)
-				WSAGetLastError();
-		}
-	};
+	void RecvPacket();
+	void SendPacket(void* packet);
 	// 싱글턴 객체 가져오기
 	static ClientSocket* GetSingleton() {
 		static ClientSocket ins;
 		return &ins;
 	}
+	HANDLE Iocp;
 	Overlap _recv_over;
 	int      _prev_size = 0;
-	SOCKET _socket;
-private:
 	SOCKET ServerSocket;
 	char recvBuffer[MAX_BUFFER];
-	ABOGameMode* GameMode;	// 게임모드 정보
+	FRunnableThread* Thread;
+	FThreadSafeCounter StopTaskCounter;
+private:
+
 };
