@@ -54,15 +54,22 @@ bool ClientSocket::Connect(const char* s_IP, int port)
 	return true;
 }
 
-void ClientSocket::SetGameMode(ABOGameMode* pGameMode)
-{
-	GameMode = pGameMode;
-}
 
 void ClientSocket::CloseSocket()
 {
 	closesocket(ServerSocket);
 	WSACleanup();
+}
+
+void ClientSocket::PacketProcess(const char* ptr)
+{
+}
+
+void ClientSocket::Send_Login_Info(char* id, char* pw)
+{
+	//패킷 조립
+	//cs_login_packet
+	//SendPacket(&packet);
 }
 
 bool ClientSocket::Init()
@@ -73,10 +80,7 @@ uint32 ClientSocket::Run()
 {
 	FPlatformProcess::Sleep(0.03);
 	// 게임모드를 가져옴
-	ABOGameMode* LocalGameMode = nullptr;
-	if (GameMode != nullptr) {
-		LocalGameMode = GameMode;
-	}
+
 	return 0;
 }
 void ClientSocket::Stop()
@@ -106,4 +110,28 @@ void ClientSocket::StopListen()
 	delete Thread;
 	Thread = nullptr;
 	StopTaskCounter.Reset();
+}
+
+void ClientSocket::RecvPacket()
+{
+	DWORD recv_flag = 0;
+	ZeroMemory(&_recv_over._wsa_over, sizeof(_recv_over._wsa_over));
+	_recv_over._wsa_buf.buf = reinterpret_cast<char*>(_recv_over._net_buf + _prev_size);
+	_recv_over._wsa_buf.len = sizeof(_recv_over._net_buf) - _prev_size;
+	int ret = WSARecv(ServerSocket, &_recv_over._wsa_buf, 1, 0, &recv_flag, &_recv_over._wsa_over, NULL);
+	if (SOCKET_ERROR == ret) {
+		int error_num = WSAGetLastError();
+	}
+}
+
+void ClientSocket::SendPacket(void* packet)
+{
+	int psize = reinterpret_cast<unsigned char*>(packet)[0];
+	Overlap* ex_over = new Overlap(OP_SEND, psize, packet);
+	int ret = WSASend(ServerSocket, &ex_over->_wsa_buf, 1, 0, 0, &ex_over->_wsa_over, NULL);
+	if (SOCKET_ERROR == ret) {
+		int error_num = WSAGetLastError();
+		if (ERROR_IO_PENDING != error_num)
+			WSAGetLastError();
+	}
 }
