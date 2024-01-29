@@ -16,8 +16,8 @@
 #define MAX_INFO_SIZE   20
 
 //패킷 첫바이트 사이즈 + 어떤 패킷인지
-const char CS_LOGIN_PACKET = 1;
-const char SC_LOGIN_BACK = 1;
+//const char CS_LOGIN_PACKET = 1;
+//const char SC_LOGIN_BACK = 1;
 
 
 #pragma pack (push, 1)

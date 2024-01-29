@@ -13,7 +13,7 @@ void ACharacterController::BeginPlay()
 	SetInputMode(GameOnlyInput);
 
 	MainHUD = Cast<AMainHUD>(GetHUD());
-
+	
 }
 
 void ACharacterController::SetHUDHealth(float Health, float MaxHealth)
