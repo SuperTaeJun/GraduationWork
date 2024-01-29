@@ -160,6 +160,7 @@
     <ClInclude Include="CoreTLS.h" />
     <ClInclude Include="Lock.h" />
     <ClInclude Include="pch.h" />
+    <ClInclude Include="protocol.h" />
     <ClInclude Include="Types.h" />
   </ItemGroup>
   <ItemGroup>

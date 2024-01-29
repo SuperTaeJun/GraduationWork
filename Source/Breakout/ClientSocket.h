@@ -9,23 +9,20 @@
 #include <WS2tcpip.h>
 #include <fstream>
 #include <iostream>
+#include "Network/PacketData.h"
 #include "Windows/PostWindowsApi.h"
 #include "Windows/HideWindowsPlatformTypes.h"
 #include "CoreMinimal.h"
 
 
-#define	MAX_BUFFER		4096
-#define SERVER_PORT		12345
-#define SERVER_IP		"127.0.0.1"
-#define MAX_CLIENTS		100
+
 
 class ABOGameMode;
 class ACharacterController;
 using namespace std;
-
 enum OPTYPE {
-	OP_SEND, 
-	OP_RECV, 
+	OP_SEND,
+	OP_RECV,
 };
 
 class Overlap {
@@ -55,8 +52,6 @@ public:
 	{
 	}
 };
-
-
 
 // 플레이어 클래스 
 class Player
@@ -150,6 +145,8 @@ public:
 	char recvBuffer[MAX_BUFFER];
 	FRunnableThread* Thread;
 	FThreadSafeCounter StopTaskCounter;
+
+
 private:
 
 };
