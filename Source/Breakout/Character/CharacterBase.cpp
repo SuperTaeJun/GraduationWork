@@ -94,7 +94,7 @@ void ACharacterBase::BeginPlay()
 		MainController->showWeaponSelect();
 	}
 
-	if (MainController&& GetWorld()->GetGameInstance())
+	if (MainController && GetWorld()->GetGameInstance())
 	{
 		//캐릭터 선택 (게임룸에서 선택한 정보를 게임인스턴스에서 가져와서 선택)
 		switch (Cast<UBOGameInstance>(GetWorld()->GetGameInstance())->GetCharacterType())
@@ -117,7 +117,9 @@ void ACharacterBase::BeginPlay()
 			break;
 		}
 	}
-	
+
+	BojoMugiType = EBojoMugiType::ECS_DEFAULT;
+
 	OnTakeAnyDamage.AddDynamic(this, &ACharacterBase::ReciveDamage);
 
 	UpdateHpHUD();
@@ -323,11 +325,30 @@ void ACharacterBase::Dead()
 }
 void ACharacterBase::SpawnGrenade()
 {
-	UE_LOG(LogTemp, Log, TEXT("GRENDADE SPAWN"));
-
 	Grenade->bHiddenInGame = true;
 
-	if (ProjectileClass && Grenade)
+	switch (BojoMugiType)
+	{
+	case EBojoMugiType::E_Grenade:
+		SetSpawnGrenade(GrenadeClass);
+		break;
+	case EBojoMugiType::E_Wall:
+		SetSpawnGrenade(WallClass);
+		break;
+	case EBojoMugiType::E_BoobyTrap:
+		SetSpawnGrenade(BoobyTrapClass);
+		break;
+	case EBojoMugiType::ECS_DEFAULT:
+		SetSpawnGrenade(GrenadeClass);
+		break;
+	}
+
+}
+
+void ACharacterBase::SetSpawnGrenade(TSubclassOf<AProjectileBase> Projectile)
+{
+	UE_LOG(LogTemp, Log, TEXT("GRENDADE SPAWN"));
+	if (Grenade)
 	{
 		const FVector StartLocation = GetMesh()->GetSocketLocation(FName("GrandeSocket"));
 		FVector ToHitTarget = HitTarget - StartLocation;
@@ -337,10 +358,9 @@ void ACharacterBase::SpawnGrenade()
 		TObjectPtr<UWorld> World = GetWorld();
 		if (World)
 		{
-			World->SpawnActor<AProjectileBase>(ProjectileClass, StartLocation, ToHitTarget.Rotation(), SpawnParms);
+			World->SpawnActor<AProjectileBase>(Projectile, StartLocation, ToHitTarget.Rotation(), SpawnParms);
 		}
 	}
-
 }
 
 void ACharacterBase::TurnInPlace(float DeltaTime)
@@ -589,6 +609,28 @@ void ACharacterBase::GrandeFire(const FInputActionValue& Value)
 	}
 }
 
+void ACharacterBase::SelectGrande(const FInputActionValue& Value)
+{
+	BojoMugiType = EBojoMugiType::E_Grenade;
+
+	//할것
+	//UI연결해야함
+}
+
+void ACharacterBase::SelectWall(const FInputActionValue& Value)
+{
+	BojoMugiType = EBojoMugiType::E_Wall;
+	//할것
+	//UI연결해야함
+}
+
+void ACharacterBase::SelectTrap(const FInputActionValue& Value)
+{
+	BojoMugiType = EBojoMugiType::E_BoobyTrap;
+	//할것
+	//UI연결해야함
+}
+
 void ACharacterBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
@@ -642,6 +684,9 @@ void ACharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 		EnhancedInputComponent->BindAction(FireAction, ETriggerEvent::Completed, this, &ACharacterBase::Fire_E);
 		EnhancedInputComponent->BindAction(ReRoadAction, ETriggerEvent::Triggered, this, &ACharacterBase::Reroad);
 		EnhancedInputComponent->BindAction(GrandeFireAction, ETriggerEvent::Triggered, this, &ACharacterBase::GrandeFire);
+		EnhancedInputComponent->BindAction(SelectGrandeAction, ETriggerEvent::Triggered, this, &ACharacterBase::SelectGrande);
+		EnhancedInputComponent->BindAction(SelectWallAction, ETriggerEvent::Triggered, this, &ACharacterBase::SelectWall);
+		EnhancedInputComponent->BindAction(SelectTrapAction, ETriggerEvent::Triggered, this, &ACharacterBase::SelectTrap);
 	}
 }
 

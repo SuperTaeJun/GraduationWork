@@ -54,6 +54,7 @@ protected:
 	int32 BoobyTrapNum;
 
 	ECharacterState CharacterState;
+	EBojoMugiType BojoMugiType;
 	int32 ObtainedEscapeToolNum;
 
 public:
@@ -81,6 +82,8 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void SpawnGrenade();
+
+	void SetSpawnGrenade(TSubclassOf<class AProjectileBase> Projectile);
 
 	void Dead();
 
@@ -121,7 +124,11 @@ private:
 	TObjectPtr<class UStaticMeshComponent> Grenade;
 
 	UPROPERTY(EditAnywhere)
-	TSubclassOf<class AProjectileBase> ProjectileClass;
+	TSubclassOf<class AProjectileBase> GrenadeClass;
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class AProjectileBase> WallClass;
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class AProjectileBase> BoobyTrapClass;
 
 	//idle turn
 	ETurningInPlace TurningType;
@@ -188,6 +195,13 @@ protected:
 	TObjectPtr<UInputAction> ReRoadAction;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
 	TObjectPtr<UInputAction> GrandeFireAction;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
+	TObjectPtr<UInputAction> SelectGrandeAction;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
+	TObjectPtr<UInputAction> SelectWallAction;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
+	TObjectPtr<UInputAction> SelectTrapAction;
+
 	void Move(const FInputActionValue& Value);
 	void Look(const FInputActionValue& Value);
 	void Sprint_S(const FInputActionValue& Value);
@@ -197,6 +211,9 @@ protected:
 	void Inter(const FInputActionValue& Value);
 	void Reroad(const FInputActionValue& Value);
 	void GrandeFire(const FInputActionValue& Value);
+	void SelectGrande(const FInputActionValue& Value);
+	void SelectWall(const FInputActionValue& Value);
+	void SelectTrap(const FInputActionValue& Value);
 
 };
 
@@ -207,6 +224,16 @@ enum class ECharacterState : uint8
 	ECS_RUN UMETA(DisplayName = "Run"),
 	ECS_SPRINT UMETA(DisplayName = "Sprint"),
 	ECS_FALLING UMETA(DisplayName = "Falling"),
+
+	ECS_DEFAULT UMETA(DisplayName = "Default")
+};
+
+UENUM(BlueprintType)
+enum class EBojoMugiType : uint8
+{
+	E_Grenade UMETA(DisplayName = "Grenade"),
+	E_Wall UMETA(DisplayName = "Wall"),
+	E_BoobyTrap UMETA(DisplayName = "BoobyTrap"),
 
 	ECS_DEFAULT UMETA(DisplayName = "Default")
 };
