@@ -68,8 +68,15 @@ void ClientSocket::PacketProcess(const char* ptr)
 void ClientSocket::Send_Login_Info(char* id, char* pw)
 {
 	//패킷 조립
+	//CS_LOGIN_PACKET packet;
+	CS_LOGIN_PACKET packet;
+	packet.size = sizeof(packet);
+	strcpy(packet.id, id);
+	strcpy(packet.pw, pw);
+
 	//cs_login_packet
-	//SendPacket(&packet);
+	SendPacket(&packet);
+	UE_LOG(LogClass, Warning, TEXT("Sending login info - id: %s, pw: %s"), ANSI_TO_TCHAR(id), ANSI_TO_TCHAR(pw));
 }
 
 bool ClientSocket::Init()

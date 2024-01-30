@@ -1,10 +1,12 @@
-﻿  lOCPServer.cpp
-C:\Users\sejin\OneDrive\바탕 화면\Server\GameServer\lOCPServer.cpp(61,62): warning C4311: '형식 캐스트': 'Overlapped *'에서 'DWORD'(으)로 포인터가 잘립니다.
-C:\Users\sejin\OneDrive\바탕 화면\Server\GameServer\lOCPServer.cpp(61,62): warning C4302: '형식 캐스트': 'Overlapped *'에서 'DWORD'(으)로 잘립니다.
-C:\Users\sejin\OneDrive\바탕 화면\Server\GameServer\lOCPServer.cpp(97,10): warning C4101: 'sendBytes' :참조되지 않은 지역 변수입니다.
+﻿  pch.cpp
+  GameServer.cpp
+  lOCPServer.cpp
+C:\Users\sejin\Downloads\GraduationWork\Server\GameServer\lOCPServer.cpp(61,62): warning C4311: '형식 캐스트': 'Overlapped *'에서 'DWORD'(으)로 포인터가 잘립니다.
+C:\Users\sejin\Downloads\GraduationWork\Server\GameServer\lOCPServer.cpp(61,62): warning C4302: '형식 캐스트': 'Overlapped *'에서 'DWORD'(으)로 잘립니다.
+C:\Users\sejin\Downloads\GraduationWork\Server\GameServer\lOCPServer.cpp(97,10): warning C4101: 'sendBytes' :참조되지 않은 지역 변수입니다.
   코드를 생성하고 있습니다.
-  2 of 121 functions ( 1.7%) were compiled, the rest were copied from previous compilation.
+  116 of 121 functions (95.9%) were compiled, the rest were copied from previous compilation.
     0 functions were new in current compilation
-    0 functions had inline decision re-evaluated but remain unchanged
+    1 functions had inline decision re-evaluated but remain unchanged
   코드를 생성했습니다.
-  GameServer.vcxproj -> C:\Users\sejin\OneDrive\바탕 화면\Server\Binary\Release\GameServer.exe
+  GameServer.vcxproj -> C:\Users\sejin\Downloads\GraduationWork\Server\Binary\Release\GameServer.exe
