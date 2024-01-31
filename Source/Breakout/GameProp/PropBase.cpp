@@ -15,20 +15,18 @@ APropBase::APropBase()
 	AreaSphere->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Overlap);
 	AreaSphere->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 
-	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
-	Mesh->SetupAttachment(RootComponent);
-
-	//ProceduralMesh = CreateDefaultSubobject<UProceduralMeshComponent>(TEXT("ProceduralMesh"));
-	//ProceduralMesh->SetupAttachment(RootComponent);
-
-	//static ConstructorHelpers::FObjectFinder<UStaticMesh> Mesh1Asset(TEXT("/Game/FPS_Weapon_Bundle/Weapons/Meshes/Accessories/SM_Scope_25x56_X.SM_Scope_25x56_X"));
+	ProceduralMesh = CreateDefaultSubobject<UProceduralMeshComponent>(TEXT("ProceduralMesh"));
+	ProceduralMesh->SetupAttachment(RootComponent);
 
 
-	////메쉬 데이터에 스테틱 메쉬 데이터 넣기
-	//if (Mesh1)
-	//{
-	//	UE_LOG(LogTemp, Log, TEXT("HAHAHAHA"));
-	//}
+	//메쉬 데이터에 스테틱 메쉬 데이터 넣기
+	if (Mesh1)
+	{
+		UE_LOG(LogTemp, Log, TEXT("HAHAHAHA"));
+		GetMeshDataFromStaticMesh(Mesh1, &Data1, 0, 0, true);
+	}
+	//ProceduralMesh->CreateMeshSection(0, Data1.Verts, Data1.Tris, Data1.Normals, Data1.UVs, FColor::Red, , false);
+	// 
 	//GetMeshDataFromStaticMesh(Mesh1, &Data1, 0, 0, true);
 	//UnifyTri(Data1);
 	//GetMeshDataFromStaticMesh(Mesh2, &Data2, 0, 0, true);
@@ -48,67 +46,72 @@ void APropBase::BeginPlay()
 {
 	Super::BeginPlay();
 
-	AreaSphere->OnComponentBeginOverlap.AddDynamic(this, &APropBase::OnSphereOverlap);
-	AreaSphere->OnComponentEndOverlap.AddDynamic(this, &APropBase::OnSphereEndOverlap);
+	if (AreaSphere)
+	{
+		AreaSphere->OnComponentBeginOverlap.AddDynamic(this, &APropBase::OnSphereOverlap);
+		AreaSphere->OnComponentEndOverlap.AddDynamic(this, &APropBase::OnSphereEndOverlap);
+	}
+
+
 }
-//
-//void APropBase::GetMeshDataFromStaticMesh(UStaticMesh* Mesh, FMeshData* Data, int32 LODIndex, int32 SectionIndex, bool GetAllSections)
-//{
-//	int32 n = 0, svi = 0, vi = 0, sec = 0;
-//	int32* NewIndexPtr = nullptr;
-//
-//	if (!Mesh) return;
-//
-//	if(!Mesh->bAllowCPUAccess) 
-//	{
-//		UE_LOG(LogTemp, Log, TEXT("Not Allow CpuAccesss"));
-//	}
-//	Data->Clear();
-//
-//	while (true)
-//	{
-//		const FStaticMeshLODResources& LOD = Mesh->GetRenderData()->LODResources[LODIndex];
-//
-//		if (!LOD.Sections.IsValidIndex(SectionIndex))
-//		{
-//			Data->CountSections();
-//			return;
-//		}
-//		TMap<int32, int32> MeshToSectionVertMap = {};
-//		uint32 i = 0;
-//		uint32 is = LOD.Sections[SectionIndex].FirstIndex;
-//		uint32 l = LOD.Sections[SectionIndex].FirstIndex + LOD.Sections[SectionIndex].NumTriangles * 3;
-//		FIndexArrayView Indices = LOD.IndexBuffer.GetArrayView();
-//		uint32 il = Indices.Num();
-//		const bool hasColors = LOD.VertexBuffers.ColorVertexBuffer.GetNumVertices() >= LOD.VertexBuffers.PositionVertexBuffer.GetNumVertices();
-//
-//		for (i = is; i < l; ++i) {
-//			if (i < il) {
-//				vi = Indices[i];
-//				NewIndexPtr = MeshToSectionVertMap.Find(vi);
-//				if (NewIndexPtr != nullptr) { svi = *NewIndexPtr; }
-//				else 
-//				{
-//					Data->Verts.Emplace(LOD.VertexBuffers.PositionVertexBuffer.VertexPosition(vi));
-//					Data->Verts.Emplace(LOD.VertexBuffers.PositionVertexBuffer.VertexPosition(vi));
-//					Data->Normals.Emplace(LOD.VertexBuffers.StaticMeshVertexBuffer.VertexTangentZ(vi));
-//					Data->UVs.Emplace(LOD.VertexBuffers.StaticMeshVertexBuffer.GetVertexUV(vi, 0));
-//					Data->Sects.Emplace(sec);
-//					if (hasColors) 
-//					{ 
-//						Data->Colors.Emplace(LOD.VertexBuffers.ColorVertexBuffer.VertexColor(vi)); 
-//					}
-//					svi = n;
-//					MeshToSectionVertMap.Emplace(vi, n);
-//					++n;
-//				}
-//				Data->Tris.Emplace(svi);
-//			}
-//
-//		}
-//	}
-//}
-//
+
+void APropBase::GetMeshDataFromStaticMesh(UStaticMesh* Mesh, FMeshData* Data, int32 LODIndex, int32 SectionIndex, bool GetAllSections)
+{
+	int32 n = 0, svi = 0, vi = 0, sec = 0;
+	int32* NewIndexPtr = nullptr;
+
+	if (!Mesh) return;
+
+	if(!Mesh->bAllowCPUAccess) 
+	{
+		UE_LOG(LogTemp, Log, TEXT("Not Allow CpuAccesss"));
+	}
+	Data->Clear();
+
+	while (true)
+	{
+		const FStaticMeshLODResources& LOD = Mesh->GetRenderData()->LODResources[LODIndex];
+
+		if (!LOD.Sections.IsValidIndex(SectionIndex))
+		{
+			Data->CountSections();
+			return;
+		}
+		TMap<int32, int32> MeshToSectionVertMap = {};
+		uint32 i = 0;
+		uint32 is = LOD.Sections[SectionIndex].FirstIndex;
+		uint32 l = LOD.Sections[SectionIndex].FirstIndex + LOD.Sections[SectionIndex].NumTriangles * 3;
+		FIndexArrayView Indices = LOD.IndexBuffer.GetArrayView();
+		uint32 il = Indices.Num();
+		const bool hasColors = LOD.VertexBuffers.ColorVertexBuffer.GetNumVertices() >= LOD.VertexBuffers.PositionVertexBuffer.GetNumVertices();
+
+		for (i = is; i < l; ++i) {
+			if (i < il) {
+				vi = Indices[i];
+				NewIndexPtr = MeshToSectionVertMap.Find(vi);
+				if (NewIndexPtr != nullptr) { svi = *NewIndexPtr; }
+				else 
+				{
+					Data->Verts.Emplace(LOD.VertexBuffers.PositionVertexBuffer.VertexPosition(vi));
+					Data->Verts.Emplace(LOD.VertexBuffers.PositionVertexBuffer.VertexPosition(vi));
+					Data->Normals.Emplace(LOD.VertexBuffers.StaticMeshVertexBuffer.VertexTangentZ(vi));
+					Data->UVs.Emplace(LOD.VertexBuffers.StaticMeshVertexBuffer.GetVertexUV(vi, 0));
+					Data->Sects.Emplace(sec);
+					if (hasColors) 
+					{ 
+						Data->Colors.Emplace(LOD.VertexBuffers.ColorVertexBuffer.VertexColor(vi)); 
+					}
+					svi = n;
+					MeshToSectionVertMap.Emplace(vi, n);
+					++n;
+				}
+				Data->Tris.Emplace(svi);
+			}
+
+		}
+	}
+}
+
 //void APropBase::UnifyTri(FMeshData& Data)
 //{
 //	SplitVertexes(Data);
@@ -183,24 +186,24 @@ void APropBase::BeginPlay()
 
 void APropBase::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	ACharacterBase* CharacterBase = Cast<ACharacterBase>(OtherActor);
+	//ACharacterBase* CharacterBase = Cast<ACharacterBase>(OtherActor);
 
-	CharacterBase->SetbCanObtainEscapeTool(true);
-	CharacterBase->OverlappingEscapeTool = this;
+	//CharacterBase->SetbCanObtainEscapeTool(true);
+	//CharacterBase->OverlappingEscapeTool = this;
 
-	//UE_LOG(LogTemp, Log, TEXT("OBTAIN"));
+	////UE_LOG(LogTemp, Log, TEXT("OBTAIN"));
 }
 
 void APropBase::OnSphereEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-	if (Mesh->bHiddenInGame==false)
-	{
-		ACharacterBase* CharacterBase = Cast<ACharacterBase>(OtherActor);
+	//if (Mesh->bHiddenInGame==false)
+	//{
+	//	ACharacterBase* CharacterBase = Cast<ACharacterBase>(OtherActor);
 
-		CharacterBase->SetbCanObtainEscapeTool(false);
-		CharacterBase->OverlappingEscapeTool = nullptr;
+	//	CharacterBase->SetbCanObtainEscapeTool(false);
+	//	CharacterBase->OverlappingEscapeTool = nullptr;
 
-	}
+	//}
 }
 
 
@@ -210,13 +213,12 @@ void APropBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-
-	if (Mesh->bHiddenInGame == true)
-		Destroy();
+	//if (Mesh->bHiddenInGame == true)
+	//	Destroy();
 }
 
 void APropBase::SetHideMesh()
 {
-	Mesh->bHiddenInGame = true;
+	//Mesh->bHiddenInGame = true;
 }
 

@@ -22,19 +22,15 @@ struct FMeshData
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MeshOps")
 	TArray<FVector> Normals = {};
 
-	/** All UVs for the mesh. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MeshOps")
 	TArray<FVector2D> UVs = {};
 
-	/** All Vertex Colors for the mesh. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MeshOps")
 	TArray<FLinearColor> Colors = {};
 
-	/** Provided for convenience, feel free to use as a timestamp or checksum. (unused in the plugin's code) */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MeshOps")
 	float Time = 0.0f;
 
-	/** Provided for convenience, feel free to use as you see fit. (unused in the plugin's code) */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MeshOps")
 	bool Updated = false;
 
@@ -126,7 +122,7 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
-	//void GetMeshDataFromStaticMesh(class UStaticMesh* Mesh, FMeshData* Data, int32 LODIndex, int32 SectionIndex, bool GetAllSections);
+	void GetMeshDataFromStaticMesh(class UStaticMesh* Mesh, FMeshData* Data, int32 LODIndex, int32 SectionIndex, bool GetAllSections);
 	//void UnifyTri(FMeshData& Data);
 	//void SplitVertexes(FMeshData& Data);
 	//void TransformMeshData(FMeshData& Data, FTransform Transform, FVector Pivot);
@@ -149,19 +145,20 @@ protected:
 		int32 OtherBodyIndex);
 
 private:
+
+	UPROPERTY(VisibleAnywhere, Category = "Mesh")
 	TObjectPtr<class UProceduralMeshComponent> ProceduralMesh;
 
 	UPROPERTY(VisibleAnywhere, Category = "Mesh")
 	TObjectPtr<class USphereComponent>AreaSphere;
 
-	UPROPERTY(VisibleAnywhere, Category = "Mesh")
-	TObjectPtr<class UStaticMeshComponent>Mesh;
-
 
 	FMeshData Data1;
 	FMeshData Data2;
 
+	UPROPERTY(EditAnywhere, Category = "Mesh")
 	TObjectPtr<UStaticMesh> Mesh1;
+	UPROPERTY(EditAnywhere, Category = "Mesh")
 	TObjectPtr<UStaticMesh> Mesh2;
 
 };
