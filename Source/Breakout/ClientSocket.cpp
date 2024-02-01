@@ -88,9 +88,12 @@ uint32 ClientSocket::Run()
 {
 	FPlatformProcess::Sleep(0.03);
 	// 게임모드를 가져옴
-	while(true)
+	/*while(true)
+		RecvPacket();*/
+	while (StopTaskCounter.GetValue() == 0)
+	{
 		RecvPacket();
-
+	}
 	return 0;
 }
 void ClientSocket::Stop()

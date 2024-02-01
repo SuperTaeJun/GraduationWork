@@ -59,16 +59,7 @@ void lOCPServer::Start()
 		overlap->wsabuf.buf = overlap->recvBuffer;
 		flags = 0;
 		::CreateIoCompletionPort((HANDLE)clientsocket, iocpHandle, (DWORD)overlap, 0);
-
-		result = WSARecv(
-			overlap->socket,
-			&overlap->wsabuf,
-			1,
-			&recvBytes,
-			&flags,
-			&(overlap->overlapped),
-			NULL
-		);
+		RecvPacket(overlap);
 	}
 
 }
@@ -108,7 +99,7 @@ void lOCPServer::WorkerThread()
 			cout << "[INFO] 소켓(" << overlap->socket << ")로부터 0 바이트 수신" << endl;
 
 		if (recvBytes > 0) {
-			//cout << "[INFO] 소켓(" << overlap->socket << ")로부터 데이터 수신: " << overlap->wsabuf.buf << endl;
+			cout << "[INFO] 소켓(" << overlap->socket << ")로부터 데이터 수신: " << overlap->wsabuf.buf << endl;
 
 			//if (recvBytes >= sizeof(CS_LOGIN_PACKET)) {
 			CS_LOGIN_PACKET* loginPacket = reinterpret_cast<CS_LOGIN_PACKET*>(overlap->wsabuf.buf);
@@ -126,23 +117,26 @@ void lOCPServer::WorkerThread()
 			strncpy_s(loginOkPacket.pw, MAX_INFO_SIZE, loginPacket->pw, MAX_INFO_SIZE);
 			cout << "login info : " << loginOkPacket.id << ", pw:" << loginOkPacket.pw << endl;
 
-			overlap->recvBytes = 0;
-			DWORD flags = 0;
-			int nResult = WSARecv(
+			// 패킷을 클라이언트에게 전송
+			/*DWORD sendBytes;
+			if (WSASend(
 				overlap->socket,
-				&overlap->wsabuf,
+				&(overlap->wsabuf),
 				1,
-				&recvBytes,
-				&flags,
+				&sendBytes,
+				0,
 				&(overlap->overlapped),
 				NULL
-			);
-			if (nResult == SOCKET_ERROR && WSAGetLastError() != WSA_IO_PENDING) {
-				cout << "[ERROR] WSARecv 실패: " << WSAGetLastError() << endl;
+			) == SOCKET_ERROR && WSAGetLastError() != WSA_IO_PENDING) {
+				cout << "[ERROR] WSASend 실패: " << WSAGetLastError() << endl;
 				closesocket(overlap->socket);
 				delete overlap;
 				continue;
-			}
+			}*/
+
+			// 다음 패킷 수신 작업 시작
+			RecvPacket(overlap);
+			//}
 		}
 		else {
 			// 0 바이트를 받음 - 연결이 닫힐 수 있으므로 이에 대한 처리를 수행
@@ -150,6 +144,30 @@ void lOCPServer::WorkerThread()
 			closesocket(overlap->socket);
 			delete overlap;
 		}
+	}
+
+}
+
+void lOCPServer::RecvPacket(Overlapped* overlap)
+{
+	DWORD recv_flag = 0;
+	ZeroMemory(&(overlap->overlapped), sizeof(overlap->overlapped));
+	overlap->wsabuf.buf = reinterpret_cast<char*>(overlap->_net_buf + overlap->prev_size);
+	overlap->wsabuf.len = sizeof(overlap->_net_buf) - overlap->prev_size;
+
+	int ret = WSARecv(
+		overlap->socket,
+		&(overlap->wsabuf),
+		1,
+		0,
+		&recv_flag,
+		&(overlap->overlapped),
+		NULL
+	);
+
+	if (SOCKET_ERROR == ret) {
+		int error_num = WSAGetLastError();
+		// 에러 처리
 	}
 }
 
