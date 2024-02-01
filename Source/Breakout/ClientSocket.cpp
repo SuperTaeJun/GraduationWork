@@ -88,6 +88,8 @@ uint32 ClientSocket::Run()
 {
 	FPlatformProcess::Sleep(0.03);
 	// °ÔÀÓ¸ðµå¸¦ °¡Á®¿È
+	while(true)
+		RecvPacket();
 
 	return 0;
 }
@@ -129,6 +131,9 @@ void ClientSocket::RecvPacket()
 	int ret = WSARecv(ServerSocket, &_recv_over._wsa_buf, 1, 0, &recv_flag, &_recv_over._wsa_over, NULL);
 	if (SOCKET_ERROR == ret) {
 		int error_num = WSAGetLastError();
+	}
+	if (ret > 0) {
+		UE_LOG(LogClass, Warning, TEXT("recv µÊ "));
 	}
 }
 

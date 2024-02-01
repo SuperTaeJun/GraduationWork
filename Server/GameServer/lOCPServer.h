@@ -1,5 +1,6 @@
 #pragma once
 #include "Overlapped.h"
+#include "protocol.h"
 class lOCPServer
 {
 public:
