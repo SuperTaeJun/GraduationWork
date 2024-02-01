@@ -1,8 +1,9 @@
 #pragma once
 #define MAX_INFO_SIZE   20
 
-const char CS_LOGIN_PACKET = 1;
-const char SC_LOGIN_BACK = 1;
+const char CS_LOGIN = 1;
+const char SC_LOGIN_OK = 1;
+
 #pragma pack (push, 1)
 struct CS_LOGIN_PACKET
 {

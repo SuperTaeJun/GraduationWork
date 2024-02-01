@@ -1,5 +1,6 @@
 #pragma once
 #include "Overlapped.h"
+#include "protocol.h"
 class lOCPServer
 {
 public:
@@ -9,6 +10,7 @@ public:
 	void Start();
 	bool CreateWorkerThreads();
 	void WorkerThread();
+	void RecvPacket(Overlapped* overlap);
 	virtual bool OnRecv(int s_id, Overlapped* overlap, DWORD num_bytes) { return true; };
 protected:
 	SOCKET listensocket;

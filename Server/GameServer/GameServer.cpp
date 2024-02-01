@@ -3,6 +3,8 @@
 #include "lOCPServer.h"
 int main()
 {
+    wcout.imbue(locale("korean"));
+    
     lOCPServer server;
     if (server.Init())
     {

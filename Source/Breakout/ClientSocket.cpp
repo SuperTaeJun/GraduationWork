@@ -71,6 +71,7 @@ void ClientSocket::Send_Login_Info(char* id, char* pw)
 	//CS_LOGIN_PACKET packet;
 	CS_LOGIN_PACKET packet;
 	packet.size = sizeof(packet);
+	packet.type = SC_LOGIN_OK;
 	strcpy(packet.id, id);
 	strcpy(packet.pw, pw);
 
@@ -87,7 +88,12 @@ uint32 ClientSocket::Run()
 {
 	FPlatformProcess::Sleep(0.03);
 	// °ÔÀÓ¸ðµå¸¦ °¡Á®¿È
-
+	/*while(true)
+		RecvPacket();*/
+	while (StopTaskCounter.GetValue() == 0)
+	{
+		RecvPacket();
+	}
 	return 0;
 }
 void ClientSocket::Stop()
@@ -128,6 +134,9 @@ void ClientSocket::RecvPacket()
 	int ret = WSARecv(ServerSocket, &_recv_over._wsa_buf, 1, 0, &recv_flag, &_recv_over._wsa_over, NULL);
 	if (SOCKET_ERROR == ret) {
 		int error_num = WSAGetLastError();
+	}
+	if (ret > 0) {
+		UE_LOG(LogClass, Warning, TEXT("recv µÊ "));
 	}
 }
 

@@ -59,16 +59,7 @@ void lOCPServer::Start()
 		overlap->wsabuf.buf = overlap->recvBuffer;
 		flags = 0;
 		::CreateIoCompletionPort((HANDLE)clientsocket, iocpHandle, (DWORD)overlap, 0);
-
-		result = WSARecv(
-			overlap->socket,
-			&overlap->wsabuf,
-			1,
-			&recvBytes,
-			&flags,
-			&(overlap->overlapped),
-			NULL
-		);
+		RecvPacket(overlap);
 	}
 
 }
@@ -98,48 +89,54 @@ void lOCPServer::WorkerThread()
 	// Completion Key를 받을 포인터 변수
 	Overlapped* pCompletionKey;
 	// I/O 작업을 위해 요청한 Overlapped 구조체를 받을 포인터    
-	Overlapped* overlap; 
+	Overlapped* overlap;
 	DWORD   dwFlags = 0;
 
 	while (true) {
-		/*
-		* 이 함수로 인해 쓰레드들은 WaitingThread Queue 에 대기상태로 들어가게 됨
-		* 완료된 Overlapped I/O 작업이 발생하면 IOCP Queue 에서 완료된 작업을 가져와
-		* 뒷처리를 함
-		*/
-		BOOL bResult = GetQueuedCompletionStatus(iocpHandle,
-			&recvBytes,                // 실제로 전송된 바이트
-			(PULONG_PTR)&pCompletionKey,    // completion key
-			(LPOVERLAPPED*)&overlap,            // overlapped I/O 객체
-			INFINITE                // 대기할 시간
-		);
+		bool bResult = GetQueuedCompletionStatus(iocpHandle, &recvBytes, (PULONG_PTR)&pCompletionKey, (LPOVERLAPPED*)&overlap, INFINITE);
+
 		if (recvBytes == 0)
-			cout << "??" << endl;
+			cout << "[INFO] 소켓(" << overlap->socket << ")로부터 0 바이트 수신" << endl;
 
 		if (recvBytes > 0) {
 			cout << "[INFO] 소켓(" << overlap->socket << ")로부터 데이터 수신: " << overlap->wsabuf.buf << endl;
 
-			// todo
+			//if (recvBytes >= sizeof(CS_LOGIN_PACKET)) {
+			CS_LOGIN_PACKET* loginPacket = reinterpret_cast<CS_LOGIN_PACKET*>(overlap->wsabuf.buf);
 
-			// 추가 데이터를 수신하기 위해 다시 WSARecv 작업을 시작
-			overlap->recvBytes = 0;
-			DWORD flags = 0;
-			int nResult = WSARecv(
+			// loginPacket 처리 (아이디, 비밀번호 확인 등)
+
+			SC_LOGIN_BACK loginOkPacket;
+			loginOkPacket.size = sizeof(SC_LOGIN_BACK);
+			loginOkPacket.type = 1;  // SC_LOGIN_OK 타입
+			loginOkPacket.cl_id = 1; // 세션 아이디 (임의의 값)
+			loginOkPacket.x = 0.0f;   // 좌표 (임의의 값)
+			loginOkPacket.y = 0.0f;   // 좌표 (임의의 값)
+			loginOkPacket.z = 0.0f;   // 좌표 (임의의 값)
+			strncpy_s(loginOkPacket.id, MAX_INFO_SIZE, loginPacket->id, MAX_INFO_SIZE);
+			strncpy_s(loginOkPacket.pw, MAX_INFO_SIZE, loginPacket->pw, MAX_INFO_SIZE);
+			cout << "login info : " << loginOkPacket.id << ", pw:" << loginOkPacket.pw << endl;
+
+			// 패킷을 클라이언트에게 전송
+			/*DWORD sendBytes;
+			if (WSASend(
 				overlap->socket,
-				&overlap->wsabuf,
+				&(overlap->wsabuf),
 				1,
-				&recvBytes,
-				&flags,
+				&sendBytes,
+				0,
 				&(overlap->overlapped),
 				NULL
-			);
-
-			if (nResult == SOCKET_ERROR && WSAGetLastError() != WSA_IO_PENDING) {
-				cout << "[ERROR] WSARecv 실패: " << WSAGetLastError() << endl;
+			) == SOCKET_ERROR && WSAGetLastError() != WSA_IO_PENDING) {
+				cout << "[ERROR] WSASend 실패: " << WSAGetLastError() << endl;
 				closesocket(overlap->socket);
 				delete overlap;
 				continue;
-			}
+			}*/
+
+			// 다음 패킷 수신 작업 시작
+			RecvPacket(overlap);
+			//}
 		}
 		else {
 			// 0 바이트를 받음 - 연결이 닫힐 수 있으므로 이에 대한 처리를 수행
@@ -147,72 +144,31 @@ void lOCPServer::WorkerThread()
 			closesocket(overlap->socket);
 			delete overlap;
 		}
-		// todo
 	}
 
 }
 
-//void lOCPServer::WorkerThread()
-//{
-//	// ...
-//	DWORD   recvBytes;
-//	DWORD   sendBytes;
-//	Overlapped* completionKey;
-//	Overlapped* overlapped;
-//	while (true)
-//	{
-//		BOOL ret = ::GetQueuedCompletionStatus(iocpHandle, &recvBytes,
-//			(ULONG_PTR*)&completionKey, (LPOVERLAPPED*)&overlapped, INFINITE);
-//		if (ret == FALSE)
-//			continue;
-//
-//		if (recvBytes == 0)
-//			cout << "받은거 없음" << endl;
-//		if (recvBytes > 0)
-//		{
-//			cout << "[INFO] 소켓(" << overlapped->socket << ")로부터 데이터 수신: " << overlapped->wsabuf.buf << endl;
-//
-//			// todo
-//
-//			// 추가 데이터를 수신하기 위해 다시 WSARecv 작업을 시작
-//			overlapped->recvBytes = 0;
-//			DWORD flags = 0;
-//			int result = WSARecv(
-//				overlapped->socket,
-//				&overlapped->wsabuf,
-//				1,
-//				&recvBytes,
-//				&flags,
-//				&(overlapped->overlapped),
-//				NULL
-//			);
-//		}
-//	}
-//}
-//void lOCPServer::WorkerThread()
-//{
-//	while (true)
-//	{
-//		DWORD bytesTransferred = 0;
-//		//Session* session = nullptr;
-//		Overlapped* overlappedEx = nullptr;
-//
-//		BOOL ret = ::GetQueuedCompletionStatus(iocpHandle, &bytesTransferred,
-//			(ULONG_PTR*)&overlappedEx, (LPOVERLAPPED*)&overlappedEx, INFINITE);
-//
-//		if (ret == FALSE || bytesTransferred == 0)
-//		{
-//			// TODO : 연결 끊김
-//			continue;
-//		}
-//		overlappedEx->type == IO_type::IO_RECV;
-//		cout << "Recv Data IOCP = " << bytesTransferred << endl;
-//		WSABUF wsaBuf;
-//		wsaBuf.buf = overlappedEx->recvBuffer;
-//		wsaBuf.len = 1000;
-//
-//		DWORD recvLen = 0;
-//		DWORD flags = 0;
-//		::WSARecv(overlappedEx->socket, &wsaBuf, 1, &recvLen, &flags, &overlappedEx->overlapped, NULL);
-//	}
-//}
+void lOCPServer::RecvPacket(Overlapped* overlap)
+{
+	DWORD recv_flag = 0;
+	ZeroMemory(&(overlap->overlapped), sizeof(overlap->overlapped));
+	overlap->wsabuf.buf = reinterpret_cast<char*>(overlap->_net_buf + overlap->prev_size);
+	overlap->wsabuf.len = sizeof(overlap->_net_buf) - overlap->prev_size;
+
+	int ret = WSARecv(
+		overlap->socket,
+		&(overlap->wsabuf),
+		1,
+		0,
+		&recv_flag,
+		&(overlap->overlapped),
+		NULL
+	);
+
+	if (SOCKET_ERROR == ret) {
+		int error_num = WSAGetLastError();
+		// 에러 처리
+	}
+}
+
+

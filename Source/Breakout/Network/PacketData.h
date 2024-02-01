@@ -15,10 +15,8 @@
 #define MAX_CLIENTS		100
 #define MAX_INFO_SIZE   20
 
-//패킷 첫바이트 사이즈 + 어떤 패킷인지
-//const char CS_LOGIN_PACKET = 1;
-//const char SC_LOGIN_BACK = 1;
-
+const char CS_LOGIN = 1;
+const char SC_LOGIN_OK = 1;
 
 #pragma pack (push, 1)
 struct CS_LOGIN_PACKET
@@ -37,7 +35,8 @@ struct SC_LOGIN_BACK {
 	float x, y, z;
 	int cl_id;
 };
-#pragma pack(pop) 
+#pragma pack(pop)
+
 
 /**
  * 
