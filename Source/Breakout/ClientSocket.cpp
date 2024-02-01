@@ -71,6 +71,7 @@ void ClientSocket::Send_Login_Info(char* id, char* pw)
 	//CS_LOGIN_PACKET packet;
 	CS_LOGIN_PACKET packet;
 	packet.size = sizeof(packet);
+	packet.type = SC_LOGIN_OK;
 	strcpy(packet.id, id);
 	strcpy(packet.pw, pw);
 
