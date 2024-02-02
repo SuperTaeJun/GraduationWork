@@ -1,11 +1,14 @@
-// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "GameProp/PropBase.h"
 #include "ProceduralMeshComponent.h"
 #include "Components/SphereComponent.h"
 #include "Character/CharacterBase.h"
-// Sets default values
+
+//전역변수
+TMap<FMeshData*, TArray<FMeshData>> CachedSections = {};
+TMap<FName, FMeshData> MeshDatas = {};
+
 APropBase::APropBase()
 {
 	PrimaryActorTick.bCanEverTick = true;
@@ -19,26 +22,63 @@ APropBase::APropBase()
 	ProceduralMesh->SetupAttachment(RootComponent);
 
 
-	//메쉬 데이터에 스테틱 메쉬 데이터 넣기
+	////메쉬 데이터에 스테틱 메쉬 데이터 넣기
 	if (Mesh1)
 	{
 		UE_LOG(LogTemp, Log, TEXT("HAHAHAHA"));
 		GetMeshDataFromStaticMesh(Mesh1, &Data1, 0, 0, true);
+		//ProceduralMeshFromMeshData(ProceduralMesh, Data1, 0, false, false);
+		TArray<FProcMeshTangent> Tangents = {};
+		ProceduralMesh->CreateMeshSection_LinearColor(0, Data1.Verts, Data1.Tris, Data1.Normals, Data1.UVs, Data1.Colors, Tangents, false);
 	}
-	//ProceduralMesh->CreateMeshSection(0, Data1.Verts, Data1.Tris, Data1.Normals, Data1.UVs, FColor::Red, , false);
-	// 
-	//GetMeshDataFromStaticMesh(Mesh1, &Data1, 0, 0, true);
-	//UnifyTri(Data1);
-	//GetMeshDataFromStaticMesh(Mesh2, &Data2, 0, 0, true);
-	//UnifyTri(Data2);
 
-	//FTransform Transform;
-	//Transform.SetRotation(FQuat(FRotator(45.f, 45.f, 45.f)));
-	//Transform.SetScale3D(FVector(1.f, 1.f, 1.f));
-	//TransformMeshData(Data1, Transform, FVector(0.f, 0.f, 0.f));
+	Vertices.Add(FVector(0, -100, 0)); //lower left - 0
+	Vertices.Add(FVector(0, -100, 100)); //upper left - 1
+	Vertices.Add(FVector(0, 100, 0)); //lower right - 2 
+	Vertices.Add(FVector(0, 100, 100)); //upper right - 3
 
-	//ProceduralMesh->CreateMeshSection(0, Data1.Verts, Data1.Tris, Data1.Normals, Data1.UVs, TArray<FColor>(), TArray<FProcMeshTangent>(), true);
+	Vertices.Add(FVector(100, -100, 0)); //lower front left - 4
+	Vertices.Add(FVector(100, -100, 100)); //upper front left - 5
 
+	Vertices.Add(FVector(100, 100, 100)); //upper front right - 6
+	Vertices.Add(FVector(100, 100, 0)); //lower front right - 7
+
+	//Back face of cube
+	AddTriangle(0, 2, 3); //normal face
+	//AddTriangle(3, 2, 0); // flipped face
+	AddTriangle(3, 1, 0);
+
+	//Left face of cube
+	AddTriangle(0, 1, 4);
+	AddTriangle(4, 1, 5);
+
+	//Front face of cube
+	AddTriangle(4, 5, 7);
+	AddTriangle(7, 5, 6);
+
+	//Right face of cube
+	AddTriangle(7, 6, 3);
+	AddTriangle(3, 2, 7);
+
+	//Top face
+	AddTriangle(1, 3, 5);
+	AddTriangle(6, 5, 3);
+
+	//bottom face
+	AddTriangle(2, 0, 4);
+	AddTriangle(4, 7, 2);
+
+	TArray<FLinearColor> VertexColors;
+	VertexColors.Add(FLinearColor(0.f, 0.f, 1.f));
+	VertexColors.Add(FLinearColor(1.f, 0.f, 0.f));
+	VertexColors.Add(FLinearColor(1.f, 0.f, 0.f));
+	VertexColors.Add(FLinearColor(0.f, 1.f, 0.f));
+	VertexColors.Add(FLinearColor(0.5f, 1.f, 0.5f));
+	VertexColors.Add(FLinearColor(0.f, 1.f, 0.f));
+	VertexColors.Add(FLinearColor(1.f, 1.f, 0.f));
+	VertexColors.Add(FLinearColor(0.f, 1.f, 1.f));
+
+	ProceduralMesh->CreateMeshSection_LinearColor(0, Vertices, Triangles, TArray<FVector>(), TArray<FVector2D>(), VertexColors, TArray<FProcMeshTangent>(), true);
 }
 
 // Called when the game starts or when spawned
@@ -204,6 +244,36 @@ void APropBase::OnSphereEndOverlap(UPrimitiveComponent* OverlappedComponent, AAc
 	//	CharacterBase->OverlappingEscapeTool = nullptr;
 
 	//}
+}
+
+void APropBase::AddTriangle(int32 V1, int32 V2, int32 V3)
+{
+	Triangles.Add(V1);
+	Triangles.Add(V2);
+	Triangles.Add(V3);
+}
+
+void APropBase::ProceduralMeshFromMeshData(UProceduralMeshComponent* Mesh, FMeshData& Data, int SectionIndex, bool Collision, bool CalcTangents)
+{
+	if (!Mesh) return;
+
+	TArray<FMeshData> ConvertOutput = ConvertFromSectionedMeshData(Data);
+	CachedSections.Emplace(&Data, ConvertOutput);
+	TArray<FProcMeshTangent> Tangents = {};
+	for (int x = 0; x < ConvertOutput.Num(); ++x)
+	{
+		FMeshData& r = ConvertOutput[x];
+		Mesh->CreateMeshSection_LinearColor(SectionIndex + x, r.Verts, r.Tris, r.Normals, r.UVs, r.Colors, Tangents, Collision);
+		return;
+	}
+	Mesh->CreateMeshSection_LinearColor(SectionIndex, Data.Verts, Data.Tris, Data.Normals, Data.UVs, Data.Colors, Tangents, Collision);
+}
+
+TArray<FMeshData> APropBase::ConvertFromSectionedMeshData(FMeshData& Data)
+{
+
+
+	return TArray<FMeshData>();
 }
 
 
