@@ -13,13 +13,13 @@ void UBOGameInstance::ConnectToServer()
 	{
 		m_Socket->StartListen();
 		UE_LOG(LogClass, Warning, TEXT("IOCP Server connect success!"));
-	
+		FString id = "testuser";
+		FString pw = "1234";
+		m_Socket->Send_Login_Info(TCHAR_TO_UTF8(*id), TCHAR_TO_UTF8(*pw));
 	}
 	else
 	{
 		UE_LOG(LogClass, Warning, TEXT("IOCP Server connect FAIL!"));
 	}
-	FString id = "testuser";
-	FString pw = "1234";
-	m_Socket->Send_Login_Info(TCHAR_TO_UTF8(*id), TCHAR_TO_UTF8(*pw));
+
 }
