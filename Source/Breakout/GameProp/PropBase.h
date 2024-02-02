@@ -109,7 +109,6 @@ struct FMeshData
 
 };
 
-
 UCLASS()
 class BREAKOUT_API APropBase : public AActor
 {
@@ -145,6 +144,9 @@ protected:
 		int32 OtherBodyIndex);
 
 private:
+	TArray<FVector> Vertices;
+	TArray<int32> Triangles;
+	void AddTriangle(int32 V1, int32 V2, int32 V3);
 
 	UPROPERTY(VisibleAnywhere, Category = "Mesh")
 	TObjectPtr<class UProceduralMeshComponent> ProceduralMesh;
@@ -161,4 +163,7 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Mesh")
 	TObjectPtr<UStaticMesh> Mesh2;
 
+
+	void ProceduralMeshFromMeshData(UProceduralMeshComponent* Mesh, FMeshData& Data, int SectionIndex, bool Collision, bool CalcTangents);
+	TArray<FMeshData> ConvertFromSectionedMeshData(FMeshData& Data);
 };
