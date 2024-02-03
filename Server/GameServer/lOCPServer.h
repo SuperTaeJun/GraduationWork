@@ -10,7 +10,8 @@ public:
 	void Start();
 	bool CreateWorkerThreads();
 	void WorkerThread();
-	void RecvPacket(Overlapped* overlap);
+	void RecvPacket(Overlapped* overlap); 
+	void SendPacket(Overlapped* overlap, void* packet);
 	virtual bool OnRecv(int s_id, Overlapped* overlap, DWORD num_bytes) { return true; };
 protected:
 	SOCKET listensocket;

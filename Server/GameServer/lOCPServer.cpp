@@ -51,7 +51,7 @@ void lOCPServer::Start()
 			cout << "accept 실패" << endl;
 			return;
 		}
-		overlap = new Overlapped();
+		Overlapped* overlap = new Overlapped();
 		overlap->socket = clientsocket;
 		overlap->recvBytes = 0;
 		overlap->sendBytes = 0;
@@ -59,9 +59,10 @@ void lOCPServer::Start()
 		overlap->wsabuf.buf = overlap->recvBuffer;
 		flags = 0;
 		::CreateIoCompletionPort((HANDLE)clientsocket, iocpHandle, (DWORD)overlap, 0);
+
+		// 클라이언트에게서 첫 번째 패킷을 받기 위해 RecvPacket 호출
 		RecvPacket(overlap);
 	}
-
 }
 
 bool lOCPServer::CreateWorkerThreads()
@@ -101,7 +102,6 @@ void lOCPServer::WorkerThread()
 		if (recvBytes > 0) {
 			cout << "[INFO] 소켓(" << overlap->socket << ")로부터 데이터 수신: " << overlap->wsabuf.buf << endl;
 
-			//if (recvBytes >= sizeof(CS_LOGIN_PACKET)) {
 			CS_LOGIN_PACKET* loginPacket = reinterpret_cast<CS_LOGIN_PACKET*>(overlap->wsabuf.buf);
 
 			// loginPacket 처리 (아이디, 비밀번호 확인 등)
@@ -118,25 +118,10 @@ void lOCPServer::WorkerThread()
 			cout << "login info : " << loginOkPacket.id << ", pw:" << loginOkPacket.pw << endl;
 
 			// 패킷을 클라이언트에게 전송
-			/*DWORD sendBytes;
-			if (WSASend(
-				overlap->socket,
-				&(overlap->wsabuf),
-				1,
-				&sendBytes,
-				0,
-				&(overlap->overlapped),
-				NULL
-			) == SOCKET_ERROR && WSAGetLastError() != WSA_IO_PENDING) {
-				cout << "[ERROR] WSASend 실패: " << WSAGetLastError() << endl;
-				closesocket(overlap->socket);
-				delete overlap;
-				continue;
-			}*/
-
-			// 다음 패킷 수신 작업 시작
-			RecvPacket(overlap);
-			//}
+			SendPacket(overlap, &loginOkPacket);
+			break;
+			//// 다음 패킷 수신 작업 시작
+			//RecvPacket(overlap);
 		}
 		else {
 			// 0 바이트를 받음 - 연결이 닫힐 수 있으므로 이에 대한 처리를 수행
@@ -169,6 +154,29 @@ void lOCPServer::RecvPacket(Overlapped* overlap)
 		int error_num = WSAGetLastError();
 		// 에러 처리
 	}
+}
+
+void lOCPServer::SendPacket(Overlapped* overlap, void* packet)
+{
+	DWORD sendBytes;
+	int ret = WSASend(
+		overlap->socket,
+		&(overlap->wsabuf),
+		1,
+		&sendBytes,
+		0,
+		&(overlap->overlapped),
+		NULL
+	);
+
+	if (ret == SOCKET_ERROR && WSAGetLastError() != WSA_IO_PENDING) {
+		cout << "[ERROR] WSASend 실패: " << WSAGetLastError() << endl;
+		closesocket(overlap->socket);
+		delete overlap;
+		// 에러 처리
+		// ...
+	}
+	cout << "send ㄱ?" << endl;
 }
 
 
