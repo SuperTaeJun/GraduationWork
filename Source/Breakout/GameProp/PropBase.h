@@ -71,9 +71,7 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
-	//void UnifyTri(FMeshData& Data);
-	//void SplitVertexes(FMeshData& Data);
-	//void TransformMeshData(FMeshData& Data, FTransform Transform, FVector Pivot);
+	void UnifyTri(FMeshData& Data);
 
 
 	UFUNCTION()
@@ -96,10 +94,6 @@ protected:
 	);
 
 private:
-	TArray<FVector> Vertices;
-	TArray<int32> Triangles;
-	void AddTriangle(int32 V1, int32 V2, int32 V3);
-
 	UPROPERTY(VisibleAnywhere, Category = "Mesh")
 	TObjectPtr<class UProceduralMeshComponent> ProceduralMesh;
 
@@ -108,12 +102,14 @@ private:
 
 	FMeshData Data1;
 	FMeshData Data2;
+	FMeshData InterpData;
 
-	//UPROPERTY(EditAnywhere, Category = "Mesh")
-	//TObjectPtr<UStaticMesh> Mesh1;
-	//UPROPERTY(EditAnywhere, Category = "Mesh")
-	//TObjectPtr<UStaticMesh> Mesh2;
+	float Time = 0.f;
+	float MorphingSpeed = 0.3f;
+	float Cur = 0.f;
+	double DegSin(double A);
 
+	void InterpMeshData(FMeshData& Data, FMeshData& DataA,FMeshData& DataB, float Alpha, bool Clamp);
 	void GetMeshDataFromStaticMesh(UStaticMesh* Mesh, FMeshData& Data, int32 LODIndex, int32 SectionIndex, bool GetAllSections);
 
 	void ProceduralMeshFromMeshData(UProceduralMeshComponent* Mesh, FMeshData& Data, int SectionIndex, bool Collision, bool CalcTangents);

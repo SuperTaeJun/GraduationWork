@@ -22,9 +22,14 @@ APropBase::APropBase()
 	ProceduralMesh->SetupAttachment(RootComponent);
 	
 	//메쉬 에셋 가져오기
-	ConstructorHelpers::FObjectFinder<UStaticMesh> SMMesh1(TEXT("/Engine/BasicShapes/Cone.Cone"));
+	ConstructorHelpers::FObjectFinder<UStaticMesh> SMMesh1(TEXT("/Game/FPS_Weapon_Bundle/Weapons/Meshes/KA74U/SM_KA74U_X.SM_KA74U_X"));
+
+	ConstructorHelpers::FObjectFinder<UStaticMesh> SMMesh2(TEXT("/Game/FPS_Weapon_Bundle/Weapons/Meshes/SMG11/SM_SMG11_X.SM_SMG11_X"));
+
 	////메쉬 데이터에 스테틱 메쉬 데이터 넣기
 	GetMeshDataFromStaticMesh(SMMesh1.Object, Data1, 0, 0, true);
+	GetMeshDataFromStaticMesh(SMMesh2.Object, Data2, 0, 0, true);
+
 	TArray<FProcMeshTangent> Tangents = {};
 	ProceduralMesh->CreateMeshSection_LinearColor
 	(
@@ -53,6 +58,56 @@ void APropBase::BeginPlay()
 	}
 
 
+}
+
+void APropBase::InterpMeshData(FMeshData& Data, FMeshData& DataA, FMeshData& DataB, float Alpha, bool Clamp)
+{
+	int x = 0, l = Data.Verts.Num(), al = DataA.Verts.Num(), bl = DataB.Verts.Num();
+	if (l <= 0 || al <= 0 || bl <= 0)
+	{
+		return; 
+	}
+	if (Clamp) 
+	{
+		if (Alpha <= 0.0f) 
+		{
+			if (Data.Verts[0] != DataA.Verts[0]) { Data = DataA; }
+			return;
+		}
+		if (Alpha >= 1.0f) 
+		{
+			if (Data.Verts[0] != DataB.Verts[0]) { Data = DataB; }
+			return;
+		}
+	}
+	int ml = l = std::min(l, al);
+	ml = std::min(ml, bl);
+	const bool hasNormals = (Data.Normals.Num() >= ml && DataA.Normals.Num() >= ml && DataB.Normals.Num() >= ml);
+	const bool hasUVs = (Data.UVs.Num() >= ml && DataA.UVs.Num() >= ml && DataB.UVs.Num() >= ml);
+	const bool hasColors = (Data.Colors.Num() >= ml && DataA.Colors.Num() >= ml && DataB.Colors.Num() >= ml);
+	int y = 0;
+	for (x = 0; x < l; ++x) 
+	{
+		y = x;
+		if (bl < l && y >= bl) 
+		{
+			y = (y % bl) / 3; 
+		}
+		Data.Verts[x] = FMath::Lerp(DataA.Verts[x], DataB.Verts[y], Alpha);
+		if (hasNormals) 
+		{
+			Data.Normals[x] = FMath::Lerp(DataA.Normals[x], DataB.Normals[y], Alpha);
+			Data.Normals[x].Normalize();
+		}
+		if (hasColors) 
+		{
+			Data.UVs[x] = FMath::Lerp(DataA.UVs[x], DataB.UVs[y], Alpha);
+		}
+		if (hasColors) 
+		{
+			Data.Colors[x] = FMath::Lerp(DataA.Colors[x], DataB.Colors[y], Alpha);
+		}
+	}
 }
 
 void APropBase::GetMeshDataFromStaticMesh(UStaticMesh* Mesh, FMeshData& Data, int32 LODIndex, int32 SectionIndex, bool GetAllSections)
@@ -118,78 +173,6 @@ void APropBase::GetMeshDataFromStaticMesh(UStaticMesh* Mesh, FMeshData& Data, in
 	}
 }
 
-//void APropBase::UnifyTri(FMeshData& Data)
-//{
-//	SplitVertexes(Data);
-//	const TArray<FVector> oldverts = Data.Verts;
-//	const TArray<FVector> oldnorm = Data.Normals;
-//	const TArray<FVector2D> olduvs = Data.UVs;
-//	const TArray<FLinearColor> oldcolors = Data.Colors;
-//	const TArray<int> oldtris = Data.Tris;
-//	int vl = Data.Verts.Num();
-//	bool hasNormals = (Data.Normals.Num() >= vl), hasUVs = (Data.UVs.Num() >= vl), hasColors = (Data.Colors.Num() >= vl);
-//	Data.Verts = {};
-//	Data.Tris = {};
-//	Data.Normals = {};
-//	Data.UVs = {};
-//	Data.Colors = {};
-//	int x = 0, l = oldtris.Num();
-//	for (x = 0; x < l; ++x) {
-//		Data.Verts.Emplace(oldverts[oldtris[x]]);
-//		if (hasNormals) { Data.Normals.Emplace(oldnorm[oldtris[x]]); }
-//		if (hasUVs) { Data.UVs.Emplace(olduvs[oldtris[x]]); }
-//		if (hasColors) { Data.Colors.Emplace(oldcolors[oldtris[x]]); }
-//		Data.Tris.Emplace(x);
-//	}
-//}
-//
-//void APropBase::SplitVertexes(FMeshData& Data)
-//{
-//	TMap<int, int> Visited = {};
-//	int vl = Data.Verts.Num();
-//	FVector vec; FVector2D uv; FLinearColor col; int sect; 
-//	const bool hasNormals = Data.Normals.Num() >= vl, hasUVs = Data.UVs.Num() >= vl, hasColors = Data.Colors.Num() >= vl, hasSects = Data.Sects.Num() >= vl;
-//	int x = 0, l = Data.Tris.Num();
-//	for (x = 0; x < l; ++x) {
-//		if (!Visited.Contains(Data.Tris[x])) {
-//			Visited.Emplace(Data.Tris[x], 1);
-//		}
-//		else {
-//			vec = Data.Verts[Data.Tris[x]]; Data.Verts.Emplace(vec);
-//			if (hasNormals) { vec = Data.Normals[Data.Tris[x]]; Data.Normals.Emplace(vec); }
-//			if (hasUVs) { uv = Data.UVs[Data.Tris[x]]; Data.UVs.Emplace(uv); }
-//			if (hasColors) { col = Data.Colors[Data.Tris[x]]; Data.Colors.Emplace(col); }
-//			if (hasSects) { sect = Data.Sects[Data.Tris[x]]; Data.Sects.Emplace(sect); }
-//			Data.Tris[x] = vl;
-//			++vl;
-//		}
-//	}
-//}
-//
-//void APropBase::TransformMeshData(FMeshData& Data, FTransform Transform, FVector Pivot)
-//{
-//	const FVector ZeroVector = FVector(0.0f, 0.0f, 0.0f);
-//	FMeshData newdata;
-//	FMeshData* pres = &newdata;
-//	if (InPlace) { pres = &Data; }
-//	else { newdata = Data; }
-//	FMeshData& res = *pres;
-//	const FVector loc = Transform.GetLocation();
-//	const FRotator rot = Transform.Rotator();
-//	const FVector scale = Transform.GetScale3D();
-//	bool skiprot = (rot == FRotator(0.0f, 0.0f, 0.0f));
-//	bool skipscale = (scale == FVector(1.0f, 1.0f, 1.0f));
-//	bool skippiv = (Pivot == ZeroVector);
-//	int x = 0, l = res.Verts.Num(), nl = res.Normals.Num();
-//	bool hasNormals = (nl >= l);
-//	for (x = 0; x < l; ++x) {
-//		FVector& v = res.Verts[x];
-//		if (skippiv) { if (skipscale) { if (skiprot) { v += loc; } else { v = rot.RotateVector(v) + loc; } } else { v = rot.RotateVector(v * scale) + loc; } }
-//		else { if (skipscale) { v = rot.RotateVector((v - Pivot)) + Pivot + loc; } else { v = rot.RotateVector(((v - Pivot) * scale)) + Pivot + loc; } }
-//		if (hasNormals) { if (!skiprot) { FVector& n = res.Normals[x]; n = rot.RotateVector(n); } }
-//	}
-//}
-
 void APropBase::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	//ACharacterBase* CharacterBase = Cast<ACharacterBase>(OtherActor);
@@ -212,11 +195,9 @@ void APropBase::OnSphereEndOverlap(UPrimitiveComponent* OverlappedComponent, AAc
 	//}
 }
 
-void APropBase::AddTriangle(int32 V1, int32 V2, int32 V3)
+double APropBase::DegSin(double A)
 {
-	Triangles.Add(V1);
-	Triangles.Add(V2);
-	Triangles.Add(V3);
+	return FMath::Sin(3.141592/ (180.0) * A);
 }
 
 void APropBase::ProceduralMeshFromMeshData(UProceduralMeshComponent* Mesh, FMeshData& Data, int SectionIndex, bool Collision, bool CalcTangents)
@@ -244,13 +225,19 @@ TArray<FMeshData> APropBase::ConvertFromSectionedMeshData(FMeshData& Data)
 
 
 
-// Called every frame
 void APropBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	//if (Mesh->bHiddenInGame == true)
-	//	Destroy();
+	Cur = FMath::Clamp
+	(
+		(((DegSin(Cur * 180.f) * 1.1) + 1.0) / 2.f),
+		0.f,
+		1.f
+	);
+
+	InterpMeshData(InterpData, Data1, Data2, Cur, false);
+	ProceduralMesh->UpdateMeshSection_LinearColor(0, InterpData.Verts, InterpData.Normals, InterpData.UVs, InterpData.Colors, TArray<FProcMeshTangent>());
 }
 
 void APropBase::SetHideMesh()
