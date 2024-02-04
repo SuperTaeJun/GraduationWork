@@ -28,7 +28,9 @@ APropBase::APropBase()
 
 	////메쉬 데이터에 스테틱 메쉬 데이터 넣기
 	GetMeshDataFromStaticMesh(SMMesh1.Object, Data1, 0, 0, true);
+	//UnifyTri(Data1);
 	GetMeshDataFromStaticMesh(SMMesh2.Object, Data2, 0, 0, true);
+	//UnifyTri(Data2);
 
 	TArray<FProcMeshTangent> Tangents = {};
 	ProceduralMesh->CreateMeshSection_LinearColor
@@ -57,6 +59,72 @@ void APropBase::BeginPlay()
 		AreaSphere->OnComponentEndOverlap.AddDynamic(this, &APropBase::OnSphereEndOverlap);
 	}
 
+
+}
+
+void APropBase::UnifyTri(FMeshData& Data)
+{
+	TMap<int, int> Visited = {};
+	int vl = Data.Verts.Num();
+	FVector vec; 
+	FVector2D uv; 
+	FLinearColor col; 
+	int sect; 
+	bool hasNormals = Data.Normals.Num() >= vl;
+	bool	hasUVs = Data.UVs.Num() >= vl;
+	bool	hasColors = Data.Colors.Num() >= vl;
+	bool	hasSects = Data.Sects.Num() >= vl;
+	int x = 0, l = Data.Tris.Num();
+
+	for (x = 0; x < l; ++x) {
+		if (!Visited.Contains(Data.Tris[x])) 
+		{
+			Visited.Emplace(Data.Tris[x], 1);
+		}
+		else 
+		{
+			vec = Data.Verts[Data.Tris[x]]; 
+			Data.Verts.Emplace(vec);
+			if (hasNormals) 
+				 vec = Data.Normals[Data.Tris[x]]; Data.Normals.Emplace(vec); 
+			if (hasUVs)
+				 uv = Data.UVs[Data.Tris[x]]; Data.UVs.Emplace(uv); 
+			if (hasColors) 
+				 col = Data.Colors[Data.Tris[x]]; Data.Colors.Emplace(col); 
+			if (hasSects)
+				 sect = Data.Sects[Data.Tris[x]]; Data.Sects.Emplace(sect); 
+			Data.Tris[x] = vl;
+			++vl;
+		}
+	}
+
+	//기존 정보를 저장하고 다시 트라이앵글 기준으로 정렬
+	const TArray<FVector> oldverts = Data.Verts;
+	const TArray<FVector> oldnorm = Data.Normals;
+	const TArray<FVector2D> olduvs = Data.UVs;
+	const TArray<FLinearColor> oldcolors = Data.Colors;
+	const TArray<int> oldtris = Data.Tris;
+	int vl = Data.Verts.Num();
+	bool hasNormals = (Data.Normals.Num() >= vl);
+	bool	hasUVs = (Data.UVs.Num() >= vl);
+	bool	hasColors = (Data.Colors.Num() >= vl);
+	Data.Verts = {};
+	Data.Tris = {};
+	Data.Normals = {};
+	Data.UVs = {};
+	Data.Colors = {};
+	int x = 0, l = oldtris.Num();
+	for (x = 0; x < l; ++x) 
+	{
+		Data.Verts.Emplace(oldverts[oldtris[x]]);
+		if (hasNormals) 
+			Data.Normals.Emplace(oldnorm[oldtris[x]]);
+		if (hasUVs) 
+			 Data.UVs.Emplace(olduvs[oldtris[x]]); 
+		if (hasColors)
+			 Data.Colors.Emplace(oldcolors[oldtris[x]]); 
+		Data.Tris.Emplace(x);
+	}
 
 }
 
