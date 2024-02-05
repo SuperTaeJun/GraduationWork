@@ -76,8 +76,6 @@ bool lOCPServer::CreateWorkerThreads()
 		workerthread.emplace_back([this]() {WorkerThread(); });
 
 	}
-
-
 	std::cout << "Created " << WorkerCount << " worker threads." << std::endl;
 	return true;
 }
@@ -177,6 +175,7 @@ void lOCPServer::SendPacket(Overlapped* overlap, void* packet)
 		// ...
 	}
 	cout << "send ¤¡?" << endl;
+	//cout << overlap->wsabuf.buf << "dlrj";
 }
 
 
