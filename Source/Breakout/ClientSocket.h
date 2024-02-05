@@ -121,7 +121,7 @@ public:
 	bool Connect(const char* s_IP, int port);
 	void CloseSocket();
 	
-	void PacketProcess(const char* ptr);
+	void PacketProcess(unsigned char* ptr);
 	void Send_Login_Info(char* id, char* pw);
 	
 	virtual bool Init();
@@ -139,6 +139,7 @@ public:
 		static ClientSocket ins;
 		return &ins;
 	}
+	void SetPlayerController(ACharacterController* CharacterController);
 	HANDLE Iocp;
 	Overlap _recv_over;
 	int      _prev_size = 0;
@@ -147,7 +148,7 @@ public:
 	FRunnableThread* Thread;
 	FThreadSafeCounter StopTaskCounter;
 
-
+	bool login_cond = false;
 private:
-
+	ACharacterController* MyCharacterController;
 };

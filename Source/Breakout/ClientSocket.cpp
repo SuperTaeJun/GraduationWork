@@ -61,8 +61,21 @@ void ClientSocket::CloseSocket()
 	WSACleanup();
 }
 
-void ClientSocket::PacketProcess(const char* ptr)
+void ClientSocket::PacketProcess(unsigned char* ptr)
 {
+	switch (ptr[1])
+	{
+	case SC_LOGIN_OK: {
+		SC_LOGIN_BACK* packet = reinterpret_cast<SC_LOGIN_BACK*>(ptr);
+
+		login_cond = true;
+		//UE_LOG(LogClass, Warning, TEXT("recv login back - id: %s"), ANSI_TO_TCHAR(id), ANSI_TO_TCHAR(pw));
+	
+		break;
+	}
+	default:
+		break;
+	}
 }
 
 void ClientSocket::Send_Login_Info(char* id, char* pw)
@@ -88,10 +101,11 @@ uint32 ClientSocket::Run()
 {
 	FPlatformProcess::Sleep(0.03);
 	// 게임모드를 가져옴
-	/*while(true)
-		RecvPacket();*/
+	RecvPacket();
 	while (StopTaskCounter.GetValue() == 0)
 	{
+		unsigned char* packet_start = _recv_over._net_buf;
+		PacketProcess(packet_start);
 		RecvPacket();
 	}
 	return 0;
@@ -149,5 +163,13 @@ void ClientSocket::SendPacket(void* packet)
 		int error_num = WSAGetLastError();
 		if (ERROR_IO_PENDING != error_num)
 			WSAGetLastError();
+	}
+}
+
+void ClientSocket::SetPlayerController(ACharacterController* CharacterController)
+{
+	if (CharacterController)
+	{
+		MyCharacterController = CharacterController;
 	}
 }
