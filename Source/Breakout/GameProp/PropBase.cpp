@@ -29,8 +29,12 @@ APropBase::APropBase()
 	////메쉬 데이터에 스테틱 메쉬 데이터 넣기
 	GetMeshDataFromStaticMesh(SMMesh1.Object, Data1, 0, 0, true);
 	//UnifyTri(Data1);
+	SetColorData(Data1, FLinearColor::Red);
 	GetMeshDataFromStaticMesh(SMMesh2.Object, Data2, 0, 0, true);
 	//UnifyTri(Data2);
+	SetColorData(Data1, FLinearColor::Red);
+
+	InterpData = Data1;
 
 	TArray<FProcMeshTangent> Tangents = {};
 	ProceduralMesh->CreateMeshSection_LinearColor
@@ -99,21 +103,22 @@ void APropBase::UnifyTri(FMeshData& Data)
 	}
 
 	//기존 정보를 저장하고 다시 트라이앵글 기준으로 정렬
-	const TArray<FVector> oldverts = Data.Verts;
-	const TArray<FVector> oldnorm = Data.Normals;
-	const TArray<FVector2D> olduvs = Data.UVs;
-	const TArray<FLinearColor> oldcolors = Data.Colors;
-	const TArray<int> oldtris = Data.Tris;
-	int vl = Data.Verts.Num();
-	bool hasNormals = (Data.Normals.Num() >= vl);
-	bool	hasUVs = (Data.UVs.Num() >= vl);
-	bool	hasColors = (Data.Colors.Num() >= vl);
+	TArray<FVector> oldverts = Data.Verts;
+	TArray<FVector> oldnorm = Data.Normals;
+	TArray<FVector2D> olduvs = Data.UVs;
+	TArray<FLinearColor> oldcolors = Data.Colors;
+	TArray<int> oldtris = Data.Tris;
+	vl = Data.Verts.Num();
+	hasNormals = (Data.Normals.Num() >= vl);
+	hasUVs = (Data.UVs.Num() >= vl);
+	hasColors = (Data.Colors.Num() >= vl);
 	Data.Verts = {};
 	Data.Tris = {};
 	Data.Normals = {};
 	Data.UVs = {};
 	Data.Colors = {};
-	int x = 0, l = oldtris.Num();
+	x = 0;
+	l = oldtris.Num();
 	for (x = 0; x < l; ++x) 
 	{
 		Data.Verts.Emplace(oldverts[oldtris[x]]);
@@ -241,6 +246,16 @@ void APropBase::GetMeshDataFromStaticMesh(UStaticMesh* Mesh, FMeshData& Data, in
 	}
 }
 
+void APropBase::SetColorData(FMeshData& Data, FLinearColor Color)
+{
+	Data.Colors = {};
+	Data.Colors.SetNumUninitialized(Data.Verts.Num());
+	for (int x = 0; x < Data.Verts.Num(); ++x)
+	{
+		Data.Colors[x] = Color;
+	}
+}
+
 void APropBase::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	//ACharacterBase* CharacterBase = Cast<ACharacterBase>(OtherActor);
@@ -268,22 +283,6 @@ double APropBase::DegSin(double A)
 	return FMath::Sin(3.141592/ (180.0) * A);
 }
 
-void APropBase::ProceduralMeshFromMeshData(UProceduralMeshComponent* Mesh, FMeshData& Data, int SectionIndex, bool Collision, bool CalcTangents)
-{
-	if (!Mesh) return;
-
-	TArray<FMeshData> ConvertOutput = ConvertFromSectionedMeshData(Data);
-	CachedSections.Emplace(&Data, ConvertOutput);
-	TArray<FProcMeshTangent> Tangents = {};
-	for (int x = 0; x < ConvertOutput.Num(); ++x)
-	{
-		FMeshData& r = ConvertOutput[x];
-		Mesh->CreateMeshSection_LinearColor(SectionIndex + x, r.Verts, r.Tris, r.Normals, r.UVs, r.Colors, Tangents, Collision);
-		return;
-	}
-	Mesh->CreateMeshSection_LinearColor(SectionIndex, Data.Verts, Data.Tris, Data.Normals, Data.UVs, Data.Colors, Tangents, Collision);
-}
-
 TArray<FMeshData> APropBase::ConvertFromSectionedMeshData(FMeshData& Data)
 {
 
@@ -299,13 +298,15 @@ void APropBase::Tick(float DeltaTime)
 
 	Cur = FMath::Clamp
 	(
-		(((DegSin(Cur * 180.f) * 1.1) + 1.0) / 2.f),
+		(((DegSin(Time * 180.f) * 1.1) + 1.0) / 2.f),
 		0.f,
 		1.f
 	);
 
 	InterpMeshData(InterpData, Data1, Data2, Cur, false);
-	ProceduralMesh->UpdateMeshSection_LinearColor(0, InterpData.Verts, InterpData.Normals, InterpData.UVs, InterpData.Colors, TArray<FProcMeshTangent>());
+	ProceduralMesh->UpdateMeshSection_LinearColor(0, InterpData.Verts, InterpData.Normals, InterpData.UVs, InterpData.Colors, TArray<FProcMeshTangent>());	
+
+	Time = Time + (DeltaTime * MorphingSpeed);
 }
 
 void APropBase::SetHideMesh()

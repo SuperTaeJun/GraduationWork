@@ -111,7 +111,6 @@ private:
 
 	void InterpMeshData(FMeshData& Data, FMeshData& DataA,FMeshData& DataB, float Alpha, bool Clamp);
 	void GetMeshDataFromStaticMesh(UStaticMesh* Mesh, FMeshData& Data, int32 LODIndex, int32 SectionIndex, bool GetAllSections);
-
-	void ProceduralMeshFromMeshData(UProceduralMeshComponent* Mesh, FMeshData& Data, int SectionIndex, bool Collision, bool CalcTangents);
+	void SetColorData(FMeshData& Data, FLinearColor Color);
 	TArray<FMeshData> ConvertFromSectionedMeshData(FMeshData& Data);
 };
