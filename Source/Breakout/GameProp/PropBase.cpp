@@ -28,7 +28,9 @@ APropBase::APropBase()
 
 	////메쉬 데이터에 스테틱 메쉬 데이터 넣기
 	GetMeshDataFromStaticMesh(SMMesh1.Object, Data1, 0, 0, true);
+	UE_LOG(LogTemp, Log, TEXT("%s"), *Data1.Verts[Data1.Tris[0]].ToString());
 	//UnifyTri(Data1);
+	UE_LOG(LogTemp, Log, TEXT("%s"), *Data1.Verts[Data1.Tris[0]].ToString());
 	SetColorData(Data1, FLinearColor::Red);
 	GetMeshDataFromStaticMesh(SMMesh2.Object, Data2, 0, 0, true);
 	//UnifyTri(Data2);
@@ -63,11 +65,14 @@ void APropBase::BeginPlay()
 		AreaSphere->OnComponentEndOverlap.AddDynamic(this, &APropBase::OnSphereEndOverlap);
 	}
 
+	UE_LOG(LogTemp, Log, TEXT("%d"), Data1.Tris[0]);
 
 }
 
 void APropBase::UnifyTri(FMeshData& Data)
 {
+	//UE_LOG(LogTemp, Log, TEXT("%d"), Data1.Tris.Num());
+
 	TMap<int, int> Visited = {};
 	int vl = Data.Verts.Num();
 	FVector vec; 
@@ -80,26 +85,39 @@ void APropBase::UnifyTri(FMeshData& Data)
 	bool	hasSects = Data.Sects.Num() >= vl;
 	int x = 0, l = Data.Tris.Num();
 
-	for (x = 0; x < l; ++x) {
+	for (x = 0; x < l; ++x) 
+	{
 		if (!Visited.Contains(Data.Tris[x])) 
 		{
 			Visited.Emplace(Data.Tris[x], 1);
+
 		}
 		else 
 		{
 			vec = Data.Verts[Data.Tris[x]]; 
 			Data.Verts.Emplace(vec);
 			if (hasNormals) 
-				 vec = Data.Normals[Data.Tris[x]]; Data.Normals.Emplace(vec); 
+				 vec = Data.Normals[Data.Tris[x]]; 
+			Data.Normals.Emplace(vec); 
+
 			if (hasUVs)
-				 uv = Data.UVs[Data.Tris[x]]; Data.UVs.Emplace(uv); 
+				 uv = Data.UVs[Data.Tris[x]]; 
+			Data.UVs.Emplace(uv); 
+
 			if (hasColors) 
-				 col = Data.Colors[Data.Tris[x]]; Data.Colors.Emplace(col); 
+				 col = Data.Colors[Data.Tris[x]]; 
+			Data.Colors.Emplace(col); 
+
 			if (hasSects)
-				 sect = Data.Sects[Data.Tris[x]]; Data.Sects.Emplace(sect); 
+				 sect = Data.Sects[Data.Tris[x]]; 
+			Data.Sects.Emplace(sect); 
+
 			Data.Tris[x] = vl;
 			++vl;
+
 		}
+		UE_LOG(LogTemp, Log, TEXT("%s"), *Data.Verts[Data.Tris[0]].ToString());
+
 	}
 
 	//기존 정보를 저장하고 다시 트라이앵글 기준으로 정렬
@@ -210,7 +228,8 @@ void APropBase::GetMeshDataFromStaticMesh(UStaticMesh* Mesh, FMeshData& Data, in
 		uint32 il = Indices.Num();
 		const bool hasColors = LOD.VertexBuffers.ColorVertexBuffer.GetNumVertices() >= LOD.VertexBuffers.PositionVertexBuffer.GetNumVertices();
 		for (i = is; i < l; ++i) {
-			if (i < il) {
+			if (i < il) 
+			{
 				vi = Indices[i];
 				NewIndexPtr = MeshToSectionVertMap.Find(vi);
 				if (NewIndexPtr != nullptr)
@@ -282,15 +301,6 @@ double APropBase::DegSin(double A)
 {
 	return FMath::Sin(3.141592/ (180.0) * A);
 }
-
-TArray<FMeshData> APropBase::ConvertFromSectionedMeshData(FMeshData& Data)
-{
-
-
-	return TArray<FMeshData>();
-}
-
-
 
 void APropBase::Tick(float DeltaTime)
 {
