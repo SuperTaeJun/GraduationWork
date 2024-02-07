@@ -101,13 +101,31 @@ uint32 ClientSocket::Run()
 {
 	FPlatformProcess::Sleep(0.03);
 	// 게임모드를 가져옴
-	RecvPacket();
-	while (StopTaskCounter.GetValue() == 0)
+	//RecvPacket();
+	/*while (StopTaskCounter.GetValue() == 0)
 	{
 		unsigned char* packet_start = _recv_over._net_buf;
 		PacketProcess(packet_start);
 		RecvPacket();
-	}
+	}*/
+	/*while (StopTaskCounter.GetValue() == 0 && MyCharacterController != nullptr)
+	{
+		DWORD num_byte;
+		LONG64 iocp_key;
+		WSAOVERLAPPED* p_over;
+
+		BOOL ret = GetQueuedCompletionStatus(Iocp, &num_byte, (PULONG_PTR)&iocp_key, &p_over, INFINITE);
+
+		Overlap* exp_over = reinterpret_cast<Overlap*>(p_over);
+
+		if ( ret == false) {
+			int err_no = WSAGetLastError();
+			if (exp_over->_op == OP_SEND)
+				delete exp_over;
+			continue;
+		}*/
+
+	//	switch (exp_over->_op) {
 	return 0;
 }
 void ClientSocket::Stop()

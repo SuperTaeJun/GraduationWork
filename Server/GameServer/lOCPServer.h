@@ -10,13 +10,18 @@ public:
 	void Start();
 	bool CreateWorkerThreads();
 	void WorkerThread();
-	void RecvPacket(Overlapped* overlap); 
-	void SendPacket(Overlapped* overlap, void* packet);
-	virtual bool OnRecv(int s_id, Overlapped* overlap, DWORD num_bytes) { return true; };
+	void HandleReceive(Overlapped* overlapped, DWORD bytesTransferred);
+	void HandleSend(Overlapped* overlapped, DWORD bytesTransferred);
+	void HandleAccept(Overlapped* overlapped, DWORD bytesTransferred);
+	void PostRecv(Overlapped* overlapped);
+	void PostSend(Overlapped* overlapped);
+	void PostAccept();
+	//virtual bool OnRecv(int s_id, Overlapped* overlap, DWORD num_bytes) { return true; };
 protected:
 	SOCKET listensocket;
 	HANDLE iocpHandle;
-	Overlapped* overlap;
+
+
 	bool	bAccept;			// 요청 동작 플래그
 	bool	bWorkerThread;	// 작업 스레드 동작 플래그
 public:

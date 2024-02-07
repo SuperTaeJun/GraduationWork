@@ -1,7 +1,5 @@
 #include "pch.h"
 #include "PacketHandler.h"
-
-
 void PacketHandler::ProcessPacket(int id, char* r_ptr)
 {
 	Idnum = id;

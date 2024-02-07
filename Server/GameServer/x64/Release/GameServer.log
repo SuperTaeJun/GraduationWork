@@ -1,13 +1,12 @@
-﻿  PacketHandler.cpp
+﻿  GameServer.cpp
+  PacketHandler.cpp
   lOCPServer.cpp
-C:\Users\sejin\Downloads\GraduationWork\Server\GameServer\lOCPServer.cpp(61,62): warning C4311: '형식 캐스트': 'Overlapped *'에서 'DWORD'(으)로 포인터가 잘립니다.
-C:\Users\sejin\Downloads\GraduationWork\Server\GameServer\lOCPServer.cpp(61,62): warning C4302: '형식 캐스트': 'Overlapped *'에서 'DWORD'(으)로 잘립니다.
-C:\Users\sejin\Downloads\GraduationWork\Server\GameServer\lOCPServer.cpp(37,6): warning C4101: 'result' :참조되지 않은 지역 변수입니다.
-C:\Users\sejin\Downloads\GraduationWork\Server\GameServer\lOCPServer.cpp(41,8): warning C4101: 'recvBytes' :참조되지 않은 지역 변수입니다.
-C:\Users\sejin\Downloads\GraduationWork\Server\GameServer\lOCPServer.cpp(87,10): warning C4101: 'sendBytes' :참조되지 않은 지역 변수입니다.
-C:\Users\sejin\Downloads\GraduationWork\Server\GameServer\lOCPServer.cpp(139,50): warning C4267: '=': 'size_t'에서 'ULONG'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\sejin\OneDrive\바탕 화면\Server\GameServer\lOCPServer.cpp(182,61): warning C4311: '형식 캐스트': 'Overlapped *'에서 'DWORD'(으)로 포인터가 잘립니다.
+C:\Users\sejin\OneDrive\바탕 화면\Server\GameServer\lOCPServer.cpp(182,61): warning C4302: '형식 캐스트': 'Overlapped *'에서 'DWORD'(으)로 잘립니다.
+C:\Users\sejin\OneDrive\바탕 화면\Server\GameServer\lOCPServer.cpp(164,6): warning C4101: 'result' :참조되지 않은 지역 변수입니다.
+C:\Users\sejin\OneDrive\바탕 화면\Server\GameServer\lOCPServer.cpp(168,8): warning C4101: 'recvBytes' :참조되지 않은 지역 변수입니다.
   코드를 생성하고 있습니다.
   Compiler switch has changed, fall back to full compilation.
-  All 168 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  All 171 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
   코드를 생성했습니다.
-  GameServer.vcxproj -> C:\Users\sejin\Downloads\GraduationWork\Server\Binary\Release\GameServer.exe
+  GameServer.vcxproj -> C:\Users\sejin\OneDrive\바탕 화면\Server\Binary\Release\GameServer.exe
