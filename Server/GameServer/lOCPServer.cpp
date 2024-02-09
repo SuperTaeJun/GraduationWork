@@ -124,10 +124,8 @@ void lOCPServer::HandleAccept(Overlapped* overlapped, DWORD bytesTransferred)
 {
 	// Accept 작업 완료 처리, 필요에 따라 새로운 워커 스레드 생성 또는 수락된 소켓 처리 등을 수행
 	// ...
-	//cout << "Send data: " << overlapped->recvBuffer << endl;
 	// 새로운 Accept 작업을 등록하여 계속해서 들어오는 연결을 수신
-	cout << "연결됨" << endl;
-	PostAccept();
+		PostAccept();
 }
 
 

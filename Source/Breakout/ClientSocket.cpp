@@ -101,31 +101,7 @@ uint32 ClientSocket::Run()
 {
 	FPlatformProcess::Sleep(0.03);
 	// 게임모드를 가져옴
-	//RecvPacket();
-	/*while (StopTaskCounter.GetValue() == 0)
-	{
-		unsigned char* packet_start = _recv_over._net_buf;
-		PacketProcess(packet_start);
-		RecvPacket();
-	}*/
-	/*while (StopTaskCounter.GetValue() == 0 && MyCharacterController != nullptr)
-	{
-		DWORD num_byte;
-		LONG64 iocp_key;
-		WSAOVERLAPPED* p_over;
-
-		BOOL ret = GetQueuedCompletionStatus(Iocp, &num_byte, (PULONG_PTR)&iocp_key, &p_over, INFINITE);
-
-		Overlap* exp_over = reinterpret_cast<Overlap*>(p_over);
-
-		if ( ret == false) {
-			int err_no = WSAGetLastError();
-			if (exp_over->_op == OP_SEND)
-				delete exp_over;
-			continue;
-		}*/
-
-	//	switch (exp_over->_op) {
+	
 	return 0;
 }
 void ClientSocket::Stop()
@@ -160,10 +136,10 @@ void ClientSocket::StopListen()
 void ClientSocket::RecvPacket()
 {
 	DWORD recv_flag = 0;
-	ZeroMemory(&_recv_over._wsa_over, sizeof(_recv_over._wsa_over));
-	_recv_over._wsa_buf.buf = reinterpret_cast<char*>(_recv_over._net_buf + _prev_size);
-	_recv_over._wsa_buf.len = sizeof(_recv_over._net_buf) - _prev_size;
-	int ret = WSARecv(ServerSocket, &_recv_over._wsa_buf, 1, 0, &recv_flag, &_recv_over._wsa_over, NULL);
+	ZeroMemory(&_recv_over.overlapped, sizeof(_recv_over.overlapped));
+	_recv_over.wsabuf.buf = reinterpret_cast<char*>(_recv_over.recvBuffer + _prev_size);
+	_recv_over.wsabuf.len = sizeof(_recv_over.recvBuffer) - _prev_size;
+	int ret = WSARecv(ServerSocket, &_recv_over.wsabuf, 1, 0, &recv_flag, &_recv_over.overlapped, NULL);
 	if (SOCKET_ERROR == ret) {
 		int error_num = WSAGetLastError();
 	}
@@ -175,8 +151,8 @@ void ClientSocket::RecvPacket()
 void ClientSocket::SendPacket(void* packet)
 {
 	int psize = reinterpret_cast<unsigned char*>(packet)[0];
-	Overlap* ex_over = new Overlap(OP_SEND, psize, packet);
-	int ret = WSASend(ServerSocket, &ex_over->_wsa_buf, 1, 0, 0, &ex_over->_wsa_over, NULL);
+	Overlapped* ex_over = new Overlapped(IO_SEND, psize, packet);
+	int ret = WSASend(ServerSocket, &ex_over->wsabuf, 1, 0, 0, &ex_over->overlapped, NULL);
 	if (SOCKET_ERROR == ret) {
 		int error_num = WSAGetLastError();
 		if (ERROR_IO_PENDING != error_num)
