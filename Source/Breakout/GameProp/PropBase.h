@@ -119,6 +119,7 @@ private:
 	float Time = 0.f;
 	float MorphingSpeed = 0.3f;
 	float Cur = 0.f;
+	int32 RandValue;
 	double DegSin(double A);
 
 	void InterpMeshData(FMeshData& Data, FMeshData& DataA,FMeshData& DataB, float Alpha, bool Clamp);

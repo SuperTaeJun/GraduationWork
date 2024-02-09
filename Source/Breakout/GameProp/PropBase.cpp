@@ -29,13 +29,33 @@ APropBase::APropBase()
 	////메쉬 데이터에 스테틱 메쉬 데이터 넣기
 	GetMeshDataFromStaticMesh(SMMesh1.Object, Data1, 0, 0, true);
 	UE_LOG(LogTemp, Log, TEXT("%s"), *Data1.Verts[Data1.Tris[0]].ToString());
-	//UnifyTri(Data1);
+	UnifyTri(Data1);
 	UE_LOG(LogTemp, Log, TEXT("%s"), *Data1.Verts[Data1.Tris[0]].ToString());
-	SetColorData(Data1, FLinearColor::Red);
 	GetMeshDataFromStaticMesh(SMMesh2.Object, Data2, 0, 0, true);
-	//UnifyTri(Data2);
-	SetColorData(Data1, FLinearColor::Red);
+	UnifyTri(Data2);
 
+	if (Data1.Verts.Num() < Data2.Verts.Num())
+	{
+		int Loop = Data2.Verts.Num() - Data1.Verts.Num();
+
+		for (int i = 0; i < Loop / 3 - 1; ++i)
+		{
+			RandValue = FMath::RandRange(0, Data1.Verts.Num() - 1);
+
+			for (int j = 0; j < 2; ++j)
+			{
+				Data1.Tris.Add(RandValue);
+				Data1.Verts.Add(Data1.Verts[RandValue]);
+				Data1.Normals.Add(FVector(0.f, 0.f, 0.f));
+				Data1.UVs.Add(FVector2D(0.f, 0.f));
+				Data1.Colors.Add(FLinearColor::Red);
+			}
+
+		}
+	}
+
+	SetColorData(Data1, FLinearColor::Red);
+	SetColorData(Data1, FLinearColor::Red);
 	InterpData = Data1;
 
 	TArray<FProcMeshTangent> Tangents = {};
