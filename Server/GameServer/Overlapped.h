@@ -15,13 +15,7 @@ enum IO_type
 
 class Overlapped {
 public:
-	//WSAOVERLAPPED	overlapped;
-	//WSABUF			wsabuf;
-	//SOCKET			socket;
-	//char			recvBuffer[buffsize + 1];
-	//int				recvBytes;
-	//int				sendBytes;
-	//IO_type			type; // read, write, accept, connect ...
+
 	WSAOVERLAPPED	overlapped;
 	WSABUF			wsabuf;
 	SOCKET			socket;
@@ -29,7 +23,30 @@ public:
 	int				recvBytes;
 	int				sendBytes;
 	IO_type			type; // read, write, accept, connect ...
-	size_t			prev_size; // 추가
-	char			_net_buf[buffsize]; // 추가
+public:
+	Overlapped(IO_type type, char bytes, void* mess) : type(type)
+	{
+		ZeroMemory(&overlapped, sizeof(overlapped));
+		wsabuf.buf = reinterpret_cast<char*>(recvBuffer);
+		wsabuf.len = bytes;
+		memcpy(recvBuffer, mess, bytes);
+	}
+	Overlapped(IO_type type) : type(type)
+	{
+		ZeroMemory(&overlapped, sizeof(overlapped));
+		wsabuf.buf = {};
+		wsabuf.len = {};
+	}
+	Overlapped()
+	{
+		type = IO_RECV;
+		ZeroMemory(&overlapped, sizeof(overlapped));
+		wsabuf.buf = {};
+		wsabuf.len = {};
+	}
+	~Overlapped()
+	{
+
+	}
 };
 

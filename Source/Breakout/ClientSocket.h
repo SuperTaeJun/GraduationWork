@@ -26,31 +26,51 @@ enum OPTYPE {
 	OP_RECV,
 };
 
-class Overlap {
+
+const int buffsize = 1000;
+
+enum IO_type
+{
+	IO_RECV,
+	IO_SEND,
+	IO_ACCEPT,
+	//IO_CONNECT,
+};
+
+class Overlapped {
 public:
-	WSAOVERLAPPED   _wsa_over;
-	OPTYPE         _op;
-	WSABUF         _wsa_buf;
-	unsigned char   _net_buf[1024];
-	int32            _target;
+
+	WSAOVERLAPPED	overlapped;
+	WSABUF			wsabuf;
+	SOCKET			socket;
+	char			recvBuffer[buffsize + 1];
+	int				recvBytes;
+	int				sendBytes;
+	IO_type			type; // read, write, accept, connect ...
 public:
-	Overlap(OPTYPE _op, char num_bytes, void* mess) : _op(_op)
+	Overlapped(IO_type type, char bytes, void* mess) : type(type)
 	{
-		ZeroMemory(&_wsa_over, sizeof(_wsa_over));
-		_wsa_buf.buf = reinterpret_cast<char*>(_net_buf);
-		_wsa_buf.len = num_bytes;
-		memcpy(_net_buf, mess, num_bytes);
+		ZeroMemory(&overlapped, sizeof(overlapped));
+		wsabuf.buf = reinterpret_cast<char*>(recvBuffer);
+		wsabuf.len = bytes;
+		memcpy(recvBuffer, mess, bytes);
 	}
-
-	Overlap(OPTYPE _op) : _op(_op) {}
-
-	Overlap()
+	Overlapped(IO_type type) : type(type)
 	{
-		_op = OP_RECV;
+		ZeroMemory(&overlapped, sizeof(overlapped));
+		wsabuf.buf = {};
+		wsabuf.len = {};
 	}
-
-	~Overlap()
+	Overlapped()
 	{
+		type = IO_RECV;
+		ZeroMemory(&overlapped, sizeof(overlapped));
+		wsabuf.buf = {};
+		wsabuf.len = {};
+	}
+	~Overlapped()
+	{
+
 	}
 };
 
@@ -141,7 +161,7 @@ public:
 	}
 	void SetPlayerController(ACharacterController* CharacterController);
 	HANDLE Iocp;
-	Overlap _recv_over;
+	Overlapped _recv_over;
 	int      _prev_size = 0;
 	SOCKET ServerSocket;
 	char recvBuffer[MAX_BUFFER];
