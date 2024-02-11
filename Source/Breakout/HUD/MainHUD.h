@@ -25,15 +25,13 @@ class BREAKOUT_API AMainHUD : public AHUD
 public:
 	UPROPERTY(EditAnywhere, Category = "Player State")
 	TSubclassOf<class UUserWidget>SelectWeaponClass;
+	TObjectPtr<class USelectWeaponUi> SelectWeapon;
 
 	UPROPERTY(EditAnywhere, Category = "Player State")
 	TSubclassOf<class UUserWidget>CharacterUiClass;
-
 	TObjectPtr<class UCharacterUi> CharacterUi;
 
 
-	TObjectPtr<class USelectWeaponUi> SelectWeapon;
-	
 	virtual void DrawHUD() override;
 
 	void AddSelectWeapon();
