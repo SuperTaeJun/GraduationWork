@@ -73,7 +73,7 @@ public:
 	UFUNCTION()
 	void ReciveDamage(AActor* DamagedActor, float Damage, const UDamageType* DamageType, class AController* InstigatorController, AActor* DamageCauser);
 
-	TObjectPtr<class APropBase> OverlappingEscapeTool;
+	TObjectPtr<class AEscapeTool> OverlappingEscapeTool;
 
 	void GrandeThrow();
 
@@ -209,6 +209,7 @@ protected:
 	void Fire_S(const FInputActionValue& Value);
 	void Fire_E(const FInputActionValue& Value);
 	void Inter(const FInputActionValue& Value);
+	void EToolTranfrom(const FInputActionValue& Value);
 	void Reroad(const FInputActionValue& Value);
 	void GrandeFire(const FInputActionValue& Value);
 	void SelectGrande(const FInputActionValue& Value);

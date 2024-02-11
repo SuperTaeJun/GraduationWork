@@ -18,10 +18,10 @@
 #include "Player/CharacterController.h"
 #include "GameFramework/PlayerController.h"
 #include "Game/BOGameInstance.h"
-#include "GameProp/PropBase.h"
 #include "Weapon/ProjectileBase.h"
 #include "Game/BOGameMode.h"
 #include "Components/CapsuleComponent.h"
+#include "GameProp/EscapeTool.h"
 
 ACharacterBase::ACharacterBase()
 {
@@ -588,9 +588,22 @@ void ACharacterBase::Inter(const FInputActionValue& Value)
 	{
 		ObtainedEscapeToolNum += 1;
 		UpdateObtainedEscapeTool();
-		OverlappingEscapeTool->SetHideMesh();
 		OverlappingEscapeTool = nullptr;
+		OverlappingEscapeTool->Destroy();
 	}
+	else if (!bCanObtainEscapeTool && OverlappingEscapeTool)
+	{
+		UE_LOG(LogTemp, Log, TEXT("TEST"));
+		EToolTranfrom(Value);
+	}
+}
+void ACharacterBase::EToolTranfrom(const FInputActionValue& Value)
+{
+	//if (OverlappingEscapeTool)
+	//{
+	OverlappingEscapeTool->TransformMesh(GetWorld()->GetDeltaSeconds());
+	//}
+
 }
 void ACharacterBase::Reroad(const FInputActionValue& Value)
 {
@@ -679,7 +692,8 @@ void ACharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Triggered, this, &ACharacter::Jump);
 		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Triggered, this, &ACharacterBase::Sprint_S);
 		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Completed, this, &ACharacterBase::Sprint_E);
-		EnhancedInputComponent->BindAction(InterAction, ETriggerEvent::Started, this, &ACharacterBase::Inter);
+		EnhancedInputComponent->BindAction(InterAction, ETriggerEvent::Triggered, this, &ACharacterBase::Inter);
+		//EnhancedInputComponent->BindAction(InterAction, ETriggerEvent::Ongoing, this, &ACharacterBase::EToolTranfrom);
 		EnhancedInputComponent->BindAction(FireAction, ETriggerEvent::Triggered, this, &ACharacterBase::Fire_S);
 		EnhancedInputComponent->BindAction(FireAction, ETriggerEvent::Completed, this, &ACharacterBase::Fire_E);
 		EnhancedInputComponent->BindAction(ReRoadAction, ETriggerEvent::Triggered, this, &ACharacterBase::Reroad);

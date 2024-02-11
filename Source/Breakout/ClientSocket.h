@@ -8,6 +8,7 @@
 #include <WinSock2.h>
 #include <WS2tcpip.h>
 #include <fstream>
+#include <map>
 #include <iostream>
 #include "Network/PacketData.h"
 #include "Windows/PostWindowsApi.h"
@@ -39,7 +40,6 @@ enum IO_type
 
 class Overlapped {
 public:
-
 	WSAOVERLAPPED	overlapped;
 	WSABUF			wsabuf;
 	SOCKET			socket;
@@ -129,6 +129,45 @@ public:
 		return stream;
 	}
 };
+class PlayerInfo
+{
+public:
+	PlayerInfo() {};
+	~PlayerInfo() {};
+
+	map<int, Player> players;
+
+	friend ostream& operator<<(ostream& stream, PlayerInfo& info)
+	{
+		stream << info.players.size() << endl;
+		for (auto& kvp : info.players)
+		{
+			stream << kvp.first << endl;
+			stream << kvp.second << endl;
+		}
+
+		return stream;
+	}
+
+	friend istream& operator>>(istream& stream, PlayerInfo& info)
+	{
+		int nPlayers = 0;
+		int SessionId = 0;
+		Player Player;
+		info.players.clear();
+
+		stream >> nPlayers;
+		for (int i = 0; i < nPlayers; i++)
+		{
+			stream >> SessionId;
+			stream >> Player;
+			info.players[SessionId] = Player;
+		}
+
+		return stream;
+	}
+};
+
 /**
  *
  */
@@ -171,4 +210,5 @@ public:
 	bool login_cond = false;
 private:
 	ACharacterController* MyCharacterController;
+	PlayerInfo PlayerInfo;
 };
