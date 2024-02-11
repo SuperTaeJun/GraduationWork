@@ -21,6 +21,7 @@ public:
 	SOCKET			socket;
 	char			recvBuffer[buffsize + 1];
 	int				recvBytes;
+
 	int				sendBytes;
 	IO_type			type; // read, write, accept, connect ...
 public:
