@@ -17,6 +17,7 @@ void AEscapeTool::BeginPlay()
 		AreaSphere->OnComponentBeginOverlap.AddDynamic(this, &AEscapeTool::OnSphereOverlap);
 		AreaSphere->OnComponentEndOverlap.AddDynamic(this, &AEscapeTool::OnSphereEndOverlap);
 	}
+
 }
 
 void AEscapeTool::TransformMesh(float DeltaTime)
@@ -44,6 +45,12 @@ void AEscapeTool::TransformMesh(float DeltaTime)
 	Time = Time + (DeltaTime * MorphingSpeed);
 }
 
+void AEscapeTool::SetHideMesh()
+{
+	UE_LOG(LogTemp, Log, TEXT("TEST"));
+	ProceduralMesh->SetHiddenInGame(true);
+}
+
 void AEscapeTool::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	OverlapedCharacter = Cast<ACharacterBase>(OtherActor);
@@ -51,7 +58,6 @@ void AEscapeTool::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AAct
 	{
 		OverlapedCharacter->OverlappingEscapeTool = this;
 	}
-
 	//CharacterBase->SetbCanObtainEscapeTool(true);
 
 //UE_LOG(LogTemp, Log, TEXT("OBTAIN"));

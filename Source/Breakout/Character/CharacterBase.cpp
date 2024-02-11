@@ -588,12 +588,12 @@ void ACharacterBase::Inter(const FInputActionValue& Value)
 	{
 		ObtainedEscapeToolNum += 1;
 		UpdateObtainedEscapeTool();
+		OverlappingEscapeTool->SetHideMesh();
 		OverlappingEscapeTool = nullptr;
-		OverlappingEscapeTool->Destroy();
 	}
 	else if (!bCanObtainEscapeTool && OverlappingEscapeTool)
 	{
-		UE_LOG(LogTemp, Log, TEXT("TEST"));
+		//UE_LOG(LogTemp, Log, TEXT("TEST"));
 		EToolTranfrom(Value);
 	}
 }
@@ -693,7 +693,6 @@ void ACharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Triggered, this, &ACharacterBase::Sprint_S);
 		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Completed, this, &ACharacterBase::Sprint_E);
 		EnhancedInputComponent->BindAction(InterAction, ETriggerEvent::Triggered, this, &ACharacterBase::Inter);
-		//EnhancedInputComponent->BindAction(InterAction, ETriggerEvent::Ongoing, this, &ACharacterBase::EToolTranfrom);
 		EnhancedInputComponent->BindAction(FireAction, ETriggerEvent::Triggered, this, &ACharacterBase::Fire_S);
 		EnhancedInputComponent->BindAction(FireAction, ETriggerEvent::Completed, this, &ACharacterBase::Fire_E);
 		EnhancedInputComponent->BindAction(ReRoadAction, ETriggerEvent::Triggered, this, &ACharacterBase::Reroad);

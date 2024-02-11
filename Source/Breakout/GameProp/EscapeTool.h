@@ -20,7 +20,7 @@ public:
 	virtual void BeginPlay() override;
 
 	void TransformMesh(float DeltaTime);
-
+	void SetHideMesh();
 private:
 	UFUNCTION()
 	virtual void OnSphereOverlap
