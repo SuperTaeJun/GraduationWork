@@ -79,33 +79,13 @@ class BREAKOUT_API APropBase : public AActor
 public:	
 	APropBase();
 	virtual void Tick(float DeltaTime) override;
-	void SetHideMesh();
 protected:
 	virtual void BeginPlay() override;
 
 	void UnifyTri(FMeshData& Data);
 
 
-	UFUNCTION()
-	virtual void OnSphereOverlap
-	(
-		UPrimitiveComponent* OverlappedComponent,
-		AActor* OtherActor,
-		UPrimitiveComponent* OtherComp,
-		int32 OtherBodyIndex,
-		bool bFromSweep,
-		const FHitResult& SweepResult
-	);
-	UFUNCTION()
-	void OnSphereEndOverlap
-	(
-		UPrimitiveComponent* OverlappedComponent,
-		AActor* OtherActor,
-		UPrimitiveComponent* OtherComp,
-		int32 OtherBodyIndex
-	);
-
-private:
+protected:
 	UPROPERTY(VisibleAnywhere, Category = "Mesh")
 	TObjectPtr<class UProceduralMeshComponent> ProceduralMesh;
 

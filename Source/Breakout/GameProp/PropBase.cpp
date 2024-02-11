@@ -3,11 +3,10 @@
 #include "GameProp/PropBase.h"
 #include "ProceduralMeshComponent.h"
 #include "Components/SphereComponent.h"
-#include "Character/CharacterBase.h"
 
 //전역변수
-TMap<FMeshData*, TArray<FMeshData>> CachedSections = {};
-TMap<FName, FMeshData> MeshDatas = {};
+//TMap<FMeshData*, TArray<FMeshData>> CachedSections = {};
+//TMap<FName, FMeshData> MeshDatas = {};
 
 APropBase::APropBase()
 {
@@ -78,12 +77,6 @@ APropBase::APropBase()
 void APropBase::BeginPlay()
 {
 	Super::BeginPlay();
-
-	if (AreaSphere)
-	{
-		AreaSphere->OnComponentBeginOverlap.AddDynamic(this, &APropBase::OnSphereOverlap);
-		AreaSphere->OnComponentEndOverlap.AddDynamic(this, &APropBase::OnSphereEndOverlap);
-	}
 
 	UE_LOG(LogTemp, Log, TEXT("%d"), Data1.Tris[0]);
 
@@ -295,28 +288,6 @@ void APropBase::SetColorData(FMeshData& Data, FLinearColor Color)
 	}
 }
 
-void APropBase::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
-{
-	//ACharacterBase* CharacterBase = Cast<ACharacterBase>(OtherActor);
-
-	//CharacterBase->SetbCanObtainEscapeTool(true);
-	//CharacterBase->OverlappingEscapeTool = this;
-
-	////UE_LOG(LogTemp, Log, TEXT("OBTAIN"));
-}
-
-void APropBase::OnSphereEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
-{
-	//if (Mesh->bHiddenInGame==false)
-	//{
-	//	ACharacterBase* CharacterBase = Cast<ACharacterBase>(OtherActor);
-
-	//	CharacterBase->SetbCanObtainEscapeTool(false);
-	//	CharacterBase->OverlappingEscapeTool = nullptr;
-
-	//}
-}
-
 double APropBase::DegSin(double A)
 {
 	return FMath::Sin(3.141592/ (180.0) * A);
@@ -326,21 +297,18 @@ void APropBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	Cur = FMath::Clamp
-	(
-		(((DegSin(Time * 180.f) * 1.1) + 1.0) / 2.f),
-		0.f,
-		1.f
-	);
+	//Cur = FMath::Clamp
+	//(
+	//	Time/*(((DegSin(Time * 180.f) * 1.1) + 1.0) / 2.f)*/,
+	//	0.f,
+	//	1.f
+	//);
 
-	InterpMeshData(InterpData, Data1, Data2, Cur, false);
-	ProceduralMesh->UpdateMeshSection_LinearColor(0, InterpData.Verts, InterpData.Normals, InterpData.UVs, InterpData.Colors, TArray<FProcMeshTangent>());	
+	//InterpMeshData(InterpData, Data1, Data2, Cur, false);
+	//ProceduralMesh->UpdateMeshSection_LinearColor(0, InterpData.Verts, InterpData.Normals, InterpData.UVs, InterpData.Colors, TArray<FProcMeshTangent>());
 
-	Time = Time + (DeltaTime * MorphingSpeed);
-}
+	//Time = Time + (DeltaTime * MorphingSpeed);
+	//
 
-void APropBase::SetHideMesh()
-{
-	//Mesh->bHiddenInGame = true;
 }
 
