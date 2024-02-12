@@ -18,8 +18,9 @@ public:
 	AEscapeTool();
 
 	virtual void BeginPlay() override;
+	virtual void Tick(float DeltaTime);
 
-	void TransformMesh(float DeltaTime);
+	void TransformMesh(float DeltaTime, bool Clamp, bool TransformReverse);
 	void SetHideMesh();
 private:
 	UFUNCTION()
@@ -42,4 +43,15 @@ private:
 	);
 
 	TObjectPtr<class ACharacterBase> OverlapedCharacter;
+
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<class UWidgetComponent> PercentBar;
+
+	void UpdatePercent(float Percent);
+
+	//0 = 기본상태
+	//1 = a->b로 보간중인 상태
+	//2 = b->a로 다시 돌아가는 상태
+	//이넘클래스로 다시 만들기 
+	int32 bOverlap=0;
 };

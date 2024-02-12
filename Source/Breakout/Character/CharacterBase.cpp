@@ -601,7 +601,7 @@ void ACharacterBase::EToolTranfrom(const FInputActionValue& Value)
 {
 	//if (OverlappingEscapeTool)
 	//{
-	OverlappingEscapeTool->TransformMesh(GetWorld()->GetDeltaSeconds());
+	OverlappingEscapeTool->TransformMesh(GetWorld()->GetDeltaSeconds(),false,false);
 	//}
 
 }

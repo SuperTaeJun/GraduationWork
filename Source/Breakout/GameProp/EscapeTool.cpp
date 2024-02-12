@@ -5,30 +5,58 @@
 #include "Character/CharacterBase.h"
 #include "ProceduralMeshComponent.h"
 #include "Components/SphereComponent.h"
-
+#include "Components/ProgressBar.h"
+#include "Components/WidgetComponent.h"
+#include "HUD/ETPercentBar.h"
 AEscapeTool::AEscapeTool()
 {
+	PercentBar = CreateDefaultSubobject<UWidgetComponent>(TEXT("PercentBar"));
+	PercentBar->SetupAttachment(RootComponent);
 }
 
 void AEscapeTool::BeginPlay()
 {
+	Super::BeginPlay();
+
 	if (AreaSphere)
 	{
 		AreaSphere->OnComponentBeginOverlap.AddDynamic(this, &AEscapeTool::OnSphereOverlap);
 		AreaSphere->OnComponentEndOverlap.AddDynamic(this, &AEscapeTool::OnSphereEndOverlap);
 	}
+	PercentBar->SetVisibility(false);
+
+	UpdatePercent(Cur);
+}
+
+void AEscapeTool::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+
+	if (bOverlap==2)
+	{
+		TransformMesh(DeltaTime, false,true);
+		UpdatePercent(Cur);
+	}
+
+
 
 }
 
-void AEscapeTool::TransformMesh(float DeltaTime)
+void AEscapeTool::TransformMesh(float DeltaTime, bool Clamp, bool TransformReverse)
 {
 
 	if (OverlapedCharacter)
 	{
 		if (Cur >= 1.f)
 		{
-			UE_LOG(LogTemp, Log, TEXT("CUR 1.F"));
+			//UE_LOG(LogTemp, Log, TEXT("CUR 1.F"));
 			OverlapedCharacter->SetbCanObtainEscapeTool(true);
+			PercentBar->SetVisibility(false);
+			bOverlap = 0;
+		}
+		else if (Cur <= 0.f)
+		{
+			bOverlap = 0;
 		}
 	}
 
@@ -39,16 +67,22 @@ void AEscapeTool::TransformMesh(float DeltaTime)
 		1.f
 	);
 
-	InterpMeshData(InterpData, Data1, Data2, Cur, false);
+	InterpMeshData(InterpData, Data1, Data2, Cur, Clamp);
+
 	ProceduralMesh->UpdateMeshSection_LinearColor(0, InterpData.Verts, InterpData.Normals, InterpData.UVs, InterpData.Colors, TArray<FProcMeshTangent>());
 
-	Time = Time + (DeltaTime * MorphingSpeed);
+	if (TransformReverse)
+		Time = Time - (DeltaTime * MorphingSpeed);
+	else
+		Time = Time + (DeltaTime * MorphingSpeed);
+	UpdatePercent(Cur);
 }
 
 void AEscapeTool::SetHideMesh()
 {
 	UE_LOG(LogTemp, Log, TEXT("TEST"));
 	ProceduralMesh->SetHiddenInGame(true);
+	Destroy();
 }
 
 void AEscapeTool::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -58,19 +92,28 @@ void AEscapeTool::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AAct
 	{
 		OverlapedCharacter->OverlappingEscapeTool = this;
 	}
+	PercentBar->SetVisibility(true);
 	//CharacterBase->SetbCanObtainEscapeTool(true);
 
 //UE_LOG(LogTemp, Log, TEXT("OBTAIN"));
+	bOverlap = 1;
 }
 
 void AEscapeTool::OnSphereEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-	if (ProceduralMesh->bHiddenInGame==false)
+
+	ACharacterBase* characterbase = Cast<ACharacterBase>(OtherActor);
+
+	characterbase->SetbCanObtainEscapeTool(false);
+	characterbase->OverlappingEscapeTool = nullptr;
+	bOverlap = 2;
+	
+}
+
+void AEscapeTool::UpdatePercent(float Percent)
+{
+	if (PercentBar->GetWidget())
 	{
-		ACharacterBase* characterbase = Cast<ACharacterBase>(OtherActor);
-
-		characterbase->SetbCanObtainEscapeTool(false);
-		characterbase->OverlappingEscapeTool = nullptr;
-
+		Cast<UETPercentBar>(PercentBar->GetWidget())->PercentBar->SetPercent(Percent);
 	}
 }

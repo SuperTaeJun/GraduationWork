@@ -84,7 +84,6 @@ protected:
 
 	void UnifyTri(FMeshData& Data);
 
-
 protected:
 	UPROPERTY(VisibleAnywhere, Category = "Mesh")
 	TObjectPtr<class UProceduralMeshComponent> ProceduralMesh;
