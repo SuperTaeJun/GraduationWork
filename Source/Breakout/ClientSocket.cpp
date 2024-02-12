@@ -101,8 +101,21 @@ uint32 ClientSocket::Run()
 {
 	FPlatformProcess::Sleep(0.03);
 	// 게임모드를 가져옴
-	
+	Iocp = CreateIoCompletionPort(INVALID_HANDLE_VALUE, NULL, NULL, 0);
+	CreateIoCompletionPort(reinterpret_cast<HANDLE>(socket), Iocp, NULL, 0);
+	RecvPacket();
+	SleepEx(0, true);
+	while (true)
+	{
+		DWORD num_byte;
+		LONG64 iocp_key;
+		WSAOVERLAPPED* p_over; 
+		BOOL ret = GetQueuedCompletionStatus(Iocp, &num_byte, (PULONG_PTR)&iocp_key, &p_over, INFINITE);
+
+		Overlapped* exp_over = reinterpret_cast<Overlapped*>(p_over);
+	}
 	return 0;
+
 }
 void ClientSocket::Stop()
 {

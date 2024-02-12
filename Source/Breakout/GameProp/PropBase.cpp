@@ -4,10 +4,6 @@
 #include "ProceduralMeshComponent.h"
 #include "Components/SphereComponent.h"
 
-//전역변수
-//TMap<FMeshData*, TArray<FMeshData>> CachedSections = {};
-//TMap<FName, FMeshData> MeshDatas = {};
-
 APropBase::APropBase()
 {
 	PrimaryActorTick.bCanEverTick = true;
@@ -77,8 +73,6 @@ APropBase::APropBase()
 void APropBase::BeginPlay()
 {
 	Super::BeginPlay();
-
-	UE_LOG(LogTemp, Log, TEXT("%d"), Data1.Tris[0]);
 
 }
 
