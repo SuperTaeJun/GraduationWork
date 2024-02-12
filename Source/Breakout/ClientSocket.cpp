@@ -107,12 +107,41 @@ uint32 ClientSocket::Run()
 	SleepEx(0, true);
 	while (true)
 	{
-		DWORD num_byte;
+		/*DWORD num_byte;
 		LONG64 iocp_key;
 		WSAOVERLAPPED* p_over; 
 		BOOL ret = GetQueuedCompletionStatus(Iocp, &num_byte, (PULONG_PTR)&iocp_key, &p_over, INFINITE);
 
-		Overlapped* exp_over = reinterpret_cast<Overlapped*>(p_over);
+		Overlapped* exp_over = reinterpret_cast<Overlapped*>(p_over);*/
+		DWORD bytesTransferred;
+		ULONG_PTR completionKey;
+		Overlapped* overlapped;
+
+		// IO 완료 패킷을 기다립니다.
+		if (!GetQueuedCompletionStatus(Iocp, &bytesTransferred, &completionKey, (LPOVERLAPPED*)&overlapped, INFINITE))
+		{
+			// 에러 처리 (추가적인 에러 처리를 추가할 수 있음)
+			cout << "GetQueuedCompletionStatus failed with error: " << GetLastError() << endl;
+			cout << "??";
+			continue;
+		}
+		// IO 작업 유형을 결정하기 위해 완료 키를 확인
+		switch (overlapped->type)
+		{
+		case IO_RECV:
+			// 수신 완료 처리
+			break;
+		case IO_SEND:
+			// 송신 완료 처리
+			break;
+		case IO_ACCEPT:
+			// Accept 완료 처리
+			break;
+			// 필요에 따라 더 많은 경우를 추가 (예: IO_CONNECT)
+		default:
+			cout << "Unknown IO type" << endl;
+			break;
+		}
 	}
 	return 0;
 

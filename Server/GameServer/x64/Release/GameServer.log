@@ -7,8 +7,7 @@ C:\Users\sejin\Downloads\GraduationWork\Server\GameServer\lOCPServer.cpp(180,61)
 C:\Users\sejin\Downloads\GraduationWork\Server\GameServer\lOCPServer.cpp(162,6): warning C4101: 'result' :참조되지 않은 지역 변수입니다.
 C:\Users\sejin\Downloads\GraduationWork\Server\GameServer\lOCPServer.cpp(166,8): warning C4101: 'recvBytes' :참조되지 않은 지역 변수입니다.
   코드를 생성하고 있습니다.
-  0 of 172 functions ( 0.0%) were compiled, the rest were copied from previous compilation.
-    0 functions were new in current compilation
-    0 functions had inline decision re-evaluated but remain unchanged
+  Previous IPDB and IOBJ mismatch, fall back to full compilation.
+  All 172 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
   코드를 생성했습니다.
   GameServer.vcxproj -> C:\Users\sejin\Downloads\GraduationWork\Server\Binary\Release\GameServer.exe
