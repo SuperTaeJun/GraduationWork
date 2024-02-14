@@ -100,7 +100,6 @@ bool ClientSocket::Init()
 uint32 ClientSocket::Run()
 {
 	FPlatformProcess::Sleep(0.03);
-	// 게임모드를 가져옴
 	Iocp = CreateIoCompletionPort(INVALID_HANDLE_VALUE, NULL, NULL, 0);
 	CreateIoCompletionPort(reinterpret_cast<HANDLE>(socket), Iocp, NULL, 0);
 	RecvPacket();

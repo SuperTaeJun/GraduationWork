@@ -1,5 +1,6 @@
 #pragma once
 #include "Overlapped.h"
+#include "PacketHandler.h"
 #include "protocol.h"
 class lOCPServer
 {
@@ -20,7 +21,6 @@ public:
 protected:
 	SOCKET listensocket;
 	HANDLE iocpHandle;
-
 
 	bool	bAccept;			// 요청 동작 플래그
 	bool	bWorkerThread;	// 작업 스레드 동작 플래그

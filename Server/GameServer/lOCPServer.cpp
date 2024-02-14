@@ -106,8 +106,6 @@ void lOCPServer::HandleReceive(Overlapped* overlapped, DWORD bytesTransferred)
 
 	// 예시: 수신된 데이터 출력
 	cout << "Received data: " << overlapped->recvBuffer << endl;
-
-	// 계속해서 새로운 수신 작업을 등록
 	PostRecv(overlapped);
 }
 

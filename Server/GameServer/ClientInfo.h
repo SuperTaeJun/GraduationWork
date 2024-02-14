@@ -34,9 +34,14 @@ public:
 	float Yaw, Pitch, Roll;
 	float VX, VY, VZ;
 	int hp;
+	SOCKET c_socket;
+	Overlapped c_overlapped;
+	int prev;
 public:
 	ClientInfo();
-	~ClientInfo() { };
+	~ClientInfo() { closesocket(c_socket); }
+	void c_recv();
+	void c_send(int num_bytes, void* mess);
 private:
 
 };
