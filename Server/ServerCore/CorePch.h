@@ -20,10 +20,15 @@
 #include <string>
 #include <windows.h>
 #include <iostream>
+#include "protocol.h"
+
 using namespace std;
 
 #pragma comment (lib, "WS2_32.LIB")
 #pragma comment (lib, "MSWSock.LIB")
+
+
+
 
 void error_display(int err_no)
 {

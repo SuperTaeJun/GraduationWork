@@ -1,6 +1,8 @@
 #pragma once
-#include "Overlapped.h"
-#include "protocol.h"
+#include "pch.h"
+//#include "PacketHandler.h"
+class PacketHandler;
+std::unique_ptr<PacketHandler> p_handler;
 class lOCPServer
 {
 public:
@@ -27,4 +29,5 @@ protected:
 public:
 	vector <thread> workerthread;
 };
+
 
