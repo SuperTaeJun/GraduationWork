@@ -1,8 +1,9 @@
 #include "pch.h"
 #include "ClientInfo.h"
 
-ClientInfo::ClientInfo()
+ClientInfo::ClientInfo() : prev(0)
 {
+	cl_id = {};
 }
 
 

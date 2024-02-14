@@ -28,6 +28,8 @@ using namespace std;
 #pragma comment (lib, "MSWSock.LIB")
 
 
+
+
 void error_display(int err_no)
 {
 	WCHAR* lpMsgBuf;
