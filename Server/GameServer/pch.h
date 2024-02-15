@@ -15,5 +15,5 @@
 
 #include "protocol.h"
 
-extern array <ClientInfo, 100> clients;
+extern array <ClientInfo*, 100> clients;
 void Login_Back(int _s_id);
