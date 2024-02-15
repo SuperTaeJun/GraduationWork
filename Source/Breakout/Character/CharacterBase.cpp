@@ -5,7 +5,7 @@
 #include "EnhancedInputSubsystems.h"
 
 //스킬
-#include "Skill/SkillTimeReverse.h"
+#include "Skill/SkillComponent.h"
 
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
@@ -40,7 +40,7 @@ ACharacterBase::ACharacterBase()
 	Movement->bOrientRotationToMovement = false;
 	bUseControllerRotationYaw = true;
 
-	Skill = CreateDefaultSubobject<UActorComponent>(TEXT("SkillComp"));
+	SkillComp = CreateDefaultSubobject<USkillComponent>(TEXT("SkillComp"));
 
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
 	CameraBoom->SetupAttachment(GetMesh());
@@ -98,7 +98,7 @@ void ACharacterBase::BeginPlay()
 
 		MainController->showWeaponSelect();
 	}
-	TSubclassOf<USkillTimeReverse> TimeReverse;
+
 	if (MainController && GetWorld()->GetGameInstance())
 	{
 		//캐릭터 선택 (게임룸에서 선택한 정보를 게임인스턴스에서 가져와서 선택)
@@ -106,19 +106,24 @@ void ACharacterBase::BeginPlay()
 		{
 		case ECharacterType::ECharacter1:
 			GetMesh()->SetSkeletalMeshAsset(Character1);
+			SkillComp->SetSelectedSkill(ESelectedSkill::E_Skill1);
 			break;
 		case ECharacterType::ECharacter2:
 			GetMesh()->SetSkeletalMeshAsset(Character2);
+			SkillComp->SetSelectedSkill(ESelectedSkill::E_Skill2);
 			break;
 		case ECharacterType::ECharacter3:
 			GetMesh()->SetSkeletalMeshAsset(Character3);
+			SkillComp->SetSelectedSkill(ESelectedSkill::E_Skill3);
 			break;
 		case ECharacterType::ECharacter4:
 			GetMesh()->SetSkeletalMeshAsset(Character4);
+			SkillComp->SetSelectedSkill(ESelectedSkill::E_Skill4);
 			break;
 
 		default:
 			GetMesh()->SetSkeletalMeshAsset(Character1);
+			SkillComp->SetSelectedSkill(ESelectedSkill::E_Skill1);
 			break;
 		}
 	}
@@ -649,6 +654,22 @@ void ACharacterBase::SelectTrap(const FInputActionValue& Value)
 	//UI연결해야함
 }
 
+void ACharacterBase::Skill(const FInputActionValue& Value)
+{
+	switch (SkillComp->GetSelectedSkill())
+	{
+	case ESelectedSkill::E_Skill1:
+		SkillComp->Recall();
+		break;
+	case ESelectedSkill::E_Skill2:
+		break;
+	case ESelectedSkill::E_Skill3:
+		break;
+	case ESelectedSkill::E_Skill4:
+		break;
+	}
+}
+
 void ACharacterBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
@@ -705,6 +726,7 @@ void ACharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 		EnhancedInputComponent->BindAction(SelectGrandeAction, ETriggerEvent::Triggered, this, &ACharacterBase::SelectGrande);
 		EnhancedInputComponent->BindAction(SelectWallAction, ETriggerEvent::Triggered, this, &ACharacterBase::SelectWall);
 		EnhancedInputComponent->BindAction(SelectTrapAction, ETriggerEvent::Triggered, this, &ACharacterBase::SelectTrap);
+		EnhancedInputComponent->BindAction(SkillAction, ETriggerEvent::Triggered, this, &ACharacterBase::Skill);
 	}
 }
 

@@ -98,6 +98,7 @@ private:
 	UPROPERTY(EditAnywhere, Category = Mesh)
 	TObjectPtr<class USkeletalMesh> Character4;
 
+
 	UPROPERTY(VisibleAnywhere, Category = Camera)
 	TObjectPtr<class USpringArmComponent> CameraBoom;
 
@@ -107,8 +108,8 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Character, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UCharacterMovementComponent> Movement;
 
-	UPROPERTY(VisibleAnywhere, Category = Skill)
-	TObjectPtr<class UActorComponent> Skill;
+	UPROPERTY(VisibleAnywhere, Category = SkillComp)
+	TObjectPtr<class USkillComponent> SkillComp;
 
 	TObjectPtr<class AWeaponBase> CurWeapon;
 
@@ -218,7 +219,7 @@ protected:
 	void SelectGrande(const FInputActionValue& Value);
 	void SelectWall(const FInputActionValue& Value);
 	void SelectTrap(const FInputActionValue& Value);
-
+	void Skill(const FInputActionValue& Value);
 };
 
 UENUM(BlueprintType)
