@@ -4,6 +4,9 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 
+//스킬
+#include "Skill/SkillTimeReverse.h"
+
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -36,6 +39,8 @@ ACharacterBase::ACharacterBase()
 	Movement->MaxWalkSpeed = 400.f;
 	Movement->bOrientRotationToMovement = false;
 	bUseControllerRotationYaw = true;
+
+	Skill = CreateDefaultSubobject<UActorComponent>(TEXT("SkillComp"));
 
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
 	CameraBoom->SetupAttachment(GetMesh());
@@ -93,7 +98,7 @@ void ACharacterBase::BeginPlay()
 
 		MainController->showWeaponSelect();
 	}
-
+	TSubclassOf<USkillTimeReverse> TimeReverse;
 	if (MainController && GetWorld()->GetGameInstance())
 	{
 		//캐릭터 선택 (게임룸에서 선택한 정보를 게임인스턴스에서 가져와서 선택)
