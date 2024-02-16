@@ -28,13 +28,14 @@ public:
 	FORCEINLINE ESelectedSkill GetSelectedSkill() { return CurSelectedSKill; }
 
 	FORCEINLINE void SetIsReverse(bool _IsReverse) { bTimeReplay = _IsReverse; }
+	FORCEINLINE void SetIsDash(bool _IsDash) { bDash = _IsDash; }
 private:
 	ESelectedSkill CurSelectedSKill;
 	//Skill1
 	TDoubleLinkedList<FCharacterFrameData> FrameDatas;
 	void StoreFrameData(float DeltaTime);
 	void Replay(float DeltaTime);
-	bool bTimeReplay;
+	bool bTimeReplay=false;
 	//out of time data, cannot keep replay
 	bool bOutOfData;
 	//실제로 진행된시간
@@ -46,7 +47,16 @@ private:
 	float RecordedTime;
 	float MaxSaveTime = 5.f;
 	float Temp = 0.2f;
+	
 	//Skill2
+	bool bDash=false;
+	int32 DashPoint = 3;
+	float DashCoolChargeTime=0.f;
+	void DashStart();
+	FVector OldVelocity;
+	FTimerHandle DashTimer;
+	void FinishDashTimer();
+	void CoolTimeDashTimer();
 };
 
 USTRUCT(BluePrintType)

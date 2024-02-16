@@ -2,6 +2,7 @@
 #include "Skill/SkillComponent.h"
 #include "Character/CharacterBase.h"
 #include "Player/CharacterController.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 USkillComponent::USkillComponent()
 {
@@ -27,6 +28,10 @@ void USkillComponent::BeginPlay()
 		MaxSaveTime = 5.f;
 		break;
 	case ESelectedSkill::E_Skill2:
+		if (Character->GetController())
+		{
+			Controller = Character->GetController();
+		}
 		break;
 	case ESelectedSkill::E_Skill3:
 		break;
@@ -41,10 +46,10 @@ void USkillComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	GEngine->AddOnScreenDebugMessage(1, 1.f, FColor::Blue, FString::Printf(TEXT("RecordedTime : %f"), RecordedTime));
-
 	if (CurSelectedSKill == ESelectedSkill::E_Skill1)
 	{
+		GEngine->AddOnScreenDebugMessage(1, 1.f, FColor::Blue, FString::Printf(TEXT("RecordedTime : %f"), RecordedTime));
+
 		if (!bTimeReplay)
 		{
 			StoreFrameData(DeltaTime);
@@ -56,6 +61,14 @@ void USkillComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 	}
 	else if(CurSelectedSKill == ESelectedSkill::E_Skill2)
 	{
+
+		DashCoolChargeTime += DeltaTime;
+		if (DashPoint < 3 && DashCoolChargeTime>=2.f)
+		{
+			DashPoint += 1;
+			DashCoolChargeTime = 0.f;
+		}
+		DashStart();
 	}
 	else if (CurSelectedSKill == ESelectedSkill::E_Skill3)
 	{
@@ -134,6 +147,34 @@ void USkillComponent::Replay(float DeltaTime)
 
 		Character->SetActorLocation(InterpLocation);
 	}
+}
+
+void USkillComponent::DashStart()
+{
+	//const FRotator Rotation = Controller->GetControlRotation();
+	//const FRotator YawRotaion(0.f, Rotation.Yaw, 0.f);
+	//const FVector ForwardDir = FRotationMatrix(YawRotaion).GetUnitAxis(EAxis::X);
+
+	if (bDash)
+	{
+		bDash = false;
+		DashPoint -= 1;
+		OldVelocity = Character->GetMovementComponent()->Velocity;
+		Character->GetMovementComponent()->Velocity = //ForwardDir * 5000.f;
+			Character->GetActorForwardVector() * 5000.f;
+		GetWorld()->GetTimerManager().SetTimer(DashTimer, this, &USkillComponent::FinishDashTimer, 0.2, false);
+	}
+}
+
+void USkillComponent::FinishDashTimer()
+{
+	Character->GetMovementComponent()->Velocity = OldVelocity;
+	GetWorld()->GetTimerManager().SetTimer(DashTimer, this, &USkillComponent::CoolTimeDashTimer, 3, false);
+}
+
+void USkillComponent::CoolTimeDashTimer()
+{
+	bDash = true;
 }
 
 //Skill2

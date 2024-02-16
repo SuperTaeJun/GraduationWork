@@ -662,6 +662,7 @@ void ACharacterBase::Skill_S(const FInputActionValue& Value)
 		SkillComp->SetIsReverse(true);
 		break;
 	case ESelectedSkill::E_Skill2:
+		SkillComp->SetIsDash(true);
 		break;
 	case ESelectedSkill::E_Skill3:
 		break;
