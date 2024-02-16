@@ -3,7 +3,7 @@
 #include "Character/CharacterBase.h"
 #include "Player/CharacterController.h"
 #include "GameFramework/CharacterMovementComponent.h"
-
+#include "Components/CapsuleComponent.h"
 USkillComponent::USkillComponent()
 {
 	PrimaryComponentTick.bCanEverTick = true;
@@ -28,10 +28,7 @@ void USkillComponent::BeginPlay()
 		MaxSaveTime = 5.f;
 		break;
 	case ESelectedSkill::E_Skill2:
-		if (Character->GetController())
-		{
-			Controller = Character->GetController();
-		}
+		DashPoint = 3;
 		break;
 	case ESelectedSkill::E_Skill3:
 		break;
@@ -61,18 +58,35 @@ void USkillComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 	}
 	else if(CurSelectedSKill == ESelectedSkill::E_Skill2)
 	{
-
-		DashCoolChargeTime += DeltaTime;
-		if (DashPoint < 3 && DashCoolChargeTime>=2.f)
+		GEngine->AddOnScreenDebugMessage(1, 1.f, FColor::Blue, FString::Printf(TEXT("DashPoint : %d"), DashPoint));
+		if(DashPoint < 3) DashCoolChargeTime += DeltaTime;
+		if (DashPoint < 3 && DashCoolChargeTime>=4.f)
 		{
 			DashPoint += 1;
 			DashCoolChargeTime = 0.f;
 		}
-		DashStart();
+		//DashStart();
 	}
 	else if (CurSelectedSKill == ESelectedSkill::E_Skill3)
 	{
+		GEngine->AddOnScreenDebugMessage(1, 1.f, FColor::Blue, FString::Printf(TEXT("RecordedGhostTime : %f"), RecordedGhostTime));
+		GEngine->AddOnScreenDebugMessage(1, 1.f, FColor::Blue, FString::Printf(TEXT("GhostCoolChargeTime : %f"), GhostCoolChargeTime));
+		if (bCoolTimeFinish && bGhost)
+		{
+			GhostStart();
+			RecordedGhostTime += DeltaTime;
+			if (RecordedGhostTime >= 5.f) GhostEnd();
+		}
 
+		if (!bCoolTimeFinish)
+		{
+			GhostCoolChargeTime += DeltaTime;
+			if (GhostCoolChargeTime >= 10.f) 
+			{ 
+				bCoolTimeFinish = true; 
+				GhostCoolChargeTime = 0.f;
+			}
+		}
 	}
 	else if(CurSelectedSKill == ESelectedSkill::E_Skill4)
 	{ 
@@ -148,33 +162,53 @@ void USkillComponent::Replay(float DeltaTime)
 		Character->SetActorLocation(InterpLocation);
 	}
 }
-
+//Skill2
 void USkillComponent::DashStart()
 {
 	//const FRotator Rotation = Controller->GetControlRotation();
 	//const FRotator YawRotaion(0.f, Rotation.Yaw, 0.f);
 	//const FVector ForwardDir = FRotationMatrix(YawRotaion).GetUnitAxis(EAxis::X);
 
-	if (bDash)
+	if (bDash && bCoolTimeFinish)
 	{
+		UE_LOG(LogTemp, Log, TEXT("DASHPOINT --"));
 		bDash = false;
+		bCoolTimeFinish = false;
 		DashPoint -= 1;
 		OldVelocity = Character->GetMovementComponent()->Velocity;
 		Character->GetMovementComponent()->Velocity = //ForwardDir * 5000.f;
-			Character->GetActorForwardVector() * 5000.f;
-		GetWorld()->GetTimerManager().SetTimer(DashTimer, this, &USkillComponent::FinishDashTimer, 0.2, false);
+			Character->GetActorForwardVector() * 20000.f;
+		GetWorld()->GetTimerManager().SetTimer(DashTimer, this, &USkillComponent::FinishDashTimer, 0.5, false);
 	}
 }
 
 void USkillComponent::FinishDashTimer()
 {
 	Character->GetMovementComponent()->Velocity = OldVelocity;
-	GetWorld()->GetTimerManager().SetTimer(DashTimer, this, &USkillComponent::CoolTimeDashTimer, 3, false);
+	GetWorld()->GetTimerManager().SetTimer(DashTimer, this, &USkillComponent::CoolTimeDashTimer, 0.2, false);
 }
 
 void USkillComponent::CoolTimeDashTimer()
 {
-	bDash = true;
+	bCoolTimeFinish = true;
 }
 
-//Skill2
+//Skill3
+void USkillComponent::GhostStart()
+{
+	if (bGhost && bCoolTimeFinish)
+	{
+		OldVelocity = Character->GetMovementComponent()->Velocity;
+		Character->GetMovementComponent()->Velocity = Character->GetActorForwardVector() * 2500.f;
+		Character->GetCapsuleComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Visibility, ECollisionResponse::ECR_Ignore);
+	}
+}
+
+void USkillComponent::GhostEnd()
+{
+	Character->GetCapsuleComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Visibility, ECollisionResponse::ECR_Block);
+	Character->GetMovementComponent()->Velocity = OldVelocity;
+	bCoolTimeFinish = false;
+	bGhost = false;
+	RecordedGhostTime = 0.f;
+}
