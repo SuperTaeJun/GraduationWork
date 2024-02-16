@@ -19,7 +19,7 @@ public:
 	WSAOVERLAPPED	overlapped;
 	WSABUF			wsabuf;
 	//SOCKET			socket;
-	unsigned char	recvBuffer[buffsize + 1];
+	unsigned char	recvBuffer[2024 + 1];
 	/*int				recvBytes;
 	int				sendBytes;*/
 	IO_type			type; // read, write, accept, connect ...

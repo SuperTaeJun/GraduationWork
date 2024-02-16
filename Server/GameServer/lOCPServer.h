@@ -23,12 +23,12 @@ protected:
 	SOCKET listensocket;
 	HANDLE iocpHandle;
 
-	std::unique_ptr<PacketHandler> p_handler;
+	//std::unique_ptr<PacketHandler> p_handler;
 	bool	bAccept;			// 요청 동작 플래그
 	bool	bWorkerThread;	// 작업 스레드 동작 플래그
 public:
 	vector <thread> workerthread;
-	int cl_id;
+	//int cl_id;
 };
 
 
