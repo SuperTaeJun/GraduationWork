@@ -26,6 +26,7 @@ void process_packet(int _s_id, unsigned char* p)
 		ClientInfo& cl = clients[_s_id];
 		cout << _s_id << endl;
 		printf_s("[INFO] 로그인 시도 {%s}/{%s}\n", packet->id, packet->pw);
+		Login_Back(_s_id);
 		break;
 	}
 	default:

@@ -21,7 +21,7 @@ ClientInfo::ClientInfo() : cl_state(ST_FREE), prev(0)
 
 void ClientInfo::c_recv()
 {
-	cout << "dddd";
+	
 	DWORD recv_flag = 0;
 	ZeroMemory(&c_overlapped.overlapped, sizeof(c_overlapped.overlapped));
 	c_overlapped.wsabuf.buf = reinterpret_cast<char*>(c_overlapped.recvBuffer + prev);
@@ -37,6 +37,7 @@ void ClientInfo::c_recv()
 
 void ClientInfo::c_send(int num_bytes, void* mess)
 {
+	cout << "send data" << endl;
 	//int psize = reinterpret_cast<unsigned char*>(packet)[0];
 	Overlapped* ex_over = new Overlapped(IO_SEND, num_bytes, mess);
 	int ret = WSASend(c_socket, &ex_over->wsabuf, 1, 0, 0, &ex_over->overlapped, NULL);
