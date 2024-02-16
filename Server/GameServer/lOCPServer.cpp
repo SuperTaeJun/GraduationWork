@@ -3,7 +3,8 @@
 
 lOCPServer::lOCPServer()
 {
-	cl_id = 0;
+	//cl_id = 0;
+	for (int i = 0; i < 100; ++i) clients[i].cl_id = i;
 }
 
 lOCPServer::~lOCPServer()
@@ -21,7 +22,7 @@ bool lOCPServer::Init()
 	listensocket = WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, 0, 0, WSA_FLAG_OVERLAPPED);
 	if (listensocket == INVALID_SOCKET)
 		return 0;
-	for (int i = 0; i < 100; ++i) clients[i] = new ClientInfo();
+	
 	SOCKADDR_IN serverAddr;
 	::memset(&serverAddr, 0, sizeof(serverAddr));
 	serverAddr.sin_family = AF_INET;
@@ -45,7 +46,7 @@ void lOCPServer::Start()
 	//	//PostAccept();
 	//}
 	CreateIoCompletionPort(reinterpret_cast<HANDLE>(listensocket), iocpHandle, 0, 0);
-
+	
 	SOCKET c_socket = WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, 0, 0, WSA_FLAG_OVERLAPPED);
 	char   accept_buf[sizeof(SOCKADDR_IN) * 2 + 32 + 100];
 	Overlapped  accept_ex;
@@ -75,43 +76,92 @@ void lOCPServer::WorkerThread()
 {
 	while (true)
 	{
+		//cout << "들어옴";
 		DWORD bytesTransferred;
 		LONG64 completionKey;
-		WSAOVERLAPPED* overlapped;
+		WSAOVERLAPPED* p_over;
 
 		// IO 완료 패킷을 기다립니다.
 		bool ret = GetQueuedCompletionStatus(iocpHandle, &bytesTransferred, 
-			(PULONG_PTR)&completionKey, (LPOVERLAPPED*)&overlapped, INFINITE);
+			(PULONG_PTR)&completionKey, (LPOVERLAPPED*)&p_over, INFINITE);
 
-		cl_id = static_cast<int>(completionKey);
-		Overlapped* overlap = reinterpret_cast<Overlapped*>(overlapped);
-		//if (FALSE == ret) {
-		//	int err_no = WSAGetLastError();
-		//	cout << "GQCS Error : ";
-		//	error_display(err_no);
-		//	cout << endl;
-		//	continue;
-		//}
+		int cl_id = static_cast<int>(completionKey);
+		Overlapped* overlap = reinterpret_cast<Overlapped*>(p_over);
+		if (FALSE == ret) {
+			int err_no = WSAGetLastError();
+			cout << "GQCS Error : ";
+			//error_display(err_no);
+			cout << endl;
+			continue;
+		}
 		// IO 작업 유형을 결정하기 위해 완료 키를 확인
 		switch (overlap->type)
 		{
-		case IO_RECV:
+		case IO_RECV: {
 			// 수신 완료 처리
-			if (false == HandleReceive(cl_id, overlap, bytesTransferred))
-				continue;
+			/*if (false == HandleReceive(cl_id, overlap, bytesTransferred))
+				continue;*/
+			cout << "Received data: " << overlap->recvBuffer << endl;
+			ClientInfo& cl = clients[cl_id];
+			int remain_data = bytesTransferred + cl.prev;
+			unsigned char* packet_start = overlap->recvBuffer;
+			int packet_size = packet_start[0];
+
+			while (packet_size <= remain_data) {
+				process_packet(cl_id, packet_start);
+				remain_data -= packet_size;
+				packet_start += packet_size;
+				if (remain_data > 0) packet_size = packet_start[0];
+				else break;
+			}
+
+			if (0 < remain_data) {
+				cl.prev = remain_data;
+				memcpy(&overlap->recvBuffer, packet_start, remain_data);
+			}
+			cl.c_recv();
 			break;
+		}
 		case IO_SEND:
 			// 송신 완료 처리
 			HandleSend(overlap, bytesTransferred);
 			break;
-		case IO_ACCEPT:
-			// Accept 완료 처리
-			HandleAccept(overlap);
+		case IO_ACCEPT: {
+			//// Accept 완료 처리
+			cout << "Accept Completed.\n";
+			SOCKET c_socket = *(reinterpret_cast<SOCKET*>(overlap->recvBuffer));
+			int a_id = get_id();
+			if (-1 == a_id)
+				cout << "over" << endl;
+			else
+			{
+				ClientInfo& cl = clients[a_id];
+				//cl.state_lock.lock();
+				cl.cl_id = a_id;
+				cl.cl_state = ST_ACCEPT;
+				//.cl.state_lock.unlock();
+				cl.prev = 0;
+				cl.c_overlapped.type = IO_RECV;
+				cl.c_overlapped.wsabuf.buf = reinterpret_cast<char*>(cl.c_overlapped.recvBuffer);
+				cl.c_overlapped.wsabuf.len = sizeof(cl.c_overlapped.recvBuffer);
+				ZeroMemory(&cl.c_overlapped.overlapped, sizeof(cl.c_overlapped.overlapped));
+				cl.c_socket = c_socket;
+				CreateIoCompletionPort(reinterpret_cast<HANDLE>(c_socket), iocpHandle, a_id, 0);
+				cl.c_recv();
+
+			}
+			ZeroMemory(&overlap->overlapped, sizeof(overlap->overlapped));
+			c_socket = WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, 0, 0, WSA_FLAG_OVERLAPPED);
+			*(reinterpret_cast<SOCKET*>(overlap->recvBuffer)) = c_socket;
+			AcceptEx(listensocket, c_socket, overlap->recvBuffer + 8, 0, sizeof(SOCKADDR_IN) + 16,
+				sizeof(SOCKADDR_IN) + 16, NULL, &overlap->overlapped);
+			//HandleAccept(overlap);
 			break;
 			// 필요에 따라 더 많은 경우를 추가 (예: IO_CONNECT)
-		default:
+		}
+	/*	default:
 			cout << "Unknown IO type" << endl;
-			break;
+			break;*/
 		}
 	}
 }
@@ -125,21 +175,21 @@ bool lOCPServer::HandleAccept(Overlapped* overlapped)
 	DWORD dwBytes;
 	cout << "Accept Completed.\n";
 	SOCKET c_socket = *(reinterpret_cast<SOCKET*>(overlapped->recvBuffer));
-
+	int a_id = get_id();
 	
-	ClientInfo* cl = clients[cl_id];
+	ClientInfo& cl = clients[a_id];
 	//cl.state_lock.lock();
-	cl->cl_id = cl_id;
-	cl->cl_state = ST_ACCEPT;
+	cl.cl_id = a_id;
+	cl.cl_state = ST_ACCEPT;
 	//.cl.state_lock.unlock();
-	cl->prev = 0;
-	cl->c_overlapped.type = IO_RECV;
-	cl->c_overlapped.wsabuf.buf = reinterpret_cast<char*>(cl->c_overlapped.recvBuffer);
-	cl->c_overlapped.wsabuf.len = sizeof(cl->c_overlapped.recvBuffer);
-	ZeroMemory(&cl->c_overlapped.overlapped, sizeof(cl->c_overlapped.overlapped));
-	cl->c_socket = c_socket;
-	CreateIoCompletionPort(reinterpret_cast<HANDLE>(c_socket), iocpHandle, cl_id, 0);
-	cl->c_recv();
+	cl.prev = 0;
+	cl.c_overlapped.type = IO_RECV;
+	cl.c_overlapped.wsabuf.buf = reinterpret_cast<char*>(cl.c_overlapped.recvBuffer);
+	cl.c_overlapped.wsabuf.len = sizeof(cl.c_overlapped.recvBuffer);
+	ZeroMemory(&cl.c_overlapped.overlapped, sizeof(cl.c_overlapped.overlapped));
+	cl.c_socket = c_socket;
+	CreateIoCompletionPort(reinterpret_cast<HANDLE>(c_socket), iocpHandle, a_id, 0);
+	cl.c_recv();
 	
 
 	ZeroMemory(&overlapped->overlapped, sizeof(overlapped->overlapped));
@@ -157,14 +207,13 @@ bool lOCPServer::HandleReceive(int cl_id, Overlapped* overlapped, DWORD bytesTra
 
 	// 예시: 수신된 데이터 출력
 	cout << "Received data: " << overlapped->recvBuffer << endl;
-	ClientInfo* cl = clients[cl_id];
-	int remain_data = bytesTransferred + cl->prev;
+	ClientInfo& cl = clients[cl_id];
+	int remain_data = bytesTransferred + cl.prev;
 	unsigned char* packet_start = overlapped->recvBuffer;
 	int packet_size = packet_start[0];
-	// 계속해서 새로운 수신 작업을 등록
-	//PostRecv(overlapped);
+
 	while (packet_size <= remain_data) {
-		p_handler->ProcessPacket(0, packet_start);
+		process_packet(cl_id, packet_start);
 		remain_data -= packet_size;
 		packet_start += packet_size;
 		if (remain_data > 0) packet_size = packet_start[0];
@@ -172,17 +221,12 @@ bool lOCPServer::HandleReceive(int cl_id, Overlapped* overlapped, DWORD bytesTra
 	}
 
 	if (0 < remain_data) {
-		cl->prev = remain_data;
+		cl.prev = remain_data;
 		memcpy(&overlapped->recvBuffer, packet_start, remain_data);
 	}
-	if (remain_data == 0)
-		cl->prev = 0;
-	if (cl->cl_state != ST_SERVER)
-		cl->c_recv();
+	cl.c_recv();
 	return true;
-
 }
-
 
 
 void lOCPServer::HandleSend(Overlapped* overlapped, DWORD bytesTransferred)

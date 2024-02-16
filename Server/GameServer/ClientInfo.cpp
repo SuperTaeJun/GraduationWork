@@ -21,6 +21,7 @@ ClientInfo::ClientInfo() : cl_state(ST_FREE), prev(0)
 
 void ClientInfo::c_recv()
 {
+	cout << "dddd";
 	DWORD recv_flag = 0;
 	ZeroMemory(&c_overlapped.overlapped, sizeof(c_overlapped.overlapped));
 	c_overlapped.wsabuf.buf = reinterpret_cast<char*>(c_overlapped.recvBuffer + prev);
