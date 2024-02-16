@@ -654,12 +654,28 @@ void ACharacterBase::SelectTrap(const FInputActionValue& Value)
 	//UI연결해야함
 }
 
-void ACharacterBase::Skill(const FInputActionValue& Value)
+void ACharacterBase::Skill_S(const FInputActionValue& Value)
 {
 	switch (SkillComp->GetSelectedSkill())
 	{
 	case ESelectedSkill::E_Skill1:
-		SkillComp->Recall();
+		SkillComp->SetIsReverse(true);
+		break;
+	case ESelectedSkill::E_Skill2:
+		break;
+	case ESelectedSkill::E_Skill3:
+		break;
+	case ESelectedSkill::E_Skill4:
+		break;
+	}
+}
+
+void ACharacterBase::Skill_E(const FInputActionValue& Value)
+{
+	switch (SkillComp->GetSelectedSkill())
+	{
+	case ESelectedSkill::E_Skill1:
+		SkillComp->SetIsReverse(false);
 		break;
 	case ESelectedSkill::E_Skill2:
 		break;
@@ -726,7 +742,8 @@ void ACharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 		EnhancedInputComponent->BindAction(SelectGrandeAction, ETriggerEvent::Triggered, this, &ACharacterBase::SelectGrande);
 		EnhancedInputComponent->BindAction(SelectWallAction, ETriggerEvent::Triggered, this, &ACharacterBase::SelectWall);
 		EnhancedInputComponent->BindAction(SelectTrapAction, ETriggerEvent::Triggered, this, &ACharacterBase::SelectTrap);
-		EnhancedInputComponent->BindAction(SkillAction, ETriggerEvent::Triggered, this, &ACharacterBase::Skill);
+		EnhancedInputComponent->BindAction(SkillAction, ETriggerEvent::Triggered, this, &ACharacterBase::Skill_S);
+		EnhancedInputComponent->BindAction(SkillAction, ETriggerEvent::Completed, this, &ACharacterBase::Skill_E);
 	}
 }
 

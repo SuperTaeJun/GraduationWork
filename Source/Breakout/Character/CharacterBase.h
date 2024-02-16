@@ -219,7 +219,8 @@ protected:
 	void SelectGrande(const FInputActionValue& Value);
 	void SelectWall(const FInputActionValue& Value);
 	void SelectTrap(const FInputActionValue& Value);
-	void Skill(const FInputActionValue& Value);
+	void Skill_S(const FInputActionValue& Value);
+	void Skill_E(const FInputActionValue& Value);
 };
 
 UENUM(BlueprintType)
