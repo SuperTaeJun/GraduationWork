@@ -18,10 +18,10 @@ public:
 
 	WSAOVERLAPPED	overlapped;
 	WSABUF			wsabuf;
-	SOCKET			socket;
-	char			recvBuffer[buffsize + 1];
-	int				recvBytes;
-	int				sendBytes;
+	//SOCKET			socket;
+	unsigned char	recvBuffer[buffsize + 1];
+	/*int				recvBytes;
+	int				sendBytes;*/
 	IO_type			type; // read, write, accept, connect ...
 public:
 	Overlapped(IO_type type, char bytes, void* mess) : type(type)

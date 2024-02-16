@@ -1,7 +1,7 @@
 #include "pch.h"
 
 
-array <ClientInfo, 100> clients;
+array <ClientInfo*, 100> clients;
 
 void Login_Back(int _s_id)
 {
@@ -11,6 +11,6 @@ void Login_Back(int _s_id)
 	b_packet->cl_id = _s_id;
 	/*strcpy_s(b_packet->id, packet->id);
 	strcpy_s(b_packet->pw, packet->pw);*/
-	clients[_s_id].c_send(sizeof(b_packet), &b_packet);
+	clients[_s_id]->c_send(sizeof(b_packet), &b_packet);
 
 }

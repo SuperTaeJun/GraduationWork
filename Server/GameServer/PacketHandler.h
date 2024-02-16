@@ -13,11 +13,12 @@ public:
 	virtual ~PacketHandler() {};
 
 public:
-	void ProcessPacket(int id, char* r_ptr);
+	void ProcessPacket(int id, unsigned char* r_ptr);
 	bool Login();
+	int get_id();
 private:
-	ClientInfo* cl;
-	int Idnum;
-	char* recv_buf;
+	ClientInfo* cl = nullptr;
+	int Idnum = 0;
+	unsigned char* recv_buf = nullptr;
 };
 

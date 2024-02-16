@@ -23,7 +23,7 @@ struct LoginInfo {
 	 int Kill_num;
 	 int Death_num;
 };
-
+enum CL_STATE { ST_FREE, ST_ACCEPT, ST_INGAME, ST_SERVER }; //  접속 상태
 // 클라들 정보 저장 클래스 
 class ClientInfo
 {
@@ -37,6 +37,7 @@ public:
 	SOCKET c_socket;
 	Overlapped c_overlapped;
 	int prev;
+	CL_STATE cl_state;  //  접속 상태
 public:
 	ClientInfo();
 	~ClientInfo() { closesocket(c_socket); }

@@ -1,9 +1,21 @@
 #include "pch.h"
 #include "ClientInfo.h"
 
-ClientInfo::ClientInfo() : prev(0)
+ClientInfo::ClientInfo() : cl_state(ST_FREE), prev(0)
 {
 	cl_id = {};
+	// 위치
+	x = {};
+	y = {};
+	z = {};
+	// 회전값
+	Yaw = {};
+	Pitch = {};
+	Roll = {};
+	// 속도
+	VX = {};
+	VY = {};
+	VZ = {};
 }
 
 
