@@ -1,8 +1,6 @@
 #include "pch.h"
 #include "lOCPServer.h"
 
-static int g_id = 0;
-
 lOCPServer::lOCPServer()
 {
 	cl_id = 0;
@@ -23,7 +21,7 @@ bool lOCPServer::Init()
 	listensocket = WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, 0, 0, WSA_FLAG_OVERLAPPED);
 	if (listensocket == INVALID_SOCKET)
 		return 0;
-	for (int i = 0; i < 100; ++i) clients[i] = new ClientInfo;
+	for (int i = 0; i < 100; ++i) clients[i] = new ClientInfo();
 	SOCKADDR_IN serverAddr;
 	::memset(&serverAddr, 0, sizeof(serverAddr));
 	serverAddr.sin_family = AF_INET;
@@ -82,13 +80,9 @@ void lOCPServer::WorkerThread()
 		WSAOVERLAPPED* overlapped;
 
 		// IO 완료 패킷을 기다립니다.
-		if (!GetQueuedCompletionStatus(iocpHandle, &bytesTransferred, (PULONG_PTR)&completionKey, (LPOVERLAPPED*)&overlapped, INFINITE))
-		{
-			// 에러 처리 (추가적인 에러 처리를 추가할 수 있음)
-			cout << "GetQueuedCompletionStatus failed with error: " << GetLastError() << endl;
-			cout << "??";
-			continue;
-		}
+		bool ret = GetQueuedCompletionStatus(iocpHandle, &bytesTransferred, 
+			(PULONG_PTR)&completionKey, (LPOVERLAPPED*)&overlapped, INFINITE);
+
 		cl_id = static_cast<int>(completionKey);
 		Overlapped* overlap = reinterpret_cast<Overlapped*>(overlapped);
 		//if (FALSE == ret) {
@@ -103,7 +97,8 @@ void lOCPServer::WorkerThread()
 		{
 		case IO_RECV:
 			// 수신 완료 처리
-			HandleReceive(cl_id, overlap, bytesTransferred);
+			if (false == HandleReceive(cl_id, overlap, bytesTransferred))
+				continue;
 			break;
 		case IO_SEND:
 			// 송신 완료 처리
@@ -123,14 +118,13 @@ void lOCPServer::WorkerThread()
 
 bool lOCPServer::HandleAccept(Overlapped* overlapped)
 {
-	// Accept 작업 완료 처리, 필요에 따라 새로운 워커 스레드 생성 또는 수락된 소켓 처리 등을 수행
-	// ...
-	// 새로운 Accept 작업을 등록하여 계속해서 들어오는 연결을 수신
-	//PostAccept();
+	//// Accept 작업 완료 처리, 필요에 따라 새로운 워커 스레드 생성 또는 수락된 소켓 처리 등을 수행
+	//// ...
+	//// 새로운 Accept 작업을 등록하여 계속해서 들어오는 연결을 수신
+	////PostAccept();
 	DWORD dwBytes;
 	cout << "Accept Completed.\n";
 	SOCKET c_socket = *(reinterpret_cast<SOCKET*>(overlapped->recvBuffer));
-
 
 	
 	ClientInfo* cl = clients[cl_id];
@@ -154,6 +148,7 @@ bool lOCPServer::HandleAccept(Overlapped* overlapped)
 	AcceptEx(listensocket, c_socket, overlapped->recvBuffer + 8, 0, sizeof(SOCKADDR_IN) + 16,
 		sizeof(SOCKADDR_IN) + 16, &dwBytes, &overlapped->overlapped);
 	return true;
+	
 }
 bool lOCPServer::HandleReceive(int cl_id, Overlapped* overlapped, DWORD bytesTransferred)
 {
