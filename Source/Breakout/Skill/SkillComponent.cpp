@@ -90,6 +90,16 @@ void USkillComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 	}
 	else if(CurSelectedSKill == ESelectedSkill::E_Skill4)
 	{ 
+		GEngine->AddOnScreenDebugMessage(1, 1.f, FColor::Blue, FString::Printf(TEXT("RecordedTelpoTime : %f"), GhostCoolChargeTime));
+		if (!TelepoChargeTime)
+		{
+			GhostCoolChargeTime += DeltaTime;
+			if (GhostCoolChargeTime >= 15.f)
+			{
+				TelepoChargeTime = true;
+			}
+		}
+
 	}
 	
 }
@@ -211,4 +221,29 @@ void USkillComponent::GhostEnd()
 	bCoolTimeFinish = false;
 	bGhost = false;
 	RecordedGhostTime = 0.f;
+}
+
+void USkillComponent::SaveCurLocation()
+{
+	if ( TelepoChargeTime)
+	{
+		UE_LOG(LogTemp, Log, TEXT("START"));
+		SavedLocation=Character->GetActorLocation();
+		bSaved = true;
+		GetWorld()->GetTimerManager().SetTimer(DashTimer, this, &USkillComponent::SetCanTelepo, 1, false);
+	}
+
+}
+
+void USkillComponent::SetLocation()
+{
+	if (bSaved && CanTelepo)
+	{
+		UE_LOG(LogTemp, Log, TEXT("End"));
+		TelepoChargeTime = false;
+		bSaved = false;
+		Character->SetActorLocation(SavedLocation);
+		Toggle += 1;
+	}
+
 }

@@ -687,8 +687,17 @@ void ACharacterBase::Skill_E(const FInputActionValue& Value)
 		break;
 	case ESelectedSkill::E_Skill3:
 		SkillComp->SetIsGhost(false);
+		SkillComp->SetIsCharageTime(false);
 		break;
 	case ESelectedSkill::E_Skill4:
+		if (SkillComp->Toggle % 2 == 1)
+		{
+			SkillComp->SaveCurLocation();
+		}
+		else
+		{
+			SkillComp->SetLocation();
+		}
 		break;
 	}
 }
