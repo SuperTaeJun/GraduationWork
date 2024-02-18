@@ -69,7 +69,7 @@ void ClientSocket::PacketProcess(unsigned char* ptr)
 		SC_LOGIN_BACK* packet = reinterpret_cast<SC_LOGIN_BACK*>(ptr);
 
 		login_cond = true;
-		//UE_LOG(LogClass, Warning, TEXT("recv login back - id: %s"), ANSI_TO_TCHAR(id), ANSI_TO_TCHAR(pw));
+		UE_LOG(LogTemp, Warning, TEXT("recv data"));
 	
 		break;
 	}
