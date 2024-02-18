@@ -29,9 +29,13 @@ public:
 
 	FORCEINLINE void SetIsReverse(bool _IsReverse) { bTimeReplay = _IsReverse; }
 	FORCEINLINE void SetIsDash(bool _IsDash) { bDash = _IsDash; }
+	FORCEINLINE int32 GetDashPoint() { return DashPoint; }
+	FORCEINLINE void SetIsGhost(bool _bGhost) { bGhost = _bGhost; }
+	FORCEINLINE void SetIsCharageTime(bool _GhostCoolChargeTime) { GhostCoolChargeTime = _GhostCoolChargeTime; }
+	void DashStart();
 private:
 	ESelectedSkill CurSelectedSKill;
-	//Skill1
+	//Skill1 시간되돌리기
 	TDoubleLinkedList<FCharacterFrameData> FrameDatas;
 	void StoreFrameData(float DeltaTime);
 	void Replay(float DeltaTime);
@@ -47,16 +51,36 @@ private:
 	float RecordedTime;
 	float MaxSaveTime = 5.f;
 	float Temp = 0.2f;
-	
-	//Skill2
+
+	//Skill2 대쉬3번
 	bool bDash=false;
+	bool bCoolTimeFinish = true;
 	int32 DashPoint = 3;
 	float DashCoolChargeTime=0.f;
-	void DashStart();
+	//void DashStart();
 	FVector OldVelocity;
 	FTimerHandle DashTimer;
 	void FinishDashTimer();
 	void CoolTimeDashTimer();
+
+	//Skill3 유령화
+	bool bGhost = false;
+	float GhostCoolChargeTime = 0.f;
+	float RecordedGhostTime = 0.f;
+	FTimerHandle GhostTimer;
+	void GhostStart();
+	void GhostEnd();
+
+	//순간이동
+	FVector SavedLocation;
+	bool TelepoChargeTime=true;
+	bool bSaved=false;
+	bool CanTelepo = false;
+	void SetCanTelepo() { CanTelepo = true; 		Toggle += 1;}
+public:
+	void SaveCurLocation();
+	void SetLocation();
+	int Toggle = 1;
 };
 
 USTRUCT(BluePrintType)

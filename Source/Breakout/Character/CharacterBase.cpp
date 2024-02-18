@@ -46,8 +46,8 @@ ACharacterBase::ACharacterBase()
 	CameraBoom->SetupAttachment(GetMesh());
 	CameraBoom->TargetArmLength = DEFAULTCAMERALENGTH;
 	CameraBoom->bUsePawnControlRotation = true;
-	CameraBoom->bEnableCameraLag;
-	CameraBoom->bEnableCameraRotationLag;
+	CameraBoom->bEnableCameraLag = true;
+	CameraBoom->bEnableCameraRotationLag = true;
 
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
 	FollowCamera->SetupAttachment(CameraBoom);
@@ -662,9 +662,14 @@ void ACharacterBase::Skill_S(const FInputActionValue& Value)
 		SkillComp->SetIsReverse(true);
 		break;
 	case ESelectedSkill::E_Skill2:
-		SkillComp->SetIsDash(true);
+		if (SkillComp->GetDashPoint() > 0 && !Movement->IsFalling())  
+		{
+			SkillComp->SetIsDash(true);
+			SkillComp->DashStart();
+		}
 		break;
 	case ESelectedSkill::E_Skill3:
+		SkillComp->SetIsGhost(true);
 		break;
 	case ESelectedSkill::E_Skill4:
 		break;
@@ -681,8 +686,18 @@ void ACharacterBase::Skill_E(const FInputActionValue& Value)
 	case ESelectedSkill::E_Skill2:
 		break;
 	case ESelectedSkill::E_Skill3:
+		SkillComp->SetIsGhost(false);
+		SkillComp->SetIsCharageTime(false);
 		break;
 	case ESelectedSkill::E_Skill4:
+		if (SkillComp->Toggle % 2 == 1)
+		{
+			SkillComp->SaveCurLocation();
+		}
+		else
+		{
+			SkillComp->SetLocation();
+		}
 		break;
 	}
 }
