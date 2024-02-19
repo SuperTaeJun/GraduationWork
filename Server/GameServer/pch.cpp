@@ -21,7 +21,7 @@ void process_packet(int _s_id, unsigned char* p)
 		printf("login\n");
 		CS_LOGIN_PACKET* packet = reinterpret_cast<CS_LOGIN_PACKET*>(p);
 		ClientInfo& cl = clients[_s_id];
-		cout << _s_id << endl;
+		cout << "client 접속 id : " << _s_id << endl;
 		cout << "로그인 시도  :" << packet->id << packet->pw << endl;
 		cout << packet->id << " 로그인 성공" << endl;
 		Login_Back(_s_id);
