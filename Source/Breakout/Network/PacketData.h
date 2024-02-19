@@ -16,7 +16,11 @@
 #define MAX_INFO_SIZE   20
 
 const char CS_LOGIN = 1;
+const char CS_MOVE = 2;
+
+
 const char SC_LOGIN_OK = 1;
+const char SC_MOVE_OK = 2;
 
 #pragma pack (push, 1)
 struct CS_LOGIN_PACKET
@@ -34,6 +38,19 @@ struct SC_LOGIN_BACK {
 	char pw[MAX_INFO_SIZE];
 	float x, y, z;
 	int cl_id;
+};
+struct CS_MOVE_PACKET
+{
+	unsigned char size;
+	char type;
+	int	id;
+	float x, y, z;
+};
+struct SC_MOVE_BACK {
+	unsigned char size;
+	char type;
+	int		id;
+	float x, y, z;
 };
 #pragma pack(pop)
 
