@@ -16,10 +16,12 @@ class BREAKOUT_API ABOGameMode : public AGameMode
 	
 public:
 	ABOGameMode();
-
 	virtual void PlayerRemove(class ACharacterBase* RemovedCharacter, class ACharacterController* RemovedCharacterController, class ACharacterController* AttackerController);
-	//virtual void BeginPlay() override;
-
+	virtual UClass* GetDefaultPawnClassForController_Implementation(AController* InController) override;
+	TSubclassOf<class ACharacterBase>Character1;
+	TSubclassOf<class ACharacterBase>Character2;
+	TSubclassOf<class ACharacterBase>Character3;
+	TSubclassOf<class ACharacterBase>Character4;
 //private:
 //	ClientSocket* m_Socket;
 //	bool connect;

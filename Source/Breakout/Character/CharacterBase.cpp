@@ -48,6 +48,7 @@ ACharacterBase::ACharacterBase()
 	CameraBoom->bUsePawnControlRotation = true;
 	CameraBoom->bEnableCameraLag = true;
 	CameraBoom->bEnableCameraRotationLag = true;
+	CameraBoom->SetWorldLocation(FVector(-40.f, 0.f, 160.f));
 
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
 	FollowCamera->SetupAttachment(CameraBoom);
@@ -99,34 +100,34 @@ void ACharacterBase::BeginPlay()
 		MainController->showWeaponSelect();
 	}
 
-	if (MainController && GetWorld()->GetGameInstance())
-	{
-		//캐릭터 선택 (게임룸에서 선택한 정보를 게임인스턴스에서 가져와서 선택)
-		switch (Cast<UBOGameInstance>(GetWorld()->GetGameInstance())->GetCharacterType())
-		{
-		case ECharacterType::ECharacter1:
-			GetMesh()->SetSkeletalMeshAsset(Character1);
-			SkillComp->SetSelectedSkill(ESelectedSkill::E_Skill1);
-			break;
-		case ECharacterType::ECharacter2:
-			GetMesh()->SetSkeletalMeshAsset(Character2);
-			SkillComp->SetSelectedSkill(ESelectedSkill::E_Skill2);
-			break;
-		case ECharacterType::ECharacter3:
-			GetMesh()->SetSkeletalMeshAsset(Character3);
-			SkillComp->SetSelectedSkill(ESelectedSkill::E_Skill3);
-			break;
-		case ECharacterType::ECharacter4:
-			GetMesh()->SetSkeletalMeshAsset(Character4);
-			SkillComp->SetSelectedSkill(ESelectedSkill::E_Skill4);
-			break;
+	//if (MainController && GetWorld()->GetGameInstance())
+	//{
+	//	//캐릭터 선택 (게임룸에서 선택한 정보를 게임인스턴스에서 가져와서 선택)
+	//	switch (Cast<UBOGameInstance>(GetWorld()->GetGameInstance())->GetCharacterType())
+	//	{
+	//	case ECharacterType::ECharacter1:
+	//		GetMesh()->SetSkeletalMeshAsset(Character1);
+	//		SkillComp->SetSelectedSkill(ESelectedSkill::E_Skill1);
+	//		break;
+	//	case ECharacterType::ECharacter2:
+	//		GetMesh()->SetSkeletalMeshAsset(Character2);
+	//		SkillComp->SetSelectedSkill(ESelectedSkill::E_Skill2);
+	//		break;
+	//	case ECharacterType::ECharacter3:
+	//		GetMesh()->SetSkeletalMeshAsset(Character3);
+	//		SkillComp->SetSelectedSkill(ESelectedSkill::E_Skill3);
+	//		break;
+	//	case ECharacterType::ECharacter4:
+	//		GetMesh()->SetSkeletalMeshAsset(Character4);
+	//		SkillComp->SetSelectedSkill(ESelectedSkill::E_Skill4);
+	//		break;
 
-		default:
-			GetMesh()->SetSkeletalMeshAsset(Character1);
-			SkillComp->SetSelectedSkill(ESelectedSkill::E_Skill1);
-			break;
-		}
-	}
+	//	default:
+	//		GetMesh()->SetSkeletalMeshAsset(Character1);
+	//		SkillComp->SetSelectedSkill(ESelectedSkill::E_Skill1);
+	//		break;
+	//	}
+	//}
 
 	BojoMugiType = EBojoMugiType::ECS_DEFAULT;
 

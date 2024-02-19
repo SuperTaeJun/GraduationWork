@@ -70,7 +70,7 @@ private:
 	FTimerHandle GhostTimer;
 	void GhostStart();
 	void GhostEnd();
-
+	TObjectPtr<class UNiagaraSystem> GhostFX;
 	//순간이동
 	FVector SavedLocation;
 	bool TelepoChargeTime=true;

@@ -4,6 +4,10 @@
 #include "Player/CharacterController.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/CapsuleComponent.h"
+
+#include "NiagaraFunctionLibrary.h"
+#include "NiagaraSystem.h"
+
 USkillComponent::USkillComponent()
 {
 	PrimaryComponentTick.bCanEverTick = true;
@@ -16,6 +20,8 @@ USkillComponent::USkillComponent()
 			Controller = Character->GetController();
 		}
 	}
+	
+	GhostFX = LoadObject<UNiagaraSystem>(nullptr, TEXT("/Game/Niagara/DashFX.DashFX"));
 
 }
 void USkillComponent::BeginPlay()
@@ -211,6 +217,11 @@ void USkillComponent::GhostStart()
 		OldVelocity = Character->GetMovementComponent()->Velocity;
 		Character->GetMovementComponent()->Velocity = Character->GetActorForwardVector() * 2500.f;
 		Character->GetCapsuleComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Visibility, ECollisionResponse::ECR_Ignore);
+
+		if (GhostFX)
+		{
+			UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), GhostFX, Character->GetActorLocation(), Character->GetActorRotation());
+		}
 	}
 }
 
@@ -231,6 +242,8 @@ void USkillComponent::SaveCurLocation()
 		SavedLocation=Character->GetActorLocation();
 		bSaved = true;
 		GetWorld()->GetTimerManager().SetTimer(DashTimer, this, &USkillComponent::SetCanTelepo, 1, false);
+
+		//UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(),);
 	}
 
 }

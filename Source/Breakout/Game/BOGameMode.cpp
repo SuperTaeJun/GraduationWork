@@ -20,6 +20,15 @@ ABOGameMode::ABOGameMode()
 	{
 		UE_LOG(LogClass, Warning, TEXT("IOCP Server connect FAIL!"));
 	}*/
+
+	ConstructorHelpers::FClassFinder<ACharacterBase>Character1Ref(TEXT("/Game/BP/Character/BP_Character1.BP_Character1_C"));
+	Character1 = Character1Ref.Class;
+	ConstructorHelpers::FClassFinder<ACharacterBase>Character2Ref(TEXT("/Game/BP/Character/BP_Character2.BP_Character2_C"));
+	Character2 = Character2Ref.Class;
+	ConstructorHelpers::FClassFinder<ACharacterBase>Character3Ref(TEXT("/Game/BP/Character/BP_Character3.BP_Character3_C"));
+	Character3 = Character3Ref.Class;
+	ConstructorHelpers::FClassFinder<ACharacterBase>Character4Ref(TEXT("/Game/BP/Character/BP_Character4.BP_Character4_C"));
+	Character4 = Character4Ref.Class;
 }
 
 void ABOGameMode::PlayerRemove(ACharacterBase* RemovedCharacter, ACharacterController* RemovedCharacterController, ACharacterController* AttackerController)
@@ -30,8 +39,29 @@ void ABOGameMode::PlayerRemove(ACharacterBase* RemovedCharacter, ACharacterContr
 	}
 }
 
-//void ABOGameMode::BeginPlay()
-//{
-//
-//}
+
+UClass* ABOGameMode::GetDefaultPawnClassForController_Implementation(AController* InController)
+{
+	Super::GetDefaultPawnClassForController_Implementation(InController);
+
+	if (Cast<UBOGameInstance>(GetWorld()->GetGameInstance())->GetCharacterType() == ECharacterType::ECharacter1)
+	{
+		return Character1;
+	}
+	else if (Cast<UBOGameInstance>(GetWorld()->GetGameInstance())->GetCharacterType() == ECharacterType::ECharacter2)
+	{
+		return Character2;
+	}
+	else if (Cast<UBOGameInstance>(GetWorld()->GetGameInstance())->GetCharacterType() == ECharacterType::ECharacter3)
+	{
+		return Character3;
+	}
+	else if (Cast<UBOGameInstance>(GetWorld()->GetGameInstance())->GetCharacterType() == ECharacterType::ECharacter4)
+	{
+		return Character4;
+	}
+	else
+		return Character4;
+}
+
 

@@ -87,17 +87,7 @@ public:
 
 	void Dead();
 
-private:
-	//character Á¾·ù
-	UPROPERTY(EditAnywhere, Category = Mesh)
-	TObjectPtr<class USkeletalMesh> Character1;
-	UPROPERTY(EditAnywhere, Category = Mesh)
-	TObjectPtr<class USkeletalMesh> Character2;
-	UPROPERTY(EditAnywhere, Category = Mesh)
-	TObjectPtr<class USkeletalMesh> Character3;
-	UPROPERTY(EditAnywhere, Category = Mesh)
-	TObjectPtr<class USkeletalMesh> Character4;
-
+protected:
 
 	UPROPERTY(VisibleAnywhere, Category = Camera)
 	TObjectPtr<class USpringArmComponent> CameraBoom;
@@ -219,8 +209,8 @@ protected:
 	void SelectGrande(const FInputActionValue& Value);
 	void SelectWall(const FInputActionValue& Value);
 	void SelectTrap(const FInputActionValue& Value);
-	void Skill_S(const FInputActionValue& Value);
-	void Skill_E(const FInputActionValue& Value);
+	virtual void Skill_S(const FInputActionValue& Value);
+	virtual void Skill_E(const FInputActionValue& Value);
 };
 
 UENUM(BlueprintType)
