@@ -43,7 +43,7 @@ public:
 	WSAOVERLAPPED	overlapped;
 	WSABUF			wsabuf;
 	SOCKET			socket;
-	char			recvBuffer[buffsize + 1];
+	unsigned char			recvBuffer[buffsize + 1];
 	int				recvBytes;
 	int				sendBytes;
 	IO_type			type; // read, write, accept, connect ...
@@ -182,7 +182,7 @@ public:
 	
 	void PacketProcess(unsigned char* ptr);
 	void Send_Login_Info(char* id, char* pw);
-	
+	void Send_Move_Packet(int sessionID, float x, float y, float z);
 	virtual bool Init();
 	virtual uint32 Run();
 	virtual void Stop();
