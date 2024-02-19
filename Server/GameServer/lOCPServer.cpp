@@ -7,11 +7,11 @@ lOCPServer::lOCPServer()
 	for (int i = 0; i < 100; ++i) clients[i].cl_id = i;
 }
 
-lOCPServer::~lOCPServer()
-{
-	WSACleanup();
-	cout << "종료" << endl;
-}
+//lOCPServer::~lOCPServer()
+//{
+//	WSACleanup();
+//	cout << "종료" << endl;
+//}
 
 bool lOCPServer::Init()
 {
@@ -124,7 +124,7 @@ void lOCPServer::WorkerThread()
 		}
 		case IO_SEND:
 			// 송신 완료 처리
-			HandleSend(overlap, bytesTransferred);
+			//HandleSend(overlap, bytesTransferred);
 			break;
 		case IO_ACCEPT: {
 			//// Accept 완료 처리
@@ -136,10 +136,8 @@ void lOCPServer::WorkerThread()
 			else
 			{
 				ClientInfo& cl = clients[a_id];
-				//cl.state_lock.lock();
 				cl.cl_id = a_id;
 				cl.cl_state = ST_ACCEPT;
-				//.cl.state_lock.unlock();
 				cl.prev = 0;
 				cl.c_overlapped.type = IO_RECV;
 				cl.c_overlapped.wsabuf.buf = reinterpret_cast<char*>(cl.c_overlapped.recvBuffer);
@@ -229,14 +227,14 @@ bool lOCPServer::HandleReceive(int cl_id, Overlapped* overlapped, DWORD bytesTra
 }
 
 
-void lOCPServer::HandleSend(Overlapped* overlapped, DWORD bytesTransferred)
-{
-	// 송신 작업 완료 처리, 필요에 따라 추가 로직 구현
-	// ...
-	cout << "Send data: " << overlapped->recvBuffer << endl;
-	//PostSend(overlapped);
-	// 필요한 경우 리소스 정리, 소켓 닫기 등을 수행
-}
+//void lOCPServer::HandleSend(Overlapped* overlapped, DWORD bytesTransferred)
+//{
+//	// 송신 작업 완료 처리, 필요에 따라 추가 로직 구현
+//	// ...
+//	cout << "Send data: " << overlapped->recvBuffer << endl;
+//	//PostSend(overlapped);
+//	// 필요한 경우 리소스 정리, 소켓 닫기 등을 수행
+//}
 
 
 //void lOCPServer::PostRecv(Overlapped* overlapped)

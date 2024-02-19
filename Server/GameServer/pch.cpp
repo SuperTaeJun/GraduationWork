@@ -5,14 +5,11 @@ array <ClientInfo, 100> clients;
 
 void Login_Back(int _s_id)
 {
-	SC_LOGIN_BACK* b_packet = new SC_LOGIN_BACK;
-	b_packet->size = sizeof(SC_LOGIN_BACK);
-	b_packet->type = SC_LOGIN_OK;
-	b_packet->cl_id = _s_id;
-	/*strcpy_s(b_packet->id, packet->id);
-	strcpy_s(b_packet->pw, packet->pw);*/
+	SC_LOGIN_BACK b_packet;
+	b_packet.size = sizeof(SC_LOGIN_BACK);
+	b_packet.type = SC_LOGIN_OK;
 	clients[_s_id].c_send(sizeof(b_packet), &b_packet);
-
+	cout << "b_packet - size : " << sizeof(SC_LOGIN_BACK) << endl;
 }
 void process_packet(int _s_id, unsigned char* p)
 {
@@ -25,7 +22,8 @@ void process_packet(int _s_id, unsigned char* p)
 		CS_LOGIN_PACKET* packet = reinterpret_cast<CS_LOGIN_PACKET*>(p);
 		ClientInfo& cl = clients[_s_id];
 		cout << _s_id << endl;
-		printf_s("[INFO] 로그인 시도 {%s}/{%s}\n", packet->id, packet->pw);
+		cout << "로그인 시도  :" << packet->id << packet->pw << endl;
+		cout << packet->id << " 로그인 성공" << endl;
 		Login_Back(_s_id);
 		break;
 	}

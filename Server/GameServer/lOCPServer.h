@@ -7,13 +7,13 @@ class lOCPServer
 {
 public:
 	lOCPServer();
-	virtual ~lOCPServer();
+	//virtual ~lOCPServer();
 	bool Init();
 	void Start();
 	bool CreateWorkerThreads();
 	void WorkerThread();
 	bool HandleReceive(int cl_id, Overlapped* overlapped, DWORD bytesTransferred);
-	void HandleSend(Overlapped* overlapped, DWORD bytesTransferred);
+	//void HandleSend(Overlapped* overlapped, DWORD bytesTransferred);
 	bool HandleAccept(Overlapped* overlapped);
 	//void PostRecv(Overlapped* overlapped);
 	//void PostSend(Overlapped* overlapped);
