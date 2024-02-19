@@ -4,9 +4,12 @@
 #include "Player/CharacterController.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "Character/Character3.h"
+
 
 #include "NiagaraFunctionLibrary.h"
-#include "NiagaraSystem.h"
+#include "NiagaraComponent.h"
+
 
 USkillComponent::USkillComponent()
 {
@@ -21,8 +24,6 @@ USkillComponent::USkillComponent()
 		}
 	}
 	
-	GhostFX = LoadObject<UNiagaraSystem>(nullptr, TEXT("/Game/Niagara/DashFX.DashFX"));
-
 }
 void USkillComponent::BeginPlay()
 {
@@ -218,10 +219,7 @@ void USkillComponent::GhostStart()
 		Character->GetMovementComponent()->Velocity = Character->GetActorForwardVector() * 2500.f;
 		Character->GetCapsuleComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Visibility, ECollisionResponse::ECR_Ignore);
 
-		if (GhostFX)
-		{
-			UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), GhostFX, Character->GetActorLocation(), Character->GetActorRotation());
-		}
+		Cast<ACharacter3>(Character)->NiagaraComp->SetActive(true);
 	}
 }
 
@@ -232,6 +230,7 @@ void USkillComponent::GhostEnd()
 	bCoolTimeFinish = false;
 	bGhost = false;
 	RecordedGhostTime = 0.f;
+	Cast<ACharacter3>(Character)->NiagaraComp->SetActive(false);
 }
 
 void USkillComponent::SaveCurLocation()
