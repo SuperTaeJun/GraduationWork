@@ -3,7 +3,17 @@
 
 #include "Character/Character3.h"
 #include "Skill/SkillComponent.h"
+#include "NiagaraFunctionLibrary.h"
+#include "NiagaraComponent.h"
 
+ACharacter3::ACharacter3()
+{
+
+	ConstructorHelpers::FObjectFinder<UNiagaraSystem> DashFxRef(TEXT("/Game/Niagara/DashFX.DashFX"));
+	NiagaraComp = CreateDefaultSubobject<UNiagaraComponent>(TEXT("NiagaraComp"));
+	NiagaraComp->SetAsset(DashFxRef.Object);
+	NiagaraComp->SetActive(false);
+}
 void ACharacter3::BeginPlay()
 {
 	Super::BeginPlay();
@@ -20,4 +30,5 @@ void ACharacter3::Skill_E(const FInputActionValue& Value)
 {
 	SkillComp->SetIsGhost(false);
 	SkillComp->SetIsCharageTime(false);
+
 }
