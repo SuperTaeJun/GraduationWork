@@ -4,9 +4,6 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 
-//스킬
-#include "Skill/SkillComponent.h"
-
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -39,8 +36,6 @@ ACharacterBase::ACharacterBase()
 	Movement->MaxWalkSpeed = 400.f;
 	Movement->bOrientRotationToMovement = false;
 	bUseControllerRotationYaw = true;
-
-	SkillComp = CreateDefaultSubobject<USkillComponent>(TEXT("SkillComp"));
 
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
 	CameraBoom->SetupAttachment(GetMesh());
@@ -99,35 +94,6 @@ void ACharacterBase::BeginPlay()
 
 		MainController->showWeaponSelect();
 	}
-
-	//if (MainController && GetWorld()->GetGameInstance())
-	//{
-	//	//캐릭터 선택 (게임룸에서 선택한 정보를 게임인스턴스에서 가져와서 선택)
-	//	switch (Cast<UBOGameInstance>(GetWorld()->GetGameInstance())->GetCharacterType())
-	//	{
-	//	case ECharacterType::ECharacter1:
-	//		GetMesh()->SetSkeletalMeshAsset(Character1);
-	//		SkillComp->SetSelectedSkill(ESelectedSkill::E_Skill1);
-	//		break;
-	//	case ECharacterType::ECharacter2:
-	//		GetMesh()->SetSkeletalMeshAsset(Character2);
-	//		SkillComp->SetSelectedSkill(ESelectedSkill::E_Skill2);
-	//		break;
-	//	case ECharacterType::ECharacter3:
-	//		GetMesh()->SetSkeletalMeshAsset(Character3);
-	//		SkillComp->SetSelectedSkill(ESelectedSkill::E_Skill3);
-	//		break;
-	//	case ECharacterType::ECharacter4:
-	//		GetMesh()->SetSkeletalMeshAsset(Character4);
-	//		SkillComp->SetSelectedSkill(ESelectedSkill::E_Skill4);
-	//		break;
-
-	//	default:
-	//		GetMesh()->SetSkeletalMeshAsset(Character1);
-	//		SkillComp->SetSelectedSkill(ESelectedSkill::E_Skill1);
-	//		break;
-	//	}
-	//}
 
 	BojoMugiType = EBojoMugiType::ECS_DEFAULT;
 
@@ -657,7 +623,7 @@ void ACharacterBase::SelectTrap(const FInputActionValue& Value)
 
 void ACharacterBase::Skill_S(const FInputActionValue& Value)
 {
-	switch (SkillComp->GetSelectedSkill())
+	/*switch (SkillComp->GetSelectedSkill())
 	{
 	case ESelectedSkill::E_Skill1:
 		SkillComp->SetIsReverse(true);
@@ -674,33 +640,33 @@ void ACharacterBase::Skill_S(const FInputActionValue& Value)
 		break;
 	case ESelectedSkill::E_Skill4:
 		break;
-	}
+	}*/
 }
 
 void ACharacterBase::Skill_E(const FInputActionValue& Value)
 {
-	switch (SkillComp->GetSelectedSkill())
-	{
-	case ESelectedSkill::E_Skill1:
-		SkillComp->SetIsReverse(false);
-		break;
-	case ESelectedSkill::E_Skill2:
-		break;
-	case ESelectedSkill::E_Skill3:
-		SkillComp->SetIsGhost(false);
-		SkillComp->SetIsCharageTime(false);
-		break;
-	case ESelectedSkill::E_Skill4:
-		if (SkillComp->Toggle % 2 == 1)
-		{
-			SkillComp->SaveCurLocation();
-		}
-		else
-		{
-			SkillComp->SetLocation();
-		}
-		break;
-	}
+	//switch (SkillComp->GetSelectedSkill())
+	//{
+	//case ESelectedSkill::E_Skill1:
+	//	SkillComp->SetIsReverse(false);
+	//	break;
+	//case ESelectedSkill::E_Skill2:
+	//	break;
+	//case ESelectedSkill::E_Skill3:
+	//	SkillComp->SetIsGhost(false);
+	//	SkillComp->SetIsCharageTime(false);
+	//	break;
+	//case ESelectedSkill::E_Skill4:
+	//	if (SkillComp->Toggle % 2 == 1)
+	//	{
+	//		SkillComp->SaveCurLocation();
+	//	}
+	//	else
+	//	{
+	//		SkillComp->SetLocation();
+	//	}
+	//	break;
+	//}
 }
 
 void ACharacterBase::Tick(float DeltaTime)
