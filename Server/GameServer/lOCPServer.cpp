@@ -178,7 +178,7 @@ bool lOCPServer::HandleAccept(Overlapped* overlapped)
 	ClientInfo& cl = clients[a_id];
 	//cl.state_lock.lock();
 	cl.cl_id = a_id;
-	cl.cl_state = ST_ACCEPT;
+	//cl.cl_state = ST_ACCEPT;
 	//.cl.state_lock.unlock();
 	cl.prev = 0;
 	cl.c_overlapped.type = IO_RECV;

@@ -37,10 +37,11 @@ void ClientInfo::c_recv()
 
 void ClientInfo::c_send(int num_bytes, void* mess)
 {
-	cout << "send data" << endl;
+	
 	//int psize = reinterpret_cast<unsigned char*>(packet)[0];
 	Overlapped* ex_over = new Overlapped(IO_SEND, num_bytes, mess);
 	int ret = WSASend(c_socket, &ex_over->wsabuf, 1, 0, 0, &ex_over->overlapped, NULL);
+	cout << "send data" << endl;
 	if (SOCKET_ERROR == ret) {
 		int error_num = WSAGetLastError();
 		if (ERROR_IO_PENDING != error_num)

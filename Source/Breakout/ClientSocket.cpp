@@ -69,8 +69,14 @@ void ClientSocket::PacketProcess(unsigned char* ptr)
 		SC_LOGIN_BACK* packet = reinterpret_cast<SC_LOGIN_BACK*>(ptr);
 
 		login_cond = true;
-		UE_LOG(LogTemp, Warning, TEXT("recv data"));
+		UE_LOG(LogClass, Warning, TEXT("recv data"));
 	
+		break;
+	}
+	case SC_MOVE_OK:
+	{
+		SC_MOVE_BACK* packet = reinterpret_cast<SC_MOVE_BACK*>(ptr);
+		UE_LOG(LogClass, Warning, TEXT("recv data"));
 		break;
 	}
 	default:
@@ -82,15 +88,31 @@ void ClientSocket::Send_Login_Info(char* id, char* pw)
 {
 	//패킷 조립
 	//CS_LOGIN_PACKET packet;
-	CS_LOGIN_PACKET packet;
-	packet.size = sizeof(packet);
-	packet.type = SC_LOGIN_OK;
-	strcpy(packet.id, id);
-	strcpy(packet.pw, pw);
+	
+		CS_LOGIN_PACKET packet;
+		packet.size = sizeof(packet);
+		packet.type = SC_LOGIN_OK;
+		strcpy(packet.id, id);
+		strcpy(packet.pw, pw);
 
-	//cs_login_packet
-	SendPacket(&packet);
-	UE_LOG(LogClass, Warning, TEXT("Sending login info - id: %s, pw: %s"), ANSI_TO_TCHAR(id), ANSI_TO_TCHAR(pw));
+		//cs_login_packet
+		SendPacket(&packet);
+		UE_LOG(LogClass, Warning, TEXT("Sending login info - id: %s, pw: %s"), ANSI_TO_TCHAR(id), ANSI_TO_TCHAR(pw));
+
+}
+
+void ClientSocket::Send_Move_Packet(int sessionID, float x, float y, float z)
+{
+	if (login_cond) {
+		CS_MOVE_PACKET packet;
+		packet.size = sizeof(packet);
+		packet.type = CS_MOVE;
+		packet.id = sessionID;
+		packet.x = x;
+		packet.y = y;
+		packet.z = z;
+		SendPacket(&packet);
+	}
 }
 
 bool ClientSocket::Init()
@@ -103,48 +125,64 @@ uint32 ClientSocket::Run()
 	Iocp = CreateIoCompletionPort(INVALID_HANDLE_VALUE, NULL, NULL, 0);
 	CreateIoCompletionPort(reinterpret_cast<HANDLE>(socket), Iocp, NULL, 0);
 	RecvPacket();
-	SleepEx(0, true);
-	while (true)
+	//SleepEx(0, true);
+	while (StopTaskCounter.GetValue() == 0 && MyCharacterController != nullptr)
 	{
-		/*DWORD num_byte;
+		DWORD num_byte;
 		LONG64 iocp_key;
-		WSAOVERLAPPED* p_over; 
+		WSAOVERLAPPED* p_over;
 		BOOL ret = GetQueuedCompletionStatus(Iocp, &num_byte, (PULONG_PTR)&iocp_key, &p_over, INFINITE);
 
-		Overlapped* exp_over = reinterpret_cast<Overlapped*>(p_over);*/
-		DWORD bytesTransferred;
-		ULONG_PTR completionKey;
-		Overlapped* overlapped;
+		Overlapped* exp_over = reinterpret_cast<Overlapped*>(p_over);
 
-		// IO 완료 패킷을 기다립니다.
-		if (!GetQueuedCompletionStatus(Iocp, &bytesTransferred, &completionKey, (LPOVERLAPPED*)&overlapped, INFINITE))
-		{
-			// 에러 처리 (추가적인 에러 처리를 추가할 수 있음)
-			cout << "GetQueuedCompletionStatus failed with error: " << GetLastError() << endl;
-			cout << "??";
+		if (ret == false) {
+			int err_no = WSAGetLastError();
 			continue;
 		}
-		// IO 작업 유형을 결정하기 위해 완료 키를 확인
-		switch (overlapped->type)
-		{
-		case IO_RECV:
-			// 수신 완료 처리
-			break;
-		case IO_SEND:
-			// 송신 완료 처리
-			break;
-		case IO_ACCEPT:
-			// Accept 완료 처리
-			break;
-			// 필요에 따라 더 많은 경우를 추가 (예: IO_CONNECT)
-		default:
-			cout << "Unknown IO type" << endl;
+
+		switch (exp_over->type) {
+		case IO_RECV: {
+			if (num_byte == 0) {
+				//Disconnect();
+				continue;
+			}
+			int remain_data = num_byte + _prev_size;
+			unsigned char* packet_start = exp_over->recvBuffer;
+			int packet_size = packet_start[0];
+			while (packet_size <= remain_data) {
+				PacketProcess(packet_start);
+				remain_data -= packet_size;
+				packet_start += packet_size;
+				if (remain_data > 0) packet_size = packet_start[0];
+				else break;
+			}
+
+			if (0 < remain_data) {
+				_prev_size = remain_data;
+				memcpy(&exp_over->recvBuffer, packet_start, remain_data);
+			}
+
+			RecvPacket();
 			break;
 		}
+		case IO_SEND: {
+
+			UE_LOG(LogClass, Warning, TEXT("send data"));
+
+			if (num_byte != exp_over->wsabuf.len) {
+				//Disconnect();
+			}
+			delete exp_over;
+			break;
+		}
+
+		}
+
+
 	}
 	return 0;
-
 }
+
 void ClientSocket::Stop()
 {
 	// thread safety 변수를 조작해 while loop 가 돌지 못하게 함
@@ -176,7 +214,7 @@ void ClientSocket::StopListen()
 
 void ClientSocket::RecvPacket()
 {
-	UE_LOG(LogClass, Warning, TEXT("recv data"));
+	//UE_LOG(LogClass, Warning, TEXT("recv data"));
 	DWORD recv_flag = 0;
 	ZeroMemory(&_recv_over.overlapped, sizeof(_recv_over.overlapped));
 	_recv_over.wsabuf.buf = reinterpret_cast<char*>(_recv_over.recvBuffer + _prev_size);
