@@ -88,7 +88,7 @@ void ClientSocket::Send_Login_Info(char* id, char* pw)
 {
 	//패킷 조립
 	//CS_LOGIN_PACKET packet;
-	if (login_cond) {
+	
 		CS_LOGIN_PACKET packet;
 		packet.size = sizeof(packet);
 		packet.type = SC_LOGIN_OK;
@@ -98,19 +98,21 @@ void ClientSocket::Send_Login_Info(char* id, char* pw)
 		//cs_login_packet
 		SendPacket(&packet);
 		UE_LOG(LogClass, Warning, TEXT("Sending login info - id: %s, pw: %s"), ANSI_TO_TCHAR(id), ANSI_TO_TCHAR(pw));
-	}
+
 }
 
 void ClientSocket::Send_Move_Packet(int sessionID, float x, float y, float z)
 {
-	CS_MOVE_PACKET packet;
-	packet.size = sizeof(packet);
-	packet.type = CS_MOVE;
-	packet.id = sessionID;
-	packet.x = x;
-	packet.y = y;
-	packet.z = z;
-	SendPacket(&packet);
+	if (login_cond) {
+		CS_MOVE_PACKET packet;
+		packet.size = sizeof(packet);
+		packet.type = CS_MOVE;
+		packet.id = sessionID;
+		packet.x = x;
+		packet.y = y;
+		packet.z = z;
+		SendPacket(&packet);
+	}
 }
 
 bool ClientSocket::Init()

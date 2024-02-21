@@ -50,7 +50,7 @@ void UBOAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 			LeftHandTransform = EquipWeapon->GetWeaponMesh()->GetSocketTransform(FName("LeftHandSocket"), ERelativeTransformSpace::RTS_World);
 			FVector OutPosition;
 			FRotator OutRotation;
-			BaseCharacter->GetMesh()->TransformToBoneSpace(FName("hand_r"), LeftHandTransform.GetLocation(), FRotator::ZeroRotator, OutPosition, OutRotation);
+			BaseCharacter->GetMesh()->TransformToBoneSpace(FName("Bip001-R-Hand"), LeftHandTransform.GetLocation(), FRotator::ZeroRotator, OutPosition, OutRotation);
 			LeftHandTransform.SetLocation(OutPosition);
 			LeftHandTransform.SetRotation(FQuat(OutRotation));
 
