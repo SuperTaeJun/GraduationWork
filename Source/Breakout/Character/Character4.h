@@ -16,9 +16,23 @@ class BREAKOUT_API ACharacter4 : public ACharacterBase
 	
 public:
 	virtual void BeginPlay() override;
-
+	virtual void Tick(float DeltaTime);
 protected:
 	virtual void Skill_S(const FInputActionValue& Value) override;
 	virtual void Skill_E(const FInputActionValue& Value) override;
-
+	
+private:
+	FTimerHandle TelpoTimer;
+	FVector SavedLocation;
+	bool TelepoChargeTime = true;
+	bool bSaved = false;
+	bool CanTelepo = false;
+	int Toggle = 1;
+	float CoolChargeTime = 0.f;
+	void SetCanTelepo() { CanTelepo = true; 		Toggle += 1; }
+	void SaveCurLocation();
+	void SetLocation();
+public:
+	UPROPERTY(BlueprintReadWrite)
+	class AReplayFX* GhostMesh;
 };

@@ -15,11 +15,47 @@ class BREAKOUT_API ACharacter1 : public ACharacterBase
 	GENERATED_BODY()
 	
 public:
+	ACharacter1();
 	virtual void BeginPlay() override;
-	
+	virtual void Tick(float DeltaTime);
 protected:
 	virtual void Skill_S(const FInputActionValue& Value) override;
 	virtual void Skill_E(const FInputActionValue& Value) override;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TObjectPtr<class UNiagaraComponent> NiagaraComp;
+private:
+	TDoubleLinkedList<FCharacterFrameData> FrameDatas;
+	void StoreFrameData(float DeltaTime);
+	void Replay(float DeltaTime);
+	bool bTimeReplay = false;
+	//out of time data, cannot keep replay
+	bool bOutOfData;
+	//실제로 진행된시간
+	float RunningTime;
+	//각프레임마다의 델타타임
+	float LeftRunningTime;
+	float RightRunningTime;
+	//저장된 각프레임마다에서 기록된 전체시간 
+	float RecordedTime;
+	float MaxSaveTime = 5.f;
+	float Temp = 0.2f;
+};
 
+USTRUCT(BluePrintType)
+struct FCharacterFrameData
+{
+	GENERATED_BODY()
+
+	FVector Location;
+	float DeltaTime;
+
+	FCharacterFrameData()
+	{
+	};
+	FCharacterFrameData(FVector _Location, float _DeltaTime)
+	{
+		Location = _Location;
+		DeltaTime = _DeltaTime;
+	};
 };

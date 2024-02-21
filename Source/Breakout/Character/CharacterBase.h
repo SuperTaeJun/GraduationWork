@@ -98,9 +98,6 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Character, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UCharacterMovementComponent> Movement;
 
-	UPROPERTY(VisibleAnywhere, Category = SkillComp)
-	TObjectPtr<class USkillComponent> SkillComp;
-
 	TObjectPtr<class AWeaponBase> CurWeapon;
 
 	TObjectPtr<class AMainHUD> MainHUD;
