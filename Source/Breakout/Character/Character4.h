@@ -32,4 +32,7 @@ private:
 	void SetCanTelepo() { CanTelepo = true; 		Toggle += 1; }
 	void SaveCurLocation();
 	void SetLocation();
+public:
+	UPROPERTY(BlueprintReadWrite)
+	class AReplayFX* GhostMesh;
 };

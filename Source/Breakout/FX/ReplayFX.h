@@ -13,14 +13,18 @@ class BREAKOUT_API AReplayFX : public AActor
 	
 public:	
 	// Sets default values for this actor's properties
-	AReplayFX();
-
-protected:
-	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+	AReplayFX();
+	void Init(USkeletalMeshComponent* Pawn);
 
-public:	
+private:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+	TObjectPtr<class UPoseableMeshComponent> PoseableMesh;
+	TObjectPtr<class UMaterialInstance> GhostMaterial;
+	TArray<UMaterialInstanceDynamic*> GhostMaterials;
 
+	bool IsSpawned = false;
+	float FadeCountDown;
+	float FadeOutTime = 1.0f;
 };

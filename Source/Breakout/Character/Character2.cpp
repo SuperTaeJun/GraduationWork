@@ -39,13 +39,13 @@ void ACharacter2::Skill_S(const FInputActionValue& Value)
 	{
 		bDash = true;
 		DashStart();
-		NiagaraComp->Activate();
+		//NiagaraComp->Activate();
 	}
 }
 
 void ACharacter2::Skill_E(const FInputActionValue& Value)
 {
-	NiagaraComp->Deactivate();
+	//NiagaraComp->Deactivate();
 }
 
 void ACharacter2::DashStart()

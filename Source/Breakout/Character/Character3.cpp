@@ -44,7 +44,7 @@ void ACharacter3::Tick(float DeltaTime)
 void ACharacter3::Skill_S(const FInputActionValue& Value)
 {
 	bGhost = true;
-	NiagaraComp->Activate();
+	//NiagaraComp->Activate();
 }
 
 void ACharacter3::Skill_E(const FInputActionValue& Value)
@@ -52,7 +52,7 @@ void ACharacter3::Skill_E(const FInputActionValue& Value)
 
 	bGhost = false;
 	GhostCoolChargeTime = false;
-	NiagaraComp->Deactivate();
+	//NiagaraComp->Deactivate();
 }
 
 void ACharacter3::GhostStart()
