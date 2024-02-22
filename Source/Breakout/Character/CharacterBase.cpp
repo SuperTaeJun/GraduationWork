@@ -68,6 +68,19 @@ ACharacterBase::ACharacterBase()
 	ObtainedEscapeToolNum = 0;
 }
 
+//float ACharacterBase::GetAO_Yaw()
+//{
+//	AO_Yaw = UKismetMathLibrary::NormalizedDeltaRotator(GetControlRotation(), GetActorRotation()).Yaw;
+//
+//	return AO_Yaw;
+//}
+//
+//float ACharacterBase::GetAO_Pitch()
+//{
+//	AO_Pitch = UKismetMathLibrary::NormalizedDeltaRotator(GetControlRotation(), GetActorRotation()).Pitch;
+//	return AO_Pitch;
+//}
+
 void ACharacterBase::BeginPlay()
 {
 	Super::BeginPlay();

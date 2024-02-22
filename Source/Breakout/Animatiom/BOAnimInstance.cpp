@@ -45,6 +45,7 @@ void UBOAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 		AO_Yaw = BaseCharacter->GetAO_Yaw();
 		AO_Pitch = BaseCharacter->GetAO_Pitch();
 
+
 		if (EquipWeapon)
 		{
 			LeftHandTransform = EquipWeapon->GetWeaponMesh()->GetSocketTransform(FName("LeftHandSocket"), ERelativeTransformSpace::RTS_World);
@@ -53,6 +54,14 @@ void UBOAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 			BaseCharacter->GetMesh()->TransformToBoneSpace(FName("Bip001-R-Hand"), LeftHandTransform.GetLocation(), FRotator::ZeroRotator, OutPosition, OutRotation);
 			LeftHandTransform.SetLocation(OutPosition);
 			LeftHandTransform.SetRotation(FQuat(OutRotation));
+
+			FTransform RightHandTransform = EquipWeapon->GetWeaponMesh()->GetSocketTransform(FName("Bip001-R-Hand"), ERelativeTransformSpace::RTS_World);
+			RightHandRotation = UKismetMathLibrary::FindLookAtRotation(RightHandTransform.GetLocation(), BaseCharacter->GetHitTarget());
+
+			FTransform MuzzleTransform = EquipWeapon->GetWeaponMesh()->GetSocketTransform(FName("MuzzleFlash"), ERelativeTransformSpace::RTS_World);
+			FVector MuzzleX(FRotationMatrix(MuzzleTransform.GetRotation().Rotator()).GetUnitAxis(EAxis::X));
+
+
 
 		}
 	}

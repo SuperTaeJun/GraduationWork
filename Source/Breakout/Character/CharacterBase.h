@@ -26,6 +26,10 @@ public:
 
 	FORCEINLINE float GetAO_Yaw() const { return AO_Yaw; }
 	FORCEINLINE float GetAO_Pitch() const { return AO_Pitch; }
+	//FORCEINLINE AWeaponBase* GetCurWeapon() const { return CurWeapon; }
+
+	/*float GetAO_Yaw();
+	float GetAO_Pitch();*/
 	int		_SessionId;
 
 protected:
@@ -69,7 +73,7 @@ public:
 	FORCEINLINE float GetStamina() const { return Stamina; }
 	FORCEINLINE float MaxGetStamina() const { return MaxStamina; }
 	void PlayFireActionMontage(bool bAiming);
-
+	FVector GetHitTarget() { return HitTarget; }
 	UFUNCTION()
 	void ReciveDamage(AActor* DamagedActor, float Damage, const UDamageType* DamageType, class AController* InstigatorController, AActor* DamageCauser);
 
