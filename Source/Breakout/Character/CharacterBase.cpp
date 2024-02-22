@@ -41,8 +41,8 @@ ACharacterBase::ACharacterBase()
 	CameraBoom->SetupAttachment(GetMesh());
 	CameraBoom->TargetArmLength = DEFAULTCAMERALENGTH;
 	CameraBoom->bUsePawnControlRotation = true;
-	//CameraBoom->bEnableCameraLag = true;
-	//CameraBoom->bEnableCameraRotationLag = true;
+	CameraBoom->bEnableCameraLag = true;
+	CameraBoom->bEnableCameraRotationLag = true;
 	CameraBoom->SetWorldLocation(FVector(-40.f, 0.f, 160.f));
 
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
