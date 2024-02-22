@@ -32,6 +32,7 @@ public:
 	void SetHUDEscapeTool(int32 EscapeTool);
 	void SetHUDCrosshair(const struct FCrosshairPackage& Package);
 	void showWeaponSelect();
+	void RecvNewPlayer(int sessionID, float x, float y, float z);
 	void SendPlayerPos(int id);
 	//동기화 용
 	void UpdateSyncPlayer();
@@ -41,5 +42,6 @@ public:
 	virtual void OnPossess(APawn* InPawn) override;
 private:
 	TObjectPtr<class AMainHUD> MainHUD;
+	bool bNewPlayerEntered;
 	//ClientSocket* mysocket;
 };

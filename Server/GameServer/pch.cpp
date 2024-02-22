@@ -27,6 +27,19 @@ void process_packet(int _s_id, unsigned char* p)
 		Login_Back(_s_id);
 		break;
 	}
+	case CS_MOVE:
+	{
+		CS_MOVE_PACKET* packet = reinterpret_cast<CS_MOVE_PACKET*>(p);
+		ClientInfo& cl = clients[_s_id];
+		cl.x = packet->x;
+		cl.y = packet->y;
+		cl.z = packet->z;
+
+		cout << "x: " << packet->x << " y: " << packet->y << " z : " << packet->z << endl;
+		//클라 recv 확인용
+		printf("Move\n");
+		break;
+	}
 	default:
 		break;
 	}
