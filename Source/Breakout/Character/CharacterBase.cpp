@@ -35,7 +35,7 @@ ACharacterBase::ACharacterBase()
 	Movement = GetCharacterMovement();
 	Movement->MaxWalkSpeed = 400.f;
 	Movement->bOrientRotationToMovement = false;
-	bUseControllerRotationYaw = false;
+	bUseControllerRotationYaw = true;
 
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
 	CameraBoom->SetupAttachment(GetMesh());
@@ -67,6 +67,19 @@ ACharacterBase::ACharacterBase()
 	//bShowSelectUi = false;
 	ObtainedEscapeToolNum = 0;
 }
+
+//float ACharacterBase::GetAO_Yaw()
+//{
+//	AO_Yaw = UKismetMathLibrary::NormalizedDeltaRotator(GetControlRotation(), GetActorRotation()).Yaw;
+//
+//	return AO_Yaw;
+//}
+//
+//float ACharacterBase::GetAO_Pitch()
+//{
+//	AO_Pitch = UKismetMathLibrary::NormalizedDeltaRotator(GetControlRotation(), GetActorRotation()).Pitch;
+//	return AO_Pitch;
+//}
 
 void ACharacterBase::BeginPlay()
 {
@@ -381,14 +394,14 @@ void ACharacterBase::AimOffset(float DeltaTime)
 		{
 			InterpAO_Yaw = AO_Yaw;
 		}
-	//	bUseControllerRotationYaw = true;
+		bUseControllerRotationYaw = true;
 		TurnInPlace(DeltaTime);
 	}
 	if (IsFalling || Speed > 0.f) // 뛰거나 점프일때
 	{
 		StartingAimRotation = FRotator(0.f, GetBaseAimRotation().Yaw, 0.f);
 		AO_Yaw = 0.f;
-	//	bUseControllerRotationYaw = true;
+		bUseControllerRotationYaw = true;
 		TurningType = ETurningInPlace::ETIP_NotTurning;
 	}
 	AO_Pitch = GetBaseAimRotation().Pitch;
@@ -527,8 +540,7 @@ void ACharacterBase::Sprint_S(const FInputActionValue& Value)
 	{
 		CharacterState = ECharacterState::ECS_RUN;
 		Movement->bOrientRotationToMovement = false;
-		bUseControllerRotationYaw = false;
-		//bUseControllerRotationYaw = true;
+		bUseControllerRotationYaw = true;
 	}
 }
 void ACharacterBase::Sprint_E(const FInputActionValue& Value)
