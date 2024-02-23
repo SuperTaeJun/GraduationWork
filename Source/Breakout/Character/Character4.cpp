@@ -2,7 +2,10 @@
 
 
 #include "Character/Character4.h"
-#include "FX/ReplayFX.h"
+
+#include "InputMappingContext.h"
+#include "EnhancedInputComponent.h"
+#include "EnhancedInputSubsystems.h"
 void ACharacter4::BeginPlay()
 {
 	Super::BeginPlay();
@@ -22,6 +25,15 @@ void ACharacter4::Tick(float DeltaTime)
 		{
 			TelepoChargeTime = true;
 		}
+	}
+}
+
+void ACharacter4::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+{
+	if (UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent))
+	{
+		EnhancedInputComponent->BindAction(SkillAction, ETriggerEvent::Triggered, this, &ACharacter4::Skill_S);
+		EnhancedInputComponent->BindAction(SkillAction, ETriggerEvent::Completed, this, &ACharacter4::Skill_E);
 	}
 }
 

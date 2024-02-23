@@ -5,6 +5,9 @@
 #include "NiagaraFunctionLibrary.h"
 #include "NiagaraComponent.h"
 
+#include "InputMappingContext.h"
+#include "EnhancedInputComponent.h"
+#include "EnhancedInputSubsystems.h"
 ACharacter1::ACharacter1()
 {
 	NiagaraComp = CreateDefaultSubobject<UNiagaraComponent>(TEXT("NiagaraComp"));
@@ -34,6 +37,16 @@ void ACharacter1::Tick(float DeltaTime)
 		Replay(DeltaTime);
 	}
 
+}
+void ACharacter1::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+{
+	Super::SetupPlayerInputComponent(PlayerInputComponent);
+
+	if (UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent))
+	{
+		EnhancedInputComponent->BindAction(SkillAction, ETriggerEvent::Triggered, this, &ACharacter1::Skill_S);
+		EnhancedInputComponent->BindAction(SkillAction, ETriggerEvent::Completed, this, &ACharacter1::Skill_E);
+	}
 }
 void ACharacter1::Skill_S(const FInputActionValue& Value)
 {

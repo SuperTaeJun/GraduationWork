@@ -7,6 +7,9 @@
 #include "NiagaraFunctionLibrary.h"
 #include "NiagaraComponent.h"
 
+#include "InputMappingContext.h"
+#include "EnhancedInputComponent.h"
+#include "EnhancedInputSubsystems.h"
 ACharacter3::ACharacter3()
 {
 	NiagaraComp = CreateDefaultSubobject<UNiagaraComponent>(TEXT("NiagaraComp"));
@@ -38,6 +41,17 @@ void ACharacter3::Tick(float DeltaTime)
 			bCoolTimeFinish = true;
 			GhostCoolChargeTime = 0.f;
 		}
+	}
+}
+
+void ACharacter3::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+{
+	Super::SetupPlayerInputComponent(PlayerInputComponent);
+
+	if (UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent))
+	{
+		EnhancedInputComponent->BindAction(SkillAction, ETriggerEvent::Triggered, this, &ACharacter3::Skill_S);
+		EnhancedInputComponent->BindAction(SkillAction, ETriggerEvent::Completed, this, &ACharacter3::Skill_E);
 	}
 }
 

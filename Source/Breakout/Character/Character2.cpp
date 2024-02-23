@@ -5,19 +5,44 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "NiagaraFunctionLibrary.h"
 #include "NiagaraComponent.h"
+#include "Kismet/GameplayStatics.h"
+#include "Components/ArrowComponent.h"
 
+#include "InputMappingContext.h"
+#include "EnhancedInputComponent.h"
+#include "EnhancedInputSubsystems.h"
 ACharacter2::ACharacter2()
 {
+	FXroc = CreateDefaultSubobject<UArrowComponent>(TEXT("FXroc"));
+	FXroc->SetupAttachment(RootComponent);
+
 	NiagaraComp = CreateDefaultSubobject<UNiagaraComponent>(TEXT("NiagaraComp"));
-	ConstructorHelpers::FObjectFinder<UNiagaraSystem> DashFxRef(TEXT("/Game/Niagara/DashFX.DashFX"));
+	ConstructorHelpers::FObjectFinder<UNiagaraSystem> DashFxRef(TEXT("/Game/Niagara/Skill2.Skill2"));
 	NiagaraComp->bAutoActivate = false;
 	NiagaraComp->SetAsset(DashFxRef.Object);
+	NiagaraComp->SetupAttachment(FXroc);
+
+	MovementComp = GetCharacterMovement();
+
+
+	OldMaxAcceleration = GetCharacterMovement()->MaxAcceleration;
+	OldMaxWalkSpeed = GetCharacterMovement()->MaxWalkSpeed;
+	OldRotationRate = GetCharacterMovement()->RotationRate;
+
+	DashSpeed = 4000.f;
+
+
 }
 
 void ACharacter2::BeginPlay()
 {
 	Super::BeginPlay();
 	DashPoint = 3;
+
+	if (MovementComp)
+	{
+
+	}
 }
 
 void ACharacter2::Tick(float DeltaTime)
@@ -33,19 +58,53 @@ void ACharacter2::Tick(float DeltaTime)
 	}
 }
 
+void ACharacter2::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+{
+	Super::SetupPlayerInputComponent(PlayerInputComponent);
+
+	if (UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent))
+	{
+		EnhancedInputComponent->BindAction(SkillAction, ETriggerEvent::Started, this, &ACharacter2::Skill_S);
+		EnhancedInputComponent->BindAction(SkillAction, ETriggerEvent::Completed, this, &ACharacter2::Skill_E);
+	}
+}
+
 void ACharacter2::Skill_S(const FInputActionValue& Value)
 {
-	if (DashPoint > 0)
+	if (DashPoint > 0 && !GetMovementComponent()->IsFalling())
 	{
-		bDash = true;
-		DashStart();
-		//NiagaraComp->Activate();
+		DashSetup(DashSpeed, 100000000.f, FRotator(0.f, 0.f, 10000000.f), true);
+		NiagaraComp->Activate();
+		//bDash = true;
+		//DashStart();
+		GetWorld()->GetTimerManager().SetTimer(DashTimer, this, &ACharacter2::DashFinishSetup, 0.2, false);
 	}
 }
 
 void ACharacter2::Skill_E(const FInputActionValue& Value)
 {
-	//NiagaraComp->Deactivate();
+
+}
+
+void ACharacter2::DashSetup(float _MaxWalk, float _MaxAcc, FRotator _Rotation ,bool _Visibillity)
+{
+	MovementComp->MaxAcceleration = _MaxAcc;
+	MovementComp->MaxWalkSpeed = _MaxWalk;
+	MovementComp->RotationRate = _Rotation;
+	GetMesh()->SetHiddenInGame(_Visibillity, true);
+	CanJump = false;
+	NiagaraComp->Deactivate();
+	//DisableInput(UGameplayStatics::GetPlayerController(GetWorld(),0));
+}
+
+void ACharacter2::DashFinishSetup()
+{
+	MovementComp->MaxAcceleration = OldMaxAcceleration;
+	MovementComp->MaxWalkSpeed = OldMaxWalkSpeed;
+	MovementComp->RotationRate = OldRotationRate;
+	GetMesh()->SetHiddenInGame(false, true);
+	CanJump = true;
+	//EnableInput(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 }
 
 void ACharacter2::DashStart()
