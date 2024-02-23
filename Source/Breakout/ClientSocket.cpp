@@ -76,6 +76,10 @@ void ClientSocket::PacketProcess(unsigned char* ptr)
 	case SC_MOVE_OK:
 	{
 		SC_MOVE_BACK* packet = reinterpret_cast<SC_MOVE_BACK*>(ptr);
+		int id = packet->id;
+		float x = packet->x;
+		float y = packet->y;
+		float z = packet->z;
 		UE_LOG(LogClass, Warning, TEXT("recv data"));
 		break;
 	}

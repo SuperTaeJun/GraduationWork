@@ -2,7 +2,7 @@
 #define MAX_INFO_SIZE   20
 
 const char CS_LOGIN = 1;
-const char CS_MOVE_PACKET = 2;
+const char CS_MOVE = 2;
 
 
 const char SC_LOGIN_OK = 1;

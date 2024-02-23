@@ -167,6 +167,8 @@ protected:
 
 	//ÀÔ·Â°ª
 protected:
+	bool CanJump=true;
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
 	TObjectPtr<class UInputMappingContext> DefalutMappingContext;
 
@@ -210,6 +212,7 @@ protected:
 	void SelectGrande(const FInputActionValue& Value);
 	void SelectWall(const FInputActionValue& Value);
 	void SelectTrap(const FInputActionValue& Value);
+	void Jump(const FInputActionValue& Value);
 	virtual void Skill_S(const FInputActionValue& Value);
 	virtual void Skill_E(const FInputActionValue& Value);
 };

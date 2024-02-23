@@ -634,6 +634,12 @@ void ACharacterBase::SelectTrap(const FInputActionValue& Value)
 	//UI연결해야함
 }
 
+void ACharacterBase::Jump(const FInputActionValue& Value)
+{
+	if(CanJump)
+		Super::Jump();
+}
+
 void ACharacterBase::Skill_S(const FInputActionValue& Value)
 {
 	/*switch (SkillComp->GetSelectedSkill())
@@ -727,7 +733,7 @@ void ACharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	{
 		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ACharacterBase::Move);
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ACharacterBase::Look);
-		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Triggered, this, &ACharacter::Jump);
+		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Triggered, this, &ACharacterBase::Jump);
 		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Triggered, this, &ACharacterBase::Sprint_S);
 		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Completed, this, &ACharacterBase::Sprint_E);
 		EnhancedInputComponent->BindAction(InterAction, ETriggerEvent::Triggered, this, &ACharacterBase::Inter);
@@ -738,8 +744,8 @@ void ACharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 		EnhancedInputComponent->BindAction(SelectGrandeAction, ETriggerEvent::Triggered, this, &ACharacterBase::SelectGrande);
 		EnhancedInputComponent->BindAction(SelectWallAction, ETriggerEvent::Triggered, this, &ACharacterBase::SelectWall);
 		EnhancedInputComponent->BindAction(SelectTrapAction, ETriggerEvent::Triggered, this, &ACharacterBase::SelectTrap);
-		EnhancedInputComponent->BindAction(SkillAction, ETriggerEvent::Triggered, this, &ACharacterBase::Skill_S);
-		EnhancedInputComponent->BindAction(SkillAction, ETriggerEvent::Completed, this, &ACharacterBase::Skill_E);
+		//EnhancedInputComponent->BindAction(SkillAction, ETriggerEvent::Triggered, this, &ACharacterBase::Skill_S);
+		//EnhancedInputComponent->BindAction(SkillAction, ETriggerEvent::Completed, this, &ACharacterBase::Skill_E);
 	}
 }
 

@@ -17,6 +17,7 @@ class BREAKOUT_API ACharacter4 : public ACharacterBase
 public:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime);
+	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent);
 protected:
 	virtual void Skill_S(const FInputActionValue& Value) override;
 	virtual void Skill_E(const FInputActionValue& Value) override;

@@ -18,6 +18,7 @@ public:
 	ACharacter3();
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime);
+	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent);
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TObjectPtr<class UNiagaraComponent> NiagaraComp;
