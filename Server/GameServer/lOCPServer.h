@@ -7,7 +7,7 @@ class lOCPServer
 {
 public:
 	lOCPServer();
-	//virtual ~lOCPServer();
+	virtual ~lOCPServer();
 	bool Init();
 	void Start();
 	bool CreateWorkerThreads();

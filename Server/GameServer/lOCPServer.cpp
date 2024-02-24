@@ -7,11 +7,11 @@ lOCPServer::lOCPServer()
 	for (int i = 0; i < 100; ++i) clients[i].cl_id = i;
 }
 
-//lOCPServer::~lOCPServer()
-//{
-//	WSACleanup();
-//	cout << "종료" << endl;
-//}
+lOCPServer::~lOCPServer()
+{
+	WSACleanup();
+	cout << "종료" << endl;
+}
 
 bool lOCPServer::Init()
 {
@@ -101,7 +101,7 @@ void lOCPServer::WorkerThread()
 			// 수신 완료 처리
 			/*if (false == HandleReceive(cl_id, overlap, bytesTransferred))
 				continue;*/
-			cout << "Received data: " << overlap->recvBuffer << endl;
+			//cout << "Received data: " << overlap->recvBuffer << endl;
 			ClientInfo& cl = clients[cl_id];
 			int remain_data = bytesTransferred + cl.prev;
 			unsigned char* packet_start = overlap->recvBuffer;

@@ -8,8 +8,8 @@ void Login_Back(int _s_id)
 	SC_LOGIN_BACK b_packet;
 	b_packet.size = sizeof(SC_LOGIN_BACK);
 	b_packet.type = SC_LOGIN_OK;
-	clients[_s_id].c_send(sizeof(b_packet), &b_packet);
-	cout << "b_packet - size : " << sizeof(SC_LOGIN_BACK) << endl;
+	if(clients[_s_id].c_send(sizeof(b_packet), &b_packet))
+		cout << "b_packet - size : " << sizeof(SC_LOGIN_BACK) << endl;
 }
 void process_packet(int _s_id, unsigned char* p)
 {

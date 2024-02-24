@@ -19,7 +19,7 @@ ClientInfo::ClientInfo() : cl_state(ST_FREE), prev(0)
 }
 
 
-void ClientInfo::c_recv()
+bool ClientInfo::c_recv()
 {
 	
 	DWORD recv_flag = 0;
@@ -33,18 +33,20 @@ void ClientInfo::c_recv()
 			//error_display(error_num);
 			WSAGetLastError();
 	}
+	return true;
 }
 
-void ClientInfo::c_send(int num_bytes, void* mess)
+bool ClientInfo::c_send(int num_bytes, void* mess)
 {
 	
 	//int psize = reinterpret_cast<unsigned char*>(packet)[0];
 	Overlapped* ex_over = new Overlapped(IO_SEND, num_bytes, mess);
 	int ret = WSASend(c_socket, &ex_over->wsabuf, 1, 0, 0, &ex_over->overlapped, NULL);
-	cout << "send data" << endl;
+	cout << "send ตส" << endl;
 	if (SOCKET_ERROR == ret) {
 		int error_num = WSAGetLastError();
 		if (ERROR_IO_PENDING != error_num)
 			WSAGetLastError();
 	}
+	return true;
 }

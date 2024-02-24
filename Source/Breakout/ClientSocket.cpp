@@ -63,14 +63,15 @@ void ClientSocket::CloseSocket()
 
 void ClientSocket::PacketProcess(unsigned char* ptr)
 {
+	static bool first_time = true;
 	switch (ptr[1])
 	{
 	case SC_LOGIN_OK: {
 		SC_LOGIN_BACK* packet = reinterpret_cast<SC_LOGIN_BACK*>(ptr);
-
-		login_cond = true;
 		UE_LOG(LogClass, Warning, TEXT("recv data"));
-	
+		login_cond = true;
+
+
 		break;
 	}
 	case SC_MOVE_OK:
@@ -92,22 +93,21 @@ void ClientSocket::Send_Login_Info(char* id, char* pw)
 {
 	//ÆÐÅ¶ Á¶¸³
 	//CS_LOGIN_PACKET packet;
-	
-		CS_LOGIN_PACKET packet;
-		packet.size = sizeof(packet);
-		packet.type = SC_LOGIN_OK;
-		strcpy(packet.id, id);
-		strcpy(packet.pw, pw);
 
-		//cs_login_packet
-		SendPacket(&packet);
-		UE_LOG(LogClass, Warning, TEXT("Sending login info - id: %s, pw: %s"), ANSI_TO_TCHAR(id), ANSI_TO_TCHAR(pw));
+	CS_LOGIN_PACKET packet;
+	packet.size = sizeof(packet);
+	packet.type = CS_LOGIN;
+	strcpy(packet.id, id);
+	strcpy(packet.pw, pw);
+	//cs_login_packet
+	SendPacket(&packet);
+	UE_LOG(LogClass, Warning, TEXT("Sending login info - id: %s, pw: %s"), ANSI_TO_TCHAR(id), ANSI_TO_TCHAR(pw));
 
 }
 
 void ClientSocket::Send_Move_Packet(int sessionID, float x, float y, float z)
 {
-	if (login_cond) {
+	if (login_cond == true) {
 		CS_MOVE_PACKET packet;
 		packet.size = sizeof(packet);
 		packet.type = CS_MOVE;
@@ -130,7 +130,8 @@ uint32 ClientSocket::Run()
 	CreateIoCompletionPort(reinterpret_cast<HANDLE>(socket), Iocp, NULL, 0);
 	RecvPacket();
 	//SleepEx(0, true);
-	while (StopTaskCounter.GetValue() == 0 && MyCharacterController != nullptr)
+//	StopTaskCounter.GetValue() == 0 && MyCharacterController != nullptr
+	while (true)
 	{
 		DWORD num_byte;
 		LONG64 iocp_key;
@@ -170,16 +171,12 @@ uint32 ClientSocket::Run()
 			break;
 		}
 		case IO_SEND: {
-
-			UE_LOG(LogClass, Warning, TEXT("send data"));
-
 			if (num_byte != exp_over->wsabuf.len) {
 				//Disconnect();
 			}
 			delete exp_over;
 			break;
 		}
-
 		}
 
 
@@ -218,7 +215,7 @@ void ClientSocket::StopListen()
 
 void ClientSocket::RecvPacket()
 {
-	//UE_LOG(LogClass, Warning, TEXT("recv data"));
+	UE_LOG(LogClass, Warning, TEXT("recv data"));
 	DWORD recv_flag = 0;
 	ZeroMemory(&_recv_over.overlapped, sizeof(_recv_over.overlapped));
 	_recv_over.wsabuf.buf = reinterpret_cast<char*>(_recv_over.recvBuffer + _prev_size);
@@ -227,13 +224,14 @@ void ClientSocket::RecvPacket()
 	if (SOCKET_ERROR == ret) {
 		int error_num = WSAGetLastError();
 	}
-	if (ret > 0) {
+	/*if (ret > 0) {
 		UE_LOG(LogClass, Warning, TEXT("recv µÊ "));
-	}
+	}*/
 }
 
 void ClientSocket::SendPacket(void* packet)
 {
+	UE_LOG(LogClass, Warning, TEXT("send data"));
 	int psize = reinterpret_cast<unsigned char*>(packet)[0];
 	Overlapped* ex_over = new Overlapped(IO_SEND, psize, packet);
 	int ret = WSASend(ServerSocket, &ex_over->wsabuf, 1, 0, 0, &ex_over->overlapped, NULL);

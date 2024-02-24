@@ -41,8 +41,8 @@ public:
 public:
 	ClientInfo();
 	~ClientInfo() { closesocket(c_socket); }
-	void c_recv();
-	void c_send(int num_bytes, void* mess);
+	bool c_recv();
+	bool c_send(int num_bytes, void* mess);
 private:
 
 };
