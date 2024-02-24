@@ -15,6 +15,7 @@ public:
 	bool HandleReceive(int cl_id, Overlapped* overlapped, DWORD bytesTransferred);
 	//void HandleSend(Overlapped* overlapped, DWORD bytesTransferred);
 	bool HandleAccept(Overlapped* overlapped);
+	void Disconnect(int _s_id);
 	//void PostRecv(Overlapped* overlapped);
 	//void PostSend(Overlapped* overlapped);
 	//void PostAccept();

@@ -92,6 +92,9 @@ void lOCPServer::WorkerThread()
 			cout << "GQCS Error : ";
 			//error_display(err_no);
 			cout << endl;
+			Disconnect(cl_id);
+			if (overlap->type == IO_SEND)
+				delete overlap;
 			continue;
 		}
 		// IO 작업 유형을 결정하기 위해 완료 키를 확인
@@ -125,6 +128,11 @@ void lOCPServer::WorkerThread()
 		case IO_SEND:
 			// 송신 완료 처리
 			//HandleSend(overlap, bytesTransferred);
+			if (bytesTransferred != overlap->wsabuf.len) {
+				cout << "send 에러" << endl;
+				Disconnect(cl_id);
+			}
+			delete overlap;
 			break;
 		case IO_ACCEPT: {
 			//// Accept 완료 처리
@@ -197,6 +205,11 @@ bool lOCPServer::HandleAccept(Overlapped* overlapped)
 		sizeof(SOCKADDR_IN) + 16, &dwBytes, &overlapped->overlapped);
 	return true;
 	
+}
+void lOCPServer::Disconnect(int _s_id)
+{
+	ClientInfo& cl = clients[_s_id];
+	closesocket(clients[_s_id].c_socket);
 }
 bool lOCPServer::HandleReceive(int cl_id, Overlapped* overlapped, DWORD bytesTransferred)
 {
