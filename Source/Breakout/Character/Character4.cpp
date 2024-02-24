@@ -2,15 +2,23 @@
 
 
 #include "Character/Character4.h"
+#include "NiagaraFunctionLibrary.h"
+#include "NiagaraComponent.h"
 
 #include "InputMappingContext.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+ACharacter4::ACharacter4()
+{
+	NiagaraComp = CreateDefaultSubobject<UNiagaraComponent>(TEXT("NiagaraComp"));
+	NiagaraComp->SetAutoActivate(false);
+	NiagaraComp2 = CreateDefaultSubobject<UNiagaraComponent>(TEXT("NiagaraComp2"));
+	NiagaraComp2->SetAutoActivate(false);
+}
 void ACharacter4::BeginPlay()
 {
 	Super::BeginPlay();
-
-	Toggle = 1;
+	TelepoChargeTime = true;
 }
 
 void ACharacter4::Tick(float DeltaTime)
@@ -30,57 +38,53 @@ void ACharacter4::Tick(float DeltaTime)
 
 void ACharacter4::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
+	Super::SetupPlayerInputComponent(PlayerInputComponent);
+
 	if (UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent))
 	{
-		EnhancedInputComponent->BindAction(SkillAction, ETriggerEvent::Triggered, this, &ACharacter4::Skill_S);
+		EnhancedInputComponent->BindAction(SkillAction, ETriggerEvent::Started, this, &ACharacter4::Skill_S);
 		EnhancedInputComponent->BindAction(SkillAction, ETriggerEvent::Completed, this, &ACharacter4::Skill_E);
 	}
 }
 
 void ACharacter4::Skill_S(const FInputActionValue& Value)
 {
-	if (Toggle % 2 == 1)
+	if (!bSaved&& TelepoChargeTime)
 	{
+		NiagaraComp2->Activate();
 		SaveCurLocation();
 		//GhostMesh = GetWorld()->SpawnActor<AReplayFX>(AReplayFX::StaticClass(), GetActorTransform());
 		//GhostMesh->Init(GetMesh());
 		//UE_LOG(LogTemp, Log, (TEXT("TEST")));
 	}
-	else if(Toggle %2 ==0)
+	else if(bSaved)
 	{
-		SetLocation();
+		NiagaraComp->Activate();
+		GetMesh()->SetVisibility(false, true);
+		GetWorld()->GetTimerManager().SetTimer(TelpoTimer, this, &ACharacter4::SetLocation, 0.5f, false);
 	}
 }
 
 void ACharacter4::Skill_E(const FInputActionValue& Value)
 {
-	//if (Toggle % 2 == 1)
-	//{
-	//	GhostMesh->Init(GetMesh());
-	//	UE_LOG(LogTemp, Log, (TEXT("TEST")));
-	//}
+
 }
 
 void ACharacter4::SaveCurLocation()
 {
-	if (TelepoChargeTime)
-	{
-		UE_LOG(LogTemp, Log, TEXT("START"));
-		SavedLocation = GetActorLocation();
-		bSaved = true;
-		GetWorld()->GetTimerManager().SetTimer(TelpoTimer, this, &ACharacter4::SetCanTelepo, 1, false);
-		TelepoChargeTime = false;
-		//UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(),);
-	}
+
+	SavedLocation = GetActorLocation();
+	bSaved = true;
+	
 }
 
 void ACharacter4::SetLocation()
 {
-	if (bSaved && CanTelepo)
-	{
-		UE_LOG(LogTemp, Log, TEXT("End"));
-		bSaved = false;
-		SetActorLocation(SavedLocation);
-		Toggle += 1;
-	}
+
+	bSaved = false;
+	TelepoChargeTime = false;
+	SetActorLocation(SavedLocation);
+
+	NiagaraComp->Deactivate();
+	GetMesh()->SetVisibility(true, true);
 }

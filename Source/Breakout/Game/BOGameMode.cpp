@@ -61,7 +61,7 @@ UClass* ABOGameMode::GetDefaultPawnClassForController_Implementation(AController
 		return Character4;
 	}
 	else
-		return Character4;
+		return nullptr;
 }
 
 
