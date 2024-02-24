@@ -7,8 +7,8 @@
 #include "CharacterBase.generated.h"
 
 class UInputAction;
-#define DEFAULTCAMERALENGTH 300
-#define SPRINTCAMERALENGTH 200
+#define DEFAULTCAMERALENGTH 200
+#define SPRINTCAMERALENGTH 150
 
 UCLASS()
 class BREAKOUT_API ACharacterBase : public ACharacter
