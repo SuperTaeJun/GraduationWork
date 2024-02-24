@@ -14,6 +14,8 @@ ACharacter1::ACharacter1()
 	ConstructorHelpers::FObjectFinder<UNiagaraSystem> DashFxRef(TEXT("/Game/Niagara/DashFX.DashFX"));
 	NiagaraComp->bAutoActivate = false;
 	NiagaraComp->SetAsset(DashFxRef.Object);
+
+	bCoolTimeFinish = true;
 }
 
 void ACharacter1::BeginPlay()
@@ -27,6 +29,15 @@ void ACharacter1::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	GEngine->AddOnScreenDebugMessage(1, 1.f, FColor::Blue, FString::Printf(TEXT("RecordedTime : %f"), RecordedTime));
+	if (!bCoolTimeFinish)
+	{
+		RecordedCoolTime += DeltaTime;
+		if(RecordedCoolTime >=15.f)
+		{
+			bCoolTimeFinish = true;
+			RecordedCoolTime = 0.f;
+		}
+	}
 	if (!bTimeReplay)
 	{
 		StoreFrameData(DeltaTime);
@@ -44,15 +55,18 @@ void ACharacter1::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 
 	if (UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent))
 	{
-		EnhancedInputComponent->BindAction(SkillAction, ETriggerEvent::Triggered, this, &ACharacter1::Skill_S);
+		EnhancedInputComponent->BindAction(SkillAction, ETriggerEvent::Started, this, &ACharacter1::Skill_S);
 		EnhancedInputComponent->BindAction(SkillAction, ETriggerEvent::Completed, this, &ACharacter1::Skill_E);
 	}
 }
 void ACharacter1::Skill_S(const FInputActionValue& Value)
 {
-	bTimeReplay = true;
-	NiagaraComp->Activate();
-	GetMesh()->SetHiddenInGame(true, true);
+	if (bCoolTimeFinish)
+	{
+		bTimeReplay = true;
+		NiagaraComp->Activate();
+		GetMesh()->SetHiddenInGame(true, true);
+	}
 }
 
 void ACharacter1::Skill_E(const FInputActionValue& Value)
@@ -60,6 +74,11 @@ void ACharacter1::Skill_E(const FInputActionValue& Value)
 	bTimeReplay = false;
 	NiagaraComp->Deactivate();
 	GetMesh()->SetHiddenInGame(false, true);
+	bCoolTimeFinish = false;
+}
+
+void ACharacter1::Skill_T(const FInputActionValue& Value)
+{
 }
 
 

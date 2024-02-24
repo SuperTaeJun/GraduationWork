@@ -22,6 +22,7 @@ public:
 protected:
 	virtual void Skill_S(const FInputActionValue& Value) override;
 	virtual void Skill_E(const FInputActionValue& Value) override;
+	void Skill_T(const FInputActionValue& Value);
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TObjectPtr<class UNiagaraComponent> NiagaraComp;
@@ -41,6 +42,9 @@ private:
 	float RecordedTime;
 	float MaxSaveTime = 5.f;
 	float Temp = 0.2f;
+
+	bool bCoolTimeFinish = true;
+	float RecordedCoolTime = 0.f;
 };
 
 USTRUCT(BluePrintType)

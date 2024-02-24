@@ -27,12 +27,20 @@ protected:
 	virtual void Skill_S(const FInputActionValue& Value) override;
 	virtual void Skill_E(const FInputActionValue& Value) override;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TObjectPtr<class UMaterialInstance> Material;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TObjectPtr<class UMaterialInstance> OldMaterial;
+
+	TObjectPtr<class UMaterialInstanceDynamic> DynamicMaterial;
 private:
-	bool bGhost = false;
+	TObjectPtr<class UCharacterMovementComponent> MovementComp;
+	float OldMaxWalkSpeed;
+	float OldMaxAcceleration;
+
+
 	bool bCoolTimeFinish = true;
 	float GhostCoolChargeTime = 0.f;
-	float RecordedGhostTime = 0.f;
-	FVector OldVelocity;
 	FTimerHandle GhostTimer;
 	void GhostStart();
 	void GhostEnd();
