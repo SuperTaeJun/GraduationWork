@@ -8,6 +8,7 @@
 #include "InputMappingContext.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "Player/CharacterController.h"
 ACharacter1::ACharacter1()
 {
 	NiagaraComp = CreateDefaultSubobject<UNiagaraComponent>(TEXT("NiagaraComp"));
@@ -21,7 +22,7 @@ ACharacter1::ACharacter1()
 void ACharacter1::BeginPlay()
 {
 	Super::BeginPlay();
-
+	MainController->SetHUDCoolVisibility(false);
 	MaxSaveTime = 5.f;
 }
 void ACharacter1::Tick(float DeltaTime)
@@ -32,10 +33,14 @@ void ACharacter1::Tick(float DeltaTime)
 	if (!bCoolTimeFinish)
 	{
 		RecordedCoolTime += DeltaTime;
+		UpdateHUDCool(RecordedCoolTime,15.f);
+
 		if(RecordedCoolTime >=15.f)
 		{
 			bCoolTimeFinish = true;
 			RecordedCoolTime = 0.f;
+			MainController->SetHUDCoolVisibility(false);
+			MainController->SetHUDSkillOpacity(1.f);
 		}
 	}
 	if (!bTimeReplay)
@@ -44,7 +49,6 @@ void ACharacter1::Tick(float DeltaTime)
 	}
 	else if (!bOutOfData)
 	{
-		//NiagaraComp->SetActive(true, true);
 		Replay(DeltaTime);
 	}
 
@@ -57,16 +61,18 @@ void ACharacter1::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	{
 		EnhancedInputComponent->BindAction(SkillAction, ETriggerEvent::Started, this, &ACharacter1::Skill_S);
 		EnhancedInputComponent->BindAction(SkillAction, ETriggerEvent::Completed, this, &ACharacter1::Skill_E);
+		EnhancedInputComponent->BindAction(SkillAction, ETriggerEvent::Triggered, this, &ACharacter1::Skill_T);
 	}
 }
 void ACharacter1::Skill_S(const FInputActionValue& Value)
 {
-	if (bCoolTimeFinish)
-	{
+	/*if (bCoolTimeFinish)
+	{*/
 		bTimeReplay = true;
-		NiagaraComp->Activate();
 		GetMesh()->SetHiddenInGame(true, true);
-	}
+		NiagaraComp->Activate();
+		//NiagaraComp->Activate();
+	//	}
 }
 
 void ACharacter1::Skill_E(const FInputActionValue& Value)
@@ -75,10 +81,16 @@ void ACharacter1::Skill_E(const FInputActionValue& Value)
 	NiagaraComp->Deactivate();
 	GetMesh()->SetHiddenInGame(false, true);
 	bCoolTimeFinish = false;
+
+	MainController->SetHUDCoolVisibility(true);
+	MainController->SetHUDSkillOpacity(0.3);
 }
 
 void ACharacter1::Skill_T(const FInputActionValue& Value)
 {
+	if (bCoolTimeFinish)
+	{
+	}
 }
 
 
@@ -148,4 +160,9 @@ void ACharacter1::Replay(float DeltaTime)
 
 		SetActorLocation(InterpLocation);
 	}
+}
+
+void ACharacter1::UpdateHUDCool(float Cool, float MaxCool)
+{
+	MainController->SetHUDCool(Cool, MaxCool);
 }

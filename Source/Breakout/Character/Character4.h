@@ -26,9 +26,11 @@ protected:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TObjectPtr<class UNiagaraComponent> NiagaraComp;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TObjectPtr<class UNiagaraComponent> NiagaraComp2;
 
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class ANiagaraActor> NiagaraActor;
+
+	class ANiagaraActor* Temp;
 private:
 	FTimerHandle TelpoTimer;
 	FVector SavedLocation;

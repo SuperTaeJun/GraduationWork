@@ -8,7 +8,7 @@
 
 class UInputAction;
 #define DEFAULTCAMERALENGTH 200
-#define SPRINTCAMERALENGTH 150
+#define SPRINTCAMERALENGTH 100
 
 UCLASS()
 class BREAKOUT_API ACharacterBase : public ACharacter
@@ -212,7 +212,7 @@ protected:
 	void SelectGrande(const FInputActionValue& Value);
 	void SelectWall(const FInputActionValue& Value);
 	void SelectTrap(const FInputActionValue& Value);
-	void Jump(const FInputActionValue& Value);
+	void Custom_Jump(const FInputActionValue& Value);
 	virtual void Skill_S(const FInputActionValue& Value);
 	virtual void Skill_E(const FInputActionValue& Value);
 };

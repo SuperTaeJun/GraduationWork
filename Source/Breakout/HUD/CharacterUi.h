@@ -33,4 +33,19 @@ public:
 	UPROPERTY(meta = (BindWidget))
 	class UTextBlock* ToolAmount;
 
+	UPROPERTY(meta = (BindWidget))
+	class UImage* SkillImage;
+
+	UPROPERTY(meta = (BindWidget))
+	class UTextBlock* SkillCool;
+
+	UPROPERTY(EditAnywhere)
+	class UTexture2D* SkillIcon1;
+	UPROPERTY(EditAnywhere)
+	class UTexture2D* SkillIcon2;
+	UPROPERTY(EditAnywhere)
+	class UTexture2D* SkillIcon3;
+	UPROPERTY(EditAnywhere)
+	class UTexture2D* SkillIcon4;
+
 };

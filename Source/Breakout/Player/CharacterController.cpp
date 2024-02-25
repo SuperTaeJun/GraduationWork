@@ -7,6 +7,8 @@
 #include "Components/ProgressBar.h"
 #include "Components/TextBlock.h"
 #include "Character/CharacterBase.h"
+#include "Components/Image.h"
+#include "Game/BOGameInstance.h"
 void ACharacterController::BeginPlay()
 {
 	FInputModeGameOnly GameOnlyInput;
@@ -62,6 +64,54 @@ void ACharacterController::SetHUDCrosshair(const FCrosshairPackage& Package)
 	if (MainHUD)
 	{
 		MainHUD->SetHUDPackage(Package);
+	}
+}
+
+void ACharacterController::SetHUDSkill()
+{
+	if (Cast<UBOGameInstance>(GetWorld()->GetGameInstance())->GetCharacterType() == ECharacterType::ECharacter1)
+	{
+		MainHUD->CharacterUi->SkillImage->SetBrushFromTexture(MainHUD->CharacterUi->SkillIcon1);
+	}
+	else if (Cast<UBOGameInstance>(GetWorld()->GetGameInstance())->GetCharacterType() == ECharacterType::ECharacter2)
+	{
+		MainHUD->CharacterUi->SkillImage->SetBrushFromTexture(MainHUD->CharacterUi->SkillIcon2);
+	}
+	else if (Cast<UBOGameInstance>(GetWorld()->GetGameInstance())->GetCharacterType() == ECharacterType::ECharacter3)
+	{
+		MainHUD->CharacterUi->SkillImage->SetBrushFromTexture(MainHUD->CharacterUi->SkillIcon3);
+	}
+	else if (Cast<UBOGameInstance>(GetWorld()->GetGameInstance())->GetCharacterType() == ECharacterType::ECharacter4)
+	{
+		MainHUD->CharacterUi->SkillImage->SetBrushFromTexture(MainHUD->CharacterUi->SkillIcon4);
+	}
+}
+
+void ACharacterController::SetHUDSkillOpacity(float Opacity)
+{
+	MainHUD->CharacterUi->SkillImage->SetColorAndOpacity(FLinearColor(1.f, 1.f, 1.f, Opacity));
+}
+
+void ACharacterController::SetHUDCool(float Cool, float MaxCool)
+{
+	FString CoolText = FString::Printf(TEXT("%d"), FMath::FloorToInt(MaxCool - Cool));
+	if (Cast<UBOGameInstance>(GetWorld()->GetGameInstance())->GetCharacterType() != ECharacterType::ECharacter2)
+		MainHUD->CharacterUi->SkillCool->SetText(FText::FromString(CoolText));
+	else if (Cast<UBOGameInstance>(GetWorld()->GetGameInstance())->GetCharacterType() == ECharacterType::ECharacter2)
+	{
+
+	}
+}
+
+void ACharacterController::SetHUDCoolVisibility(bool bVisibility)
+{
+	if (bVisibility)
+	{
+		MainHUD->CharacterUi->SkillCool->SetVisibility(ESlateVisibility::Visible);
+	}
+	else
+	{
+		MainHUD->CharacterUi->SkillCool->SetVisibility(ESlateVisibility::Hidden);
 	}
 }
 

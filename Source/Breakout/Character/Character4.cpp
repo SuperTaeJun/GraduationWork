@@ -4,6 +4,9 @@
 #include "Character/Character4.h"
 #include "NiagaraFunctionLibrary.h"
 #include "NiagaraComponent.h"
+#include "Components/CapsuleComponent.h"
+#include "FX/Skill4Actor.h"
+#include "Player/CharacterController.h"
 
 #include "InputMappingContext.h"
 #include "EnhancedInputComponent.h"
@@ -12,13 +15,15 @@ ACharacter4::ACharacter4()
 {
 	NiagaraComp = CreateDefaultSubobject<UNiagaraComponent>(TEXT("NiagaraComp"));
 	NiagaraComp->SetAutoActivate(false);
-	NiagaraComp2 = CreateDefaultSubobject<UNiagaraComponent>(TEXT("NiagaraComp2"));
-	NiagaraComp2->SetAutoActivate(false);
+
 }
+
 void ACharacter4::BeginPlay()
 {
 	Super::BeginPlay();
 	TelepoChargeTime = true;
+
+	MainController->SetHUDCoolVisibility(false);
 }
 
 void ACharacter4::Tick(float DeltaTime)
@@ -29,9 +34,12 @@ void ACharacter4::Tick(float DeltaTime)
 	if (!TelepoChargeTime)
 	{
 		CoolChargeTime += DeltaTime;
+		MainController->SetHUDCool(CoolChargeTime, 15.f);
 		if (CoolChargeTime >= 15.f)
 		{
 			TelepoChargeTime = true;
+			MainController->SetHUDCoolVisibility(false);
+			MainController->SetHUDSkillOpacity(1.f);
 		}
 	}
 }
@@ -51,11 +59,10 @@ void ACharacter4::Skill_S(const FInputActionValue& Value)
 {
 	if (!bSaved&& TelepoChargeTime)
 	{
-		NiagaraComp2->Activate();
+
 		SaveCurLocation();
-		//GhostMesh = GetWorld()->SpawnActor<AReplayFX>(AReplayFX::StaticClass(), GetActorTransform());
-		//GhostMesh->Init(GetMesh());
-		//UE_LOG(LogTemp, Log, (TEXT("TEST")));
+		FActorSpawnParameters SpawnParameters;
+		Temp = GetWorld()->SpawnActor<ANiagaraActor>(NiagaraActor, GetActorLocation(), GetActorRotation(), SpawnParameters);
 	}
 	else if(bSaved)
 	{
@@ -80,6 +87,8 @@ void ACharacter4::SaveCurLocation()
 
 void ACharacter4::SetLocation()
 {
+	MainController->SetHUDCoolVisibility(true);
+	MainController->SetHUDSkillOpacity(0.3);
 
 	bSaved = false;
 	TelepoChargeTime = false;
@@ -87,4 +96,6 @@ void ACharacter4::SetLocation()
 
 	NiagaraComp->Deactivate();
 	GetMesh()->SetVisibility(true, true);
+
+	Temp->Destroy();
 }

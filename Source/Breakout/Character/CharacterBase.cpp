@@ -112,6 +112,7 @@ void ACharacterBase::BeginPlay()
 
 	OnTakeAnyDamage.AddDynamic(this, &ACharacterBase::ReciveDamage);
 
+	MainController->SetHUDSkill();
 	UpdateHpHUD();
 	UpdateStaminaHUD();
 	UpdateObtainedEscapeTool();
@@ -634,7 +635,7 @@ void ACharacterBase::SelectTrap(const FInputActionValue& Value)
 	//UI연결해야함
 }
 
-void ACharacterBase::Jump(const FInputActionValue& Value)
+void ACharacterBase::Custom_Jump(const FInputActionValue& Value)
 {
 	if(CanJump)
 		Super::Jump();
@@ -733,7 +734,7 @@ void ACharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	{
 		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ACharacterBase::Move);
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ACharacterBase::Look);
-		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Triggered, this, &ACharacterBase::Jump);
+		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Triggered, this, &ACharacterBase::Custom_Jump);
 		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Triggered, this, &ACharacterBase::Sprint_S);
 		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Completed, this, &ACharacterBase::Sprint_E);
 		EnhancedInputComponent->BindAction(InterAction, ETriggerEvent::Triggered, this, &ACharacterBase::Inter);
