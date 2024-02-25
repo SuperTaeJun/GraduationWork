@@ -31,6 +31,11 @@ public:
 	void SetHUDAmmo(int32 Ammo);
 	void SetHUDEscapeTool(int32 EscapeTool);
 	void SetHUDCrosshair(const struct FCrosshairPackage& Package);
+	//skill
+	void SetHUDSkill();
+	void SetHUDSkillOpacity(float Opacity);
+	void SetHUDCool(float Cool, float MaxCool);
+	void SetHUDCoolVisibility(bool bVisibility);
 	void showWeaponSelect();
 	void RecvNewPlayer(int sessionID, float x, float y, float z);
 	void SendPlayerPos(int id);

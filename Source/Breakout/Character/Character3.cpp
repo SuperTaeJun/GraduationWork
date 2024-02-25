@@ -9,6 +9,7 @@
 #include "Materials/MaterialInstance.h"
 #include "Materials/MaterialInstanceDynamic.h"
 #include "Weapon/WeaponBase.h"
+#include "Player/CharacterController.h"
 
 #include "InputMappingContext.h"
 #include "EnhancedInputComponent.h"
@@ -31,6 +32,7 @@ void ACharacter3::BeginPlay()
 	Super::BeginPlay();
 	DynamicMaterial = UMaterialInstanceDynamic::Create(Material, this);
 
+	MainController->SetHUDCoolVisibility(false);
 }
 
 void ACharacter3::Tick(float DeltaTime)
@@ -42,10 +44,14 @@ void ACharacter3::Tick(float DeltaTime)
 	if (!bCoolTimeFinish)
 	{
 		GhostCoolChargeTime += DeltaTime;
+		MainController->SetHUDCool(GhostCoolChargeTime,10.f);
 		if (GhostCoolChargeTime >= 10.f)
 		{
 			bCoolTimeFinish = true;
 			GhostCoolChargeTime = 0.f;
+			MainController->SetHUDCoolVisibility(false);
+			MainController->SetHUDSkillOpacity(1.f);
+
 		}
 	}
 
@@ -94,6 +100,9 @@ void ACharacter3::GhostStart()
 
 void ACharacter3::GhostEnd()
 {
+	MainController->SetHUDCoolVisibility(true);
+	MainController->SetHUDSkillOpacity(0.3);
+
 	GetCapsuleComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Visibility, ECollisionResponse::ECR_Block);
 	MovementComp->MaxWalkSpeed = OldMaxWalkSpeed;
 	MovementComp->MaxAcceleration = OldMaxAcceleration;
