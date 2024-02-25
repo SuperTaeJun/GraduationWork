@@ -54,7 +54,11 @@ void lOCPServer::Start()
 	ZeroMemory(&accept_ex.overlapped, sizeof(accept_ex.overlapped));
 	accept_ex.type = IO_ACCEPT;
 	AcceptEx(listensocket, c_socket, accept_buf, 0, sizeof(SOCKADDR_IN) + 16, sizeof(SOCKADDR_IN) + 16, &dwBytes, &accept_ex.overlapped);
-
+	/*for (auto& cl : clients) {
+		if (ST_INGAME == cl.cl_state)
+			Disconnect(cl.cl_id);
+	}
+	closesocket(listensocket);*/
 }
 
 bool lOCPServer::CreateWorkerThreads()
@@ -208,6 +212,7 @@ bool lOCPServer::HandleAccept(Overlapped* overlapped)
 }
 void lOCPServer::Disconnect(int _s_id)
 {
+	cout << "서버 접속 종료";
 	ClientInfo& cl = clients[_s_id];
 	closesocket(clients[_s_id].c_socket);
 }

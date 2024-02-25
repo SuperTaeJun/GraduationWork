@@ -11,6 +11,16 @@ void Login_Back(int _s_id)
 	if(clients[_s_id].c_send(sizeof(b_packet), &b_packet))
 		cout << "b_packet - size : " << sizeof(SC_LOGIN_BACK) << endl;
 }
+void Send_Player(int _s_id, int enm)
+{
+	SC_PLAYER_SYNC packet;
+	packet.id = enm;
+	packet.size = sizeof(packet);
+	packet.type = SC_OTHER_PLAYER;
+	packet.x = clients[enm].x;
+	packet.y = clients[enm].y;
+	clients[_s_id].c_send(sizeof(packet), &packet);
+}
 void process_packet(int _s_id, unsigned char* p)
 {
 	unsigned char packet_type = p[1];
@@ -25,6 +35,20 @@ void process_packet(int _s_id, unsigned char* p)
 		cout << "로그인 시도  :" << packet->id << packet->pw << endl;
 		cout << packet->id << " 로그인 성공" << endl;
 		Login_Back(_s_id);
+
+		for (auto& other : clients) {
+			if (other.cl_id == _s_id) {
+				continue;
+			}
+			SC_PLAYER_SYNC _packet;
+			_packet.id = _s_id;
+			_packet.object_type = 0;
+			_packet.size = sizeof(packet);
+			_packet.type = SC_OTHER_PLAYER;
+			_packet.x = cl.x;
+			_packet.y = cl.y;
+			other.c_send(sizeof(_packet), &_packet);
+		}
 		break;
 	}
 	case CS_MOVE:

@@ -37,6 +37,7 @@ ACharacter2::ACharacter2()
 void ACharacter2::BeginPlay()
 {
 	Super::BeginPlay();
+
 	DashPoint = 3;
 
 	if (MovementComp)
@@ -99,6 +100,8 @@ void ACharacter2::DashSetup(float _MaxWalk, float _MaxAcc, FRotator _Rotation ,b
 
 void ACharacter2::DashFinishSetup()
 {
+	DashPoint -= 1;
+
 	MovementComp->MaxAcceleration = OldMaxAcceleration;
 	MovementComp->MaxWalkSpeed = OldMaxWalkSpeed;
 	MovementComp->RotationRate = OldRotationRate;

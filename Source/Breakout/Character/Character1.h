@@ -45,6 +45,8 @@ private:
 
 	bool bCoolTimeFinish = true;
 	float RecordedCoolTime = 0.f;
+
+	void UpdateHUDCool(float Cool, float MaxCool);
 };
 
 USTRUCT(BluePrintType)
