@@ -11,6 +11,16 @@ void Login_Back(int _s_id)
 	if(clients[_s_id].c_send(sizeof(b_packet), &b_packet))
 		cout << "b_packet - size : " << sizeof(SC_LOGIN_BACK) << endl;
 }
+void Send_Player(int _s_id, int enm)
+{
+	SC_PLAYER_SYNC packet;
+	packet.id = enm;
+	packet.size = sizeof(packet);
+	packet.type = SC_OTHER_PLAYER;
+	packet.x = clients[enm].x;
+	packet.y = clients[enm].y;
+	clients[_s_id].c_send(sizeof(packet), &packet);
+}
 void process_packet(int _s_id, unsigned char* p)
 {
 	unsigned char packet_type = p[1];

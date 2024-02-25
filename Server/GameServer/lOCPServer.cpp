@@ -208,6 +208,7 @@ bool lOCPServer::HandleAccept(Overlapped* overlapped)
 }
 void lOCPServer::Disconnect(int _s_id)
 {
+	cout << "서버 접속 종료";
 	ClientInfo& cl = clients[_s_id];
 	closesocket(clients[_s_id].c_socket);
 }
