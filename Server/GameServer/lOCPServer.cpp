@@ -72,7 +72,7 @@ bool lOCPServer::CreateWorkerThreads()
 		workerthread.emplace_back([this]() {WorkerThread(); });
 	}
 
-	std::cout << "Created " << WorkerCount << " worker threads." << std::endl;
+	//std::cout << "Created " << WorkerCount << " worker threads." << std::endl;
 	return true;
 }
 

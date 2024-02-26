@@ -9,6 +9,7 @@
 #include <WS2tcpip.h>
 #include <fstream>
 #include <map>
+#include <queue>
 #include <iostream>
 #include "Player/CharacterController.h"
 #include "Network/PacketData.h"
@@ -76,11 +77,11 @@ public:
 };
 
 // 플레이어 클래스 
-class Player
+class CPlayer
 {
 public:
-	Player() { };
-	~Player() {};
+	CPlayer() { };
+	~CPlayer() {};
 
 	// 세션 아이디
 	int Id = -1;
@@ -99,8 +100,9 @@ public:
 	float VeloX = 0;
 	float VeloY = 0;
 	float VeloZ = 0;
-
-	friend ostream& operator<<(ostream& stream, Player& info)
+	FVector FMyLocation;
+	FVector FMyDirection;
+	friend ostream& operator<<(ostream& stream, CPlayer& info)
 	{
 		stream << info.Id << endl;
 		stream << info.X << endl;
@@ -115,7 +117,7 @@ public:
 		return stream;
 	}
 
-	friend istream& operator>>(istream& stream, Player& info)
+	friend istream& operator>>(istream& stream, CPlayer& info)
 	{
 		stream >> info.Id;
 		stream >> info.X;
@@ -130,15 +132,16 @@ public:
 		return stream;
 	}
 };
-class PlayerInfo
+
+class CPlayerInfo
 {
 public:
-	PlayerInfo() {};
-	~PlayerInfo() {};
+	CPlayerInfo() {};
+	~CPlayerInfo() {};
 
-	map<int, Player> players;
+	map<int, CPlayer> players;
 
-	friend ostream& operator<<(ostream& stream, PlayerInfo& info)
+	friend ostream& operator<<(ostream& stream, CPlayerInfo& info)
 	{
 		stream << info.players.size() << endl;
 		for (auto& kvp : info.players)
@@ -150,11 +153,11 @@ public:
 		return stream;
 	}
 
-	friend istream& operator>>(istream& stream, PlayerInfo& info)
+	friend istream& operator>>(istream& stream, CPlayerInfo& info)
 	{
 		int nPlayers = 0;
 		int SessionId = 0;
-		Player Player;
+		CPlayer Player;
 		info.players.clear();
 
 		stream >> nPlayers;
@@ -211,5 +214,5 @@ public:
 	bool login_cond = false;
 private:
 	ACharacterController* MyCharacterController;
-	PlayerInfo PlayerInfo;
+	CPlayerInfo PlayerInfo;
 };
