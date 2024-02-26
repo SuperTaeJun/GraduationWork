@@ -75,12 +75,13 @@ void ClientSocket::PacketProcess(unsigned char* ptr)
 	case SC_OTHER_PLAYER:
 	{
 		SC_PLAYER_SYNC* packet = reinterpret_cast<SC_PLAYER_SYNC*>(ptr);
+		auto info = make_shared<CPlayer>();
 		int id = packet->id;
 		float x = packet->x;
 		float y = packet->y;
-		float z = packet->z;
+		//float z = packet->z;
 		UE_LOG(LogClass, Warning, TEXT("recv data"));
-		MyCharacterController->RecvNewPlayer(id, x, y, z);
+		//MyCharacterController->SetNewCharacterInfo(info);
 		break;
 	}
 	default:

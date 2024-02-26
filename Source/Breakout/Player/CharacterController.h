@@ -20,12 +20,17 @@ protected:
 	virtual void BeginPlay() override;
 
 public:
-	ClientSocket* connect_player;
+//	CPlayer initplayer;
+//	CPlayerInfo* PlayerInfo;	// 다른 캐릭터들의 정보
+//	ClientSocket* connect_player;
+	//queue<shared_ptr<CPlayer>>	NewPlayer;
 	int my_session_id;
 	int other_session_id;
 	int other_x;
 	int other_y;
 	int other_z;
+	int count;
+
 	void SetHUDHealth(float Health, float MaxHealth);
 	void SetHUDStamina(float Stamina, float MaxStamina);
 	void SetHUDAmmo(int32 Ammo);
@@ -43,14 +48,15 @@ public:
 	void showWeaponSelect();
 	void RecvNewPlayer(int sessionID, float x, float y, float z);
 	void SendPlayerPos(int id);
+	//void SetNewCharacterInfo(shared_ptr<CPlayer> InitPlayer);
 	//동기화 용
-	void UpdateSyncPlayer();
+	//void UpdateSyncPlayer();
 	// 스폰시킬 다른 캐릭터
 	UPROPERTY(EditAnywhere, Category = "Spawning")
 	TSubclassOf<class ACharacter> ToSpawn;
 	virtual void OnPossess(APawn* InPawn) override;
 private:
 	TObjectPtr<class AMainHUD> MainHUD;
-	bool bNewPlayerEntered;
-	//ClientSocket* mysocket;
+	bool bNewPlayerEntered = false;
+
 };
