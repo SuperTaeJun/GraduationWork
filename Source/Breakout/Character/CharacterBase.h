@@ -80,6 +80,7 @@ public:
 	TObjectPtr<class AEscapeTool> OverlappingEscapeTool;
 
 	void GrandeThrow();
+	void GrandeAim();
 
 	UFUNCTION(BlueprintCallable)
 	void GrandeThrowFinish();
@@ -92,6 +93,12 @@ public:
 	void Dead();
 
 protected:
+
+	UPROPERTY(EditAnywhere, Category = Arrow)
+	TObjectPtr<class UArrowComponent> PathSorce;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TObjectPtr<class UNiagaraComponent> Aim;
 
 	UPROPERTY(VisibleAnywhere, Category = Camera)
 	TObjectPtr<class USpringArmComponent> CameraBoom;
@@ -208,6 +215,7 @@ protected:
 	void Inter(const FInputActionValue& Value);
 	void EToolTranfrom(const FInputActionValue& Value);
 	void Reroad(const FInputActionValue& Value);
+	void GrandeFire_Aiming(const FInputActionValue& Value);
 	void GrandeFire(const FInputActionValue& Value);
 	void SelectGrande(const FInputActionValue& Value);
 	void SelectWall(const FInputActionValue& Value);

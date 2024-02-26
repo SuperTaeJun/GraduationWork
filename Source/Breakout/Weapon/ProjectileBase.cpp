@@ -32,6 +32,9 @@ AProjectileBase::AProjectileBase()
 void AProjectileBase::BeginPlay()
 {
 	Super::BeginPlay();
+
+	CollisionBox->IgnoreActorWhenMoving(GetOwner(), true);
+
 	CollisionBox->OnComponentHit.AddDynamic(this, &AProjectileBase::OnHit);
 }
 

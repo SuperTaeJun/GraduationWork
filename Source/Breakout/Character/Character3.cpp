@@ -55,9 +55,12 @@ void ACharacter3::Tick(float DeltaTime)
 		}
 	}
 
-	//머터리얼 파라미터 적용
-	DynamicMaterial->SetVectorParameterValue(FName("Loc"), GetCapsuleComponent()->GetForwardVector()*-1.f);
-	DynamicMaterial->SetScalarParameterValue(FName("Amount"), GetCharacterMovement()->Velocity.Length()/4);
+	if (DynamicMaterial && bGhost)
+	{
+		//머터리얼 파라미터 적용
+		DynamicMaterial->SetVectorParameterValue(FName("Loc"), GetCapsuleComponent()->GetForwardVector() * -1.f);
+		DynamicMaterial->SetScalarParameterValue(FName("Amount"), GetCharacterMovement()->Velocity.Length() / 4);
+	}
 }
 
 void ACharacter3::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -85,6 +88,7 @@ void ACharacter3::GhostStart()
 {
 	if (bCoolTimeFinish)
 	{
+		bGhost = true;
 		GetCapsuleComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Visibility, ECollisionResponse::ECR_Ignore);
 		MovementComp->MaxWalkSpeed = 1500;
 		MovementComp->MaxAcceleration = 10000000.f;
@@ -92,7 +96,8 @@ void ACharacter3::GhostStart()
 
 		GetMesh()->SetVisibility(true, true);
 		CurWeapon->GetWeaponMesh()->SetVisibility(false);
-		GetMesh()->SetMaterial(0, DynamicMaterial);
+		if (DynamicMaterial)
+			GetMesh()->SetMaterial(0, DynamicMaterial);
 
 		GetWorld()->GetTimerManager().SetTimer(GhostTimer, this, &ACharacter3::GhostEnd, 4.f, false);
 	}
@@ -110,6 +115,8 @@ void ACharacter3::GhostEnd()
 	GetMesh()->SetVisibility(true, true);
 	CurWeapon->GetWeaponMesh()->SetVisibility(true);
 	bCoolTimeFinish = false;
-	GetMesh()->SetMaterial(0, OldMaterial);
+	if (OldMaterial)
+		GetMesh()->SetMaterial(0, OldMaterial);
+	bGhost = false;
 }
 

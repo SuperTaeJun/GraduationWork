@@ -9,7 +9,7 @@ AProjectileGrenade::AProjectileGrenade()
 {
 	ProjectileMovementComponent->bShouldBounce = true;
 	ProjectileMovementComponent->InitialSpeed = 500.f;
-	DestroyTime = 3.f;
+	DestroyTime = 5.f;
 }
 
 void AProjectileGrenade::StartDestroyTimer()
@@ -62,5 +62,9 @@ void AProjectileGrenade::BeginPlay()
 
 //바운스할때마다 발생 나중에 사운드 추가
 void AProjectileGrenade::OnBounce(const FHitResult& ImpactResult, const FVector& ImpactVelocity)
+{
+}
+
+void AProjectileGrenade::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NomalImpulse, const FHitResult& Hit)
 {
 }
