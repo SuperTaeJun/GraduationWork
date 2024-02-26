@@ -70,17 +70,14 @@ void ClientSocket::PacketProcess(unsigned char* ptr)
 		SC_LOGIN_BACK* packet = reinterpret_cast<SC_LOGIN_BACK*>(ptr);
 		UE_LOG(LogClass, Warning, TEXT("recv data"));
 		login_cond = true;
-
-
 		break;
 	}
-	case SC_MOVE_OK:
+	case SC_OTHER_PLAYER:
 	{
-		SC_MOVE_BACK* packet = reinterpret_cast<SC_MOVE_BACK*>(ptr);
+		SC_PLAYER_SYNC* packet = reinterpret_cast<SC_PLAYER_SYNC*>(ptr);
 		int id = packet->id;
 		float x = packet->x;
 		float y = packet->y;
-		float z = packet->z;
 		UE_LOG(LogClass, Warning, TEXT("recv data"));
 		break;
 	}
@@ -131,7 +128,7 @@ uint32 ClientSocket::Run()
 	RecvPacket();
 	//SleepEx(0, true);
 //	StopTaskCounter.GetValue() == 0 && MyCharacterController != nullptr
-	while (true)
+	while (StopTaskCounter.GetValue() == 0 && MyCharacterController != nullptr)
 	{
 		DWORD num_byte;
 		LONG64 iocp_key;
@@ -142,13 +139,14 @@ uint32 ClientSocket::Run()
 
 		if (ret == false) {
 			int err_no = WSAGetLastError();
+			if (exp_over->type == IO_SEND)
+				delete exp_over;
 			continue;
 		}
 
 		switch (exp_over->type) {
 		case IO_RECV: {
 			if (num_byte == 0) {
-				//Disconnect();
 				continue;
 			}
 			int remain_data = num_byte + _prev_size;
@@ -172,7 +170,6 @@ uint32 ClientSocket::Run()
 		}
 		case IO_SEND: {
 			if (num_byte != exp_over->wsabuf.len) {
-				//Disconnect();
 			}
 			delete exp_over;
 			break;

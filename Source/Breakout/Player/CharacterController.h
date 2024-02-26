@@ -33,8 +33,12 @@ public:
 	void SetHUDCrosshair(const struct FCrosshairPackage& Package);
 	//skill
 	void SetHUDSkill();
+	//스킬 아이콘 투명도
 	void SetHUDSkillOpacity(float Opacity);
+	//skill1,3,4 쿨타임
 	void SetHUDCool(float Cool, float MaxCool);
+	//skill2 대쉬포인트
+	void SetHUDCool(int32 Cool);
 	void SetHUDCoolVisibility(bool bVisibility);
 	void showWeaponSelect();
 	void RecvNewPlayer(int sessionID, float x, float y, float z);

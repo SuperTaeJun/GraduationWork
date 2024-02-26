@@ -97,10 +97,13 @@ void ACharacterController::SetHUDCool(float Cool, float MaxCool)
 	FString CoolText = FString::Printf(TEXT("%d"), FMath::FloorToInt(MaxCool - Cool));
 	if (Cast<UBOGameInstance>(GetWorld()->GetGameInstance())->GetCharacterType() != ECharacterType::ECharacter2)
 		MainHUD->CharacterUi->SkillCool->SetText(FText::FromString(CoolText));
-	else if (Cast<UBOGameInstance>(GetWorld()->GetGameInstance())->GetCharacterType() == ECharacterType::ECharacter2)
-	{
+}
 
-	}
+void ACharacterController::SetHUDCool(int32 Cool)
+{
+	FString CoolText = FString::Printf(TEXT("%d"), Cool);
+	if (Cast<UBOGameInstance>(GetWorld()->GetGameInstance())->GetCharacterType() == ECharacterType::ECharacter2)
+		MainHUD->CharacterUi->SkillCool->SetText(FText::FromString(CoolText));
 }
 
 void ACharacterController::SetHUDCoolVisibility(bool bVisibility)

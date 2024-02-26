@@ -38,7 +38,7 @@ private:
 	float OldMaxWalkSpeed;
 	float OldMaxAcceleration;
 
-
+	bool bGhost = false;
 	bool bCoolTimeFinish = true;
 	float GhostCoolChargeTime = 0.f;
 	FTimerHandle GhostTimer;
