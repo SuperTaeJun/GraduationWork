@@ -296,12 +296,15 @@ void ACharacterBase::GrandeThrowFinish()
 		WeaponSocket->AttachActor(CurWeapon, GetMesh());
 	}
 	GrendeNum -= 1;
+
+	//Grenade->bHiddenInGame = false;
+	Grenade->SetHiddenInGame(true);
 }
 
 void ACharacterBase::SpawnGrenade()
 {
-	Grenade->bHiddenInGame = true;
-
+	//Grenade->bHiddenInGame = true;
+	Grenade->SetHiddenInGame(true);
 	switch (BojoMugiType)
 	{
 	case EBojoMugiType::E_Grenade:
