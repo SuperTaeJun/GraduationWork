@@ -78,7 +78,9 @@ void ClientSocket::PacketProcess(unsigned char* ptr)
 		int id = packet->id;
 		float x = packet->x;
 		float y = packet->y;
+		float z = packet->z;
 		UE_LOG(LogClass, Warning, TEXT("recv data"));
+		MyCharacterController->RecvNewPlayer(id, x, y, z);
 		break;
 	}
 	default:

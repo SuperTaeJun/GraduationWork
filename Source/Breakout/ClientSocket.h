@@ -10,6 +10,7 @@
 #include <fstream>
 #include <map>
 #include <iostream>
+#include "Player/CharacterController.h"
 #include "Network/PacketData.h"
 #include "Windows/PostWindowsApi.h"
 #include "Windows/HideWindowsPlatformTypes.h"
