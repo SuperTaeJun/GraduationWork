@@ -20,7 +20,7 @@ const char CS_MOVE = 2;
 
 
 const char SC_LOGIN_OK = 1;
-const char SC_MOVE_OK = 2;
+//const char SC_MOVE_OK = 2;
 const char SC_OTHER_PLAYER = 3;
 
 #pragma pack (push, 1)
@@ -47,12 +47,12 @@ struct CS_MOVE_PACKET
 	int	id;
 	float x, y, z;
 };
-struct SC_MOVE_BACK {
-	unsigned char size;
-	char type;
-	int		id;
-	float x, y, z;
-};
+//struct SC_MOVE_BACK {
+//	unsigned char size;
+//	char type;
+//	int		id;
+//	float x, y, z;
+//};
 //동기화 용 패킷
 struct SC_PLAYER_SYNC {
 	unsigned char size;
