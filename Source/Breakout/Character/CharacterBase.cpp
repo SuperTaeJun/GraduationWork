@@ -21,7 +21,11 @@
 #include "Weapon/ProjectileBase.h"
 #include "Game/BOGameMode.h"
 #include "Components/CapsuleComponent.h"
+#include "Components/ArrowComponent.h"
 #include "GameProp/EscapeTool.h"
+#include "NiagaraFunctionLibrary.h"
+#include "NiagaraComponent.h"
+#include "NiagaraDataInterfaceArrayFunctionLibrary.h"
 
 ACharacterBase::ACharacterBase()
 {
@@ -53,6 +57,11 @@ ACharacterBase::ACharacterBase()
 	Grenade->SetupAttachment(GetMesh(), FName("GrandeSocket"));
 	Grenade->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	Grenade->bHiddenInGame = true;
+
+	PathSorce = CreateDefaultSubobject<UArrowComponent>(TEXT("GrenadePath"));
+	PathSorce->SetupAttachment(GetMesh(), FName("HeadSocket"));
+
+	Aim = CreateDefaultSubobject<UNiagaraComponent>(TEXT("NiagaraAim"));
 
 	//스테이트
 	MaxHealth = 100.f;
@@ -116,6 +125,8 @@ void ACharacterBase::BeginPlay()
 	UpdateHpHUD();
 	UpdateStaminaHUD();
 	UpdateObtainedEscapeTool();
+
+	Aim->SetAutoActivate(false);
 }
 
 
@@ -259,6 +270,11 @@ void ACharacterBase::PlayFireActionMontage(bool bAiming)
 
 void ACharacterBase::GrandeThrow()
 {
+	PlayAnimMontage(GrenadeMontage, 1.f, FName("Fire"));
+	UE_LOG(LogTemp, Log, TEXT("FIRE"));
+}
+void ACharacterBase::GrandeAim()
+{
 	Grenade->bHiddenInGame = false;
 
 	const USkeletalMeshSocket* WeaponSocket = GetMesh()->GetSocketByName(FName("LeftHandSocket"));
@@ -267,11 +283,9 @@ void ACharacterBase::GrandeThrow()
 	{
 		WeaponSocket->AttachActor(CurWeapon, GetMesh());
 	}
-
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
-	if(AnimInstance && GrenadeMontage)
-		AnimInstance->Montage_Play(GrenadeMontage);
-
+	if (AnimInstance && GrenadeMontage)
+		PlayAnimMontage(GrenadeMontage, 1.f, FName("Aim"));
 }
 void ACharacterBase::GrandeThrowFinish()
 {
@@ -284,36 +298,6 @@ void ACharacterBase::GrandeThrowFinish()
 	GrendeNum -= 1;
 }
 
-void ACharacterBase::ReciveDamage(AActor* DamagedActor, float Damage, const UDamageType* DamageType, class AController* InstigatorController, AActor* DamageCauser)
-{
-	Health = FMath::Clamp(Health - Damage, 0.f, MaxHealth);
-	UpdateHpHUD();
-
-
-	if (Health <= 0.0f)
-	{
-		ABOGameMode* GameMode = GetWorld()->GetAuthGameMode<ABOGameMode>();
-		if (GameMode)
-		{
-			MainController = MainController == nullptr ? Cast<ACharacterController>(Controller) : MainController;
-			ACharacterController* AttackerController = Cast<ACharacterController>(InstigatorController);
-			GameMode->PlayerRemove(this, MainController, AttackerController);
-		}
-	}
-}
-
-void ACharacterBase::Dead()
-{
-
-	GetMesh()->SetSimulatePhysics(true);
-	GetMesh()->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
-	GetCharacterMovement()->DisableMovement();
-	GetCharacterMovement()->StopMovementImmediately();
-	if (MainController)
-		DisableInput(MainController);
-	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-
-}
 void ACharacterBase::SpawnGrenade()
 {
 	Grenade->bHiddenInGame = true;
@@ -353,6 +337,38 @@ void ACharacterBase::SetSpawnGrenade(TSubclassOf<AProjectileBase> Projectile)
 		}
 	}
 }
+
+void ACharacterBase::ReciveDamage(AActor* DamagedActor, float Damage, const UDamageType* DamageType, class AController* InstigatorController, AActor* DamageCauser)
+{
+	Health = FMath::Clamp(Health - Damage, 0.f, MaxHealth);
+	UpdateHpHUD();
+
+
+	if (Health <= 0.0f)
+	{
+		ABOGameMode* GameMode = GetWorld()->GetAuthGameMode<ABOGameMode>();
+		if (GameMode)
+		{
+			MainController = MainController == nullptr ? Cast<ACharacterController>(Controller) : MainController;
+			ACharacterController* AttackerController = Cast<ACharacterController>(InstigatorController);
+			GameMode->PlayerRemove(this, MainController, AttackerController);
+		}
+	}
+}
+
+void ACharacterBase::Dead()
+{
+
+	GetMesh()->SetSimulatePhysics(true);
+	GetMesh()->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
+	GetCharacterMovement()->DisableMovement();
+	GetCharacterMovement()->StopMovementImmediately();
+	if (MainController)
+		DisableInput(MainController);
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+}
+
 
 void ACharacterBase::TurnInPlace(float DeltaTime)
 {
@@ -605,11 +621,32 @@ void ACharacterBase::Reroad(const FInputActionValue& Value)
 	}
 }
 
+void ACharacterBase::GrandeFire_Aiming(const FInputActionValue& Value)
+{
+	Aim->Activate();
+	FPredictProjectilePathParams Path;
+	Path.StartLocation = PathSorce->GetComponentLocation();
+	Path.LaunchVelocity = FollowCamera->GetForwardVector() * 1500.f;
+	Path.ProjectileRadius = 3.f;
+	Path.bTraceWithCollision = true;
+	Path.ActorsToIgnore.Add(this);
+	//Path.DrawDebugType = EDrawDebugTrace::ForOneFrame;
+	FPredictProjectilePathResult Result;
+	UGameplayStatics::PredictProjectilePath(Grenade, Path,Result);
+	TArray<FVector> Locations;
+	for (auto OnePathData : Result.PathData)
+	{
+		Locations.Add(OnePathData.Location);
+	}
+	UNiagaraDataInterfaceArrayFunctionLibrary::SetNiagaraArrayPosition(Aim, FName("PositionArray"), Locations);
+}
+
 void ACharacterBase::GrandeFire(const FInputActionValue& Value)
 {
+	Aim->Deactivate();
 	if (GrendeNum > 0)
 	{
-		GrandeThrow();
+		GrandeAim();
 	}
 }
 
@@ -643,50 +680,10 @@ void ACharacterBase::Custom_Jump(const FInputActionValue& Value)
 
 void ACharacterBase::Skill_S(const FInputActionValue& Value)
 {
-	/*switch (SkillComp->GetSelectedSkill())
-	{
-	case ESelectedSkill::E_Skill1:
-		SkillComp->SetIsReverse(true);
-		break;
-	case ESelectedSkill::E_Skill2:
-		if (SkillComp->GetDashPoint() > 0 && !Movement->IsFalling())  
-		{
-			SkillComp->SetIsDash(true);
-			SkillComp->DashStart();
-		}
-		break;
-	case ESelectedSkill::E_Skill3:
-		SkillComp->SetIsGhost(true);
-		break;
-	case ESelectedSkill::E_Skill4:
-		break;
-	}*/
 }
 
 void ACharacterBase::Skill_E(const FInputActionValue& Value)
 {
-	//switch (SkillComp->GetSelectedSkill())
-	//{
-	//case ESelectedSkill::E_Skill1:
-	//	SkillComp->SetIsReverse(false);
-	//	break;
-	//case ESelectedSkill::E_Skill2:
-	//	break;
-	//case ESelectedSkill::E_Skill3:
-	//	SkillComp->SetIsGhost(false);
-	//	SkillComp->SetIsCharageTime(false);
-	//	break;
-	//case ESelectedSkill::E_Skill4:
-	//	if (SkillComp->Toggle % 2 == 1)
-	//	{
-	//		SkillComp->SaveCurLocation();
-	//	}
-	//	else
-	//	{
-	//		SkillComp->SetLocation();
-	//	}
-	//	break;
-	//}
 }
 
 void ACharacterBase::Tick(float DeltaTime)
@@ -741,7 +738,8 @@ void ACharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 		EnhancedInputComponent->BindAction(FireAction, ETriggerEvent::Triggered, this, &ACharacterBase::Fire_S);
 		EnhancedInputComponent->BindAction(FireAction, ETriggerEvent::Completed, this, &ACharacterBase::Fire_E);
 		EnhancedInputComponent->BindAction(ReRoadAction, ETriggerEvent::Triggered, this, &ACharacterBase::Reroad);
-		EnhancedInputComponent->BindAction(GrandeFireAction, ETriggerEvent::Triggered, this, &ACharacterBase::GrandeFire);
+		EnhancedInputComponent->BindAction(GrandeFireAction, ETriggerEvent::Triggered, this, &ACharacterBase::GrandeFire_Aiming);
+		EnhancedInputComponent->BindAction(GrandeFireAction, ETriggerEvent::Completed, this, &ACharacterBase::GrandeFire);
 		EnhancedInputComponent->BindAction(SelectGrandeAction, ETriggerEvent::Triggered, this, &ACharacterBase::SelectGrande);
 		EnhancedInputComponent->BindAction(SelectWallAction, ETriggerEvent::Triggered, this, &ACharacterBase::SelectWall);
 		EnhancedInputComponent->BindAction(SelectTrapAction, ETriggerEvent::Triggered, this, &ACharacterBase::SelectTrap);

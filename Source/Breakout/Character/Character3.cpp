@@ -55,7 +55,7 @@ void ACharacter3::Tick(float DeltaTime)
 		}
 	}
 
-	if (DynamicMaterial)
+	if (DynamicMaterial && bGhost)
 	{
 		//머터리얼 파라미터 적용
 		DynamicMaterial->SetVectorParameterValue(FName("Loc"), GetCapsuleComponent()->GetForwardVector() * -1.f);
@@ -88,6 +88,7 @@ void ACharacter3::GhostStart()
 {
 	if (bCoolTimeFinish)
 	{
+		bGhost = true;
 		GetCapsuleComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Visibility, ECollisionResponse::ECR_Ignore);
 		MovementComp->MaxWalkSpeed = 1500;
 		MovementComp->MaxAcceleration = 10000000.f;
@@ -116,5 +117,6 @@ void ACharacter3::GhostEnd()
 	bCoolTimeFinish = false;
 	if (OldMaterial)
 		GetMesh()->SetMaterial(0, OldMaterial);
+	bGhost = false;
 }
 
