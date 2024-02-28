@@ -20,6 +20,8 @@ public:
 	virtual void Tick(float DeltaTime);
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent);
 protected:
+	virtual void Destroyed();
+
 	virtual void Skill_S(const FInputActionValue& Value) override;
 	virtual void Skill_E(const FInputActionValue& Value) override;
 	void Skill_T(const FInputActionValue& Value);

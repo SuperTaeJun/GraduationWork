@@ -121,12 +121,15 @@ void ACharacterBase::BeginPlay()
 
 	OnTakeAnyDamage.AddDynamic(this, &ACharacterBase::ReciveDamage);
 
-	MainController->SetHUDSkill();
-	UpdateHpHUD();
-	UpdateStaminaHUD();
-	UpdateObtainedEscapeTool();
-
-	Aim->SetAutoActivate(false);
+	if (MainController)
+	{
+		MainController->SetHUDSkill();
+		UpdateHpHUD();
+		UpdateStaminaHUD();
+		UpdateObtainedEscapeTool();
+	}
+	if(Aim)
+		Aim->SetAutoActivate(false);
 }
 
 
@@ -370,6 +373,22 @@ void ACharacterBase::Dead()
 		DisableInput(MainController);
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
+	GetWorld()->GetTimerManager().SetTimer(DeadTimer, this, &ACharacterBase::DestroyPlayer, 4.f, false);
+}
+
+void ACharacterBase::DestroyPlayer()
+{
+	CurWeapon->Destroy();
+	CurWeapon = nullptr;
+	Destroy();
+}
+
+void ACharacterBase::Destroyed()
+{
+	Super::Destroyed();
+
+	MainController->showWeaponSelect();
+	
 }
 
 
@@ -715,6 +734,8 @@ void ACharacterBase::Tick(float DeltaTime)
 		Movement->MaxWalkSpeed = 400.f;
 		break;
 	}
+
+
 	UpdateStamina(DeltaTime);
 	UpdateSprintCamera(DeltaTime);
 	AimOffset(DeltaTime);
@@ -724,6 +745,11 @@ void ACharacterBase::Tick(float DeltaTime)
 
 	TraceUnderCrossHiar(HitResult);
 	HitTarget = HitResult.ImpactPoint;
+
+	if (!PathSorce->bHiddenInGame)
+	{
+		PathSorce->SetHiddenInGame(true);
+	}
 }
 
 void ACharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
