@@ -128,7 +128,6 @@ void ACharacterController::showWeaponSelect()
 
 void ACharacterController::RecvNewPlayer(int sessionID, float x, float y, float z)
 {
-	
 	bNewPlayerEntered = true;
 	other_session_id = sessionID;
 	other_x = x;
