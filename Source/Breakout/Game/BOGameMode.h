@@ -18,6 +18,8 @@ public:
 	ABOGameMode();
 	virtual void PlayerRemove(class ACharacterBase* RemovedCharacter, class ACharacterController* RemovedCharacterController, class ACharacterController* AttackerController);
 	virtual UClass* GetDefaultPawnClassForController_Implementation(AController* InController) override;
+	void RespawnPlayer(class ACharacterBase* Player);
+
 	TSubclassOf<class ACharacterBase>Character1;
 	TSubclassOf<class ACharacterBase>Character2;
 	TSubclassOf<class ACharacterBase>Character3;

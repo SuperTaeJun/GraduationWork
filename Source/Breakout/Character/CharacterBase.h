@@ -91,7 +91,9 @@ public:
 	void SetSpawnGrenade(TSubclassOf<class AProjectileBase> Projectile);
 
 	void Dead();
-
+	FTimerHandle DeadTimer;
+	void DestroyPlayer();
+	virtual void Destroyed();
 protected:
 
 	UPROPERTY(EditAnywhere, Category = Arrow)

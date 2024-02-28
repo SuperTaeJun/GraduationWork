@@ -64,4 +64,11 @@ UClass* ABOGameMode::GetDefaultPawnClassForController_Implementation(AController
 		return nullptr;
 }
 
+void ABOGameMode::RespawnPlayer(ACharacterBase* Player)
+{
+
+	UGameplayStatics::GetPlayerController(GetWorld(), 0)->Possess(Cast<APawn>(GetWorld()->SpawnActor(Player->GetClass())));
+
+}
+
 
