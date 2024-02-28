@@ -4,10 +4,12 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "ClientSocket.h"
 #include "Kismet/GameplayStatics.h"
 #include "GameFramework/PlayerController.h"
 #include "CharacterController.generated.h"
+class ClientSocket;
+//class CPlayer;
+class CPlayerInfo;
 /**
  * 
  */
@@ -55,9 +57,9 @@ public:
 private:
 	TObjectPtr<class AMainHUD> MainHUD;
 	bool bNewPlayerEntered = false;
-	/*CPlayer initplayer;
-	CPlayerInfo* PlayerInfo;*/
-	//ClientSocket* c_socket;
-		// 다른 캐릭터들의 정보
-	//queue<shared_ptr<CPlayer>>	//NewPlayer;
+	ClientSocket* c_socket;
+	CPlayerInfo* PlayerInfo;  
+	//CPlayer initplayer;
+	// 다른 캐릭터들의 정보
+	//queue<shared_ptr<CPlayer>>	NewPlayer;
 };

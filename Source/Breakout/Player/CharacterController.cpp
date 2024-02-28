@@ -198,7 +198,6 @@ void ACharacterController::SendPlayerPos(int id)
 void ACharacterController::OnPossess(APawn* InPawn)
 {
 	Super::OnPossess(InPawn);
-
 	ACharacterBase* BaseCharacter = Cast<ACharacterBase>(InPawn);
 
 	if (BaseCharacter)
