@@ -9,6 +9,8 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "Player/CharacterController.h"
+#include "Game/BOGameMode.h"
+
 ACharacter1::ACharacter1()
 {
 	NiagaraComp = CreateDefaultSubobject<UNiagaraComponent>(TEXT("NiagaraComp"));
@@ -22,7 +24,8 @@ ACharacter1::ACharacter1()
 void ACharacter1::BeginPlay()
 {
 	Super::BeginPlay();
-	MainController->SetHUDCoolVisibility(false);
+	if(MainController)
+		MainController->SetHUDCoolVisibility(false);
 	MaxSaveTime = 5.f;
 }
 void ACharacter1::Tick(float DeltaTime)
@@ -63,6 +66,13 @@ void ACharacter1::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 		EnhancedInputComponent->BindAction(SkillAction, ETriggerEvent::Completed, this, &ACharacter1::Skill_E);
 		EnhancedInputComponent->BindAction(SkillAction, ETriggerEvent::Triggered, this, &ACharacter1::Skill_T);
 	}
+}
+void ACharacter1::Destroyed()
+{
+	Super::Destroyed();
+
+	Cast<ABOGameMode>(UGameplayStatics::GetGameMode(GetWorld()))->RespawnPlayer(this);
+
 }
 void ACharacter1::Skill_S(const FInputActionValue& Value)
 {
