@@ -46,7 +46,8 @@ struct SC_PLAYER_SYNC {
 	unsigned char size;
 	char type;
 	int id;
-	short x, y;
+	float x, y,z;
+	float yaw;
 	char object_type;
 	char name[MAX_INFO_SIZE];
 };

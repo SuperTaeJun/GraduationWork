@@ -107,16 +107,16 @@ void ClientSocket::Send_Login_Info(char* id, char* pw)
 
 void ClientSocket::Send_Move_Packet(int sessionID, float x, float y, float z)
 {
-	if (login_cond == true) {
-		CS_MOVE_PACKET packet;
-		packet.size = sizeof(packet);
-		packet.type = CS_MOVE;
-		packet.id = sessionID;
-		packet.x = x;
-		packet.y = y;
-		packet.z = z;
-		SendPacket(&packet);
-	}
+	//if (login_cond == true) {
+	//	CS_MOVE_PACKET packet;
+	//	packet.size = sizeof(packet);
+	//	packet.type = CS_MOVE;
+	//	packet.id = sessionID;
+	//	packet.x = x;
+	//	packet.y = y;
+	//	packet.z = z;
+	//	SendPacket(&packet);
+	//}
 }
 
 bool ClientSocket::Init()

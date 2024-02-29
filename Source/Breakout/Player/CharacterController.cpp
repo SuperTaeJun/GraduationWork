@@ -128,7 +128,6 @@ void ACharacterController::showWeaponSelect()
 
 void ACharacterController::RecvNewPlayer(int sessionID, float x, float y, float z)
 {
-	
 	bNewPlayerEntered = true;
 	other_session_id = sessionID;
 	other_x = x;
@@ -199,7 +198,6 @@ void ACharacterController::SendPlayerPos(int id)
 void ACharacterController::OnPossess(APawn* InPawn)
 {
 	Super::OnPossess(InPawn);
-
 	ACharacterBase* BaseCharacter = Cast<ACharacterBase>(InPawn);
 
 	if (BaseCharacter)

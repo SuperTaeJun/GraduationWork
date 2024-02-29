@@ -46,6 +46,8 @@ struct CS_MOVE_PACKET
 	char type;
 	int	id;
 	float x, y, z;
+	float vx, vy, vz;
+	float yaw;
 };
 //struct SC_MOVE_BACK {
 //	unsigned char size;
@@ -58,7 +60,8 @@ struct SC_PLAYER_SYNC {
 	unsigned char size;
 	char type;
 	int id;
-	short x, y;
+	float x, y, z;
+	float yaw;
 	char object_type;
 	char name[MAX_INFO_SIZE];
 };

@@ -4,10 +4,12 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "ClientSocket.h"
 #include "Kismet/GameplayStatics.h"
 #include "GameFramework/PlayerController.h"
 #include "CharacterController.generated.h"
+class ClientSocket;
+//class CPlayer;
+class CPlayerInfo;
 /**
  * 
  */
@@ -20,17 +22,14 @@ protected:
 	virtual void BeginPlay() override;
 
 public:
-//	CPlayer initplayer;
-//	CPlayerInfo* PlayerInfo;	// 다른 캐릭터들의 정보
-//	ClientSocket* connect_player;
-	//queue<shared_ptr<CPlayer>>	NewPlayer;
+
 	int my_session_id;
 	int other_session_id;
 	int other_x;
 	int other_y;
 	int other_z;
 	int count;
-
+	
 	void SetHUDHealth(float Health, float MaxHealth);
 	void SetHUDStamina(float Stamina, float MaxStamina);
 	void SetHUDAmmo(int32 Ammo);
@@ -58,5 +57,9 @@ public:
 private:
 	TObjectPtr<class AMainHUD> MainHUD;
 	bool bNewPlayerEntered = false;
-
+	ClientSocket* c_socket;
+	CPlayerInfo* PlayerInfo;  
+	//CPlayer initplayer;
+	// 다른 캐릭터들의 정보
+	//queue<shared_ptr<CPlayer>>	NewPlayer;
 };
