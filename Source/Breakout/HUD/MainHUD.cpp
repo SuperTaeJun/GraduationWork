@@ -79,7 +79,8 @@ void AMainHUD::DrawHUD()
 
 void AMainHUD::AddSelectWeapon()
 {
-	SelectWeapon->AddToViewport();
+	if(SelectWeapon)
+		SelectWeapon->AddToViewport();
 }
 
 void AMainHUD::RemoveSelectWeapon()
