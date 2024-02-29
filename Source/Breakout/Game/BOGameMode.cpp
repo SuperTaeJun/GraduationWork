@@ -5,6 +5,8 @@
 #include "Character/CharacterBase.h"
 #include "Game/BOGameInstance.h"
 #include "Character/CharacterBase.h"
+#include "GameFramework/PlayerStart.h"
+
 ABOGameMode::ABOGameMode()
 {
 	/*m_Socket = ClientSocket::GetSingleton();
@@ -31,14 +33,24 @@ ABOGameMode::ABOGameMode()
 	Character4 = Character4Ref.Class;
 }
 
-void ABOGameMode::PlayerRemove(ACharacterBase* RemovedCharacter, ACharacterController* RemovedCharacterController, ACharacterController* AttackerController)
-{
-	if (RemovedCharacter)
-	{
-		RemovedCharacter->Dead();
-	}
-}
 
+void ABOGameMode::Respawn(ACharacter* RespawnedCh, AController* RespawnedController)
+{
+	if (RespawnedCh)
+	{
+		RespawnedCh->Reset();
+		RespawnedCh->Destroy();
+	}
+	if (RespawnedController)
+	{
+		TArray<AActor*> PlayerStarts;
+		UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerStart::StaticClass(), PlayerStarts);
+		int32 Selection = FMath::RandRange(0, PlayerStarts.Num() - 1);
+		RestartPlayerAtPlayerStart(RespawnedController, PlayerStarts[Selection]);
+		//Cast<ACharacterBase>(RespawnedController->GetPawn())->SetWeaponUi(Cast<ACharacterController>(RespawnedController));
+	}
+
+}
 
 UClass* ABOGameMode::GetDefaultPawnClassForController_Implementation(AController* InController)
 {
@@ -63,12 +75,3 @@ UClass* ABOGameMode::GetDefaultPawnClassForController_Implementation(AController
 	else
 		return nullptr;
 }
-
-void ABOGameMode::RespawnPlayer(ACharacterBase* Player)
-{
-
-	UGameplayStatics::GetPlayerController(GetWorld(), 0)->Possess(Cast<APawn>(GetWorld()->SpawnActor(Player->GetClass())));
-
-}
-
-

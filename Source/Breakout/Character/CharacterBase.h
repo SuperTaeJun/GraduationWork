@@ -63,6 +63,8 @@ protected:
 
 public:
 	void SetWeapon(TSubclassOf<class AWeaponBase> Weapon, FName SocketName);
+	void SetWeaponUi();
+	void SetWeaponUi(class ACharacterController* temp);
 	void SetbInRespon(bool _bInRespon) { bInRespon = _bInRespon; }
 	bool GetbInRespon() { return bInRespon; }
 	void SetbShowSelect(bool _bShowSelect) {bShowSelectUi = _bShowSelect;}
@@ -92,8 +94,6 @@ public:
 
 	void Dead();
 	FTimerHandle DeadTimer;
-	void DestroyPlayer();
-	virtual void Destroyed();
 protected:
 
 	UPROPERTY(EditAnywhere, Category = Arrow)

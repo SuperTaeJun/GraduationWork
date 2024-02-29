@@ -107,14 +107,15 @@ void ACharacterBase::BeginPlay()
 	MainController = MainController == nullptr ? Cast<ACharacterController>(Controller) : MainController;
 	if (MainController)
 	{
-		FInputModeUIOnly UiGameInput;
-		MainController->SetInputMode(UiGameInput);
-		MainController->DisableInput(MainController);
-		//bShowSelectUi = true;
-		MainController->bShowMouseCursor = true;
-		MainController->bEnableMouseOverEvents = true;
+		SetWeaponUi();
+		//FInputModeUIOnly UiGameInput;
+		//MainController->SetInputMode(UiGameInput);
+		//MainController->DisableInput(MainController);
+		////bShowSelectUi = true;
+		//MainController->bShowMouseCursor = true;
+		//MainController->bEnableMouseOverEvents = true;
 
-		MainController->showWeaponSelect();
+		//MainController->showWeaponSelect();
 	}
 
 	BojoMugiType = EBojoMugiType::ECS_DEFAULT;
@@ -214,6 +215,34 @@ void ACharacterBase::UpdateObtainedEscapeTool()
 	{
 		MainController->SetHUDEscapeTool(ObtainedEscapeToolNum);
 	}
+}
+
+void ACharacterBase::SetWeaponUi()
+{
+	FInputModeUIOnly UiGameInput;
+	if (MainController)
+	{
+		MainController->SetInputMode(UiGameInput);
+		MainController->DisableInput(MainController);
+		//bShowSelectUi = true;
+		MainController->bShowMouseCursor = true;
+		MainController->bEnableMouseOverEvents = true;
+
+		MainController->showWeaponSelect();
+	}
+
+}
+void ACharacterBase::SetWeaponUi(ACharacterController* temp)
+{
+	UE_LOG(LogTemp, Warning, TEXT("RESPAWN"));
+	FInputModeUIOnly UiGameInput;
+	temp->SetInputMode(UiGameInput);
+	temp->DisableInput(temp);
+	//bShowSelectUi = true;
+	temp->bShowMouseCursor = true;
+	temp->bEnableMouseOverEvents = true;
+
+	temp->showWeaponSelect();
 }
 
 void ACharacterBase::SetWeapon(TSubclassOf<class AWeaponBase> Weapon, FName SocketName)
@@ -355,41 +384,33 @@ void ACharacterBase::ReciveDamage(AActor* DamagedActor, float Damage, const UDam
 		ABOGameMode* GameMode = GetWorld()->GetAuthGameMode<ABOGameMode>();
 		if (GameMode)
 		{
-			MainController = MainController == nullptr ? Cast<ACharacterController>(Controller) : MainController;
-			ACharacterController* AttackerController = Cast<ACharacterController>(InstigatorController);
-			GameMode->PlayerRemove(this, MainController, AttackerController);
+			//MainController = MainController == nullptr ? Cast<ACharacterController>(Controller) : MainController;
+			//ACharacterController* AttackerController = Cast<ACharacterController>(InstigatorController);
+			GetWorld()->GetTimerManager().SetTimer(DeadTimer, this, &ACharacterBase::Dead, 4.f, false);
 		}
 	}
 }
 
 void ACharacterBase::Dead()
 {
+	ABOGameMode* GameMode = GetWorld()->GetAuthGameMode<ABOGameMode>();
+	if (GameMode)
+	{
+		if(CurWeapon)
+			CurWeapon->Destroy();
+		GameMode->Respawn(this, MainController);
+	}
+	//GetMesh()->SetSimulatePhysics(true);
+	//GetMesh()->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
+	//GetCharacterMovement()->DisableMovement();
+	//GetCharacterMovement()->StopMovementImmediately();
+	//if (MainController)
+	//	DisableInput(MainController);
+	//GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
-	GetMesh()->SetSimulatePhysics(true);
-	GetMesh()->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
-	GetCharacterMovement()->DisableMovement();
-	GetCharacterMovement()->StopMovementImmediately();
-	if (MainController)
-		DisableInput(MainController);
-	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-
-	GetWorld()->GetTimerManager().SetTimer(DeadTimer, this, &ACharacterBase::DestroyPlayer, 4.f, false);
+	//GetWorld()->GetTimerManager().SetTimer(DeadTimer, this, &ACharacterBase::DestroyPlayer, 4.f, false);
 }
 
-void ACharacterBase::DestroyPlayer()
-{
-	CurWeapon->Destroy();
-	CurWeapon = nullptr;
-	Destroy();
-}
-
-void ACharacterBase::Destroyed()
-{
-	Super::Destroyed();
-
-	MainController->showWeaponSelect();
-	
-}
 
 
 void ACharacterBase::TurnInPlace(float DeltaTime)
