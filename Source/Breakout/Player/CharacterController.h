@@ -46,6 +46,10 @@ public:
 	void SetHUDCool(int32 Cool);
 	void SetHUDCoolVisibility(bool bVisibility);
 	void showWeaponSelect();
+
+	//TickÇÔ¼ö
+	virtual void PlayerTick(float DeltaTime);
+
 	void RecvNewPlayer(int sessionID, float x, float y, float z);
 	void SendPlayerPos(int id);
 	//void SetNewCharacterInfo(shared_ptr<CPlayer> InitPlayer);

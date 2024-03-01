@@ -137,6 +137,13 @@ void ACharacterController::showWeaponSelect()
 	}
 }
 
+void ACharacterController::PlayerTick(float DeltaTime)
+{
+	Super::PlayerTick(DeltaTime);
+
+
+}
+
 void ACharacterController::RecvNewPlayer(int sessionID, float x, float y, float z)
 {
 	bNewPlayerEntered = true;
