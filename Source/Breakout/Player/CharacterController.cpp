@@ -163,54 +163,54 @@ void ACharacterController::SendPlayerPos(int id)
 	//connect_player->Send_Move_Packet(my_session_id, MyLocation.X, MyLocation.Y, MyLocation.Z);
 }
 
-//void ACharacterController::SetNewCharacterInfo(shared_ptr<CPlayer> InitPlayer)
-//{
-//	if (InitPlayer != nullptr){
-//		bNewPlayerEntered = true;
-//		//NewPlayer.push(InitPlayer);
-//	}
-//}
+void ACharacterController::SetNewCharacterInfo(std::shared_ptr<CPlayer*> InitPlayer)
+{
+	if (InitPlayer != nullptr){
+		bNewPlayerEntered = true;
+		NewPlayer.push(*InitPlayer);
+	}
+}
 
 
-//void ACharacterController::UpdateSyncPlayer()
-//{
-//	// 동기화 용
-//	UWorld* const world = GetWorld();
-//	if (other_session_id == my_session_id)
-//		return;
-//	FVector S_LOCATION;
-//	S_LOCATION.X = other_x;
-//	S_LOCATION.Y = other_y;
-//	S_LOCATION.Z = other_z;
-//	FRotator S_ROTATOR;
-//	/*S_ROTATOR.Yaw = NewPlayer.front()->Yaw;
-//	S_ROTATOR.Pitch = 0.0;
-//	S_ROTATOR.Roll = 0.0;*/
-//
-//	FActorSpawnParameters SpawnActor;
-//	ACharacterBase* SpawnCharacter = world->SpawnActor<ACharacterBase>(ToSpawn, 
-//		S_LOCATION, FRotator::ZeroRotator, SpawnActor);
-//	SpawnCharacter->SpawnDefaultController();
-//	SpawnCharacter->_SessionId = other_session_id;
-//	//if (PlayersInfo != nullptr)
-//	//{
-//	//	APlayer info;
-//	//	info.Id = NewPlayer.front()->Id;
-//	//	info.X = NewPlayer.front()->X;
-//	//	info.Y = NewPlayer.front()->Y;
-//	//	info.Z = NewPlayer.front()->Z;
-//
-//	//	info.Yaw = NewPlayer.front()->Yaw;
-//
-//	//	PlayersInfo->players[NewPlayer.front()->Id] = info;
-//	//	count = PlayersInfo->players.size();
-//	//}
-//
-//	//UE_LOG(LogClass, Warning, TEXT("other spawned player connect"));
-//
-//	//NewPlayer.front() = nullptr;
-//	//NewPlayer.pop();
-//}
+void ACharacterController::UpdateSyncPlayer()
+{
+	// 동기화 용
+	UWorld* const world = GetWorld();
+	if (other_session_id == my_session_id)
+		return;
+	FVector S_LOCATION;
+	S_LOCATION.X = other_x;
+	S_LOCATION.Y = other_y;
+	S_LOCATION.Z = other_z;
+	FRotator S_ROTATOR;
+	S_ROTATOR.Yaw = NewPlayer.front()->Yaw;
+	S_ROTATOR.Pitch = 0.0;
+	S_ROTATOR.Roll = 0.0;
+
+	FActorSpawnParameters SpawnActor;
+	ACharacterBase* SpawnCharacter = world->SpawnActor<ACharacterBase>(ToSpawn, 
+		S_LOCATION, FRotator::ZeroRotator, SpawnActor);
+	SpawnCharacter->SpawnDefaultController();
+	SpawnCharacter->_SessionId = other_session_id;
+	if (PlayerInfo != nullptr)
+	{
+		CPlayer info;
+		info.Id = NewPlayer.front()->Id;
+		info.X = NewPlayer.front()->X;
+		info.Y = NewPlayer.front()->Y;
+		info.Z = NewPlayer.front()->Z;
+
+		info.Yaw = NewPlayer.front()->Yaw;
+
+		PlayerInfo->players[NewPlayer.front()->Id] = info;
+		count = PlayerInfo->players.size();
+	}
+
+	UE_LOG(LogClass, Warning, TEXT("other spawned player connect"));
+
+	NewPlayer.front() = nullptr;
+	NewPlayer.pop();
+}
 
 
 void ACharacterController::OnPossess(APawn* InPawn)

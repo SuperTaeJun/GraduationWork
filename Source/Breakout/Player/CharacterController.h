@@ -2,13 +2,14 @@
 
 
 #pragma once
-
+#include <queue>
 #include "CoreMinimal.h"
 #include "Kismet/GameplayStatics.h"
 #include "GameFramework/PlayerController.h"
 #include "CharacterController.generated.h"
+
 class ClientSocket;
-//class CPlayer;
+class CPlayer;
 class CPlayerInfo;
 /**
  * 
@@ -52,9 +53,9 @@ public:
 
 	void RecvNewPlayer(int sessionID, float x, float y, float z);
 	void SendPlayerPos(int id);
-	//void SetNewCharacterInfo(shared_ptr<CPlayer> InitPlayer);
+	void SetNewCharacterInfo(std::shared_ptr<CPlayer*> InitPlayer);
 	//동기화 용
-	//void UpdateSyncPlayer();
+	void UpdateSyncPlayer();
 	// 스폰시킬 다른 캐릭터
 	UPROPERTY(EditAnywhere, Category = "Spawning")
 	TSubclassOf<class ACharacter> ToSpawn;
@@ -64,7 +65,7 @@ private:
 	bool bNewPlayerEntered = false;
 	ClientSocket* c_socket;
 	CPlayerInfo* PlayerInfo;  
-	//CPlayer initplayer;
+	CPlayer* initplayer;
 	// 다른 캐릭터들의 정보
-	//queue<shared_ptr<CPlayer>>	NewPlayer;
+	std::queue<CPlayer*> NewPlayer;
 };
