@@ -16,9 +16,9 @@ class BREAKOUT_API ABOGameMode : public AGameMode
 	
 public:
 	ABOGameMode();
-	virtual void PlayerRemove(class ACharacterBase* RemovedCharacter, class ACharacterController* RemovedCharacterController, class ACharacterController* AttackerController);
+	//virtual void PlayerRemove(class ACharacterBase* RemovedCharacter, class ACharacterController* RemovedCharacterController, class ACharacterController* AttackerController);
+	void Respawn(class ACharacter* RespawnedCh, class AController* RespawnedController);
 	virtual UClass* GetDefaultPawnClassForController_Implementation(AController* InController) override;
-	void RespawnPlayer(class ACharacterBase* Player);
 
 	TSubclassOf<class ACharacterBase>Character1;
 	TSubclassOf<class ACharacterBase>Character2;

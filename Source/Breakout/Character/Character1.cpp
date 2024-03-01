@@ -33,7 +33,7 @@ void ACharacter1::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	GEngine->AddOnScreenDebugMessage(1, 1.f, FColor::Blue, FString::Printf(TEXT("RecordedTime : %f"), RecordedTime));
-	if (!bCoolTimeFinish)
+	if (!bCoolTimeFinish && MainController)
 	{
 		RecordedCoolTime += DeltaTime;
 		UpdateHUDCool(RecordedCoolTime,15.f);
@@ -70,8 +70,6 @@ void ACharacter1::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 void ACharacter1::Destroyed()
 {
 	Super::Destroyed();
-
-	Cast<ABOGameMode>(UGameplayStatics::GetGameMode(GetWorld()))->RespawnPlayer(this);
 
 }
 void ACharacter1::Skill_S(const FInputActionValue& Value)

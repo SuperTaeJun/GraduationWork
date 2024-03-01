@@ -17,7 +17,17 @@ void ACharacterController::BeginPlay()
 	MainHUD = Cast<AMainHUD>(GetHUD());
 	
 }
-
+//void ACharacterController::OnPossess(APawn* InPawn)
+//{
+//	Super::OnPossess(InPawn);
+//
+//	ACharacterBase* Ch = Cast<ACharacterBase>(InPawn);
+//	if (Ch)
+//	{
+//		Ch->SetWeaponUi();
+//	}
+//
+//}
 void ACharacterController::SetHUDHealth(float Health, float MaxHealth)
 {
 	if (MainHUD)
@@ -89,7 +99,8 @@ void ACharacterController::SetHUDSkill()
 
 void ACharacterController::SetHUDSkillOpacity(float Opacity)
 {
-	MainHUD->CharacterUi->SkillImage->SetColorAndOpacity(FLinearColor(1.f, 1.f, 1.f, Opacity));
+	if(MainHUD)
+		MainHUD->CharacterUi->SkillImage->SetColorAndOpacity(FLinearColor(1.f, 1.f, 1.f, Opacity));
 }
 
 void ACharacterController::SetHUDCool(float Cool, float MaxCool)
@@ -204,5 +215,11 @@ void ACharacterController::OnPossess(APawn* InPawn)
 	{
 		SetHUDHealth(BaseCharacter->GetHealth(), BaseCharacter->MaxGetHealth());
 		SetHUDStamina(BaseCharacter->GetStamina(), BaseCharacter->MaxGetStamina());
+		FInputModeUIOnly UiGameInput;
+		SetInputMode(UiGameInput);
+		DisableInput(this);
+		bShowMouseCursor = true;
+		bEnableMouseOverEvents = true;
+		showWeaponSelect();
 	}
 }

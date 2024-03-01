@@ -107,14 +107,15 @@ void ACharacterBase::BeginPlay()
 	MainController = MainController == nullptr ? Cast<ACharacterController>(Controller) : MainController;
 	if (MainController)
 	{
-		FInputModeUIOnly UiGameInput;
-		MainController->SetInputMode(UiGameInput);
-		MainController->DisableInput(MainController);
-		//bShowSelectUi = true;
-		MainController->bShowMouseCursor = true;
-		MainController->bEnableMouseOverEvents = true;
+		SetWeaponUi();
+		//FInputModeUIOnly UiGameInput;
+		//MainController->SetInputMode(UiGameInput);
+		//MainController->DisableInput(MainController);
+		////bShowSelectUi = true;
+		//MainController->bShowMouseCursor = true;
+		//MainController->bEnableMouseOverEvents = true;
 
-		MainController->showWeaponSelect();
+		//MainController->showWeaponSelect();
 	}
 
 	BojoMugiType = EBojoMugiType::ECS_DEFAULT;
@@ -216,6 +217,22 @@ void ACharacterBase::UpdateObtainedEscapeTool()
 	}
 }
 
+void ACharacterBase::SetWeaponUi()
+{
+	FInputModeUIOnly UiGameInput;
+	if (MainController)
+	{
+		MainController->SetInputMode(UiGameInput);
+		MainController->DisableInput(MainController);
+		//bShowSelectUi = true;
+		MainController->bShowMouseCursor = true;
+		MainController->bEnableMouseOverEvents = true;
+
+		MainController->showWeaponSelect();
+	}
+
+}
+
 void ACharacterBase::SetWeapon(TSubclassOf<class AWeaponBase> Weapon, FName SocketName)
 {
 	//if (!CurWeapon)
@@ -227,7 +244,7 @@ void ACharacterBase::SetWeapon(TSubclassOf<class AWeaponBase> Weapon, FName Sock
 
 	const USkeletalMeshSocket* WeaponSocket = GetMesh()->GetSocketByName(SocketName);
 
-
+	
 	if (WeaponSocket && SpawnWeapon)
 	{
 		WeaponSocket->AttachActor(SpawnWeapon, GetMesh());
@@ -274,7 +291,8 @@ void ACharacterBase::PlayFireActionMontage(bool bAiming)
 void ACharacterBase::GrandeThrow()
 {
 	PlayAnimMontage(GrenadeMontage, 1.f, FName("Fire"));
-	UE_LOG(LogTemp, Log, TEXT("FIRE"));
+	CurWeapon->SetActorHiddenInGame(true);
+	//UE_LOG(LogTemp, Log, TEXT("FIRE"));
 }
 void ACharacterBase::GrandeAim()
 {
@@ -294,6 +312,8 @@ void ACharacterBase::GrandeThrowFinish()
 {
 	const USkeletalMeshSocket* WeaponSocket = GetMesh()->GetSocketByName(RightSocketName);
 
+	//CurWeapon->SetActorHiddenInGame(false);
+
 	if (WeaponSocket && CurWeapon)
 	{
 		WeaponSocket->AttachActor(CurWeapon, GetMesh());
@@ -308,6 +328,7 @@ void ACharacterBase::SpawnGrenade()
 {
 	//Grenade->bHiddenInGame = true;
 	Grenade->SetHiddenInGame(true);
+
 	switch (BojoMugiType)
 	{
 	case EBojoMugiType::E_Grenade:
@@ -355,41 +376,27 @@ void ACharacterBase::ReciveDamage(AActor* DamagedActor, float Damage, const UDam
 		ABOGameMode* GameMode = GetWorld()->GetAuthGameMode<ABOGameMode>();
 		if (GameMode)
 		{
-			MainController = MainController == nullptr ? Cast<ACharacterController>(Controller) : MainController;
-			ACharacterController* AttackerController = Cast<ACharacterController>(InstigatorController);
-			GameMode->PlayerRemove(this, MainController, AttackerController);
+			//MainController = MainController == nullptr ? Cast<ACharacterController>(Controller) : MainController;
+			//ACharacterController* AttackerController = Cast<ACharacterController>(InstigatorController);
+			GetWorld()->GetTimerManager().SetTimer(DeadTimer, this, &ACharacterBase::Dead, DeadTime, false);
 		}
 	}
 }
 
 void ACharacterBase::Dead()
 {
-
-	GetMesh()->SetSimulatePhysics(true);
-	GetMesh()->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
-	GetCharacterMovement()->DisableMovement();
-	GetCharacterMovement()->StopMovementImmediately();
-	if (MainController)
-		DisableInput(MainController);
-	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-
-	GetWorld()->GetTimerManager().SetTimer(DeadTimer, this, &ACharacterBase::DestroyPlayer, 4.f, false);
+	ABOGameMode* GameMode = GetWorld()->GetAuthGameMode<ABOGameMode>();
+	if (GameMode)
+	{
+		if (CurWeapon)
+		{
+			CurWeapon->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
+			CurWeapon->Destroy();
+		}
+		GameMode->Respawn(this, MainController);
+	}
 }
 
-void ACharacterBase::DestroyPlayer()
-{
-	CurWeapon->Destroy();
-	CurWeapon = nullptr;
-	Destroy();
-}
-
-void ACharacterBase::Destroyed()
-{
-	Super::Destroyed();
-
-	MainController->showWeaponSelect();
-	
-}
 
 
 void ACharacterBase::TurnInPlace(float DeltaTime)

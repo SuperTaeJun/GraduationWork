@@ -40,7 +40,7 @@ void ACharacter2::BeginPlay()
 	Super::BeginPlay();
 
 	DashPoint = 3;
-	if (MovementComp)
+	if (MainController)
 	{
 		MainController->SetHUDCoolVisibility(true);
 		MainController->SetHUDCool(DashPoint);
@@ -52,19 +52,22 @@ void ACharacter2::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	GEngine->AddOnScreenDebugMessage(1, 1.f, FColor::Blue, FString::Printf(TEXT("DashPoint : %d"), DashPoint));
-	if (DashPoint < 3) 
-		DashCoolChargeTime += DeltaTime;
-	if (DashPoint < 3 && DashCoolChargeTime >= 4.f)
+	if (MainController)
 	{
-		DashPoint += 1;
-		MainController->SetHUDCool(DashPoint);
-		DashCoolChargeTime = 0.f;
+		GEngine->AddOnScreenDebugMessage(1, 1.f, FColor::Blue, FString::Printf(TEXT("DashPoint : %d"), DashPoint));
+		if (DashPoint < 3)
+			DashCoolChargeTime += DeltaTime;
+		if (DashPoint < 3 && DashCoolChargeTime >= 4.f)
+		{
+			DashPoint += 1;
+			MainController->SetHUDCool(DashPoint);
+			DashCoolChargeTime = 0.f;
+		}
+		if (DashPoint == 0)
+			MainController->SetHUDSkillOpacity(0.3);
+		else
+			MainController->SetHUDSkillOpacity(1);
 	}
-	if (DashPoint == 0)
-		MainController->SetHUDSkillOpacity(0.3);
-	else
-		MainController->SetHUDSkillOpacity(1);
 }
 
 void ACharacter2::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)

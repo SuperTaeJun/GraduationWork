@@ -23,7 +23,8 @@ void ACharacter4::BeginPlay()
 	Super::BeginPlay();
 	TelepoChargeTime = true;
 
-	MainController->SetHUDCoolVisibility(false);
+	if(MainController)
+		MainController->SetHUDCoolVisibility(false);
 }
 
 void ACharacter4::Tick(float DeltaTime)
@@ -31,7 +32,7 @@ void ACharacter4::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	GEngine->AddOnScreenDebugMessage(1, 1.f, FColor::Blue, FString::Printf(TEXT("RecordedTelpoTime : %f"), CoolChargeTime));
-	if (!TelepoChargeTime)
+	if (!TelepoChargeTime && MainController)
 	{
 		CoolChargeTime += DeltaTime;
 		MainController->SetHUDCool(CoolChargeTime, 15.f);

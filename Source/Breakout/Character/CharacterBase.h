@@ -51,6 +51,9 @@ protected:
 	float MaxStamina = 100.f;
 	UPROPERTY(EditAnywhere, Category = "Player Stats")
 	float Stamina = 100.f;
+	UPROPERTY(EditAnywhere, Category = "Player Stats")
+	float DeadTime = 4.f;
+
 	bool StaminaExhaustionState;
 
 	int32 GrendeNum=10;
@@ -63,6 +66,7 @@ protected:
 
 public:
 	void SetWeapon(TSubclassOf<class AWeaponBase> Weapon, FName SocketName);
+	void SetWeaponUi();
 	void SetbInRespon(bool _bInRespon) { bInRespon = _bInRespon; }
 	bool GetbInRespon() { return bInRespon; }
 	void SetbShowSelect(bool _bShowSelect) {bShowSelectUi = _bShowSelect;}
@@ -92,8 +96,6 @@ public:
 
 	void Dead();
 	FTimerHandle DeadTimer;
-	void DestroyPlayer();
-	virtual void Destroyed();
 protected:
 
 	UPROPERTY(EditAnywhere, Category = Arrow)

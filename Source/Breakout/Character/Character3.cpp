@@ -32,7 +32,8 @@ void ACharacter3::BeginPlay()
 	Super::BeginPlay();
 	DynamicMaterial = UMaterialInstanceDynamic::Create(Material, this);
 
-	MainController->SetHUDCoolVisibility(false);
+	if(MainController)
+		MainController->SetHUDCoolVisibility(false);
 }
 
 void ACharacter3::Tick(float DeltaTime)
@@ -41,7 +42,7 @@ void ACharacter3::Tick(float DeltaTime)
 
 	GEngine->AddOnScreenDebugMessage(1, 1.f, FColor::Blue, FString::Printf(TEXT("GhostCoolChargeTime : %f"), GhostCoolChargeTime));
 
-	if (!bCoolTimeFinish)
+	if (!bCoolTimeFinish && MainController)
 	{
 		GhostCoolChargeTime += DeltaTime;
 		MainController->SetHUDCool(GhostCoolChargeTime,10.f);

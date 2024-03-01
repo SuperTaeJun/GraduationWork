@@ -31,6 +31,7 @@ public:
 	int other_z;
 	int count;
 	
+	//virtual void OnPossess(APawn* InPawn) override;
 	void SetHUDHealth(float Health, float MaxHealth);
 	void SetHUDStamina(float Stamina, float MaxStamina);
 	void SetHUDAmmo(int32 Ammo);
