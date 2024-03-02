@@ -62,7 +62,7 @@ void process_packet(int _s_id, unsigned char* p)
 			packet.x = other.x;
 			packet.y = other.y;
 
-			cout << "[Send put object] id : %d, location : " << packet.id << packet.x << packet.y << endl;
+			cout << "[Send put object] id : location : " << packet.id <<"," << packet.x << "," << packet.y << endl;
 			cl.c_send(sizeof(packet), &packet);
 		}
 		break;
