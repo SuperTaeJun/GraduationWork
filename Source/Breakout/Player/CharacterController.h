@@ -49,7 +49,7 @@ public:
 	void showWeaponSelect();
 
 	//TickÇÔ¼ö
-	virtual void PlayerTick(float DeltaTime);
+	virtual void Tick(float DeltaTime);
 
 	void RecvNewPlayer(int sessionID, float x, float y, float z);
 	void SendPlayerPos(int id);

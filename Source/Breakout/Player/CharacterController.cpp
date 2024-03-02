@@ -137,9 +137,9 @@ void ACharacterController::showWeaponSelect()
 	}
 }
 
-void ACharacterController::PlayerTick(float DeltaTime)
+void ACharacterController::Tick(float DeltaTime)
 {
-	Super::PlayerTick(DeltaTime);
+	Super::Tick(DeltaTime);
 
 
 }
