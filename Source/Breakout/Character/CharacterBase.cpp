@@ -242,6 +242,8 @@ void ACharacterBase::SetWeapon(TSubclassOf<class AWeaponBase> Weapon, FName Sock
 	AActor* SpawnWeapon = GetWorld()->SpawnActor<AWeaponBase>(Weapon);
 	CurWeapon = Cast<AWeaponBase>(SpawnWeapon);
 
+	UE_LOG(LogTemp, Warning, TEXT("SPAWN WEAPON"));
+
 	const USkeletalMeshSocket* WeaponSocket = GetMesh()->GetSocketByName(SocketName);
 
 	
@@ -292,6 +294,7 @@ void ACharacterBase::GrandeThrow()
 {
 	PlayAnimMontage(GrenadeMontage, 1.f, FName("Fire"));
 	CurWeapon->SetActorHiddenInGame(true);
+	//CurWeapon->SetActorHiddenInGame(true);
 	//UE_LOG(LogTemp, Log, TEXT("FIRE"));
 }
 void ACharacterBase::GrandeAim()
