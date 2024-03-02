@@ -6,6 +6,7 @@
 #include "CoreMinimal.h"
 #include "Kismet/GameplayStatics.h"
 #include "GameFramework/PlayerController.h"
+#include <memory>
 #include "CharacterController.generated.h"
 
 class ClientSocket;
@@ -54,6 +55,7 @@ public:
 	void RecvNewPlayer(int sessionID, float x, float y, float z);
 	void SendPlayerPos(int id);
 	void SetNewCharacterInfo(std::shared_ptr<CPlayer*> InitPlayer);
+	 
 	//동기화 용
 	void UpdateSyncPlayer();
 	// 스폰시킬 다른 캐릭터
