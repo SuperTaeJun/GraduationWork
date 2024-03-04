@@ -92,7 +92,7 @@ void ClientSocket::PacketProcess(unsigned char* ptr)
 		info->Z = packet->z;
 		//float z = packet->z;
 		UE_LOG(LogClass, Warning, TEXT("recv data"));
-		//MyCharacterController->SetNewCharacterInfo(info);
+		MyCharacterController->SetNewCharacterInfo(info);
 		break;
 	}
 	case SC_OWN_MOVE:

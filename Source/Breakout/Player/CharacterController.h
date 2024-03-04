@@ -2,15 +2,17 @@
 
 
 #pragma once
-#include <queue>
 #include "CoreMinimal.h"
+#include <queue>
+#include "ClientSocket.h"
 #include "Kismet/GameplayStatics.h"
 #include "GameFramework/PlayerController.h"
 #include <memory>
 #include "CharacterController.generated.h"
 
-class ClientSocket;
 class CPlayer;
+
+class ClientSocket;
 class CPlayerInfo;
 /**
  * 
@@ -25,7 +27,9 @@ protected:
 
 public:
 	ACharacterController();
-	
+	CPlayer* initplayer;
+	// 다른 캐릭터들의 정보
+	std::queue<std::shared_ptr<CPlayer>> NewPlayer;
 	int my_session_id;
 	int other_session_id;
 	int other_x;
@@ -61,7 +65,7 @@ public:
 	void UpdatePlayer(int input);
 	//동기화 용
 	void UpdateSyncPlayer();
-	void SetNewCharacterInfo(std::shared_ptr<CPlayer*> InitPlayer);
+	void SetNewCharacterInfo(std::shared_ptr<CPlayer> InitPlayer);
 	//Tick함수
 	virtual void Tick(float DeltaTime);
 
@@ -80,8 +84,6 @@ private:
 	bool bInitPlayerSetting = false;
 	ClientSocket* c_socket;
 	CPlayerInfo* PlayerInfo;  
-	CPlayer* initplayer;
-	// 다른 캐릭터들의 정보
-	std::queue<CPlayer*> NewPlayer;
+	
 	bool connect;
 };

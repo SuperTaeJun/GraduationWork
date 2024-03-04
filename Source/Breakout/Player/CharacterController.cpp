@@ -15,12 +15,6 @@ void ACharacterController::BeginPlay()
 	SetInputMode(GameOnlyInput);
 
 	MainHUD = Cast<AMainHUD>(GetHUD());
-	
-}
-ACharacterController::ACharacterController()
-{
-	//c_socket = ClientSocket::GetSingleton();
-	c_socket = ClientSocket::GetSingleton();
 	c_socket->InitSocket();
 
 	connect = c_socket->Connect("127.0.0.1", 12345);
@@ -36,7 +30,14 @@ ACharacterController::ACharacterController()
 	{
 		UE_LOG(LogClass, Warning, TEXT("IOCP Server connect FAIL!"));
 	}
+}
+ACharacterController::ACharacterController()
+{
+	//c_socket = ClientSocket::GetSingleton();
+	c_socket = ClientSocket::GetSingleton();
 	c_socket->SetPlayerController(this);
+
+	
 	PrimaryActorTick.bCanEverTick = true;
 	bNewPlayerEntered = false;
 	bInitPlayerSetting = false;
@@ -186,23 +187,28 @@ void ACharacterController::Tick(float DeltaTime)
 //	//connect_player->Send_Move_Packet(my_session_id, MyLocation.X, MyLocation.Y, MyLocation.Z);
 //}
 
-void ACharacterController::SetNewCharacterInfo(std::shared_ptr<CPlayer*> InitPlayer)
-{
-	if (InitPlayer != nullptr){
-		bNewPlayerEntered = true;
-		NewPlayer.push(*InitPlayer);
-	}
-}
 
-
-void ACharacterController::SetInitPlayerInfo(const CPlayer& owner_player)
+void ACharacterController::SetInitPlayerInfo(const CPlayer &owner_player)
 {
 	//initplayer = owner_player;
 	bInitPlayerSetting = false;
 }
+void ACharacterController::SetNewCharacterInfo(std::shared_ptr<CPlayer> InitPlayer)
+{
+	if (InitPlayer != nullptr){
+		bNewPlayerEntered = true;
+		NewPlayer.push(InitPlayer);
+	}
+}
 
 void ACharacterController::UpdatePlayer(int input)
 {
+	auto m_Player = Cast<ACharacterBase>(UGameplayStatics::GetPlayerCharacter(this, 0));
+	my_session_id = m_Player->_SessionId;
+	auto MyLocation = m_Player->GetActorLocation();
+	auto MyRotation = m_Player->GetActorRotation();
+	auto MyVelocity = m_Player->GetVelocity();
+	c_socket->Send_Move_Packet(my_session_id, MyLocation.X, MyLocation.Y, MyLocation.Z);
 }
 
 void ACharacterController::UpdateSyncPlayer()
