@@ -84,6 +84,15 @@ protected:
 	FVector HitLoc;
 	FVector HitNomal;
 
+	virtual void OnOverlap
+	(
+		UPrimitiveComponent* OverlappedComponent,
+		AActor* OtherActor,
+		UPrimitiveComponent* OtherComp,
+		int32 OtherBodyIndex,
+		bool bFromSweep,
+		const FHitResult& SweepResult
+	);
 private:
 	void GetMeshDataFromStaticMesh(UStaticMesh* Mesh, FMeshData& Data, int32 LODIndex, int32 SectionIndex, bool GetAllSections);
 	void SetColorData(FMeshData& Data, FLinearColor Color);

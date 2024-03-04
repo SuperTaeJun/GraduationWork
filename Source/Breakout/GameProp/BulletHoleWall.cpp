@@ -11,13 +11,14 @@ ABulletHoleWall::ABulletHoleWall()
 	ProceduralMesh = CreateDefaultSubobject<UProceduralMeshComponent>(TEXT("ProceduralMesh"));
 	ProceduralMesh->SetupAttachment(RootComponent);
 
-	if (MeshA)
-	{
-		GetMeshDataFromStaticMesh(MeshA, MeshDataA, 0, 0, false);
-	}
+	ConstructorHelpers::FObjectFinder<UStaticMesh> SMMesh1(TEXT("/Game/Maps/_GENERATED/TAEJUN/Box_24A10B9B.Box_24A10B9B"));
+
+
+	GetMeshDataFromStaticMesh(SMMesh1.Object, MeshDataA, 0, 0, true);
+	
 	if (MeshB)
 	{
-		GetMeshDataFromStaticMesh(MeshB, MeshDataB, 0, 0, false);
+		GetMeshDataFromStaticMesh(MeshB, MeshDataB, 0, 0, true);
 	}
 
 	SetColorData(MeshDataA, FLinearColor::Red);
@@ -32,15 +33,25 @@ ABulletHoleWall::ABulletHoleWall()
 		MeshDataA.UVs, //UV
 		MeshDataA.Colors, //C
 		Tangents, //T
-		false // COLLISION
+		true // COLLISION
 	);
 }
 
 void ABulletHoleWall::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	ProceduralMesh->OnComponentBeginOverlap.AddDynamic(this, &ABulletHoleWall::OnOverlap);
+}
+void ABulletHoleWall::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
 
+}
+
+
+void ABulletHoleWall::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	UE_LOG(LogTemp, Warning, TEXT("ONHIT"));
 }
 
 void ABulletHoleWall::GetMeshDataFromStaticMesh(UStaticMesh* Mesh, FMeshData& Data, int32 LODIndex, int32 SectionIndex, bool GetAllSections)
@@ -115,9 +126,3 @@ void ABulletHoleWall::SetColorData(FMeshData& Data, FLinearColor Color)
 		Data.Colors[x] = Color;
 	}
 }
-void ABulletHoleWall::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-}
-
