@@ -34,7 +34,7 @@ void AWeaponBase::BeginPlay()
 
 FVector AWeaponBase::TraceEndWithScatter(const FVector& TraceStart, const FVector& HitTarget)
 {
-	UE_LOG(LogTemp, Log, TEXT("TRACE"));
+	//UE_LOG(LogTemp, Log, TEXT("TRACE"));
 	FVector ToTargetNormalized = (HitTarget - TraceStart).GetSafeNormal();
 	FVector SphereCenter = TraceStart + ToTargetNormalized * DistanceToSphere;
 	FVector RandVec = UKismetMathLibrary::RandomUnitVector() * FMath::FRandRange(0.f, SphereRadius);
@@ -106,7 +106,7 @@ void AWeaponBase::Fire(const FVector& HitTarget)
 	const USkeletalMeshSocket* MuzzleFlashSocket = GetWeaponMesh()->GetSocketByName("MuzzleFlash");
 	if (MuzzleFlashSocket && InstigatorController)
 	{
-		UE_LOG(LogTemp, Log, TEXT("TTEST"));
+		//UE_LOG(LogTemp, Log, TEXT("TTEST"));
 		FTransform SocketTransform = MuzzleFlashSocket->GetSocketTransform(GetWeaponMesh());
 		FVector Start = SocketTransform.GetLocation();
 
@@ -130,7 +130,7 @@ void AWeaponBase::Fire(const FVector& HitTarget)
 				{
 					if (HasAuthority())
 					{
-						UE_LOG(LogTemp, Log, TEXT("HIt"));
+						//UE_LOG(LogTemp, Log, TEXT("HIt"));
 						UGameplayStatics::ApplyDamage(
 							Soldier,
 							Damage,

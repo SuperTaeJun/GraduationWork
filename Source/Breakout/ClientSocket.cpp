@@ -70,6 +70,12 @@ void ClientSocket::PacketProcess(unsigned char* ptr)
 		SC_LOGIN_BACK* packet = reinterpret_cast<SC_LOGIN_BACK*>(ptr);
 		UE_LOG(LogClass, Warning, TEXT("recv data"));
 		login_cond = true;
+		CPlayer player;
+		player.Id = packet->cl_id;
+		player.X = packet->x;
+		player.Y = packet->y;
+		player.Z = packet->z;
+		PlayerInfo.players[player.Id] = player;
 		break;
 	}
 	case SC_OTHER_PLAYER:
@@ -92,8 +98,6 @@ void ClientSocket::PacketProcess(unsigned char* ptr)
 void ClientSocket::Send_Login_Info(char* id, char* pw)
 {
 	//패킷 조립
-	//CS_LOGIN_PACKET packet;
-
 	CS_LOGIN_PACKET packet;
 	packet.size = sizeof(packet);
 	packet.type = CS_LOGIN;
