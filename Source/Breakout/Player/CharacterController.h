@@ -24,7 +24,8 @@ protected:
 	virtual void BeginPlay() override;
 
 public:
-
+	ACharacterController();
+	
 	int my_session_id;
 	int other_session_id;
 	int other_x;
@@ -48,23 +49,35 @@ public:
 	void SetHUDCool(int32 Cool);
 	void SetHUDCoolVisibility(bool bVisibility);
 	void showWeaponSelect();
+	// 초기 플레이어 저장
+	void SetPlayerID(const int playerid) { id = playerid; }
+	void SetPlayerInfo(CPlayerInfo* p_info) { 
+		if (p_info != nullptr) 
+			PlayerInfo = p_info; 
+	}
+	void SetInitPlayerInfo(const CPlayer& owner_player);
+	//-----------------------------------------------------
 
+	void UpdatePlayer(int input);
+	//동기화 용
+	void UpdateSyncPlayer();
+	void SetNewCharacterInfo(std::shared_ptr<CPlayer*> InitPlayer);
 	//Tick함수
 	virtual void Tick(float DeltaTime);
 
-	void RecvNewPlayer(int sessionID, float x, float y, float z);
-	void SendPlayerPos(int id);
-	void SetNewCharacterInfo(std::shared_ptr<CPlayer*> InitPlayer);
-	 
-	//동기화 용
-	void UpdateSyncPlayer();
+	//void RecvNewPlayer(int sessionID, float x, float y, float z);
+	//void SendPlayerPos(int id);
+
 	// 스폰시킬 다른 캐릭터
 	UPROPERTY(EditAnywhere, Category = "Spawning")
 	TSubclassOf<class ACharacter> ToSpawn;
+
 	virtual void OnPossess(APawn* InPawn) override;
 private:
 	TObjectPtr<class AMainHUD> MainHUD;
+	int id;
 	bool bNewPlayerEntered = false;
+	bool bInitPlayerSetting = false;
 	ClientSocket* c_socket;
 	CPlayerInfo* PlayerInfo;  
 	CPlayer* initplayer;
