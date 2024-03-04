@@ -76,18 +76,29 @@ void ClientSocket::PacketProcess(unsigned char* ptr)
 		player.Y = packet->y;
 		player.Z = packet->z;
 		PlayerInfo.players[player.Id] = player;
+		MyCharacterController->SetPlayerID(player.Id);
+		MyCharacterController->SetPlayerInfo(&PlayerInfo);
+		MyCharacterController->SetInitPlayerInfo(player);
+		UE_LOG(LogClass, Warning, TEXT("recv - id: %d, x: %d"), player.Id, player.X);
 		break;
 	}
 	case SC_OTHER_PLAYER:
 	{
 		SC_PLAYER_SYNC* packet = reinterpret_cast<SC_PLAYER_SYNC*>(ptr);
 		auto info = make_shared<CPlayer>();
-		int id = packet->id;
-		float x = packet->x;
-		float y = packet->y;
+		info->Id = packet->id;
+		info->X = packet->x;
+		info->Y = packet->y;
+		info->Z = packet->z;
 		//float z = packet->z;
 		UE_LOG(LogClass, Warning, TEXT("recv data"));
 		//MyCharacterController->SetNewCharacterInfo(info);
+		break;
+	}
+	case SC_OWN_MOVE:
+	{
+		CS_MOVE_PACKET* packet = reinterpret_cast<CS_MOVE_PACKET*>(ptr);
+
 		break;
 	}
 	default:
@@ -111,16 +122,16 @@ void ClientSocket::Send_Login_Info(char* id, char* pw)
 
 void ClientSocket::Send_Move_Packet(int sessionID, float x, float y, float z)
 {
-	//if (login_cond == true) {
-	//	CS_MOVE_PACKET packet;
-	//	packet.size = sizeof(packet);
-	//	packet.type = CS_MOVE;
-	//	packet.id = sessionID;
-	//	packet.x = x;
-	//	packet.y = y;
-	//	packet.z = z;
-	//	SendPacket(&packet);
-	//}
+	if (login_cond == true) {
+		CS_MOVE_PACKET packet;
+		packet.size = sizeof(packet);
+		packet.type = CS_MOVE;
+		packet.id = sessionID;
+		packet.x = x;
+		packet.y = y;
+		packet.z = z;
+		SendPacket(&packet);
+	}
 }
 
 bool ClientSocket::Init()
