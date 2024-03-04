@@ -19,6 +19,24 @@ void ACharacterController::BeginPlay()
 }
 ACharacterController::ACharacterController()
 {
+	//c_socket = ClientSocket::GetSingleton();
+	c_socket = ClientSocket::GetSingleton();
+	c_socket->InitSocket();
+
+	connect = c_socket->Connect("127.0.0.1", 12345);
+	if (connect)
+	{
+		c_socket->StartListen();
+		UE_LOG(LogClass, Warning, TEXT("IOCP Server connect success!"));
+		FString c_id = "testuser";
+		FString c_pw = "1234";
+		c_socket->Send_Login_Info(TCHAR_TO_UTF8(*c_id), TCHAR_TO_UTF8(*c_pw));
+	}
+	else
+	{
+		UE_LOG(LogClass, Warning, TEXT("IOCP Server connect FAIL!"));
+	}
+	c_socket->SetPlayerController(this);
 	PrimaryActorTick.bCanEverTick = true;
 	bNewPlayerEntered = false;
 	bInitPlayerSetting = false;

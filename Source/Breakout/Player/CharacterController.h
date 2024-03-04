@@ -83,4 +83,5 @@ private:
 	CPlayer* initplayer;
 	// 다른 캐릭터들의 정보
 	std::queue<CPlayer*> NewPlayer;
+	bool connect;
 };
