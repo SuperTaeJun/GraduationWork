@@ -50,7 +50,7 @@ APropBase::APropBase()
 	//}
 
 	SetColorData(Data1, FLinearColor::Red);
-	SetColorData(Data1, FLinearColor::Red);
+	SetColorData(Data2, FLinearColor::Red);
 	InterpData = Data1;
 
 	TArray<FProcMeshTangent> Tangents = {};

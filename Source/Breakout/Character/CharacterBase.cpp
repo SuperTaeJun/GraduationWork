@@ -241,7 +241,7 @@ void ACharacterBase::SetWeapon(TSubclassOf<class AWeaponBase> Weapon, FName Sock
 		AActor* SpawnWeapon = GetWorld()->SpawnActor<AWeaponBase>(Weapon);
 		CurWeapon = Cast<AWeaponBase>(SpawnWeapon);
 
-		UE_LOG(LogTemp, Warning, TEXT("SPAWN WEAPON"));
+		//UE_LOG(LogTemp, Warning, TEXT("SPAWN WEAPON"));
 
 		const USkeletalMeshSocket* WeaponSocket = GetMesh()->GetSocketByName(SocketName);
 
@@ -335,7 +335,7 @@ void ACharacterBase::SpawnGrenade()
 
 void ACharacterBase::SetSpawnGrenade(TSubclassOf<AProjectileBase> Projectile)
 {
-	UE_LOG(LogTemp, Log, TEXT("GRENDADE SPAWN"));
+	//UE_LOG(LogTemp, Log, TEXT("GRENDADE SPAWN"));
 	if (Grenade)
 	{
 		const FVector StartLocation = GetMesh()->GetSocketLocation(FName("GrandeSocket"));
