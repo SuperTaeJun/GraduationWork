@@ -85,10 +85,10 @@ protected:
 	void UnifyTri(FMeshData& Data);
 
 protected:
-	UPROPERTY(VisibleAnywhere, Category = "Mesh")
+	UPROPERTY(EditAnywhere, Category = "Mesh")
 	TObjectPtr<class UProceduralMeshComponent> ProceduralMesh;
 
-	UPROPERTY(VisibleAnywhere, Category = "Mesh")
+	UPROPERTY(EditAnywhere, Category = "Mesh")
 	TObjectPtr<class USphereComponent>AreaSphere;
 
 	FMeshData Data1;

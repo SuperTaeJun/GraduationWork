@@ -235,40 +235,23 @@ void ACharacterBase::SetWeaponUi()
 
 void ACharacterBase::SetWeapon(TSubclassOf<class AWeaponBase> Weapon, FName SocketName)
 {
-	//if (!CurWeapon)
-	//{
-	RightSocketName = SocketName;
-
-	AActor* SpawnWeapon = GetWorld()->SpawnActor<AWeaponBase>(Weapon);
-	CurWeapon = Cast<AWeaponBase>(SpawnWeapon);
-
-	UE_LOG(LogTemp, Warning, TEXT("SPAWN WEAPON"));
-
-	const USkeletalMeshSocket* WeaponSocket = GetMesh()->GetSocketByName(SocketName);
-
-	
-	if (WeaponSocket && SpawnWeapon)
+	if (!CurWeapon)
 	{
-		WeaponSocket->AttachActor(SpawnWeapon, GetMesh());
+		RightSocketName = SocketName;
+		AActor* SpawnWeapon = GetWorld()->SpawnActor<AWeaponBase>(Weapon);
+		CurWeapon = Cast<AWeaponBase>(SpawnWeapon);
+
+		UE_LOG(LogTemp, Warning, TEXT("SPAWN WEAPON"));
+
+		const USkeletalMeshSocket* WeaponSocket = GetMesh()->GetSocketByName(SocketName);
+
+
+		if (WeaponSocket && SpawnWeapon)
+		{
+			WeaponSocket->AttachActor(SpawnWeapon, GetMesh());
+		}
+		SpawnWeapon->SetOwner(this);
 	}
-	SpawnWeapon->SetOwner(this);
-	//}
-	//else
-	//{
-	//	CurWeapon = nullptr;
-	//	AActor* SpawnWeapon = GetWorld()->SpawnActor<AWeaponBase>(Weapon);
-	//	CurWeapon = Cast<AWeaponBase>(SpawnWeapon);
-
-	//	const USkeletalMeshSocket* WeaponSocket = GetMesh()->GetSocketByName(FName("WeaponSocket"));
-
-	//	if (WeaponSocket && SpawnWeapon)
-	//	{
-	//		//UE_LOG(LogTemp, Log, TEXT("WEAONEQP"));
-	//		WeaponSocket->AttachActor(SpawnWeapon, GetMesh());
-	//	}
-
-	//}
-
 
 }
 
