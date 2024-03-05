@@ -40,7 +40,7 @@ ACharacterController::ACharacterController()
 	c_socket = ClientSocket::GetSingleton();
 	c_socket->SetPlayerController(this);
 
-
+	p_cnt = -1;
 	PrimaryActorTick.bCanEverTick = true;
 	bNewPlayerEntered = false;
 	bInitPlayerSetting = false;
@@ -166,10 +166,31 @@ void ACharacterController::showWeaponSelect()
 	}
 }
 
+void ACharacterController::InitPlayer()
+{
+	auto my_player = Cast<ACharacterBase>(UGameplayStatics::GetPlayerCharacter(this, 0));
+	my_player->SetActorLocationAndRotation(FVector(initplayer.X, initplayer.Y, initplayer.Z), FRotator(0.0f, initplayer.Yaw, 0.0f));
+	my_player->p_id = id;
+	bInitPlayerSetting = false;
+}
+
 void ACharacterController::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	//if (bInitPlayerSetting)
+	//	InitPlayer();
+	////새 플레이어 스폰
+	//if (bNewPlayerEntered)
+	//	UpdateSyncPlayer();
 
+
+	//UpdateWorld();
+}
+
+void ACharacterController::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	c_socket->CloseSocket();
+	c_socket->StopListen();
 }
 
 //void ACharacterController::RecvNewPlayer(int sessionID, float x, float y, float z)
@@ -257,6 +278,15 @@ void ACharacterController::UpdateSyncPlayer()
 
 	NewPlayer.front() = nullptr;
 	NewPlayer.pop();
+}
+
+bool ACharacterController::UpdateWorld()
+{
+	UWorld* const world = GetWorld();
+	if (world == nullptr)
+		return false;
+
+	return true;
 }
 
 //pawn 

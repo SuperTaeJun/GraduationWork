@@ -60,14 +60,18 @@ public:
 	}
 	void SetInitPlayerInfo(const CPlayer& owner_player);
 	//-----------------------------------------------------
+	void SetNewCharacterInfo(std::shared_ptr<CPlayer> InitPlayer);
 
 	void UpdatePlayer(int input);
 	//동기화 용
 	void UpdateSyncPlayer();
-	void SetNewCharacterInfo(std::shared_ptr<CPlayer> InitPlayer);
+	bool UpdateWorld();
+	//초기 컨트롤러 세팅
+
+	void InitPlayer();
 	//Tick함수
 	virtual void Tick(float DeltaTime);
-
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 	//void RecvNewPlayer(int sessionID, float x, float y, float z);
 	//void SendPlayerPos(int id);
 
@@ -83,6 +87,6 @@ private:
 	bool bInitPlayerSetting = false;
 	ClientSocket* c_socket;
 	CPlayerInfo* PlayerInfo;  
-	
+	int p_cnt;
 	bool connect;
 };
