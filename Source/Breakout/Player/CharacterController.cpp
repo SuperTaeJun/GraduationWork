@@ -177,14 +177,14 @@ void ACharacterController::InitPlayer()
 void ACharacterController::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	//if (bInitPlayerSetting)
-	//	InitPlayer();
-	////새 플레이어 스폰
-	//if (bNewPlayerEntered)
-	//	UpdateSyncPlayer();
+	if (bInitPlayerSetting)
+		InitPlayer();
+	//새 플레이어 스폰
+	if (bNewPlayerEntered)
+		UpdateSyncPlayer();
 
 
-	//UpdateWorld();
+	UpdateWorld();
 }
 
 void ACharacterController::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -244,12 +244,12 @@ void ACharacterController::UpdateSyncPlayer()
 {
 	// 동기화 용
 	UWorld* const world = GetWorld();
-	/*if (other_session_id == my_session_id)
-		return;*/
+	if (other_session_id == id)
+		return;
 	FVector S_LOCATION;
-	S_LOCATION.X = other_x;
-	S_LOCATION.Y = other_y;
-	S_LOCATION.Z = other_z;
+	S_LOCATION.X = NewPlayer.front()->X;
+	S_LOCATION.Y = NewPlayer.front()->Y;
+	S_LOCATION.Z = NewPlayer.front()->Z;
 	FRotator S_ROTATOR;
 	S_ROTATOR.Yaw = NewPlayer.front()->Yaw;
 	S_ROTATOR.Pitch = 0.0;
@@ -259,7 +259,7 @@ void ACharacterController::UpdateSyncPlayer()
 	ACharacterBase* SpawnCharacter = world->SpawnActor<ACharacterBase>(ToSpawn, 
 		S_LOCATION, FRotator::ZeroRotator, SpawnActor);
 	SpawnCharacter->SpawnDefaultController();
-	SpawnCharacter->_SessionId = other_session_id;
+	SpawnCharacter->_SessionId = NewPlayer.front()->Id;
 	if (PlayerInfo != nullptr)
 	{
 		CPlayer info;
@@ -285,6 +285,8 @@ bool ACharacterController::UpdateWorld()
 	UWorld* const world = GetWorld();
 	if (world == nullptr)
 		return false;
+	TArray<AActor*> SpawnPlayer;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACharacterBase::StaticClass(), SpawnPlayer);
 
 	return true;
 }

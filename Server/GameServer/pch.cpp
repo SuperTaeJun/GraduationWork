@@ -78,6 +78,33 @@ void process_packet(int _s_id, unsigned char* p)
 		cout << "x: " << packet->x << " y: " << packet->y << " z : " << packet->z << endl;
 		//클라 recv 확인용
 		printf("Move\n");
+		for (auto& other : clients) {
+			if (other.cl_id == _s_id) {
+				continue;
+			}
+			SC_PLAYER_SYNC _packet;
+			_packet.id = _s_id;
+			_packet.object_type = 0;
+			_packet.size = sizeof(packet);
+			_packet.type = SC_OTHER_PLAYER;
+			_packet.x = cl.x;
+			_packet.y = cl.y;
+			other.c_send(sizeof(_packet), &_packet);
+		}
+		// 새로 접속한 플레이어에게 주위 객체 정보를 보낸다
+		for (auto& other : clients) {
+			if (other.cl_id == _s_id) continue;
+			SC_PLAYER_SYNC packet;
+			packet.id = other.cl_id;
+			packet.object_type = 0;
+			packet.size = sizeof(packet);
+			packet.type = SC_OTHER_PLAYER;
+			packet.x = other.x;
+			packet.y = other.y;
+
+			cout << "[Send put object] id : location : " << packet.id << "," << packet.x << "," << packet.y << endl;
+			cl.c_send(sizeof(packet), &packet);
+		}
 		break;
 	}
 	default:
