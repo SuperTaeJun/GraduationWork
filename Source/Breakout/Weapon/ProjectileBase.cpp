@@ -40,11 +40,11 @@ void AProjectileBase::BeginPlay()
 
 void AProjectileBase::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NomalImpulse, const FHitResult& Hit)
 {
-	UE_LOG(LogTemp, Log, TEXT("ONHIT1"));
+	//UE_LOG(LogTemp, Log, TEXT("ONHIT1"));
 	APawn* FiringPawn = GetInstigator();
 	if (FiringPawn)
 	{
-		UE_LOG(LogTemp, Log, TEXT("ONHIT2"));
+		//UE_LOG(LogTemp, Log, TEXT("ONHIT2"));
 		AController* FiringController = FiringPawn->GetController();
 		if (FiringController)
 		{

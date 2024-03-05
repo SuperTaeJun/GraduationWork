@@ -12,6 +12,7 @@
 #include <queue>
 #include <iostream>
 #include "Player/CharacterController.h"
+#include "GameFramework/PlayerController.h"
 #include "Network/PacketData.h"
 #include "Windows/PostWindowsApi.h"
 #include "Windows/HideWindowsPlatformTypes.h"

@@ -27,7 +27,7 @@ protected:
 
 public:
 	ACharacterController();
-	CPlayer* initplayer;
+	//CPlayer initplayer;
 	// 다른 캐릭터들의 정보
 	std::queue<std::shared_ptr<CPlayer>> NewPlayer;
 	int my_session_id;
