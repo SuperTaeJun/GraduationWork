@@ -3,7 +3,7 @@
 #include "InputMappingContext.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
-
+#include "Player/CharacterController.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -535,11 +535,18 @@ void ACharacterBase::TraceUnderCrossHiar(FHitResult& TraceHitResult)
 	}
 	
 }
-
+enum Move {
+	Move_Player
+};
 void ACharacterBase::Move(const FInputActionValue& Value)
 {
 	const FVector2D MovementVector = Value.Get<FVector2D>();
-
+	if (MovementVector.Length() != 0)
+	{
+		
+		ACharacterController* PlayerController = Cast<ACharacterController>(GetController());
+		PlayerController->UpdatePlayer(Move_Player);
+	}
 	const FRotator Rotation = Controller->GetControlRotation();
 	const FRotator YawRotaion(0.f, Rotation.Yaw, 0.f);
 
@@ -751,7 +758,7 @@ void ACharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 
 	if (UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent))
 	{
-		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ACharacterBase::Move);
+		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ACharacterBase::Move);// trigger ¸Å Æ½¸¶´Ù
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ACharacterBase::Look);
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Triggered, this, &ACharacterBase::Custom_Jump);
 		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Triggered, this, &ACharacterBase::Sprint_S);

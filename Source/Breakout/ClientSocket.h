@@ -11,7 +11,7 @@
 #include <map>
 #include <queue>
 #include <iostream>
-#include "Player/CharacterController.h"
+//#include "Player/CharacterController.h"
 #include "Network/PacketData.h"
 #include "Windows/PostWindowsApi.h"
 #include "Windows/HideWindowsPlatformTypes.h"
@@ -189,7 +189,7 @@ public:
 	
 	void PacketProcess(unsigned char* ptr);
 	void Send_Login_Info(char* id, char* pw);
-	void Send_Move_Packet(int sessionID, float x, float y, float z);
+	void Send_Move_Packet(int sessionID, FVector Location, FRotator Rotation, FVector Velocity);
 	virtual bool Init();
 	virtual uint32 Run();
 	virtual void Stop();
