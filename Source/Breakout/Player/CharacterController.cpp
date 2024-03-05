@@ -40,7 +40,7 @@ ACharacterController::ACharacterController()
 	c_socket = ClientSocket::GetSingleton();
 	c_socket->SetPlayerController(this);
 
-	
+
 	PrimaryActorTick.bCanEverTick = true;
 	bNewPlayerEntered = false;
 	bInitPlayerSetting = false;
@@ -169,6 +169,7 @@ void ACharacterController::showWeaponSelect()
 void ACharacterController::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
 }
 
 //void ACharacterController::RecvNewPlayer(int sessionID, float x, float y, float z)
@@ -193,7 +194,7 @@ void ACharacterController::Tick(float DeltaTime)
 
 void ACharacterController::SetInitPlayerInfo(const CPlayer &owner_player)
 {
-	//initplayer = owner_player;
+	initplayer = owner_player;
 	bInitPlayerSetting = false;
 }
 void ACharacterController::SetNewCharacterInfo(std::shared_ptr<CPlayer> InitPlayer)
@@ -207,19 +208,23 @@ void ACharacterController::SetNewCharacterInfo(std::shared_ptr<CPlayer> InitPlay
 void ACharacterController::UpdatePlayer(int input)
 {
 	auto m_Player = Cast<ACharacterBase>(UGameplayStatics::GetPlayerCharacter(this, 0));
-	my_session_id = m_Player->_SessionId;
+	//my_session_id = m_Player->_SessionId;
 	auto MyLocation = m_Player->GetActorLocation();
 	auto MyRotation = m_Player->GetActorRotation();
 	auto MyVelocity = m_Player->GetVelocity();
-	c_socket->Send_Move_Packet(my_session_id, MyLocation.X, MyLocation.Y, MyLocation.Z);
+	FVector MyCameraLocation;
+	FRotator MyCameraRotation;
+	m_Player->GetActorEyesViewPoint(MyCameraLocation, MyCameraRotation);
+	c_socket->Send_Move_Packet(id, MyLocation, MyRotation, MyVelocity);
+	UE_LOG(LogClass, Warning, TEXT("send move packet"));
 }
 
 void ACharacterController::UpdateSyncPlayer()
 {
 	// 동기화 용
 	UWorld* const world = GetWorld();
-	if (other_session_id == my_session_id)
-		return;
+	/*if (other_session_id == my_session_id)
+		return;*/
 	FVector S_LOCATION;
 	S_LOCATION.X = other_x;
 	S_LOCATION.Y = other_y;
@@ -254,7 +259,7 @@ void ACharacterController::UpdateSyncPlayer()
 	NewPlayer.pop();
 }
 
-
+//pawn 
 void ACharacterController::OnPossess(APawn* InPawn)
 {
 	Super::OnPossess(InPawn);
