@@ -5,6 +5,7 @@
 #include <sstream>
 #include <process.h>
 #include "Game/BOGameMode.h"
+#include "Player/CharacterController.h"
 #include "Runtime/Core/Public/GenericPlatform/GenericPlatformAffinity.h"
 #include "Runtime/Core/Public/HAL/RunnableThread.h"
 
@@ -69,7 +70,7 @@ void ClientSocket::PacketProcess(unsigned char* ptr)
 	case SC_LOGIN_OK: {
 		SC_LOGIN_BACK* packet = reinterpret_cast<SC_LOGIN_BACK*>(ptr);
 		UE_LOG(LogClass, Warning, TEXT("recv data"));
-		login_cond = true;
+		/*login_cond = true;*/
 		CPlayer player;
 		player.Id = packet->cl_id;
 		player.X = packet->x;
@@ -92,13 +93,19 @@ void ClientSocket::PacketProcess(unsigned char* ptr)
 		info->Z = packet->z;
 		//float z = packet->z;
 		UE_LOG(LogClass, Warning, TEXT("recv data"));
-		//MyCharacterController->SetNewCharacterInfo(info);
+		MyCharacterController->SetNewCharacterInfo(info);
 		break;
 	}
 	case SC_OWN_MOVE:
 	{
 		CS_MOVE_PACKET* packet = reinterpret_cast<CS_MOVE_PACKET*>(ptr);
-
+		PlayerInfo.players[packet->id].X = packet->x;
+		PlayerInfo.players[packet->id].Y = packet->y;
+		PlayerInfo.players[packet->id].Z = packet->z;
+		PlayerInfo.players[packet->id].Yaw = packet->yaw;
+		PlayerInfo.players[packet->id].VeloX = packet->vx;
+		PlayerInfo.players[packet->id].VeloY = packet->vy;
+		PlayerInfo.players[packet->id].VeloZ = packet->vz;
 		break;
 	}
 	default:
@@ -120,18 +127,23 @@ void ClientSocket::Send_Login_Info(char* id, char* pw)
 
 }
 
-void ClientSocket::Send_Move_Packet(int sessionID, float x, float y, float z)
+void ClientSocket::Send_Move_Packet(int sessionID, FVector Location, FRotator Rotation, FVector Velocity)
 {
-	if (login_cond == true) {
+	/*if (login_cond == true) {*/
 		CS_MOVE_PACKET packet;
 		packet.size = sizeof(packet);
 		packet.type = CS_MOVE;
 		packet.id = sessionID;
-		packet.x = x;
-		packet.y = y;
-		packet.z = z;
+		packet.x = Location.X;
+		packet.y = Location.Y;
+		packet.z = Location.Z;
+		packet.yaw = Rotation.Yaw;
+		packet.vx = Velocity.X;
+		packet.vy = Velocity.Y;
+		packet.vz = Velocity.Z;
 		SendPacket(&packet);
-	}
+		UE_LOG(LogClass, Warning, TEXT("send move"));
+	//}
 }
 
 bool ClientSocket::Init()

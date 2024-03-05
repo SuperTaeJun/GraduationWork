@@ -11,7 +11,7 @@
 #include <map>
 #include <queue>
 #include <iostream>
-#include "Player/CharacterController.h"
+//#include "Player/CharacterController.h"
 #include "Network/PacketData.h"
 #include "Windows/PostWindowsApi.h"
 #include "Windows/HideWindowsPlatformTypes.h"
@@ -24,57 +24,6 @@ class ClientSocket;
 class ABOGameMode;
 class ACharacterController;
 using namespace std;
-enum OPTYPE {
-	OP_SEND,
-	OP_RECV,
-};
-
-
-const int buffsize = 1000;
-
-enum IO_type
-{
-	IO_RECV,
-	IO_SEND,
-	IO_ACCEPT,
-	//IO_CONNECT,
-};
-
-class Overlapped {
-public:
-	WSAOVERLAPPED	overlapped;
-	WSABUF			wsabuf;
-	SOCKET			socket;
-	unsigned char			recvBuffer[buffsize + 1];
-	int				recvBytes;
-	int				sendBytes;
-	IO_type			type; // read, write, accept, connect ...
-public:
-	Overlapped(IO_type type, char bytes, void* mess) : type(type)
-	{
-		ZeroMemory(&overlapped, sizeof(overlapped));
-		wsabuf.buf = reinterpret_cast<char*>(recvBuffer);
-		wsabuf.len = bytes;
-		memcpy(recvBuffer, mess, bytes);
-	}
-	Overlapped(IO_type type) : type(type)
-	{
-		ZeroMemory(&overlapped, sizeof(overlapped));
-		wsabuf.buf = {};
-		wsabuf.len = {};
-	}
-	Overlapped()
-	{
-		type = IO_RECV;
-		ZeroMemory(&overlapped, sizeof(overlapped));
-		wsabuf.buf = {};
-		wsabuf.len = {};
-	}
-	~Overlapped()
-	{
-
-	}
-};
 
 // 플레이어 클래스 
 class CPlayer
@@ -133,6 +82,60 @@ public:
 	}
 };
 
+enum OPTYPE {
+	OP_SEND,
+	OP_RECV,
+};
+
+
+const int buffsize = 1000;
+
+enum IO_type
+{
+	IO_RECV,
+	IO_SEND,
+	IO_ACCEPT,
+	//IO_CONNECT,
+};
+
+class Overlapped {
+public:
+	WSAOVERLAPPED	overlapped;
+	WSABUF			wsabuf;
+	SOCKET			socket;
+	unsigned char			recvBuffer[buffsize + 1];
+	int				recvBytes;
+	int				sendBytes;
+	IO_type			type; // read, write, accept, connect ...
+public:
+	Overlapped(IO_type type, char bytes, void* mess) : type(type)
+	{
+		ZeroMemory(&overlapped, sizeof(overlapped));
+		wsabuf.buf = reinterpret_cast<char*>(recvBuffer);
+		wsabuf.len = bytes;
+		memcpy(recvBuffer, mess, bytes);
+	}
+	Overlapped(IO_type type) : type(type)
+	{
+		ZeroMemory(&overlapped, sizeof(overlapped));
+		wsabuf.buf = {};
+		wsabuf.len = {};
+	}
+	Overlapped()
+	{
+		type = IO_RECV;
+		ZeroMemory(&overlapped, sizeof(overlapped));
+		wsabuf.buf = {};
+		wsabuf.len = {};
+	}
+	~Overlapped()
+	{
+
+	}
+};
+
+
+
 class CPlayerInfo
 {
 public:
@@ -186,7 +189,7 @@ public:
 	
 	void PacketProcess(unsigned char* ptr);
 	void Send_Login_Info(char* id, char* pw);
-	void Send_Move_Packet(int sessionID, float x, float y, float z);
+	void Send_Move_Packet(int sessionID, FVector Location, FRotator Rotation, FVector Velocity);
 	virtual bool Init();
 	virtual uint32 Run();
 	virtual void Stop();
@@ -215,4 +218,5 @@ public:
 private:
 	ACharacterController* MyCharacterController;
 	CPlayerInfo PlayerInfo;
+	//CPlayer NewPlayer;
 };

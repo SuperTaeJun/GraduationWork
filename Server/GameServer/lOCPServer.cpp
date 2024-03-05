@@ -4,7 +4,7 @@
 lOCPServer::lOCPServer()
 {
 	//cl_id = 0;
-	for (int i = 0; i < 100; ++i) clients[i].cl_id = i;
+	
 }
 
 lOCPServer::~lOCPServer()
@@ -58,6 +58,7 @@ void lOCPServer::Start()
 		if (ST_INGAME == cl.cl_state)
 			Disconnect(cl.cl_id);
 	}
+	for (int i = 0; i < 100; ++i) clients[i].cl_id = i;
 	closesocket(listensocket);*/
 }
 

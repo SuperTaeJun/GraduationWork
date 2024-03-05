@@ -2,24 +2,27 @@
 
 
 #include "GameProp/BulletHoleWall.h"
+#include "Components/BoxComponent.h"
 #include "ProceduralMeshComponent.h"
 
 ABulletHoleWall::ABulletHoleWall()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
+	CollisionBox = CreateDefaultSubobject<UBoxComponent>(TEXT("CollisionBox"));
+	SetRootComponent(CollisionBox);
+
 	ProceduralMesh = CreateDefaultSubobject<UProceduralMeshComponent>(TEXT("ProceduralMesh"));
-	ProceduralMesh->SetupAttachment(RootComponent);
+	ProceduralMesh->SetupAttachment(CollisionBox);
 
 	ConstructorHelpers::FObjectFinder<UStaticMesh> SMMesh1(TEXT("/Game/Maps/_GENERATED/TAEJUN/Box_24A10B9B.Box_24A10B9B"));
 
 
 	GetMeshDataFromStaticMesh(SMMesh1.Object, MeshDataA, 0, 0, true);
 	
-	if (MeshB)
-	{
-		GetMeshDataFromStaticMesh(MeshB, MeshDataB, 0, 0, true);
-	}
+
+	//GetMeshDataFromStaticMesh(MeshB, MeshDataB, 0, 0, true);
+	
 
 	SetColorData(MeshDataA, FLinearColor::Red);
 
@@ -40,14 +43,15 @@ ABulletHoleWall::ABulletHoleWall()
 void ABulletHoleWall::BeginPlay()
 {
 	Super::BeginPlay();
-	ProceduralMesh->OnComponentBeginOverlap.AddDynamic(this, &ABulletHoleWall::OnOverlap);
+	//CollisionBox->OnComponentHit.AddDynamic(this, &ABulletHoleWall::OnHit);
+	CollisionBox->OnComponentBeginOverlap.AddDynamic(this, &ABulletHoleWall::OnOverlap);
+	//ProceduralMesh->SetCollisionResponseToChannel(ECollisionChannel::ECC_Visibility, ECollisionResponse::ECR_Block);
 }
 void ABulletHoleWall::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
 }
-
 
 void ABulletHoleWall::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
