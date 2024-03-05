@@ -184,7 +184,7 @@ void ACharacterController::Tick(float DeltaTime)
 		UpdateSyncPlayer();
 
 
-	UpdateWorld();
+	
 }
 
 void ACharacterController::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -285,9 +285,50 @@ bool ACharacterController::UpdateWorld()
 	UWorld* const world = GetWorld();
 	if (world == nullptr)
 		return false;
+
 	TArray<AActor*> SpawnPlayer;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACharacterBase::StaticClass(), SpawnPlayer);
+	if (p_cnt == -1)
+	{
+		p_cnt = PlayerInfo->players.size();
+		return false;
+	}
+	else
+	{
+		for (auto& player : SpawnPlayer)
+		{
+			ACharacterBase* OtherPlayer = Cast<ACharacterBase>(player);
 
+			if (!OtherPlayer || OtherPlayer->p_id == -1 || OtherPlayer->p_id == p_cnt)
+			{
+				continue;
+			}
+
+			CPlayer* info = &PlayerInfo->players[OtherPlayer->p_id];
+
+			if (info->IsAlive)
+			{
+				FVector PlayerLocation;
+				PlayerLocation.X = info->X;
+				PlayerLocation.Y = info->Y;
+				PlayerLocation.Z = info->Z;
+
+				FRotator PlayerRotation;
+				PlayerRotation.Yaw = info->Yaw;
+				
+				//¼Óµµ
+				FVector PlayerVelocity;
+				PlayerVelocity.X = info->VeloX;
+				PlayerVelocity.Y = info->VeloY;
+				PlayerVelocity.Z = info->VeloZ;
+
+				OtherPlayer->AddMovementInput(PlayerVelocity);
+				OtherPlayer->SetActorRotation(PlayerRotation);
+				OtherPlayer->SetActorLocation(PlayerLocation);
+			}
+			else {}
+		}
+	}
 	return true;
 }
 
