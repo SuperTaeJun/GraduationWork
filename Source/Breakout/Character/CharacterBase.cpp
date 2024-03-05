@@ -356,7 +356,7 @@ void ACharacterBase::ReciveDamage(AActor* DamagedActor, float Damage, const UDam
 	Health = FMath::Clamp(Health - Damage, 0.f, MaxHealth);
 	UpdateHpHUD();
 
-
+	UE_LOG(LogTemp, Warning, TEXT("RECIVE DAMAGE"));
 	if (Health <= 0.0f)
 	{
 		ABOGameMode* GameMode = GetWorld()->GetAuthGameMode<ABOGameMode>();

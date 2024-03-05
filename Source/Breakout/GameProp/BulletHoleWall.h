@@ -70,12 +70,11 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
+
 	UPROPERTY(VisibleAnywhere, Category = "Mesh")
 	TObjectPtr<class UProceduralMeshComponent> ProceduralMesh;
 	UPROPERTY(EditAnywhere, Category = "Mesh")
-	TObjectPtr<class UStaticMesh> MeshA;
-	UPROPERTY(EditAnywhere, Category = "Mesh")
-	TObjectPtr<class UStaticMesh> MeshB;
+	TObjectPtr<class UBoxComponent > CollisionBox;
 
 	FMeshData MeshDataA;
 	FMeshData MeshDataB;
@@ -84,6 +83,7 @@ protected:
 	FVector HitLoc;
 	FVector HitNomal;
 
+	UFUNCTION()
 	virtual void OnOverlap
 	(
 		UPrimitiveComponent* OverlappedComponent,

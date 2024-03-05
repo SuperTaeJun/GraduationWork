@@ -9,6 +9,8 @@
 #include "Character/CharacterBase.h"
 #include "Components/Image.h"
 #include "Game/BOGameInstance.h"
+#include "ClientSocket.h"
+
 void ACharacterController::BeginPlay()
 {
 	FInputModeGameOnly GameOnlyInput;
@@ -30,6 +32,7 @@ void ACharacterController::BeginPlay()
 	{
 		UE_LOG(LogClass, Warning, TEXT("IOCP Server connect FAIL!"));
 	}
+
 }
 ACharacterController::ACharacterController()
 {
