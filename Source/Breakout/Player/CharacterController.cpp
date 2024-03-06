@@ -237,7 +237,7 @@ void ACharacterController::UpdatePlayer(int input)
 	FRotator MyCameraRotation;
 	m_Player->GetActorEyesViewPoint(MyCameraLocation, MyCameraRotation);
 	c_socket->Send_Move_Packet(id, MyLocation, MyRotation, MyVelocity);
-	UE_LOG(LogClass, Warning, TEXT("send move packet"));
+	//UE_LOG(LogClass, Warning, TEXT("send move packet"));
 }
 
 void ACharacterController::UpdateSyncPlayer()

@@ -142,7 +142,7 @@ void ClientSocket::Send_Move_Packet(int sessionID, FVector Location, FRotator Ro
 		packet.vy = Velocity.Y;
 		packet.vz = Velocity.Z;
 		SendPacket(&packet);
-		UE_LOG(LogClass, Warning, TEXT("send move"));
+		//UE_LOG(LogClass, Warning, TEXT("send move"));
 	//}
 }
 
