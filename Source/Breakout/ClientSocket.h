@@ -49,6 +49,7 @@ public:
 	float VeloX = 0;
 	float VeloY = 0;
 	float VeloZ = 0;
+	bool  IsAlive = true;
 	FVector FMyLocation;
 	FVector FMyDirection;
 	friend ostream& operator<<(ostream& stream, CPlayer& info)

@@ -40,7 +40,7 @@ ACharacterController::ACharacterController()
 	c_socket = ClientSocket::GetSingleton();
 	c_socket->SetPlayerController(this);
 
-
+	p_cnt = -1;
 	PrimaryActorTick.bCanEverTick = true;
 	bNewPlayerEntered = false;
 	bInitPlayerSetting = false;
@@ -166,10 +166,31 @@ void ACharacterController::showWeaponSelect()
 	}
 }
 
+void ACharacterController::InitPlayer()
+{
+	auto my_player = Cast<ACharacterBase>(UGameplayStatics::GetPlayerCharacter(this, 0));
+	my_player->SetActorLocationAndRotation(FVector(initplayer.X, initplayer.Y, initplayer.Z), FRotator(0.0f, initplayer.Yaw, 0.0f));
+	my_player->p_id = id;
+	bInitPlayerSetting = false;
+}
+
 void ACharacterController::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	//if (bInitPlayerSetting)
+	//	InitPlayer();
+	////새 플레이어 스폰
+	//if (bNewPlayerEntered)
+	//	UpdateSyncPlayer();
 
+	//UpdateWorld();
+	//
+}
+
+void ACharacterController::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	c_socket->CloseSocket();
+	c_socket->StopListen();
 }
 
 //void ACharacterController::RecvNewPlayer(int sessionID, float x, float y, float z)
@@ -221,42 +242,95 @@ void ACharacterController::UpdatePlayer(int input)
 
 void ACharacterController::UpdateSyncPlayer()
 {
-	// 동기화 용
-	UWorld* const world = GetWorld();
-	/*if (other_session_id == my_session_id)
-		return;*/
-	FVector S_LOCATION;
-	S_LOCATION.X = other_x;
-	S_LOCATION.Y = other_y;
-	S_LOCATION.Z = other_z;
-	FRotator S_ROTATOR;
-	S_ROTATOR.Yaw = NewPlayer.front()->Yaw;
-	S_ROTATOR.Pitch = 0.0;
-	S_ROTATOR.Roll = 0.0;
+	//// 동기화 용
+	//UWorld* const world = GetWorld();
+	//if (other_session_id == id)
+	//	return;
+	//FVector S_LOCATION;
+	//S_LOCATION.X = NewPlayer.front()->X;
+	//S_LOCATION.Y = NewPlayer.front()->Y;
+	//S_LOCATION.Z = NewPlayer.front()->Z;
+	//FRotator S_ROTATOR;
+	//S_ROTATOR.Yaw = NewPlayer.front()->Yaw;
+	//S_ROTATOR.Pitch = 0.0;
+	//S_ROTATOR.Roll = 0.0;
 
-	FActorSpawnParameters SpawnActor;
-	ACharacterBase* SpawnCharacter = world->SpawnActor<ACharacterBase>(ToSpawn, 
-		S_LOCATION, FRotator::ZeroRotator, SpawnActor);
-	SpawnCharacter->SpawnDefaultController();
-	SpawnCharacter->_SessionId = other_session_id;
-	if (PlayerInfo != nullptr)
-	{
-		CPlayer info;
-		info.Id = NewPlayer.front()->Id;
-		info.X = NewPlayer.front()->X;
-		info.Y = NewPlayer.front()->Y;
-		info.Z = NewPlayer.front()->Z;
+	//FActorSpawnParameters SpawnActor;
+	//ACharacterBase* SpawnCharacter = world->SpawnActor<ACharacterBase>(ToSpawn, 
+	//	S_LOCATION, FRotator::ZeroRotator, SpawnActor);
+	//SpawnCharacter->SpawnDefaultController();
+	//SpawnCharacter->_SessionId = NewPlayer.front()->Id;
+	//if (PlayerInfo != nullptr)
+	//{
+	//	CPlayer info;
+	//	info.Id = NewPlayer.front()->Id;
+	//	info.X = NewPlayer.front()->X;
+	//	info.Y = NewPlayer.front()->Y;
+	//	info.Z = NewPlayer.front()->Z;
 
-		info.Yaw = NewPlayer.front()->Yaw;
+	//	info.Yaw = NewPlayer.front()->Yaw;
 
-		PlayerInfo->players[NewPlayer.front()->Id] = info;
-		count = PlayerInfo->players.size();
-	}
+	//	PlayerInfo->players[NewPlayer.front()->Id] = info;
+	//	count = PlayerInfo->players.size();
+	//}
 
-	UE_LOG(LogClass, Warning, TEXT("other spawned player connect"));
+	//UE_LOG(LogClass, Warning, TEXT("other spawned player connect"));
 
-	NewPlayer.front() = nullptr;
-	NewPlayer.pop();
+	//NewPlayer.front() = nullptr;
+	//NewPlayer.pop();
+}
+
+bool ACharacterController::UpdateWorld()
+{
+	//UWorld* const world = GetWorld();
+	//if (world == nullptr)
+	//	return false;
+
+	//TArray<AActor*> SpawnPlayer;
+	//UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACharacterBase::StaticClass(), SpawnPlayer);
+	//UE_LOG(LogTemp, Warning, TEXT("Before loop"));
+	//if (p_cnt == -1)
+	//{
+	//	UE_LOG(LogTemp, Warning, TEXT("Inside loop"));
+	//	//p_cnt = PlayerInfo->players.size();
+	//	return false;
+	//}
+	//else
+	//{
+	//	for (auto& player : SpawnPlayer)
+	//	{
+	//		ACharacterBase* OtherPlayer = Cast<ACharacterBase>(player);
+	//		//CPlayer* info = &PlayerInfo->players[OtherPlayer->p_id];
+
+
+	//		UE_LOG(LogTemp, Warning, TEXT("Updating player info for ID %d"), OtherPlayer->p_id);
+	//		//if (!OtherPlayer || OtherPlayer->p_id == -1 || OtherPlayer->p_id == p_cnt)
+	//		//{
+	//		//	continue;
+	//		//}
+
+
+	//		//FVector PlayerLocation;
+	//		//PlayerLocation.X = info->X;
+	//		//PlayerLocation.Y = info->Y;
+	//		//PlayerLocation.Z = info->Z;
+
+	//		//FRotator PlayerRotation;
+	//		//PlayerRotation.Yaw = info->Yaw;
+
+	//		////속도
+	//		//FVector PlayerVelocity;
+	//		//PlayerVelocity.X = info->VeloX;
+	//		//PlayerVelocity.Y = info->VeloY;
+	//		//PlayerVelocity.Z = info->VeloZ;
+
+	//		//OtherPlayer->AddMovementInput(PlayerVelocity);
+	//		//OtherPlayer->SetActorRotation(PlayerRotation);
+	//		//OtherPlayer->SetActorLocation(PlayerLocation);
+
+	//	}
+	//}
+	return true;
 }
 
 //pawn 
