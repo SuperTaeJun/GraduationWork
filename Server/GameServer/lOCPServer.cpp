@@ -1,6 +1,21 @@
 #include "pch.h"
 #include "lOCPServer.h"
 
+
+void error_display(int err_no)
+{
+	WCHAR* lpMsgBuf;
+	FormatMessage(
+		FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM,
+		NULL, err_no,
+		MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+		(LPTSTR)&lpMsgBuf, 0, 0);
+	wcout << lpMsgBuf << endl;
+	//while (true);
+	LocalFree(lpMsgBuf);
+}
+
+
 lOCPServer::lOCPServer()
 {
 	//cl_id = 0;
@@ -9,6 +24,7 @@ lOCPServer::lOCPServer()
 
 lOCPServer::~lOCPServer()
 {
+	closesocket(listensocket);
 	WSACleanup();
 	cout << "종료" << endl;
 }
@@ -54,12 +70,13 @@ void lOCPServer::Start()
 	ZeroMemory(&accept_ex.overlapped, sizeof(accept_ex.overlapped));
 	accept_ex.type = IO_ACCEPT;
 	AcceptEx(listensocket, c_socket, accept_buf, 0, sizeof(SOCKADDR_IN) + 16, sizeof(SOCKADDR_IN) + 16, &dwBytes, &accept_ex.overlapped);
-	/*for (auto& cl : clients) {
+	for (auto& cl : clients) {
 		if (ST_INGAME == cl.cl_state)
 			Disconnect(cl.cl_id);
 	}
 	for (int i = 0; i < 100; ++i) clients[i].cl_id = i;
-	closesocket(listensocket);*/
+
+	
 }
 
 bool lOCPServer::CreateWorkerThreads()
@@ -73,7 +90,7 @@ bool lOCPServer::CreateWorkerThreads()
 		workerthread.emplace_back([this]() {WorkerThread(); });
 	}
 
-	//std::cout << "Created " << WorkerCount << " worker threads." << std::endl;
+	std::cout << "Created " << WorkerCount << " worker threads." << std::endl;
 	return true;
 }
 
@@ -95,7 +112,7 @@ void lOCPServer::WorkerThread()
 		if (FALSE == ret) {
 			int err_no = WSAGetLastError();
 			cout << "GQCS Error : ";
-			//error_display(err_no);
+			error_display(err_no);
 			cout << endl;
 			Disconnect(cl_id);
 			if (overlap->type == IO_SEND)
@@ -145,7 +162,7 @@ void lOCPServer::WorkerThread()
 			SOCKET c_socket = *(reinterpret_cast<SOCKET*>(overlap->recvBuffer));
 			int a_id = get_id();
 			if (-1 == a_id)
-				cout << "over" << endl;
+				cout << "Failed Accept" << endl;
 			else
 			{
 				ClientInfo& cl = clients[a_id];
@@ -177,71 +194,71 @@ void lOCPServer::WorkerThread()
 	}
 }
 
-bool lOCPServer::HandleAccept(Overlapped* overlapped)
-{
-	//// Accept 작업 완료 처리, 필요에 따라 새로운 워커 스레드 생성 또는 수락된 소켓 처리 등을 수행
-	//// ...
-	//// 새로운 Accept 작업을 등록하여 계속해서 들어오는 연결을 수신
-	////PostAccept();
-	DWORD dwBytes;
-	cout << "Accept Completed.\n";
-	SOCKET c_socket = *(reinterpret_cast<SOCKET*>(overlapped->recvBuffer));
-	int a_id = get_id();
-	
-	ClientInfo& cl = clients[a_id];
-	//cl.state_lock.lock();
-	cl.cl_id = a_id;
-	//cl.cl_state = ST_ACCEPT;
-	//.cl.state_lock.unlock();
-	cl.prev = 0;
-	cl.c_overlapped.type = IO_RECV;
-	cl.c_overlapped.wsabuf.buf = reinterpret_cast<char*>(cl.c_overlapped.recvBuffer);
-	cl.c_overlapped.wsabuf.len = sizeof(cl.c_overlapped.recvBuffer);
-	ZeroMemory(&cl.c_overlapped.overlapped, sizeof(cl.c_overlapped.overlapped));
-	cl.c_socket = c_socket;
-	CreateIoCompletionPort(reinterpret_cast<HANDLE>(c_socket), iocpHandle, a_id, 0);
-	cl.c_recv();
-	
-
-	ZeroMemory(&overlapped->overlapped, sizeof(overlapped->overlapped));
-	c_socket = WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, 0, 0, WSA_FLAG_OVERLAPPED);
-	*(reinterpret_cast<SOCKET*>(overlapped->recvBuffer)) = c_socket;
-	AcceptEx(listensocket, c_socket, overlapped->recvBuffer + 8, 0, sizeof(SOCKADDR_IN) + 16,
-		sizeof(SOCKADDR_IN) + 16, &dwBytes, &overlapped->overlapped);
-	return true;
-	
-}
+//bool lOCPServer::HandleAccept(Overlapped* overlapped)
+//{
+//	//// Accept 작업 완료 처리, 필요에 따라 새로운 워커 스레드 생성 또는 수락된 소켓 처리 등을 수행
+//	//// ...
+//	//// 새로운 Accept 작업을 등록하여 계속해서 들어오는 연결을 수신
+//	////PostAccept();
+//	DWORD dwBytes;
+//	cout << "Accept Completed.\n";
+//	SOCKET c_socket = *(reinterpret_cast<SOCKET*>(overlapped->recvBuffer));
+//	int a_id = get_id();
+//	
+//	ClientInfo& cl = clients[a_id];
+//	//cl.state_lock.lock();
+//	cl.cl_id = a_id;
+//	//cl.cl_state = ST_ACCEPT;
+//	//.cl.state_lock.unlock();
+//	cl.prev = 0;
+//	cl.c_overlapped.type = IO_RECV;
+//	cl.c_overlapped.wsabuf.buf = reinterpret_cast<char*>(cl.c_overlapped.recvBuffer);
+//	cl.c_overlapped.wsabuf.len = sizeof(cl.c_overlapped.recvBuffer);
+//	ZeroMemory(&cl.c_overlapped.overlapped, sizeof(cl.c_overlapped.overlapped));
+//	cl.c_socket = c_socket;
+//	CreateIoCompletionPort(reinterpret_cast<HANDLE>(c_socket), iocpHandle, a_id, 0);
+//	cl.c_recv();
+//	
+//
+//	ZeroMemory(&overlapped->overlapped, sizeof(overlapped->overlapped));
+//	c_socket = WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, 0, 0, WSA_FLAG_OVERLAPPED);
+//	*(reinterpret_cast<SOCKET*>(overlapped->recvBuffer)) = c_socket;
+//	AcceptEx(listensocket, c_socket, overlapped->recvBuffer + 8, 0, sizeof(SOCKADDR_IN) + 16,
+//		sizeof(SOCKADDR_IN) + 16, &dwBytes, &overlapped->overlapped);
+//	return true;
+//	
+//}
 void lOCPServer::Disconnect(int _s_id)
 {
 	cout << "서버 접속 종료";
 	ClientInfo& cl = clients[_s_id];
 	closesocket(clients[_s_id].c_socket);
 }
-bool lOCPServer::HandleReceive(int cl_id, Overlapped* overlapped, DWORD bytesTransferred)
-{
-	// 수신된 데이터 처리, 패킷 처리 등을 수행
-	// overlapped->recvBuffer에서 수신된 데이터에 액세스할 수 있습니다.
-
-	// 예시: 수신된 데이터 출력
-	cout << "Received data: " << overlapped->recvBuffer << endl;
-	ClientInfo& cl = clients[cl_id];
-	int remain_data = bytesTransferred + cl.prev;
-	unsigned char* packet_start = overlapped->recvBuffer;
-	int packet_size = packet_start[0];
-
-	while (packet_size <= remain_data) {
-		process_packet(cl_id, packet_start);
-		remain_data -= packet_size;
-		packet_start += packet_size;
-		if (remain_data > 0) packet_size = packet_start[0];
-		else break;
-	}
-
-	if (0 < remain_data) {
-		cl.prev = remain_data;
-		memcpy(&overlapped->recvBuffer, packet_start, remain_data);
-	}
-	cl.c_recv();
-	return true;
-}
+//bool lOCPServer::HandleReceive(int cl_id, Overlapped* overlapped, DWORD bytesTransferred)
+//{
+//	// 수신된 데이터 처리, 패킷 처리 등을 수행
+//	// overlapped->recvBuffer에서 수신된 데이터에 액세스할 수 있습니다.
+//
+//	// 예시: 수신된 데이터 출력
+//	cout << "Received data: " << overlapped->recvBuffer << endl;
+//	ClientInfo& cl = clients[cl_id];
+//	int remain_data = bytesTransferred + cl.prev;
+//	unsigned char* packet_start = overlapped->recvBuffer;
+//	int packet_size = packet_start[0];
+//
+//	while (packet_size <= remain_data) {
+//		process_packet(cl_id, packet_start);
+//		remain_data -= packet_size;
+//		packet_start += packet_size;
+//		if (remain_data > 0) packet_size = packet_start[0];
+//		else break;
+//	}
+//
+//	if (0 < remain_data) {
+//		cl.prev = remain_data;
+//		memcpy(&overlapped->recvBuffer, packet_start, remain_data);
+//	}
+//	cl.c_recv();
+//	return true;
+//}
 

@@ -21,8 +21,9 @@ struct CS_LOGIN_PACKET
 struct SC_LOGIN_BACK {
 	unsigned char size;
 	char type;
-	char id[MAX_INFO_SIZE];
-	char pw[MAX_INFO_SIZE];
+	/*char id[MAX_INFO_SIZE];
+	char pw[MAX_INFO_SIZE];*/
+	int clientid;
 	float x, y, z;
 	int cl_id;
 };
