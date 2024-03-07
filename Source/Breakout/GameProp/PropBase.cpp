@@ -291,18 +291,5 @@ void APropBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	//Cur = FMath::Clamp
-	//(
-	//	Time/*(((DegSin(Time * 180.f) * 1.1) + 1.0) / 2.f)*/,
-	//	0.f,
-	//	1.f
-	//);
-
-	//InterpMeshData(InterpData, Data1, Data2, Cur, false);
-	//ProceduralMesh->UpdateMeshSection_LinearColor(0, InterpData.Verts, InterpData.Normals, InterpData.UVs, InterpData.Colors, TArray<FProcMeshTangent>());
-
-	//Time = Time + (DeltaTime * MorphingSpeed);
-	//
-
 }
 

@@ -10,6 +10,7 @@
 #include "DrawDebugHelpers.h"
 #include "particles/ParticleSystemComponent.h"
 #include "Character/CharacterBase.h"
+#include "GameProp/BulletHoleWall.h"
 
 #define TRACE_LENGTH 10000.f
 
@@ -125,20 +126,25 @@ void AWeaponBase::Fire(const FVector& HitTarget)
 				);*/
 			if (FireHit.bBlockingHit)
 			{
-				ACharacterBase* Soldier = Cast<ACharacterBase>(FireHit.GetActor());
-				if (Soldier)
+				ACharacterBase* DamagedCharacter = Cast<ACharacterBase>(FireHit.GetActor());
+				ABulletHoleWall* DamagedWall = Cast<ABulletHoleWall>(FireHit.GetActor());
+				if (DamagedCharacter)
 				{
 					if (HasAuthority())
 					{
 						//UE_LOG(LogTemp, Log, TEXT("HIt"));
 						UGameplayStatics::ApplyDamage(
-							Soldier,
+							DamagedCharacter,
 							Damage,
 							InstigatorController,
 							this,
 							UDamageType::StaticClass()
 						);
 					}
+				}
+				else if (DamagedWall)
+				{
+					DamagedWall->SetBulletHole(FireHit);
 				}
 				if (ImpactParticles)
 				{
