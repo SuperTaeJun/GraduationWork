@@ -43,9 +43,7 @@ ABulletHoleWall::ABulletHoleWall()
 void ABulletHoleWall::BeginPlay()
 {
 	Super::BeginPlay();
-	//CollisionBox->OnComponentHit.AddDynamic(this, &ABulletHoleWall::OnHit);
-	CollisionBox->OnComponentBeginOverlap.AddDynamic(this, &ABulletHoleWall::OnOverlap);
-	//ProceduralMesh->SetCollisionResponseToChannel(ECollisionChannel::ECC_Visibility, ECollisionResponse::ECR_Block);
+
 }
 void ABulletHoleWall::Tick(float DeltaTime)
 {
@@ -53,10 +51,12 @@ void ABulletHoleWall::Tick(float DeltaTime)
 
 }
 
-void ABulletHoleWall::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+void ABulletHoleWall::SetBulletHole(const FHitResult& SweepResult)
 {
-	UE_LOG(LogTemp, Warning, TEXT("ONHIT"));
+	UE_LOG(LogTemp, Warning, TEXT("BulletHole"));
+	UE_LOG(LogTemp, Warning, TEXT("LOCATION : %s"), *SweepResult.Location.ToString());
 }
+
 
 void ABulletHoleWall::GetMeshDataFromStaticMesh(UStaticMesh* Mesh, FMeshData& Data, int32 LODIndex, int32 SectionIndex, bool GetAllSections)
 {
