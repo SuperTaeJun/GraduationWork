@@ -96,7 +96,7 @@ public:
 
 	void Dead();
 	FTimerHandle DeadTimer;
-	int p_id; // player own id
+	//int p_id; // player own id
 protected:
 
 	UPROPERTY(EditAnywhere, Category = Arrow)
