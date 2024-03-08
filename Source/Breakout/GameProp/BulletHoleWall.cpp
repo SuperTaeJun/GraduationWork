@@ -4,6 +4,7 @@
 #include "GameProp/BulletHoleWall.h"
 #include "Components/BoxComponent.h"
 #include "ProceduralMeshComponent.h"
+#include "Operations/MeshBoolean.h"
 
 ABulletHoleWall::ABulletHoleWall()
 {
@@ -55,6 +56,11 @@ void ABulletHoleWall::SetBulletHole(const FHitResult& SweepResult)
 {
 	UE_LOG(LogTemp, Warning, TEXT("BulletHole"));
 	UE_LOG(LogTemp, Warning, TEXT("LOCATION : %s"), *SweepResult.Location.ToString());
+
+
+	//UE::Geometry::FDynamicMesh3 DMeshWall = UE::Geometry::mesh2
+	//UE::Geometry::FMeshBoolean Boolean()
+
 }
 
 
