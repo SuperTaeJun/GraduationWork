@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "PropBase.h"
+#include "DynamicMesh/DynamicMesh3.h"
 #include "BulletHoleWall.generated.h"
 
 
@@ -17,6 +18,8 @@ public:
 	ABulletHoleWall();
 	virtual void Tick(float DeltaTime) override;
 	void SetBulletHole(const FHitResult& SweepResult);
+	FMeshData MeshBoolean(FMeshData DataA, FTransform TransformA, FMeshData DataB, FTransform TransformB);
+	UE::Geometry::FDynamicMesh3 ConvertToFDynamicMesh3(FMeshData& Data);
 protected:
 	virtual void BeginPlay() override;
 

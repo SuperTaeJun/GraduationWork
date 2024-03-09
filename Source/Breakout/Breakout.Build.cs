@@ -14,7 +14,9 @@ public class Breakout : ModuleRules
 			"Core", "CoreUObject", "Engine", 
 			"InputCore", "EnhancedInput", "UMG", 
 			"ProceduralMeshComponent", "MeshDescription", "Niagara" ,
-			"GeometryScriptingCore","GeometryFramework"});
+			"GeometryScriptingCore","GeometryFramework",
+			"GeometryCore","DynamicMesh"
+		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
 

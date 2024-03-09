@@ -16,7 +16,9 @@ class BREAKOUT_API ABulletHole : public AGeneratedDynamicMeshActor
 	
 public:
 	ABulletHole();
+
 	virtual void OnRebuildGeneratedMesh(UDynamicMesh* TargetMesh);
+	virtual void ExecuteRebuildGeneratedMeshIfPending();
 	virtual void BeiginPlay();
 	UPROPERTY(EditAnywhere)
 	float BoxDimensionX;

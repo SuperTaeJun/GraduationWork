@@ -21,9 +21,12 @@ void ABulletHole::OnRebuildGeneratedMesh(UDynamicMesh* TargetMesh)
 
 }
 
+void ABulletHole::ExecuteRebuildGeneratedMeshIfPending()
+{
+	Super::ExecuteRebuildGeneratedMeshIfPending();
+}
+
 void ABulletHole::BeiginPlay()
 {
 	Super::BeginPlay();
-
-	OnRebuildGeneratedMesh(DynamicMeshComponent->GetDynamicMesh());
 }
