@@ -11,6 +11,18 @@
 #include "Game/BOGameInstance.h"
 #include "ClientSocket.h"
 
+ACharacterController::ACharacterController()
+{
+	//c_socket = ClientSocket::GetSingleton();
+	c_socket = ClientSocket::GetSingleton();
+	c_socket->SetPlayerController(this);
+
+	p_cnt = -1;
+	bNewPlayerEntered = false;
+	bInitPlayerSetting = false;
+	PrimaryActorTick.bCanEverTick = true;
+}
+
 void ACharacterController::BeginPlay()
 {
 	FInputModeGameOnly GameOnlyInput;
@@ -34,17 +46,7 @@ void ACharacterController::BeginPlay()
 	}
 
 }
-ACharacterController::ACharacterController()
-{
-	//c_socket = ClientSocket::GetSingleton();
-	c_socket = ClientSocket::GetSingleton();
-	c_socket->SetPlayerController(this);
 
-	p_cnt = -1;
-	PrimaryActorTick.bCanEverTick = true;
-	bNewPlayerEntered = false;
-	bInitPlayerSetting = false;
-}
 
 //void ACharacterController::OnPossess(APawn* InPawn)
 //{
@@ -198,7 +200,7 @@ void ACharacterController::SetInitPlayerInfo(const CPlayer &owner_player)
 {
 
 	initplayer = owner_player;
-	bInitPlayerSetting = false;
+	bInitPlayerSetting = true;
 }
 void ACharacterController::SetNewCharacterInfo(std::shared_ptr<CPlayer> InitPlayer)
 {
@@ -207,63 +209,6 @@ void ACharacterController::SetNewCharacterInfo(std::shared_ptr<CPlayer> InitPlay
 		NewPlayer.push(InitPlayer);
 		UE_LOG(LogTemp, Warning, TEXT("The value of size_: %d"), NewPlayer.size());
 	}
-}
-
-void ACharacterController::UpdatePlayer(int input)
-{
-	auto m_Player = Cast<ACharacterBase>(UGameplayStatics::GetPlayerCharacter(this, 0));
-	//my_session_id = m_Player->_SessionId;
-	auto MyLocation = m_Player->GetActorLocation();
-	auto MyRotation = m_Player->GetActorRotation();
-	auto MyVelocity = m_Player->GetVelocity();
-	FVector MyCameraLocation;
-	FRotator MyCameraRotation;
-	m_Player->GetActorEyesViewPoint(MyCameraLocation, MyCameraRotation);
-	c_socket->Send_Move_Packet(id, MyLocation, MyRotation, MyVelocity);
-	//UE_LOG(LogClass, Warning, TEXT("send move packet"));
-}
-
-void ACharacterController::UpdateSyncPlayer()
-{
-	// 동기화 용
-	UWorld* const world = GetWorld();
-	/*if (other_session_id == id)
-		return;*/
-	int size_ = NewPlayer.size();
-	UE_LOG(LogTemp, Warning, TEXT("The value of size_: %d"), size_);
-	FVector S_LOCATION;
-	S_LOCATION.X = NewPlayer.front()->X;
-	S_LOCATION.Y = NewPlayer.front()->Y;
-	S_LOCATION.Z = NewPlayer.front()->Z;
-	FRotator S_ROTATOR;
-	S_ROTATOR.Yaw = NewPlayer.front()->Yaw;
-	S_ROTATOR.Pitch = 0.0;
-	S_ROTATOR.Roll = 0.0;
-
-	FActorSpawnParameters SpawnActor;
-	ACharacterBase* SpawnCharacter = world->SpawnActor<ACharacterBase>(ToSpawn, 
-		S_LOCATION, FRotator::ZeroRotator, SpawnActor);
-	SpawnCharacter->SpawnDefaultController();
-	SpawnCharacter->_SessionId = NewPlayer.front()->Id;
-	if (PlayerInfo != nullptr)
-	{
-		CPlayer info;
-		info.Id = NewPlayer.front()->Id;
-		info.X = NewPlayer.front()->X;
-		info.Y = NewPlayer.front()->Y;
-		info.Z = NewPlayer.front()->Z;
-
-		info.Yaw = NewPlayer.front()->Yaw;
-
-		PlayerInfo->players[NewPlayer.front()->Id] = info;
-		p_cnt = PlayerInfo->players.size();
-	}
-
-	UE_LOG(LogClass, Warning, TEXT("other spawned player connect"));
-
-	NewPlayer.front() = nullptr;
-	NewPlayer.pop();
-	bNewPlayerEntered = false;
 }
 
 bool ACharacterController::UpdateWorld()
@@ -318,6 +263,63 @@ bool ACharacterController::UpdateWorld()
 	//	}
 	//}
 	return true;
+}
+void ACharacterController::UpdateSyncPlayer()
+{
+	// 동기화 용
+	UWorld* const world = GetWorld();
+	/*if (other_session_id == id)
+		return;*/
+	int size_ = NewPlayer.size();
+	UE_LOG(LogTemp, Warning, TEXT("The value of size_: %d"), size_);
+	FVector S_LOCATION;
+	S_LOCATION.X = NewPlayer.front()->X;
+	S_LOCATION.Y = NewPlayer.front()->Y;
+	S_LOCATION.Z = NewPlayer.front()->Z;
+	FRotator S_ROTATOR;
+	S_ROTATOR.Yaw = NewPlayer.front()->Yaw;
+	S_ROTATOR.Pitch = 0.0;
+	S_ROTATOR.Roll = 0.0;
+
+	FActorSpawnParameters SpawnActor;
+	ACharacterBase* SpawnCharacter = world->SpawnActor<ACharacterBase>(ToSpawn,
+		S_LOCATION, FRotator::ZeroRotator, SpawnActor);
+	SpawnCharacter->SpawnDefaultController();
+	SpawnCharacter->_SessionId = NewPlayer.front()->Id;
+	if (PlayerInfo != nullptr)
+	{
+		CPlayer info;
+		info.Id = NewPlayer.front()->Id;
+		info.X = NewPlayer.front()->X;
+		info.Y = NewPlayer.front()->Y;
+		info.Z = NewPlayer.front()->Z;
+
+		info.Yaw = NewPlayer.front()->Yaw;
+
+		PlayerInfo->players[NewPlayer.front()->Id] = info;
+		p_cnt = PlayerInfo->players.size();
+	}
+
+	UE_LOG(LogClass, Warning, TEXT("other spawned player connect"));
+
+	NewPlayer.front() = nullptr;
+	NewPlayer.pop();
+	bNewPlayerEntered = false;
+}
+
+
+void ACharacterController::UpdatePlayer(int input)
+{
+	auto m_Player = Cast<ACharacterBase>(UGameplayStatics::GetPlayerCharacter(this, 0));
+	//my_session_id = m_Player->_SessionId;
+	auto MyLocation = m_Player->GetActorLocation();
+	auto MyRotation = m_Player->GetActorRotation();
+	auto MyVelocity = m_Player->GetVelocity();
+	FVector MyCameraLocation;
+	FRotator MyCameraRotation;
+	m_Player->GetActorEyesViewPoint(MyCameraLocation, MyCameraRotation);
+	c_socket->Send_Move_Packet(id, MyLocation, MyRotation, MyVelocity);
+	//UE_LOG(LogClass, Warning, TEXT("send move packet"));
 }
 
 //pawn 

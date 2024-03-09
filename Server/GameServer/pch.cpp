@@ -20,7 +20,16 @@ void Send_Player(int _s_id, int enm)
 	//packet.type = SC_OWN_MOVE;
 	//packet.x = clients[enm].x;
 	//packet.y = clients[enm].y;
-	//
+	packet.id = enm;
+	packet.size = sizeof(packet);
+	packet.type = SC_MOVE_PLAYER;
+	packet.x = clients[enm].x;
+	packet.y = clients[enm].y;
+	packet.z = clients[enm].z;
+	packet.yaw = clients[enm].Yaw;
+	packet.vx = clients[enm].VX;
+	packet.vy = clients[enm].VY;
+	packet.vz = clients[enm].VZ;
 	clients[_s_id].c_send(sizeof(packet), &packet);
 }
  

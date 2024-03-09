@@ -5,6 +5,7 @@
 #include <sstream>
 #include <process.h>
 #include "Game/BOGameMode.h"
+#include "Character/CharacterBase.h"
 #include "Player/CharacterController.h"
 #include "Runtime/Core/Public/GenericPlatform/GenericPlatformAffinity.h"
 #include "Runtime/Core/Public/HAL/RunnableThread.h"
@@ -91,12 +92,13 @@ void ClientSocket::PacketProcess(unsigned char* ptr)
 		info->X = packet->x;
 		info->Y = packet->y;
 		info->Z = packet->z;
+		info->Yaw = packet->yaw;
 		//float z = packet->z;
 		UE_LOG(LogClass, Warning, TEXT("recv data"));
 		MyCharacterController->SetNewCharacterInfo(info);
 		break;
 	}
-	case SC_OWN_MOVE:
+	case SC_MOVE_PLAYER:
 	{
 		CS_MOVE_PACKET* packet = reinterpret_cast<CS_MOVE_PACKET*>(ptr);
 		PlayerInfo.players[packet->id].X = packet->x;
@@ -121,7 +123,11 @@ void ClientSocket::Send_Login_Info(char* id, char* pw)
 	packet.type = CS_LOGIN;
 	strcpy(packet.id, id);
 	strcpy(packet.pw, pw);
+
+	auto player= Cast<ACharacterBase>(UGameplayStatics::GetPlayerCharacter(MyCharacterController, 0));
 	//cs_login_packet
+	auto location = player->GetActorLocation();
+	
 	SendPacket(&packet);
 	UE_LOG(LogClass, Warning, TEXT("Sending login info - id: %s, pw: %s"), ANSI_TO_TCHAR(id), ANSI_TO_TCHAR(pw));
 

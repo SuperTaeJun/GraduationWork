@@ -21,7 +21,7 @@ const char CS_MOVE = 2;
 
 const char SC_LOGIN_OK = 1;
 const char SC_OTHER_PLAYER = 2;
-const char SC_OWN_MOVE = 3;
+const char SC_MOVE_PLAYER = 3;
 
 #pragma pack (push, 1)
 struct CS_LOGIN_PACKET
@@ -35,8 +35,9 @@ struct CS_LOGIN_PACKET
 struct SC_LOGIN_BACK {
 	unsigned char size;
 	char type;
-	char id[MAX_INFO_SIZE];
-	char pw[MAX_INFO_SIZE];
+	/*char id[MAX_INFO_SIZE];
+	char pw[MAX_INFO_SIZE];*/
+	int clientid;
 	float x, y, z;
 	int cl_id;
 };
@@ -65,8 +66,6 @@ struct SC_PLAYER_SYNC {
 	char object_type;
 	char name[MAX_INFO_SIZE];
 };
-
-#pragma pack(pop)
 
 
 /**

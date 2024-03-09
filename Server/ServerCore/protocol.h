@@ -7,7 +7,7 @@ const char CS_MOVE = 2;
 
 const char SC_LOGIN_OK = 1;
 const char SC_OTHER_PLAYER = 2;
-const char SC_OWN_MOVE = 3;
+const char SC_MOVE_PLAYER = 3;
 
 #pragma pack (push, 1)
 struct CS_LOGIN_PACKET
