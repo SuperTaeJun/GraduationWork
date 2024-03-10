@@ -9,6 +9,7 @@
 #include "Character/CharacterBase.h"
 #include "Components/Image.h"
 #include "Game/BOGameInstance.h"
+#include <string>
 #include "ClientSocket.h"
 
 ACharacterController::ACharacterController()
@@ -216,7 +217,11 @@ bool ACharacterController::UpdateWorld()
 	UWorld* const world = GetWorld();
 	if (world == nullptr)
 		return false;
-
+	if (PlayerInfo == nullptr) return false;
+	if (PlayerInfo->players.size() == 1)
+	{
+		return false;
+	}
 	TArray<AActor*> SpawnPlayer;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACharacterBase::StaticClass(), SpawnPlayer);
 	//UE_LOG(LogTemp, Warning, TEXT("Before loop"));
@@ -227,41 +232,42 @@ bool ACharacterController::UpdateWorld()
 		UE_LOG(LogTemp, Warning, TEXT("The value of size_: %d"), p_cnt);
 		return false;
 	}
-	//else
-	//{
-	//	for (auto& player : SpawnPlayer)
-	//	{
-	//		ACharacterBase* OtherPlayer = Cast<ACharacterBase>(player);
-	//		CPlayer* info = &PlayerInfo->players[OtherPlayer->p_id];
+	else
+	{
+		for (auto& player : SpawnPlayer)
+		{
+			ACharacterBase* OtherPlayer = Cast<ACharacterBase>(player);
+			//UE_LOG(LogTemp, Warning, TEXT("Updating player info for ID %d"), OtherPlayer->p_id);
+			if (!OtherPlayer || OtherPlayer->_SessionId == -1 || OtherPlayer->_SessionId == p_cnt)
+			{
+				continue;
+			}
+			CPlayer* info = &PlayerInfo->players[OtherPlayer->_SessionId];
 
 
-	//		UE_LOG(LogTemp, Warning, TEXT("Updating player info for ID %d"), OtherPlayer->p_id);
-	//		if (!OtherPlayer || OtherPlayer->p_id == -1 || OtherPlayer->p_id == p_cnt)
-	//		{
-	//			continue;
-	//		}
+			
 
 
-	//		FVector PlayerLocation;
-	//		PlayerLocation.X = info->X;
-	//		PlayerLocation.Y = info->Y;
-	//		PlayerLocation.Z = info->Z;
+			FVector PlayerLocation;
+			PlayerLocation.X = info->X;
+			PlayerLocation.Y = info->Y;
+			PlayerLocation.Z = info->Z;
 
-	//		FRotator PlayerRotation;
-	//		PlayerRotation.Yaw = info->Yaw;
+			FRotator PlayerRotation;
+			PlayerRotation.Yaw = info->Yaw;
 
-	//		//속도
-	//		FVector PlayerVelocity;
-	//		PlayerVelocity.X = info->VeloX;
-	//		PlayerVelocity.Y = info->VeloY;
-	//		PlayerVelocity.Z = info->VeloZ;
+			//속도
+			FVector PlayerVelocity;
+			PlayerVelocity.X = info->VeloX;
+			PlayerVelocity.Y = info->VeloY;
+			PlayerVelocity.Z = info->VeloZ;
 
-	//		OtherPlayer->AddMovementInput(PlayerVelocity);
-	//		OtherPlayer->SetActorRotation(PlayerRotation);
-	//		OtherPlayer->SetActorLocation(PlayerLocation);
+			OtherPlayer->AddMovementInput(PlayerVelocity);
+			OtherPlayer->SetActorRotation(PlayerRotation);
+			OtherPlayer->SetActorLocation(PlayerLocation);
 
-	//	}
-	//}
+		}
+	}
 	return true;
 }
 void ACharacterController::UpdateSyncPlayer()
@@ -271,39 +277,52 @@ void ACharacterController::UpdateSyncPlayer()
 	/*if (other_session_id == id)
 		return;*/
 	int size_ = NewPlayer.size();
-	UE_LOG(LogTemp, Warning, TEXT("The value of size_: %d"), size_);
-	FVector S_LOCATION;
-	S_LOCATION.X = NewPlayer.front()->X;
-	S_LOCATION.Y = NewPlayer.front()->Y;
-	S_LOCATION.Z = NewPlayer.front()->Z;
-	FRotator S_ROTATOR;
-	S_ROTATOR.Yaw = NewPlayer.front()->Yaw;
-	S_ROTATOR.Pitch = 0.0;
-	S_ROTATOR.Roll = 0.0;
-
-	FActorSpawnParameters SpawnActor;
-	ACharacterBase* SpawnCharacter = world->SpawnActor<ACharacterBase>(ToSpawn,
-		S_LOCATION, FRotator::ZeroRotator, SpawnActor);
-	SpawnCharacter->SpawnDefaultController();
-	SpawnCharacter->_SessionId = NewPlayer.front()->Id;
-	if (PlayerInfo != nullptr)
+	for (int i = 0; i < size_; ++i)
 	{
-		CPlayer info;
-		info.Id = NewPlayer.front()->Id;
-		info.X = NewPlayer.front()->X;
-		info.Y = NewPlayer.front()->Y;
-		info.Z = NewPlayer.front()->Z;
+		UE_LOG(LogTemp, Warning, TEXT("%d"), NewPlayer.front()->Id);
+		if (NewPlayer.front()->Id == id)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("%d %d"), NewPlayer.front()->Id, id);
+			NewPlayer.front() = nullptr;
+			NewPlayer.pop();
+			continue;
+		}
+		FVector S_LOCATION;
+		S_LOCATION.X = NewPlayer.front()->X;
+		S_LOCATION.Y = NewPlayer.front()->Y;
+		S_LOCATION.Z = NewPlayer.front()->Z;
+		FRotator S_ROTATOR;
+		S_ROTATOR.Yaw = NewPlayer.front()->Yaw;
+		S_ROTATOR.Pitch = 0.0f;
+		S_ROTATOR.Roll = 0.0f;
+		FActorSpawnParameters SpawnActor;
+		SpawnActor.Owner = this;
+		SpawnActor.Instigator = GetInstigator();
+		SpawnActor.Name = FName(*FString(to_string(NewPlayer.front()->Id).c_str()));
+		ToSpawn = ACharacterBase::StaticClass();
+		ACharacterBase* SpawnCharacter = world->SpawnActor<ACharacterBase>(ToSpawn,
+			S_LOCATION, FRotator::ZeroRotator, SpawnActor);
+		SpawnCharacter->SpawnDefaultController();
+		SpawnCharacter->_SessionId = NewPlayer.front()->Id;
+		if (PlayerInfo != nullptr)
+		{
+			CPlayer info;
+			info.Id = NewPlayer.front()->Id;
+			info.X = NewPlayer.front()->X;
+			info.Y = NewPlayer.front()->Y;
+			info.Z = NewPlayer.front()->Z;
 
-		info.Yaw = NewPlayer.front()->Yaw;
+			info.Yaw = NewPlayer.front()->Yaw;
 
-		PlayerInfo->players[NewPlayer.front()->Id] = info;
-		p_cnt = PlayerInfo->players.size();
+			PlayerInfo->players[NewPlayer.front()->Id] = info;
+			p_cnt = PlayerInfo->players.size();
+		}
+
+		UE_LOG(LogClass, Warning, TEXT("other spawned player connect"));
+
+		NewPlayer.front() = nullptr;
+		NewPlayer.pop();
 	}
-
-	UE_LOG(LogClass, Warning, TEXT("other spawned player connect"));
-
-	NewPlayer.front() = nullptr;
-	NewPlayer.pop();
 	bNewPlayerEntered = false;
 }
 

@@ -164,6 +164,7 @@ uint32 ClientSocket::Run()
 	RecvPacket();
 	//SleepEx(0, true);
 //	StopTaskCounter.GetValue() == 0 && MyCharacterController != nullptr
+	FPlatformProcess::Sleep(0.03);
 	while (StopTaskCounter.GetValue() == 0 && MyCharacterController != nullptr)
 	{
 		DWORD num_byte;
