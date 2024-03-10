@@ -5,14 +5,20 @@
 #include <sstream>
 #include <process.h>
 #include "Game/BOGameMode.h"
+#include "Character/Character1.h"
 #include "Character/CharacterBase.h"
 #include "Player/CharacterController.h"
 #include "Runtime/Core/Public/GenericPlatform/GenericPlatformAffinity.h"
 #include "Runtime/Core/Public/HAL/RunnableThread.h"
 
 ClientSocket::ClientSocket()
-	:StopTaskCounter(0)
-{}
+{
+	WSAData wsaData;
+	if (::WSAStartup(MAKEWORD(2, 2), &wsaData) != 0)
+		UE_LOG(LogTemp, Error, TEXT("INITAILAIZING ERROR"));
+
+	ServerSocket = WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, 0, 0, WSA_FLAG_OVERLAPPED);
+}
 
 ClientSocket::~ClientSocket() {
 	delete Thread;
@@ -22,32 +28,33 @@ ClientSocket::~ClientSocket() {
 	WSACleanup();
 }
 
-bool ClientSocket::InitSocket()
-{
-	WSADATA wsaData;
-	// 윈속 버전을 2.2로 초기화
-	int nResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
-	if (nResult != 0) {
-		UE_LOG(LogTemp, Error, TEXT("INITAILAIZING ERROR"));
-		return false;
-	}
+//bool ClientSocket::InitSocket()
+//{
+//	WSADATA wsaData;
+//	// 윈속 버전을 2.2로 초기화
+//	int nResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
+//	if (nResult != 0) {
+//		UE_LOG(LogTemp, Error, TEXT("INITAILAIZING ERROR"));
+//		return false;
+//	}
+//
+//	// TCP 소켓 생성
+//	ServerSocket = WSASocket(AF_INET, SOCK_STREAM, IPPROTO_IP, NULL, 0, WSA_FLAG_OVERLAPPED);
+//	if (ServerSocket == INVALID_SOCKET) {
+//		return false;
+//	}
+//	return true;
+//}
 
-	// TCP 소켓 생성
-	ServerSocket = WSASocket(AF_INET, SOCK_STREAM, IPPROTO_IP, NULL, 0, WSA_FLAG_OVERLAPPED);
-	if (ServerSocket == INVALID_SOCKET) {
-		return false;
-	}
-	return true;
-}
-
-bool ClientSocket::Connect(const char* s_IP, int port)
+bool ClientSocket::Connect()
 {
 	// 접속할 서버 정보를 저장할 구조체
 	SOCKADDR_IN stServerAddr;
 	// 접속할 서버 포트 및 IP
 	stServerAddr.sin_family = AF_INET;
-	stServerAddr.sin_port = htons(port);
-	stServerAddr.sin_addr.s_addr = inet_addr(s_IP);
+	::inet_pton(AF_INET, SERVER_IP, &stServerAddr.sin_addr);
+	stServerAddr.sin_port = htons(12345);
+	//stServerAddr.sin_addr.s_addr = inet_addr(s_IP);
 
 	int nResult = connect(ServerSocket, (sockaddr*)&stServerAddr, sizeof(sockaddr));
 	if (nResult == SOCKET_ERROR) {
@@ -71,7 +78,7 @@ void ClientSocket::PacketProcess(unsigned char* ptr)
 	case SC_LOGIN_OK: {
 		SC_LOGIN_BACK* packet = reinterpret_cast<SC_LOGIN_BACK*>(ptr);
 		UE_LOG(LogClass, Warning, TEXT("recv data"));
-		/*login_cond = true;*/
+		login_cond = true;
 		CPlayer player;
 		player.Id = packet->cl_id;
 		player.X = packet->x;
@@ -115,27 +122,27 @@ void ClientSocket::PacketProcess(unsigned char* ptr)
 	}
 }
 
-void ClientSocket::Send_Login_Info(char* id, char* pw)
+void ClientSocket::Send_Login_Info()
 {
 	//패킷 조립
 	CS_LOGIN_PACKET packet;
 	packet.size = sizeof(packet);
 	packet.type = CS_LOGIN;
-	strcpy(packet.id, id);
-	strcpy(packet.pw, pw);
+	strcpy(packet.id, _id);
+	strcpy(packet.pw, _pw);
 
-	auto player= Cast<ACharacterBase>(UGameplayStatics::GetPlayerCharacter(MyCharacterController, 0));
+	auto player= Cast<ACharacter1>(UGameplayStatics::GetPlayerCharacter(MyCharacterController, 0));
 	//cs_login_packet
 	auto location = player->GetActorLocation();
 	
 	SendPacket(&packet);
-	UE_LOG(LogClass, Warning, TEXT("Sending login info - id: %s, pw: %s"), ANSI_TO_TCHAR(id), ANSI_TO_TCHAR(pw));
+	//UE_LOG(LogClass, Warning, TEXT("Sending login info - id: %s, pw: %s"), ANSI_TO_TCHAR(id), ANSI_TO_TCHAR(pw));
 
 }
 
 void ClientSocket::Send_Move_Packet(int sessionID, FVector Location, FRotator Rotation, FVector Velocity)
 {
-	/*if (login_cond == true) {*/
+	if (login_cond) {
 		CS_MOVE_PACKET packet;
 		packet.size = sizeof(packet);
 		packet.type = CS_MOVE;
@@ -149,7 +156,7 @@ void ClientSocket::Send_Move_Packet(int sessionID, FVector Location, FRotator Ro
 		packet.vz = Velocity.Z;
 		SendPacket(&packet);
 		//UE_LOG(LogClass, Warning, TEXT("send move"));
-	//}
+	}
 }
 
 bool ClientSocket::Init()
@@ -159,9 +166,11 @@ bool ClientSocket::Init()
 uint32 ClientSocket::Run()
 {
 	FPlatformProcess::Sleep(0.03);
+	Connect();
 	Iocp = CreateIoCompletionPort(INVALID_HANDLE_VALUE, NULL, NULL, 0);
 	CreateIoCompletionPort(reinterpret_cast<HANDLE>(socket), Iocp, NULL, 0);
 	RecvPacket();
+	Send_Login_Info();
 	//SleepEx(0, true);
 //	StopTaskCounter.GetValue() == 0 && MyCharacterController != nullptr
 	FPlatformProcess::Sleep(0.03);
