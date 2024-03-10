@@ -10,7 +10,13 @@ public class Breakout : ModuleRules
 
         PublicIncludePaths.AddRange(new string[] { "Breakout" });
 
-        PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput", "UMG", "ProceduralMeshComponent", "MeshDescription", "Niagara" });
+        PublicDependencyModuleNames.AddRange(new string[] { 
+			"Core", "CoreUObject", "Engine", 
+			"InputCore", "EnhancedInput", "UMG", 
+			"ProceduralMeshComponent", "MeshDescription", "Niagara" ,
+			"GeometryScriptingCore","GeometryFramework",
+			"GeometryCore","DynamicMesh"
+		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
 
