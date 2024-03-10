@@ -19,7 +19,11 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	void SetBulletHole(const FHitResult& SweepResult);
 	FMeshData MeshBoolean(FMeshData DataA, FTransform TransformA, FMeshData DataB, FTransform TransformB);
+
 	UE::Geometry::FDynamicMesh3 ConvertToFDynamicMesh3(FMeshData& Data);
+	FMeshData ConverToFMeshData(UE::Geometry::FDynamicMesh3& Input, FMeshData& Output);
+
+	FTransform3d ConvertToFTransform3d(FTransform Input);
 protected:
 	virtual void BeginPlay() override;
 
@@ -30,13 +34,17 @@ protected:
 
 	FMeshData MeshDataA;
 	FMeshData MeshDataB;
-	TArray<FMeshData> ProcMeshData;
+//	TArray<FMeshData> ProcMeshData;
 
 	FVector HitLoc;
 	FVector HitNomal;
 
+	FVector DirWorld;
 
 private:
+
+	void GetStaticMeshDataAll(UStaticMesh* Mesh, TArray<FMeshData>& ProcMeshData);
+
 	void GetMeshDataFromStaticMesh(UStaticMesh* Mesh, FMeshData& Data, int32 LODIndex, int32 SectionIndex, bool GetAllSections);
 	void SetColorData(FMeshData& Data, FLinearColor Color);
 };
