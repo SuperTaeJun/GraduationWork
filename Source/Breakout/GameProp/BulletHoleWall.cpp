@@ -13,11 +13,12 @@ ABulletHoleWall::ABulletHoleWall()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
-	CollisionBox = CreateDefaultSubobject<UBoxComponent>(TEXT("CollisionBox"));
-	SetRootComponent(CollisionBox);
-
 	ProceduralMesh = CreateDefaultSubobject<UProceduralMeshComponent>(TEXT("ProceduralMesh"));
-	ProceduralMesh->SetupAttachment(CollisionBox);
+	ProceduralMesh->SetupAttachment(RootComponent);
+
+	Sphere = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Sphere"));
+	Sphere->SetupAttachment(RootComponent);
+
 
 	ConstructorHelpers::FObjectFinder<UStaticMesh> SMMesh1(TEXT("/Game/Maps/_GENERATED/TAEJUN/Box_24A10B9B.Box_24A10B9B"));
 	GetMeshDataFromStaticMesh(SMMesh1.Object, MeshDataA, 0, 0, true);
@@ -49,25 +50,32 @@ void ABulletHoleWall::BeginPlay()
 void ABulletHoleWall::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
 }
 
 void ABulletHoleWall::SetBulletHole(const FHitResult& SweepResult)
 {
 	UE_LOG(LogTemp, Warning, TEXT("BulletHole"));
-	UE_LOG(LogTemp, Warning, TEXT("LOCATION : %s"), *SweepResult.Location.ToString());
+	UE_LOG(LogTemp, Warning, TEXT("LOCATION : %s"), *SweepResult.ImpactPoint.ToString());
+	HitLoc = SweepResult.ImpactPoint;
+	Sphere->SetWorldLocation(HitLoc);
 
-	//UE::Geometry::FDynamicMesh3 DMeshWall = UE::Geometry::mesh2
-	//UE::Geometry::FMeshBoolean Boolean()
+
+	//SetRandomVertex(MeshDataB, -20.f, 20.f, 0.01);
+
 	FTransform ATransform = ProceduralMesh->GetRelativeTransform();
 	FTransform BTransform;
-	BTransform.SetLocation(SweepResult.Location);
-	BTransform.SetRotation(ATransform.GetRotation());
-	BTransform.SetScale3D(FVector(60.f, 0.5f, 0.5f));
-	MeshBoolean(MeshDataA, ATransform, MeshDataB, BTransform);
+	BTransform.SetLocation(Sphere->GetRelativeTransform().GetLocation());
+	BTransform.SetRotation(ProceduralMesh->GetRelativeTransform().GetRotation());
+	BTransform.SetScale3D(FVector(60.f, 0.2f, 0.2f));
+
+
+	MeshDataA =MeshBoolean(MeshDataA, ATransform, 
+		SetRandomVertex(MeshDataB, -20.f, 20.f, 0.001), BTransform);
 
 	TArray<FProcMeshTangent> Tangents = {};
-	ProceduralMesh->UpdateMeshSection_LinearColor(0, MeshDataA.Verts, MeshDataA.Normals, MeshDataA.UVs, MeshDataA.Colors, Tangents);
-
+	ProceduralMesh->CreateMeshSection_LinearColor(0, MeshDataA.Verts, MeshDataA.Tris, MeshDataA.Normals, MeshDataA.UVs, MeshDataA.Colors,Tangents, true);
+	
 }
 
 FMeshData ABulletHoleWall::MeshBoolean(FMeshData DataA, FTransform TransformA, FMeshData DataB, FTransform TransformB)
@@ -83,7 +91,6 @@ FMeshData ABulletHoleWall::MeshBoolean(FMeshData DataA, FTransform TransformA, F
 
 	FTransform3d ConvertedTransformA = ConvertToFTransform3d(TransformA);
 	FTransform3d ConvertedTransformB = ConvertToFTransform3d(TransformB);
-
 	UE::Geometry::FDynamicMesh3 DMeshA = ConvertToFDynamicMesh3(DataA);
 	UE::Geometry::FDynamicMesh3 DMeshB = ConvertToFDynamicMesh3(DataB);
 
@@ -96,12 +103,16 @@ FMeshData ABulletHoleWall::MeshBoolean(FMeshData DataA, FTransform TransformA, F
 	Boolean.bPreserveOverlayUVs = true;
 	Boolean.bPreserveVertexUVs = true;
 	Boolean.bPutResultInInputSpace = true;
-	Boolean.bSimplifyAlongNewEdges = true;
+
+	Boolean.bSimplifyAlongNewEdges = false;
+	Boolean.SimplificationAngleTolerance = 0.f;
 	Boolean.bTrackAllNewEdges = false;
 	Boolean.bWeldSharedEdges = false;
+
 	Boolean.DegenerateEdgeTolFactor = 0.1f;
-	Boolean.WindingThreshold = 0.f;
+	Boolean.WindingThreshold = 0.1f;
 	Boolean.SnapTolerance = 0.0000001f;
+
 	Boolean.Compute();
 
 	return 	ConverToFMeshData(BooleanOutput, DataA);
@@ -260,19 +271,6 @@ FTransform3d ABulletHoleWall::ConvertToFTransform3d(FTransform Input)
 									);
 }
 
-
-
-void ABulletHoleWall::GetStaticMeshDataAll(UStaticMesh* Mesh, TArray<FMeshData>& ProcMeshData)
-{
-	ProcMeshData.Reset();
-
-	for (int i = 0; i < Mesh->GetNumSections(0); ++i)
-	{
-		GetMeshDataFromStaticMesh(Mesh, ProcMeshData[i], 0, 0,false);
-	}
-
-}
-
 void ABulletHoleWall::GetMeshDataFromStaticMesh(UStaticMesh* Mesh, FMeshData& Data, int32 LODIndex, int32 SectionIndex, bool GetAllSections)
 {
 	int32 n = 0, svi = 0, vi = 0, sec = 0;
@@ -344,4 +342,35 @@ void ABulletHoleWall::SetColorData(FMeshData& Data, FLinearColor Color)
 	{
 		Data.Colors[x] = Color;
 	}
+}
+
+FMeshData ABulletHoleWall::SetRandomVertex(FMeshData& MeshData, float Min, float Max, float Tolerance)
+{
+
+	FMeshData Result = MeshData;
+	TMap<FVector, FVector> Already = {};
+	Tolerance = 1.0f / Tolerance;
+	FVector tCoord;
+
+	for (int x = 0; x < MeshData.Verts.Num(); ++x) 
+	{
+		tCoord = FVector(Result.Verts[x].X * Tolerance, Result.Verts[x].Y * Tolerance, Result.Verts[x].Z * Tolerance);
+		if (Already.Contains(tCoord)) 
+		{
+			Result.Verts[x] = Already[tCoord];
+		}
+		else 
+		{
+			if (MeshData.Normals.IsValidIndex(x)) 
+			{
+				Result.Verts[x] = MeshData.Verts[x] + MeshData.Normals[x] * FMath::RandRange(Min, Max) + FMath::VRand() * FMath::RandRange(Min, Max);
+			}
+			else 
+			{
+				Result.Verts[x] = MeshData.Verts[x] + FMath::VRand() * FMath::RandRange(Min, Max);
+			}
+			Already.Emplace(tCoord, Result.Verts[x]);
+		}
+	}
+	return Result;
 }

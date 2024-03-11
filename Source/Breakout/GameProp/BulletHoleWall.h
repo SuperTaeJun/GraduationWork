@@ -8,7 +8,6 @@
 #include "DynamicMesh/DynamicMesh3.h"
 #include "BulletHoleWall.generated.h"
 
-
 UCLASS()
 class BREAKOUT_API ABulletHoleWall : public AActor
 {
@@ -30,7 +29,7 @@ protected:
 	UPROPERTY(VisibleAnywhere, Category = "Mesh")
 	TObjectPtr<class UProceduralMeshComponent> ProceduralMesh;
 	UPROPERTY(EditAnywhere, Category = "Mesh")
-	TObjectPtr<class UBoxComponent > CollisionBox;
+	TObjectPtr<class UStaticMeshComponent > Sphere;
 
 	FMeshData MeshDataA;
 	FMeshData MeshDataB;
@@ -43,8 +42,7 @@ protected:
 
 private:
 
-	void GetStaticMeshDataAll(UStaticMesh* Mesh, TArray<FMeshData>& ProcMeshData);
-
 	void GetMeshDataFromStaticMesh(UStaticMesh* Mesh, FMeshData& Data, int32 LODIndex, int32 SectionIndex, bool GetAllSections);
 	void SetColorData(FMeshData& Data, FLinearColor Color);
+	FMeshData SetRandomVertex(FMeshData& MeshData, float Min, float Max, float Tolerance);
 };
