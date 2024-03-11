@@ -90,7 +90,7 @@ enum OPTYPE {
 
 
 const int buffsize = 1000;
-
+const int  MAX_NAME_SIZE = 20;
 enum IO_type
 {
 	IO_RECV,
@@ -184,18 +184,19 @@ class BREAKOUT_API ClientSocket : public FRunnable
 public:
 	ClientSocket();
 	virtual ~ClientSocket();
-	bool InitSocket();
-	bool Connect(const char* s_IP, int port);
+	//bool InitSocket();
+	bool Connect();
 	void CloseSocket();
 	
 	void PacketProcess(unsigned char* ptr);
-	void Send_Login_Info(char* id, char* pw);
+	void Send_Login_Info();
 	void Send_Move_Packet(int sessionID, FVector Location, FRotator Rotation, FVector Velocity);
 	virtual bool Init();
 	virtual uint32 Run();
 	virtual void Stop();
 	virtual void Exit();
-
+	char	_id[MAX_NAME_SIZE];
+	char	_pw[MAX_NAME_SIZE];
 	// 스레드 시작 및 종료
 	bool StartListen();
 	void StopListen();
