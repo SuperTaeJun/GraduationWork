@@ -57,7 +57,7 @@ void ABulletHoleWall::SetBulletHole(const FHitResult& SweepResult)
 {
 	UE_LOG(LogTemp, Warning, TEXT("BulletHole"));
 	UE_LOG(LogTemp, Warning, TEXT("LOCATION : %s"), *SweepResult.ImpactPoint.ToString());
-	HitLoc = SweepResult.ImpactPoint;
+	HitLoc = SweepResult.Location;
 	Sphere->SetWorldLocation(HitLoc);
 
 
@@ -70,8 +70,7 @@ void ABulletHoleWall::SetBulletHole(const FHitResult& SweepResult)
 	BTransform.SetScale3D(FVector(60.f, 0.2f, 0.2f));
 
 
-	MeshDataA =MeshBoolean(MeshDataA, ATransform, 
-		SetRandomVertex(MeshDataB, -20.f, 20.f, 0.001), BTransform);
+	MeshDataA =MeshBoolean(MeshDataA, ATransform, SetRandomVertex(MeshDataB, -20.f, 20.f, 0.001), BTransform);
 
 	TArray<FProcMeshTangent> Tangents = {};
 	ProceduralMesh->CreateMeshSection_LinearColor(0, MeshDataA.Verts, MeshDataA.Tris, MeshDataA.Normals, MeshDataA.UVs, MeshDataA.Colors,Tangents, true);
@@ -158,7 +157,7 @@ UE::Geometry::FDynamicMesh3 ABulletHoleWall::ConvertToFDynamicMesh3(FMeshData& D
 
 	}
 	UE::Geometry::FIndex3i ResultTri;
-	for (int x = 0; x < Data.Verts.Num(); x+=3)
+	for (int x = 0; x < Data.Tris.Num(); x+=3)
 	{
 		if (x + 2 < Data.Tris.Num())
 		{
