@@ -33,7 +33,7 @@ void ACharacterController::BeginPlay()
 	MainHUD = Cast<AMainHUD>(GetHUD());
 	c_socket->InitSocket();
 
-	connect = c_socket->Connect("127.0.0.1", 12345);
+	connect = c_socket->Connect("192.168.219.101", 12345);
 	if (connect)
 	{
 		c_socket->StartListen();
@@ -224,7 +224,7 @@ bool ACharacterController::UpdateWorld()
 		return false;
 	}
 	TArray<AActor*> SpawnPlayer;
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACharacter1::StaticClass(), SpawnPlayer);
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACharacterBase::StaticClass(), SpawnPlayer);
 	//UE_LOG(LogTemp, Warning, TEXT("Before loop"));
 	if (p_cnt == -1)
 	{
@@ -307,7 +307,7 @@ void ACharacterController::UpdateSyncPlayer()
 		SpawnActor.Name = FName(*FString(to_string(NewPlayer.front()->Id).c_str()));
 		ToSpawn = ACharacterBase::StaticClass();
 		ACharacterBase* SpawnCharacter = world->SpawnActor<ACharacterBase>(ToSpawn,
-			S_LOCATION, FRotator::ZeroRotator, SpawnActor);
+			S_LOCATION, S_ROTATOR, SpawnActor);
 		SpawnCharacter->SpawnDefaultController();
 		SpawnCharacter->_SessionId = NewPlayer.front()->Id;
 		if (PlayerInfo != nullptr)

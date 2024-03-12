@@ -30,6 +30,7 @@ struct CS_LOGIN_PACKET
 	char type;
 	char id[MAX_INFO_SIZE];
 	char pw[MAX_INFO_SIZE];
+	float z;
 
 };
 struct SC_LOGIN_BACK {
@@ -39,6 +40,7 @@ struct SC_LOGIN_BACK {
 	char pw[MAX_INFO_SIZE];*/
 	int clientid;
 	float x, y, z;
+	float yaw;
 	int cl_id;
 };
 struct CS_MOVE_PACKET

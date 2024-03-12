@@ -90,7 +90,7 @@ void ClientSocket::PacketProcess(unsigned char* ptr)
 	}
 	case SC_OTHER_PLAYER:
 	{
-		//UE_LOG(LogClass, Warning, TEXT("other ROGIN?"));
+		UE_LOG(LogClass, Warning, TEXT("other ROGIN?"));
 		SC_PLAYER_SYNC* packet = reinterpret_cast<SC_PLAYER_SYNC*>(ptr);
 		auto info = make_shared<CPlayer>();
 		info->Id = packet->id;
@@ -133,7 +133,7 @@ void ClientSocket::Send_Login_Info(char* id, char* pw)
 	auto player= Cast<ACharacterBase>(UGameplayStatics::GetPlayerCharacter(MyCharacterController, 0));
 	//cs_login_packet
 	auto location = player->GetActorLocation();
-	
+	packet.z = location.Z;
 	SendPacket(&packet);
 	//UE_LOG(LogClass, Warning, TEXT("Sending login info - id: %s, pw: %s"), ANSI_TO_TCHAR(id), ANSI_TO_TCHAR(pw));
 
@@ -141,7 +141,7 @@ void ClientSocket::Send_Login_Info(char* id, char* pw)
 
 void ClientSocket::Send_Move_Packet(int sessionID, FVector Location, FRotator Rotation, FVector Velocity)
 {
-	if (login_cond) {
+	//if (login_cond) {
 		CS_MOVE_PACKET packet;
 		packet.size = sizeof(packet);
 		packet.type = CS_MOVE;
@@ -155,7 +155,7 @@ void ClientSocket::Send_Move_Packet(int sessionID, FVector Location, FRotator Ro
 		packet.vz = Velocity.Z;
 		SendPacket(&packet);
 		//UE_LOG(LogClass, Warning, TEXT("send move"));
-	}
+	//}
 }
 
 bool ClientSocket::Init()
