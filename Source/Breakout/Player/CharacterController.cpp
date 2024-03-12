@@ -31,21 +31,21 @@ void ACharacterController::BeginPlay()
 	SetInputMode(GameOnlyInput);
 	c_socket->StartListen();
 	MainHUD = Cast<AMainHUD>(GetHUD());
-	//c_socket->InitSocket();
+	c_socket->InitSocket();
 
-	//connect = c_socket->Connect("127.0.0.1", 12345);
-	//if (connect)
-	//{
-	//	c_socket->StartListen();
-	//	UE_LOG(LogClass, Warning, TEXT("IOCP Server connect success!"));
-	//	FString c_id = "testuser";
-	//	FString c_pw = "1234";
-	//	c_socket->Send_Login_Info(TCHAR_TO_UTF8(*c_id), TCHAR_TO_UTF8(*c_pw));
-	//}
-	//else
-	//{
-	//	UE_LOG(LogClass, Warning, TEXT("IOCP Server connect FAIL!"));
-	//}
+	connect = c_socket->Connect("127.0.0.1", 12345);
+	if (connect)
+	{
+		c_socket->StartListen();
+		UE_LOG(LogClass, Warning, TEXT("IOCP Server connect success!"));
+		FString c_id = "testuser";
+		FString c_pw = "1234";
+		c_socket->Send_Login_Info(TCHAR_TO_UTF8(*c_id), TCHAR_TO_UTF8(*c_pw));
+	}
+	else
+	{
+		UE_LOG(LogClass, Warning, TEXT("IOCP Server connect FAIL!"));
+	}
 
 }
 
@@ -172,7 +172,7 @@ void ACharacterController::showWeaponSelect()
 
 void ACharacterController::InitPlayer()
 {
-	auto my_player = Cast<ACharacter1>(UGameplayStatics::GetPlayerCharacter(this, 0));
+	auto my_player = Cast<ACharacterBase>(UGameplayStatics::GetPlayerCharacter(this, 0));
 	my_player->SetActorLocationAndRotation(FVector(initplayer.X, initplayer.Y, initplayer.Z), FRotator(0.0f, initplayer.Yaw, 0.0f));
 	my_player->_SessionId = initplayer.Id;
 	bInitPlayerSetting = false;
@@ -200,7 +200,7 @@ void ACharacterController::EndPlay(const EEndPlayReason::Type EndPlayReason)
 
 void ACharacterController::SetInitPlayerInfo(const CPlayer &owner_player)
 {
-
+	UE_LOG(LogClass, Warning, TEXT("SetInitPlayerInfo"));
 	initplayer = owner_player;
 	bInitPlayerSetting = true;
 }
@@ -237,7 +237,7 @@ bool ACharacterController::UpdateWorld()
 	{
 		for (auto& player : SpawnPlayer)
 		{
-			ACharacter1* OtherPlayer = Cast<ACharacter1>(player);
+			ACharacterBase* OtherPlayer = Cast<ACharacterBase>(player);
 			//UE_LOG(LogTemp, Warning, TEXT("Updating player info for ID %d"), OtherPlayer->p_id);
 			if (!OtherPlayer || OtherPlayer->_SessionId == -1 || OtherPlayer->_SessionId == p_cnt)
 			{
@@ -305,8 +305,8 @@ void ACharacterController::UpdateSyncPlayer()
 		SpawnActor.Owner = this;
 		SpawnActor.Instigator = GetInstigator();
 		SpawnActor.Name = FName(*FString(to_string(NewPlayer.front()->Id).c_str()));
-		ToSpawn = ACharacter1::StaticClass();
-		ACharacter1* SpawnCharacter = world->SpawnActor<ACharacter1>(ToSpawn,
+		ToSpawn = ACharacterBase::StaticClass();
+		ACharacterBase* SpawnCharacter = world->SpawnActor<ACharacterBase>(ToSpawn,
 			S_LOCATION, FRotator::ZeroRotator, SpawnActor);
 		SpawnCharacter->SpawnDefaultController();
 		SpawnCharacter->_SessionId = NewPlayer.front()->Id;
@@ -335,7 +335,7 @@ void ACharacterController::UpdateSyncPlayer()
 
 void ACharacterController::UpdatePlayer(int input)
 {
-	auto m_Player = Cast<ACharacter1>(UGameplayStatics::GetPlayerCharacter(this, 0));
+	auto m_Player = Cast<ACharacterBase>(UGameplayStatics::GetPlayerCharacter(this, 0));
 	//my_session_id = m_Player->_SessionId;
 	auto MyLocation = m_Player->GetActorLocation();
 	auto MyRotation = m_Player->GetActorRotation();
