@@ -184,12 +184,12 @@ class BREAKOUT_API ClientSocket : public FRunnable
 public:
 	ClientSocket();
 	virtual ~ClientSocket();
-	//bool InitSocket();
-	bool Connect();
+	bool InitSocket();
+	bool Connect(const char* s_IP, int port);
 	void CloseSocket();
 	
 	void PacketProcess(unsigned char* ptr);
-	void Send_Login_Info();
+	void Send_Login_Info(char* id, char* pw);
 	void Send_Move_Packet(int sessionID, FVector Location, FRotator Rotation, FVector Velocity);
 	virtual bool Init();
 	virtual uint32 Run();
