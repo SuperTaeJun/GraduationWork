@@ -11,6 +11,7 @@
 #include <map>
 #include <mutex>
 #include <queue>
+#include <vector>
 #include <iostream>
 //#include "Player/CharacterController.h"
 #include "Network/PacketData.h"
@@ -37,43 +38,34 @@ public:
 	LockQueue& operator=(const LockQueue&) = delete;
 
 	void Push(T value)
-		//void Push(int32 value)
 	{
 		lock_guard<mutex> lock(_mutex);
 		_queue.push(std::move(value));
-		_condVar.notify_one();
 	}
 
-	bool TryPop(T& value)
-		//bool TryPop(int32& value)
+	bool Pop()
 	{
 		lock_guard<mutex> lock(_mutex);
 		if (_queue.empty())
 			return false;
 
-		value = std::move(_queue.front());
+		T ret = std::move(_queue.front());
 		_queue.pop();
 		return true;
 	}
 
-	void WaitPop(T& value)
-		//void WaitPop(int32& value)
+	void PopAll(OUT std::vector<T>& items)
 	{
-		unique_lock<mutex> lock(_mutex);
-		_condVar.wait(lock, [this] { return _queue.empty() == false; });
-		value = std::move(_queue.front());
-		_queue.pop();
+		lock_guard<mutex> lock(_mutex);
+		while (T item = Pop()) {
+			_queue.push_back(item);
+		}
 	}
 
 	void Clear()
 	{
-		unique_lock<mutex> lock(_mutex);
-		if (_queue.empty() == false)
-		{
-			queue<T> _empty;
-			//queue<int32> _empty;
-			swap(_queue, _empty);
-		}
+		lock_guard<mutex> lock(_mutex);
+		_queue = std::queue<T>();
 	}
 
 	int Size()
@@ -82,12 +74,9 @@ public:
 		return _queue.size();
 	}
 
-
 private:
-	std::queue<T> _queue;
-	//std::queue<int32> _queue;
 	std::mutex _mutex;
-	std::condition_variable _condVar;
+	std::queue<T> _queue;
 };
 
 // 플레이어 클래스 
@@ -244,7 +233,7 @@ public:
 	bool InitSocket();
 	bool Connect(const char* s_IP, int port);
 	void CloseSocket();
-	
+
 	void PacketProcess(unsigned char* ptr);
 	void Send_Login_Info(char* id, char* pw);
 	void Send_Move_Packet(int sessionID, FVector Location, FRotator Rotation, FVector Velocity);
