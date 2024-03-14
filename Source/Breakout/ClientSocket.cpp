@@ -141,7 +141,7 @@ void ClientSocket::Send_Login_Info(char* id, char* pw)
 
 void ClientSocket::Send_Move_Packet(int sessionID, FVector Location, FRotator Rotation, FVector Velocity)
 {
-	//if (login_cond) {
+	if (login_cond) {
 		CS_MOVE_PACKET packet;
 		packet.size = sizeof(packet);
 		packet.type = CS_MOVE;
@@ -155,7 +155,7 @@ void ClientSocket::Send_Move_Packet(int sessionID, FVector Location, FRotator Ro
 		packet.vz = Velocity.Z;
 		SendPacket(&packet);
 		//UE_LOG(LogClass, Warning, TEXT("send move"));
-	//}
+	}
 }
 
 bool ClientSocket::Init()
@@ -172,8 +172,8 @@ uint32 ClientSocket::Run()
 	while (StopTaskCounter.GetValue() == 0 && MyCharacterController != nullptr)
 	{
 		// 블로킹 소켓을 이용하여 패킷 수신
-		unsigned char buffer[MAX_PACKET_SIZE];
-		int receivedBytes = recv(ServerSocket, reinterpret_cast<char*>(buffer), MAX_PACKET_SIZE, 0);
+		unsigned char buffer[10000];
+		int receivedBytes = recv(ServerSocket, reinterpret_cast<char*>(buffer), 10000, 0);
 
 		if (receivedBytes > 0)
 		{
