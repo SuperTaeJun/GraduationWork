@@ -239,7 +239,7 @@ bool ACharacterController::UpdateWorld()
 		{
 			ACharacterBase* OtherPlayer = Cast<ACharacterBase>(player);
 			//UE_LOG(LogTemp, Warning, TEXT("Updating player info for ID %d"), OtherPlayer->p_id);
-			if (!OtherPlayer || OtherPlayer->_SessionId == -1 || OtherPlayer->_SessionId == p_cnt)
+			if (!OtherPlayer || OtherPlayer->_SessionId == -1 || OtherPlayer->_SessionId == id)
 			{
 				continue;
 			}
