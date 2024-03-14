@@ -229,7 +229,7 @@ void ClientSocket::StopListen()
 
 void ClientSocket::RecvPacket()
 {
-	UE_LOG(LogClass, Warning, TEXT("recv data"));
+	//UE_LOG(LogClass, Warning, TEXT("recv data"));
 	DWORD recv_flag = 0;
 	ZeroMemory(&_recv_over.overlapped, sizeof(_recv_over.overlapped));
 	_recv_over.wsabuf.buf = reinterpret_cast<char*>(_recv_over.recvBuffer + _prev_size);

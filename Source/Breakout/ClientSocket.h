@@ -9,6 +9,7 @@
 #include <WS2tcpip.h>
 #include <fstream>
 #include <map>
+#include <mutex>
 #include <queue>
 #include <iostream>
 //#include "Player/CharacterController.h"
@@ -24,6 +25,70 @@ class ClientSocket;
 class ABOGameMode;
 class ACharacterController;
 using namespace std;
+
+
+template<typename T>
+class LockQueue
+{
+public:
+	LockQueue() { }
+
+	LockQueue(const LockQueue&) = delete;
+	LockQueue& operator=(const LockQueue&) = delete;
+
+	void Push(T value)
+		//void Push(int32 value)
+	{
+		lock_guard<mutex> lock(_mutex);
+		_queue.push(std::move(value));
+		_condVar.notify_one();
+	}
+
+	bool TryPop(T& value)
+		//bool TryPop(int32& value)
+	{
+		lock_guard<mutex> lock(_mutex);
+		if (_queue.empty())
+			return false;
+
+		value = std::move(_queue.front());
+		_queue.pop();
+		return true;
+	}
+
+	void WaitPop(T& value)
+		//void WaitPop(int32& value)
+	{
+		unique_lock<mutex> lock(_mutex);
+		_condVar.wait(lock, [this] { return _queue.empty() == false; });
+		value = std::move(_queue.front());
+		_queue.pop();
+	}
+
+	void Clear()
+	{
+		unique_lock<mutex> lock(_mutex);
+		if (_queue.empty() == false)
+		{
+			queue<T> _empty;
+			//queue<int32> _empty;
+			swap(_queue, _empty);
+		}
+	}
+
+	int Size()
+	{
+		unique_lock<mutex> lock(_mutex);
+		return _queue.size();
+	}
+
+
+private:
+	std::queue<T> _queue;
+	//std::queue<int32> _queue;
+	std::mutex _mutex;
+	std::condition_variable _condVar;
+};
 
 // 플레이어 클래스 
 class CPlayer
@@ -83,12 +148,6 @@ public:
 	}
 };
 
-enum OPTYPE {
-	OP_SEND,
-	OP_RECV,
-};
-
-
 const int buffsize = 1000;
 const int  MAX_NAME_SIZE = 20;
 enum IO_type
@@ -134,8 +193,6 @@ public:
 
 	}
 };
-
-
 
 class CPlayerInfo
 {
@@ -210,12 +267,14 @@ public:
 	void SetPlayerController(ACharacterController* CharacterController);
 	HANDLE Iocp;
 	Overlapped _recv_over;
-	int      _prev_size = 0;
+
 	SOCKET ServerSocket;
 	char recvBuffer[MAX_BUFFER];
 	FRunnableThread* Thread;
 	FThreadSafeCounter StopTaskCounter;
 
+	int _prev_size = 0;
+	int local_id = -1;
 	bool login_cond = false;
 private:
 	ACharacterController* MyCharacterController;
