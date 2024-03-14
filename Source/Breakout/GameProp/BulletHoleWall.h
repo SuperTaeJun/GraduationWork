@@ -42,6 +42,7 @@ protected:
 
 private:
 
+	FMeshData TransformMeshData(FMeshData& Data, FTransform Transform, bool InPlace, FVector Pivot);
 	void GetMeshDataFromStaticMesh(UStaticMesh* Mesh, FMeshData& Data, int32 LODIndex, int32 SectionIndex, bool GetAllSections);
 	void SetColorData(FMeshData& Data, FLinearColor Color);
 	FMeshData SetRandomVertex(FMeshData& MeshData, float Min, float Max, float Tolerance);

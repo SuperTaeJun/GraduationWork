@@ -8,7 +8,7 @@
 #include "Sound/SoundCue.h"
 #include "Character/CharacterBase.h"
 #include "DrawDebugHelpers.h"
-
+#include "GameProp/BulletHoleWall.h"
 void AShotGun::Fire(const FVector& HitTarget)
 {
 	//AWeaponBase::Fire(HitTarget);
@@ -24,6 +24,7 @@ void AShotGun::Fire(const FVector& HitTarget)
 		FVector Start = SocketTransform.GetLocation();
 
 		TMap<ACharacterBase*, uint32> HitMap;
+		TMap<ABulletHoleWall*, uint32> HitWall;
 		for (uint32 i = 0; i < NumberOfPellets; i++)
 		{
 			/*	FVector End = TraceEndWithScatter(Start, HitTarget);*/
@@ -31,6 +32,7 @@ void AShotGun::Fire(const FVector& HitTarget)
 			WeaponTraceHit(Start, HitTarget, FireHit);
 
 			ACharacterBase* CharacterBase = Cast<ACharacterBase>(FireHit.GetActor());
+			ABulletHoleWall* DamagedWall = Cast<ABulletHoleWall>(FireHit.GetActor());
 			if (CharacterBase && HasAuthority() && InstigatorController)
 			{
 				if (HitMap.Contains(CharacterBase))
@@ -41,6 +43,10 @@ void AShotGun::Fire(const FVector& HitTarget)
 				{
 					HitMap.Emplace(CharacterBase, 1);
 				}
+			}
+			else if (DamagedWall)
+			{
+				DamagedWall->SetBulletHole(FireHit);
 			}
 
 			if (ImpactParticles)

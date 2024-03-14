@@ -46,22 +46,21 @@ void ABulletHoleWall::BeginPlay()
 {
 	Super::BeginPlay();
 
+
 }
 void ABulletHoleWall::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 
 void ABulletHoleWall::SetBulletHole(const FHitResult& SweepResult)
 {
+	//ProceduralMesh->SetWorldLocation(FVector(0.f,0.f,0.f));
 	UE_LOG(LogTemp, Warning, TEXT("BulletHole"));
 	UE_LOG(LogTemp, Warning, TEXT("LOCATION : %s"), *SweepResult.ImpactPoint.ToString());
 	HitLoc = SweepResult.Location;
 	Sphere->SetWorldLocation(HitLoc);
 
-
-	//SetRandomVertex(MeshDataB, -20.f, 20.f, 0.01);
 
 	FTransform ATransform = ProceduralMesh->GetRelativeTransform();
 	FTransform BTransform;
@@ -69,12 +68,15 @@ void ABulletHoleWall::SetBulletHole(const FHitResult& SweepResult)
 	BTransform.SetRotation(ProceduralMesh->GetRelativeTransform().GetRotation());
 	BTransform.SetScale3D(FVector(60.f, 0.2f, 0.2f));
 
-
 	MeshDataA =MeshBoolean(MeshDataA, ATransform, SetRandomVertex(MeshDataB, -20.f, 20.f, 0.001), BTransform);
+	FTransform Temp;
+	Temp.SetLocation(FVector(0.f, 0.f, 0.f) - ProceduralMesh->GetRelativeLocation());
+	Temp.SetRotation(ProceduralMesh->GetComponentQuat());
+	Temp.SetScale3D(FVector(1.f, 1.f, 1.f) / ProceduralMesh->GetRelativeScale3D());
+	TransformMeshData(MeshDataA, Temp, true, FVector(0.f, 0.f, 0.f));
 
 	TArray<FProcMeshTangent> Tangents = {};
 	ProceduralMesh->CreateMeshSection_LinearColor(0, MeshDataA.Verts, MeshDataA.Tris, MeshDataA.Normals, MeshDataA.UVs, MeshDataA.Colors,Tangents, true);
-	
 }
 
 FMeshData ABulletHoleWall::MeshBoolean(FMeshData DataA, FTransform TransformA, FMeshData DataB, FTransform TransformB)
@@ -268,6 +270,61 @@ FTransform3d ABulletHoleWall::ConvertToFTransform3d(FTransform Input)
 									FVector3d(Location.X, Location.Y, Location.Z),
 									FVector3d(Scale.X, Scale.Y, Scale.Z)
 									);
+}
+
+FMeshData ABulletHoleWall::TransformMeshData(FMeshData& Data, FTransform Transform, bool InPlace, FVector Pivot)
+{
+	FMeshData newdata;
+	FMeshData* pres = &newdata;
+	if (InPlace) { pres = &Data; }
+	else { newdata = Data; }
+	FMeshData& res = *pres;
+	const FVector loc = Transform.GetLocation();
+	const FRotator rot = Transform.Rotator();
+	const FVector scale = Transform.GetScale3D();
+	bool skiprot = (rot == FRotator(0.0f, 0.0f, 0.0f));
+	bool skipscale = (scale == FVector(1.0f, 1.0f, 1.0f));
+	bool skippiv = (Pivot == FVector(0.0f, 0.0f, 0.0f));
+	int x = 0, l = res.Verts.Num(), nl = res.Normals.Num();
+	bool hasNormals = (nl >= l);
+	for (x = 0; x < l; ++x) {
+		FVector& v = res.Verts[x];
+		if (skippiv) 
+		{ 
+			if (skipscale) 
+			{
+				if (skiprot) 
+				{
+					v += loc; 
+				} 
+				else 
+				{
+					v = rot.RotateVector(v) + loc; 
+				}
+			}
+			else 
+			{
+				v = rot.RotateVector(v * scale) + loc; 
+			} 
+		}
+		else
+		{
+			if (skipscale)
+			{
+				v = rot.RotateVector((v - Pivot)) + Pivot + loc; 
+			}
+			else 
+			{
+				v = rot.RotateVector(((v - Pivot) * scale)) + Pivot + loc; 
+			}
+		}
+		if (hasNormals) 
+		{
+			if (!skiprot) { FVector& n = res.Normals[x]; n = rot.RotateVector(n); 
+			}
+		}
+	}
+	return newdata;
 }
 
 void ABulletHoleWall::GetMeshDataFromStaticMesh(UStaticMesh* Mesh, FMeshData& Data, int32 LODIndex, int32 SectionIndex, bool GetAllSections)
