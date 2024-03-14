@@ -9,7 +9,9 @@
 #include <WS2tcpip.h>
 #include <fstream>
 #include <map>
+#include <mutex>
 #include <queue>
+#include <vector>
 #include <iostream>
 //#include "Player/CharacterController.h"
 #include "Network/PacketData.h"
@@ -24,6 +26,58 @@ class ClientSocket;
 class ABOGameMode;
 class ACharacterController;
 using namespace std;
+
+
+template<typename T>
+class LockQueue
+{
+public:
+	LockQueue() { }
+
+	LockQueue(const LockQueue&) = delete;
+	LockQueue& operator=(const LockQueue&) = delete;
+
+	void Push(T value)
+	{
+		lock_guard<mutex> lock(_mutex);
+		_queue.push(std::move(value));
+	}
+
+	bool Pop()
+	{
+		lock_guard<mutex> lock(_mutex);
+		if (_queue.empty())
+			return false;
+
+		T ret = std::move(_queue.front());
+		_queue.pop();
+		return true;
+	}
+
+	void PopAll(OUT std::vector<T>& items)
+	{
+		lock_guard<mutex> lock(_mutex);
+		while (T item = Pop()) {
+			_queue.push_back(item);
+		}
+	}
+
+	void Clear()
+	{
+		lock_guard<mutex> lock(_mutex);
+		_queue = std::queue<T>();
+	}
+
+	int Size()
+	{
+		unique_lock<mutex> lock(_mutex);
+		return _queue.size();
+	}
+
+private:
+	std::mutex _mutex;
+	std::queue<T> _queue;
+};
 
 // 플레이어 클래스 
 class CPlayer
@@ -83,12 +137,6 @@ public:
 	}
 };
 
-enum OPTYPE {
-	OP_SEND,
-	OP_RECV,
-};
-
-
 const int buffsize = 1000;
 const int  MAX_NAME_SIZE = 20;
 enum IO_type
@@ -134,8 +182,6 @@ public:
 
 	}
 };
-
-
 
 class CPlayerInfo
 {
@@ -187,7 +233,7 @@ public:
 	bool InitSocket();
 	bool Connect(const char* s_IP, int port);
 	void CloseSocket();
-	
+
 	void PacketProcess(unsigned char* ptr);
 	void Send_Login_Info(char* id, char* pw);
 	void Send_Move_Packet(int sessionID, FVector Location, FRotator Rotation, FVector Velocity);
@@ -210,12 +256,14 @@ public:
 	void SetPlayerController(ACharacterController* CharacterController);
 	HANDLE Iocp;
 	Overlapped _recv_over;
-	int      _prev_size = 0;
+
 	SOCKET ServerSocket;
 	char recvBuffer[MAX_BUFFER];
 	FRunnableThread* Thread;
 	FThreadSafeCounter StopTaskCounter;
 
+	int _prev_size = 0;
+	int local_id = -1;
 	bool login_cond = false;
 private:
 	ACharacterController* MyCharacterController;

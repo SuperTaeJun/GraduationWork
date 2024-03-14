@@ -294,6 +294,7 @@ void ACharacterController::UpdateSyncPlayer()
 			continue;
 		}
 		FVector S_LOCATION;
+		
 		S_LOCATION.X = NewPlayer.front()->X;
 		S_LOCATION.Y = NewPlayer.front()->Y;
 		S_LOCATION.Z = NewPlayer.front()->Z;

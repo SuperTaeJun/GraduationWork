@@ -12,7 +12,7 @@ void USelectCharacterUi::NativeConstruct()
 	Character3Button->OnClicked.AddDynamic(this, &USelectCharacterUi::Character3ButtonPressed);
 	Character4Button->OnClicked.AddDynamic(this, &USelectCharacterUi::Character4ButtonPressed);
 }
-
+// 캐릭터 선택 패킷 보내는 곳
 void USelectCharacterUi::Character1ButtonPressed()
 {
 	Cast<UBOGameInstance>(GetGameInstance())->SetCharacterType(ECharacterType::ECharacter1);
