@@ -543,12 +543,12 @@ enum Move {
 void ACharacterBase::Move(const FInputActionValue& Value)
 {
 	const FVector2D MovementVector = Value.Get<FVector2D>();
-	if (MovementVector.Length() != 0)
+	/*if (MovementVector.Length() != 0)
 	{
 		
 		ACharacterController* PlayerController = Cast<ACharacterController>(GetController());
 		PlayerController->UpdatePlayer(Move_Player);
-	}
+	}*/
 	const FRotator Rotation = Controller->GetControlRotation();
 	const FRotator YawRotaion(0.f, Rotation.Yaw, 0.f);
 
@@ -737,6 +737,7 @@ void ACharacterBase::Tick(float DeltaTime)
 		break;
 	}
 
+	UE_LOG(LogTemp, Warning, TEXT("HHHHHH : %s"),*GetVelocity().ToString());
 
 	UpdateStamina(DeltaTime);
 	UpdateSprintCamera(DeltaTime);
@@ -752,6 +753,7 @@ void ACharacterBase::Tick(float DeltaTime)
 	{
 		PathSorce->SetHiddenInGame(true);
 	}
+	
 }
 
 void ACharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)

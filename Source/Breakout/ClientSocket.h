@@ -103,6 +103,7 @@ public:
 	float VeloX = 0;
 	float VeloY = 0;
 	float VeloZ = 0;
+	float Max_Speed = 400;
 	bool  IsAlive = true;
 	FVector FMyLocation;
 	FVector FMyDirection;
@@ -236,7 +237,7 @@ public:
 
 	void PacketProcess(unsigned char* ptr);
 	void Send_Login_Info(char* id, char* pw);
-	void Send_Move_Packet(int sessionID, FVector Location, FRotator Rotation, FVector Velocity);
+	void Send_Move_Packet(int sessionID, FVector Location, FRotator Rotation, FVector Velocity,float Max_speed);
 	virtual bool Init();
 	virtual uint32 Run();
 	virtual void Stop();

@@ -68,13 +68,13 @@ void ClientSocket::CloseSocket()
 
 void ClientSocket::PacketProcess(unsigned char* ptr)
 {
-	UE_LOG(LogClass, Warning, TEXT("init?"));
+	//UE_LOG(LogClass, Warning, TEXT("init?"));
 	//static bool first_time = true;
 	switch (ptr[1])
 	{
 	case SC_LOGIN_OK: {
 		SC_LOGIN_BACK* packet = reinterpret_cast<SC_LOGIN_BACK*>(ptr);
-		UE_LOG(LogClass, Warning, TEXT("RECV ROGIN?"));
+		//UE_LOG(LogClass, Warning, TEXT("RECV ROGIN?"));
 		login_cond = true;
 		CPlayer player;
 		player.Id = packet->cl_id;
@@ -99,13 +99,13 @@ void ClientSocket::PacketProcess(unsigned char* ptr)
 		info->Z = packet->z;
 		info->Yaw = packet->yaw;
 		//float z = packet->z;
-		UE_LOG(LogClass, Warning, TEXT("recv data"));
+		//UE_LOG(LogClass, Warning, TEXT("recv data"));
 		MyCharacterController->SetNewCharacterInfo(info);
 		break;
 	}
 	case SC_MOVE_PLAYER:
 	{
-		UE_LOG(LogClass, Warning, TEXT("recv move?"));
+		//UE_LOG(LogClass, Warning, TEXT("recv move?"));
 		CS_MOVE_PACKET* packet = reinterpret_cast<CS_MOVE_PACKET*>(ptr);
 		PlayerInfo.players[packet->id].X = packet->x;
 		PlayerInfo.players[packet->id].Y = packet->y;
@@ -114,6 +114,8 @@ void ClientSocket::PacketProcess(unsigned char* ptr)
 		PlayerInfo.players[packet->id].VeloX = packet->vx;
 		PlayerInfo.players[packet->id].VeloY = packet->vy;
 		PlayerInfo.players[packet->id].VeloZ = packet->vz;
+		PlayerInfo.players[packet->id].Max_Speed = packet->Max_speed;
+
 		break;
 	}
 	default:
@@ -139,7 +141,7 @@ void ClientSocket::Send_Login_Info(char* id, char* pw)
 
 }
 
-void ClientSocket::Send_Move_Packet(int sessionID, FVector Location, FRotator Rotation, FVector Velocity)
+void ClientSocket::Send_Move_Packet(int sessionID, FVector Location, FRotator Rotation, FVector Velocity, float Max_speed)
 {
 	if (login_cond) {
 		CS_MOVE_PACKET packet;
@@ -153,6 +155,7 @@ void ClientSocket::Send_Move_Packet(int sessionID, FVector Location, FRotator Ro
 		packet.vx = Velocity.X;
 		packet.vy = Velocity.Y;
 		packet.vz = Velocity.Z;
+		packet.Max_speed = Max_speed;
 		SendPacket(&packet);
 		//UE_LOG(LogClass, Warning, TEXT("send move"));
 	}
@@ -245,7 +248,7 @@ void ClientSocket::RecvPacket()
 
 void ClientSocket::SendPacket(void* packet)
 {
-	UE_LOG(LogClass, Warning, TEXT("send data"));
+	//UE_LOG(LogClass, Warning, TEXT("send data"));
 	int psize = reinterpret_cast<unsigned char*>(packet)[0];
 	Overlapped* ex_over = new Overlapped(IO_SEND, psize, packet);
 	int ret = WSASend(ServerSocket, &ex_over->wsabuf, 1, 0, 0, &ex_over->overlapped, NULL);

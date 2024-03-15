@@ -4,6 +4,7 @@
 #include "Player/CharacterController.h"
 #include "HUD/MainHUD.h"
 #include "HUD/CharacterUi.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "Components/ProgressBar.h"
 #include "Components/TextBlock.h"
 #include "Character/CharacterBase.h"
@@ -188,7 +189,8 @@ void ACharacterController::Tick(float DeltaTime)
 		UpdateSyncPlayer();
 
 	UpdateWorld();
-	
+	//UE_LOG(LogTemp, Warning, TEXT("HHHHHH : %s"), *GetOwner()->GetVelocity().ToString());
+	UpdatePlayer();
 }
 
 void ACharacterController::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -264,9 +266,11 @@ bool ACharacterController::UpdateWorld()
 				PlayerVelocity.Y = info->VeloY;
 				PlayerVelocity.Z = info->VeloZ;
 
+				
 				OtherPlayer->AddMovementInput(PlayerVelocity);
 				OtherPlayer->SetActorRotation(PlayerRotation);
 				OtherPlayer->SetActorLocation(PlayerLocation);
+				OtherPlayer->GetCharacterMovement()->MaxWalkSpeed = info->Max_Speed;
 			}
 			else {
 
@@ -334,17 +338,18 @@ void ACharacterController::UpdateSyncPlayer()
 }
 
 
-void ACharacterController::UpdatePlayer(int input)
+void ACharacterController::UpdatePlayer()
 {
 	auto m_Player = Cast<ACharacterBase>(UGameplayStatics::GetPlayerCharacter(this, 0));
 	//my_session_id = m_Player->_SessionId;
 	auto MyLocation = m_Player->GetActorLocation();
 	auto MyRotation = m_Player->GetActorRotation();
 	auto MyVelocity = m_Player->GetVelocity();
+	auto max_speed = m_Player->GetCharacterMovement()->MaxWalkSpeed;
 	FVector MyCameraLocation;
 	FRotator MyCameraRotation;
 	m_Player->GetActorEyesViewPoint(MyCameraLocation, MyCameraRotation);
-	c_socket->Send_Move_Packet(id, MyLocation, MyRotation, MyVelocity);
+	c_socket->Send_Move_Packet(id, MyLocation, MyRotation, MyVelocity, max_speed);
 	//UE_LOG(LogClass, Warning, TEXT("send move packet"));
 }
 

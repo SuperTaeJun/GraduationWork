@@ -58,7 +58,7 @@ public:
 	//-----------------------------------------------------
 	void SetNewCharacterInfo(std::shared_ptr<CPlayer> InitPlayer);
 
-	void UpdatePlayer(int input);
+	void UpdatePlayer();
 	//동기화 용
 	void UpdateSyncPlayer();
 	bool UpdateWorld();

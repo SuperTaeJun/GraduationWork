@@ -48,6 +48,7 @@ struct CS_MOVE_PACKET
 	unsigned char size;
 	char type;
 	int	id;
+	float Max_speed;
 	float x, y, z;
 	float vx, vy, vz;
 	float yaw;
@@ -63,6 +64,7 @@ struct SC_PLAYER_SYNC {
 	unsigned char size;
 	char type;
 	int id;
+	float Max_speed;
 	float x, y, z;
 	float yaw;
 	char object_type;
