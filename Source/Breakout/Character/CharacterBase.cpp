@@ -36,6 +36,8 @@ ACharacterBase::ACharacterBase()
 
 	GetMesh()->SetRelativeLocationAndRotation(FVector(0.f, 0.f, -90.f), FRotator(0.f, -90.f, 0.f));
 
+	GetMesh()->GetAnimInstance();
+
 	Movement = GetCharacterMovement();
 	Movement->MaxWalkSpeed = 400.f;
 	Movement->bOrientRotationToMovement = false;
