@@ -4,14 +4,17 @@
 #include "HUD/MainHUD.h"
 #include "GameFramework/PlayerController.h"
 #include "HUD/SelectWeaponUi.h"
+#include "HUD/RespawnSelect.h"
 #include "HUD/CharacterUi.h"
 
 void AMainHUD::BeginPlay()
 {
 	APlayerController* PlayerController = GetOwningPlayerController();
-	if(PlayerController)
+	if (PlayerController)
+	{
 		SelectWeapon = CreateWidget<USelectWeaponUi>(PlayerController, SelectWeaponClass);
-
+		RespawnSelectUi = CreateWidget<URespawnSelect>(PlayerController, RespawnSelectUiClass);
+	}
 	AddCharacterOverlay();
 }
 
@@ -81,6 +84,12 @@ void AMainHUD::AddSelectWeapon()
 {
 	if(SelectWeapon)
 		SelectWeapon->AddToViewport();
+}
+
+void AMainHUD::AddSelectRespawn()
+{
+	if (RespawnSelectUi)
+		RespawnSelectUi->AddToViewport();
 }
 
 void AMainHUD::RemoveSelectWeapon()
