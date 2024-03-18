@@ -15,10 +15,23 @@
 #define MAX_CLIENTS		100
 #define MAX_INFO_SIZE   20
 
+enum PlayerType
+{
+	Character1,
+	Character2,
+	Character3,
+	Character4
+};
+enum WeaponType
+{
+	RIFLE,
+	ShotGun,
+	Launcher
+};
 const char CS_LOGIN = 1;
 const char CS_MOVE = 2;
-
-
+const char CS_SELECT_CHAR = 3;
+const char CS_SELECT_WEP = 4;
 const char SC_LOGIN_OK = 1;
 const char SC_OTHER_PLAYER = 2;
 const char SC_MOVE_PLAYER = 3;
@@ -53,12 +66,6 @@ struct CS_MOVE_PACKET
 	float vx, vy, vz;
 	float yaw;
 };
-//struct SC_MOVE_BACK {
-//	unsigned char size;
-//	char type;
-//	int		id;
-//	float x, y, z;
-//};
 //동기화 용 패킷
 struct SC_PLAYER_SYNC {
 	unsigned char size;
@@ -70,8 +77,21 @@ struct SC_PLAYER_SYNC {
 	char object_type;
 	char name[MAX_INFO_SIZE];
 };
-
-
+struct CS_SELECT_CHARACTER
+{
+	unsigned char size;
+	char type;
+	int id;
+	PlayerType character_type;
+};
+struct CS_SELECT_WEAPO
+{
+	unsigned char size;
+	char type;
+	int id;
+	WeaponType weapon_type;
+};
+#pragma pack(pop)
 /**
  * 
  */

@@ -17,7 +17,7 @@ void USelectWeaponUi::NativeConstruct()
 	LancherButton->OnClicked.AddDynamic(this, &USelectWeaponUi::LancherButtonPressed);
 
 }
-
+// 무기 선택 창 패킷 보낼 곳
 void USelectWeaponUi::RifleButtonPressed()
 {
 	UE_LOG(LogTemp, Log, TEXT("RifleButtonPressed"));

@@ -11,28 +11,39 @@ const int  MAX_OBJ = 20;
 
 const char CS_LOGIN = 1;
 const char CS_MOVE = 2;
-
-const char CS_PACKET_ATTACK = 3;
-
-const char CS_PACKET_DAMAGE = 7;
-const char CS_PACKET_GET_ITEM = 8;
-
+const char CS_SELECT_CHAR = 3;
+const char CS_SELECT_WEP = 4;
 
 
 const char SC_LOGIN_OK = 1;
 const char SC_OTHER_PLAYER = 2;
 const char SC_MOVE_PLAYER = 3;
 
-const char SC_PACKET_REMOVE_OBJECT = 4;
 
-const char SC_PACKET_LOGIN_FAIL = 6;
-const char SC_PACKET_STATUS_CHANGE = 7;
-const char SC_PACKET_DISCONNECT = 8;
-const char SC_PACKET_HP = 9;
 
-const char SC_PACKET_ATTACK = 11;
-const char SC_PACKET_GET_ITEM = 12;
 
+//const char SC_PACKET_REMOVE_OBJECT = 4;
+//
+//const char SC_PACKET_LOGIN_FAIL = 6;
+//const char SC_PACKET_STATUS_CHANGE = 7;
+//const char SC_PACKET_DISCONNECT = 8;
+//const char SC_PACKET_HP = 9;
+//
+//const char SC_PACKET_ATTACK = 11;
+//const char SC_PACKET_GET_ITEM = 12;
+enum PlayerType
+{
+	Character1,
+	Character2,
+	Character3,
+	Character4
+};
+enum WeaponType
+{
+	RIFLE,
+	ShotGun,
+	Launcher
+};
 #pragma pack (push, 1)
 struct CS_LOGIN_PACKET
 {
@@ -80,7 +91,23 @@ struct SC_PLAYER_SYNC {
 	char object_type;
 	char name[MAX_INFO_SIZE];
 };
+struct CS_SELECT_CHARACTER
+{
+	unsigned char size;
+	char type;
+	int id;
+	PlayerType character_type;
+};
+struct CS_SELECT_WEAPO
+{
+	unsigned char size;
+	char type;
+	int id;
+	WeaponType weapon_type;
+};
 
+
+//추가 구현 예정
 struct cs_packet_start { // 게임 레디 요청
 	unsigned char size;
 	char	type;
