@@ -6,6 +6,7 @@
 #include "Game/BOGameInstance.h"
 #include "Character/CharacterBase.h"
 #include "GameFramework/PlayerStart.h"
+#include "Kismet/GameplayStatics.h"
 
 ABOGameMode::ABOGameMode()
 {
@@ -38,15 +39,22 @@ void ABOGameMode::Respawn(ACharacter* RespawnedCh, AController* RespawnedControl
 {
 	if (RespawnedCh)
 	{
+
 		RespawnedCh->Reset();
 		RespawnedCh->Destroy();
 	}
 	if (RespawnedController)
 	{
-		TArray<AActor*> PlayerStarts;
-		UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerStart::StaticClass(), PlayerStarts);
-		int32 Selection = FMath::RandRange(0, PlayerStarts.Num() - 1);
-		RestartPlayerAtPlayerStart(RespawnedController, PlayerStarts[Selection]);
+		FName Tagname = FName(TEXT("PlayerStart1"));
+		AActor* PlayerStarts;
+		//AActor* PlayerStarts;
+		//UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerStart::StaticClass(), PlayerStarts);
+		//UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerStart::StaticClass(), PlayerStarts);
+
+		PlayerStarts=FindPlayerStart(RespawnedCh->GetController(), *Tagname.ToString());
+
+		//int32 Selection = FMath::RandRange(0, PlayerStarts.Num() - 1);
+		RestartPlayerAtPlayerStart(RespawnedController, PlayerStarts);
 		//Cast<ACharacterBase>(RespawnedController->GetPawn())->SetWeaponUi(Cast<ACharacterController>(RespawnedController));
 	}
 

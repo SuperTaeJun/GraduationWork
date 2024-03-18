@@ -31,10 +31,17 @@ public:
 	TSubclassOf<class UUserWidget>CharacterUiClass;
 	TObjectPtr<class UCharacterUi> CharacterUi;
 
+	UPROPERTY(EditAnywhere, Category = "Player State")
+	TSubclassOf<class UUserWidget>RespawnSelectUiClass;
+	TObjectPtr<class URespawnSelect> RespawnSelectUi;
+
+
 
 	virtual void DrawHUD() override;
 
 	void AddSelectWeapon();
+	void AddSelectRespawn();
+
 	void RemoveSelectWeapon();
 protected:
 	virtual void BeginPlay() override;
