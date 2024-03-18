@@ -35,7 +35,7 @@ ABOGameMode::ABOGameMode()
 }
 
 
-void ABOGameMode::Respawn(ACharacter* RespawnedCh, AController* RespawnedController)
+void ABOGameMode::Respawn(ACharacter* RespawnedCh, AController* RespawnedController, FName TagName)
 {
 	if (RespawnedCh)
 	{
@@ -45,7 +45,7 @@ void ABOGameMode::Respawn(ACharacter* RespawnedCh, AController* RespawnedControl
 	}
 	if (RespawnedController)
 	{
-		FName Tagname = FName(TEXT("PlayerStart1"));
+		FName Tagname = TagName;
 		AActor* PlayerStarts;
 		//AActor* PlayerStarts;
 		//UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerStart::StaticClass(), PlayerStarts);

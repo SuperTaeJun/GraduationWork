@@ -96,3 +96,8 @@ void AMainHUD::RemoveSelectWeapon()
 {
 	SelectWeapon->RemoveFromParent();
 }
+
+void AMainHUD::RemoveRespawnSelect()
+{
+	RespawnSelectUi->RemoveFromParent();
+}

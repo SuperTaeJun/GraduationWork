@@ -48,6 +48,7 @@ public:
 	void SetHUDCool(int32 Cool);
 	void SetHUDCoolVisibility(bool bVisibility);
 	void showWeaponSelect();
+	void ShowRespawnSelect();
 	// 초기 플레이어 저장
 	void SetPlayerID(const int playerid) { id = playerid; }
 	void SetPlayerInfo(CPlayerInfo* p_info) { 

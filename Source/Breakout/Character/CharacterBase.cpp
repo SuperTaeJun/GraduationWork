@@ -235,6 +235,21 @@ void ACharacterBase::SetWeaponUi()
 
 }
 
+void ACharacterBase::SetRespawnUi()
+{
+	FInputModeUIOnly UiGameInput;
+	if (MainController)
+	{
+		MainController->SetInputMode(UiGameInput);
+		MainController->DisableInput(MainController);
+		//bShowSelectUi = true;
+		MainController->bShowMouseCursor = true;
+		MainController->bEnableMouseOverEvents = true;
+
+		MainController->ShowRespawnSelect();
+	}
+}
+
 void ACharacterBase::SetWeapon(TSubclassOf<class AWeaponBase> Weapon, FName SocketName)
 {
 	if (!CurWeapon)
@@ -373,16 +388,17 @@ void ACharacterBase::ReciveDamage(AActor* DamagedActor, float Damage, const UDam
 
 void ACharacterBase::Dead()
 {
-	ABOGameMode* GameMode = GetWorld()->GetAuthGameMode<ABOGameMode>();
-	if (GameMode)
-	{
-		if (CurWeapon)
-		{
-			CurWeapon->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
-			CurWeapon->Destroy();
-		}
-		GameMode->Respawn(this, MainController);
-	}
+	SetRespawnUi();
+	//ABOGameMode* GameMode = GetWorld()->GetAuthGameMode<ABOGameMode>();
+	//if (GameMode)
+	//{
+	//	if (CurWeapon)
+	//	{
+	//		CurWeapon->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
+	//		CurWeapon->Destroy();
+	//	}
+	//	GameMode->Respawn(this, MainController);
+	//}
 }
 
 

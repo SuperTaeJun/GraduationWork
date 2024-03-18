@@ -67,6 +67,7 @@ protected:
 public:
 	void SetWeapon(TSubclassOf<class AWeaponBase> Weapon, FName SocketName);
 	void SetWeaponUi();
+	void SetRespawnUi();
 	void SetbInRespon(bool _bInRespon) { bInRespon = _bInRespon; }
 	bool GetbInRespon() { return bInRespon; }
 	void SetbShowSelect(bool _bShowSelect) {bShowSelectUi = _bShowSelect;}

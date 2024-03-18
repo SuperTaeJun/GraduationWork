@@ -171,6 +171,14 @@ void ACharacterController::showWeaponSelect()
 	}
 }
 
+void ACharacterController::ShowRespawnSelect()
+{
+	if (MainHUD)
+	{
+		MainHUD->AddSelectRespawn();
+	}
+}
+
 void ACharacterController::InitPlayer()
 {
 	auto my_player = Cast<ACharacterBase>(UGameplayStatics::GetPlayerCharacter(this, 0));
