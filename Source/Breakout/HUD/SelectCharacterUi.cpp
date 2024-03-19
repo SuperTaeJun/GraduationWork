@@ -5,6 +5,9 @@
 #include "Components/Button.h"
 #include "Kismet/GameplayStatics.h"
 #include "Game/BOGameInstance.h"
+#include "Player/CharacterController.h"
+#include "ClientSocket.h"
+#include "Network/PacketData.h"
 void USelectCharacterUi::NativeConstruct()
 {
 	Character1Button->OnClicked.AddDynamic(this, &USelectCharacterUi::Character1ButtonPressed);
@@ -16,7 +19,7 @@ void USelectCharacterUi::NativeConstruct()
 void USelectCharacterUi::Character1ButtonPressed()
 {
 	Cast<UBOGameInstance>(GetGameInstance())->SetCharacterType(ECharacterType::ECharacter1);
-
+	
 	UGameplayStatics::OpenLevel(GetWorld(), TEXT("Testmap"));
 }
 
