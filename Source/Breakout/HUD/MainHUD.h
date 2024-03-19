@@ -43,6 +43,7 @@ public:
 	void AddSelectRespawn();
 
 	void RemoveSelectWeapon();
+	void RemoveRespawnSelect();
 protected:
 	virtual void BeginPlay() override;
 	void AddCharacterOverlay();
