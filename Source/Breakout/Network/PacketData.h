@@ -22,6 +22,7 @@ enum PlayerType
 	Character3,
 	Character4
 };
+
 enum WeaponType
 {
 	RIFLE,

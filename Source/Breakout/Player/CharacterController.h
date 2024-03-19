@@ -9,7 +9,7 @@
 #include "GameFramework/PlayerController.h"
 #include <memory>
 #include "CharacterController.generated.h"
-
+ClientSocket* c_socket = nullptr;
 class CPlayer;
 class ClientSocket;
 class CPlayerInfo;
@@ -51,6 +51,7 @@ public:
 	void ShowRespawnSelect();
 	// 초기 플레이어 저장
 	void SetPlayerID(const int playerid) { id = playerid; }
+	int GetPlayerID() { return id; }
 	void SetPlayerInfo(CPlayerInfo* p_info) { 
 		if (p_info != nullptr) 
 			PlayerInfo = p_info; 
@@ -82,7 +83,7 @@ private:
 	int id;
 	bool bNewPlayerEntered = false;
 	bool bInitPlayerSetting = false;
-	ClientSocket* c_socket;
+	//ClientSocket* c_socket;
 	CPlayerInfo* PlayerInfo;  
 	int p_cnt;
 	bool connect;

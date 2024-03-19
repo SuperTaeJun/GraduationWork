@@ -753,7 +753,7 @@ void ACharacterBase::Tick(float DeltaTime)
 		break;
 	}
 
-	UE_LOG(LogTemp, Warning, TEXT("HHHHHH : %s"),*GetVelocity().ToString());
+	//UE_LOG(LogTemp, Warning, TEXT("HHHHHH : %s"),*GetVelocity().ToString());
 
 	UpdateStamina(DeltaTime);
 	UpdateSprintCamera(DeltaTime);

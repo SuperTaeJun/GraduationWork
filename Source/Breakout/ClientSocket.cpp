@@ -161,6 +161,15 @@ void ClientSocket::Send_Move_Packet(int sessionID, FVector Location, FRotator Ro
 	}
 }
 
+void ClientSocket::Send_Character_Type(PlayerType type)
+{
+	CS_SELECT_CHARACTER packet;
+	packet.size = sizeof(packet);
+	packet.type = CS_SELECT_CHAR;
+	packet.character_type = type;
+	SendPacket(&packet);
+}
+
 bool ClientSocket::Init()
 {
 	return true;

@@ -4,7 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "Player/CharacterController.h"
 #include "SelectCharacterUi.generated.h"
+
 
 /**
  * 
@@ -38,4 +40,6 @@ public:
 	void Character3ButtonPressed();
 	UFUNCTION()
 	void Character4ButtonPressed();
+private:
+	ACharacterController* MyCharacterController;
 };
