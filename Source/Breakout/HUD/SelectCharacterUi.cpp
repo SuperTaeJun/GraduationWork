@@ -5,7 +5,7 @@
 #include "Components/Button.h"
 #include "Kismet/GameplayStatics.h"
 #include "Game/BOGameInstance.h"
-#include "Player/CharacterController.h"
+
 #include "ClientSocket.h"
 #include "Network/PacketData.h"
 void USelectCharacterUi::NativeConstruct()
@@ -19,27 +19,35 @@ void USelectCharacterUi::NativeConstruct()
 void USelectCharacterUi::Character1ButtonPressed()
 {
 	Cast<UBOGameInstance>(GetGameInstance())->SetCharacterType(ECharacterType::ECharacter1);
-	
+	PlayerType type = Character1;
+	c_socket->Send_Character_Type(type);
 	UGameplayStatics::OpenLevel(GetWorld(), TEXT("Testmap"));
+	UE_LOG(LogClass, Warning, TEXT("MY type : %d"), type);
 }
 
 void USelectCharacterUi::Character2ButtonPressed()
 {
 	Cast<UBOGameInstance>(GetGameInstance())->SetCharacterType(ECharacterType::ECharacter2);
-
+	PlayerType type = Character2;
+	c_socket->Send_Character_Type(type);
 	UGameplayStatics::OpenLevel(GetWorld(), TEXT("Testmap"));
+	UE_LOG(LogClass, Warning, TEXT("MY type : %d"), type);
 }
 
 void USelectCharacterUi::Character3ButtonPressed()
 {
 	Cast<UBOGameInstance>(GetGameInstance())->SetCharacterType(ECharacterType::ECharacter3);
-
+	PlayerType type = Character3;
+	c_socket->Send_Character_Type(type);
 	UGameplayStatics::OpenLevel(GetWorld(), TEXT("Testmap"));
+	UE_LOG(LogClass, Warning, TEXT("MY type : %d"), type);
 }
 
 void USelectCharacterUi::Character4ButtonPressed()
 {
 	Cast<UBOGameInstance>(GetGameInstance())->SetCharacterType(ECharacterType::ECharacter4);
-
+	PlayerType type = Character4;
+	c_socket->Send_Character_Type(type);
 	UGameplayStatics::OpenLevel(GetWorld(), TEXT("Testmap"));
+	UE_LOG(LogClass, Warning, TEXT("MY type : %d"), type);
 }

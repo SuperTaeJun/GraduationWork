@@ -48,7 +48,7 @@ bool ClientSocket::Connect(const char* s_IP, int port)
 	SOCKADDR_IN stServerAddr;
 	// 접속할 서버 포트 및 IP
 	stServerAddr.sin_family = AF_INET;
-	::inet_pton(AF_INET, SERVER_IP, &stServerAddr.sin_addr);
+	::inet_pton(AF_INET, s_IP, &stServerAddr.sin_addr);
 	stServerAddr.sin_port = htons(port);
 	stServerAddr.sin_addr.s_addr = inet_addr(s_IP);
 
@@ -159,6 +159,15 @@ void ClientSocket::Send_Move_Packet(int sessionID, FVector Location, FRotator Ro
 		SendPacket(&packet);
 		//UE_LOG(LogClass, Warning, TEXT("send move"));
 	}
+}
+
+void ClientSocket::Send_Character_Type(PlayerType type)
+{
+	CS_SELECT_CHARACTER packet;
+	packet.size = sizeof(packet);
+	packet.type = CS_SELECT_CHAR;
+	packet.character_type = type;
+	SendPacket(&packet);
 }
 
 bool ClientSocket::Init()
