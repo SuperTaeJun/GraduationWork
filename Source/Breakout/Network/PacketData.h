@@ -26,8 +26,8 @@ enum PlayerType
 enum WeaponType
 {
 	RIFLE,
-	ShotGun,
-	Launcher
+	SHOTGUN,
+	LAUNCHER
 };
 const char CS_LOGIN = 1;
 const char CS_MOVE = 2;
@@ -36,6 +36,8 @@ const char CS_SELECT_WEP = 4;
 const char SC_LOGIN_OK = 1;
 const char SC_OTHER_PLAYER = 2;
 const char SC_MOVE_PLAYER = 3;
+const char SC_CHAR_BACK = 4;
+const char SC_WEP_BACK = 5;
 
 #pragma pack (push, 1)
 struct CS_LOGIN_PACKET
@@ -86,6 +88,20 @@ struct CS_SELECT_CHARACTER
 	PlayerType character_type;
 };
 struct CS_SELECT_WEAPO
+{
+	unsigned char size;
+	char type;
+	int id;
+	WeaponType weapon_type;
+};
+struct SC_SELECT_CHARACTER
+{
+	unsigned char size;
+	char type;
+	int id;
+	PlayerType character_type;
+};
+struct SC_SELECT_WEAPO
 {
 	unsigned char size;
 	char type;

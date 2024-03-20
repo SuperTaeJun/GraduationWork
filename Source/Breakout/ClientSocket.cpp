@@ -118,6 +118,12 @@ void ClientSocket::PacketProcess(unsigned char* ptr)
 
 		break;
 	}
+	case SC_CHAR_BACK: {
+		break;
+	}
+	case SC_WEP_BACK: {
+		break;
+	}
 	default:
 		break;
 	}
@@ -167,6 +173,16 @@ void ClientSocket::Send_Character_Type(PlayerType type)
 	packet.size = sizeof(packet);
 	packet.type = CS_SELECT_CHAR;
 	packet.character_type = type;
+	SendPacket(&packet);
+}
+
+void ClientSocket::Send_Weapon_Type(WeaponType type, int id)
+{
+	CS_SELECT_WEAPO packet;
+	packet.size = sizeof(packet);
+	packet.type = CS_SELECT_WEP;
+	packet.id = id;
+	packet.weapon_type = type;
 	SendPacket(&packet);
 }
 
