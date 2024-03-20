@@ -6,8 +6,10 @@
 #include "Weapon/WeaponBase.h"
 #include "GameFramework/PlayerController.h"
 #include "Character/CharacterBase.h"
-#include "Player/CharacterController.h"
+
 #include "MainHUD.h"
+#include "ClientSocket.h"
+#include "Network/PacketData.h"
 void USelectWeaponUi::NativeConstruct()
 {
 	Super::NativeConstruct();
@@ -24,7 +26,9 @@ void USelectWeaponUi::RifleButtonPressed()
 	ACharacterBase* Character=Cast<ACharacterBase>(GetOwningPlayerPawn());
 	ACharacterController* Controller = Cast<ACharacterController>(Character->Controller);
 	AMainHUD* MainHUD = Cast<AMainHUD>(Controller->GetHUD());
-
+	/*WeaponType type = RIFLE;
+	int id = MyCharacterController->GetPlayerID();
+	c_socket->Send_Weapon_Type(type, id);*/
 	FInputModeGameOnly GameOnlyInput;
 	Controller->SetInputMode(GameOnlyInput);
 	MainHUD->RemoveSelectWeapon();
@@ -42,7 +46,10 @@ void USelectWeaponUi::ShotgunButtonPressed()
 	ACharacterBase* Character = Cast<ACharacterBase>(GetOwningPlayerPawn());
 	ACharacterController* Controller = Cast<ACharacterController>(Character->Controller);
 	AMainHUD* MainHUD = Cast<AMainHUD>(Controller->GetHUD());
-
+	//WeaponType type = SHOTGUN;
+	//int id = MyCharacterController->GetPlayerID();
+	//UE_LOG(LogClass, Warning, TEXT("MY ID : %d"), id);
+	//c_socket->Send_Weapon_Type(type, id);
 	FInputModeGameOnly GameOnlyInput;
 	Controller->SetInputMode(GameOnlyInput);
 	MainHUD->RemoveSelectWeapon();
@@ -61,7 +68,9 @@ void USelectWeaponUi::LancherButtonPressed()
 	ACharacterBase* Character = Cast<ACharacterBase>(GetOwningPlayerPawn());
 	ACharacterController* Controller = Cast<ACharacterController>(Character->Controller);
 	AMainHUD* MainHUD = Cast<AMainHUD>(Controller->GetHUD());
-
+	/*WeaponType type = LAUNCHER;
+	int id = MyCharacterController->GetPlayerID();
+	c_socket->Send_Weapon_Type(type, id);*/
 	FInputModeGameOnly GameOnlyInput;
 	Controller->SetInputMode(GameOnlyInput);
 	MainHUD->RemoveSelectWeapon();

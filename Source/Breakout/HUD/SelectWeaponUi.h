@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "Player/CharacterController.h"
 #include "SelectWeaponUi.generated.h"
 
 /**
@@ -41,5 +42,6 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "Combat System", meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<class AWeaponBase> Lancher;
-
+private:
+	ACharacterController* MyCharacterController;
 };

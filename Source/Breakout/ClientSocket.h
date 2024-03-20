@@ -13,14 +13,10 @@
 #include <queue>
 #include <vector>
 #include <iostream>
-//#include "Player/CharacterController.h"
 #include "Network/PacketData.h"
 #include "Windows/PostWindowsApi.h"
 #include "Windows/HideWindowsPlatformTypes.h"
 #include "CoreMinimal.h"
-
-
-
 
 class ClientSocket;
 class ABOGameMode;
@@ -239,6 +235,7 @@ public:
 	void Send_Login_Info(char* id, char* pw);
 	void Send_Move_Packet(int sessionID, FVector Location, FRotator Rotation, FVector Velocity,float Max_speed);
 	void Send_Character_Type(PlayerType type);
+	void Send_Weapon_Type(WeaponType type, int id);
 	virtual bool Init();
 	virtual uint32 Run();
 	virtual void Stop();
