@@ -279,15 +279,11 @@ void ACharacterBase::SetbCanObtainEscapeTool(bool _bCanObtain)
 
 
 
-void ACharacterBase::PlayFireActionMontage(bool bAiming)
+void ACharacterBase::PlayFireActionMontage()
 {
-	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
-	if (AnimInstance && FireActionMontage)
-	{
-		AnimInstance->Montage_Play(FireActionMontage);
-		FName SectionName = FName("RifleHip");
-		AnimInstance->Montage_JumpToSection(SectionName);
-	}
+	if(FireActionMontage)
+		PlayAnimMontage(FireActionMontage,1.5f);
+
 }
 
 void ACharacterBase::GrandeThrow()
@@ -487,7 +483,7 @@ void ACharacterBase::Fire()
 		if (CurWeapon) {
 			CurWeapon->Fire(HitTarget);
 		}
-		PlayFireActionMontage(false);
+		PlayFireActionMontage();
 
 		UGameplayStatics::GetPlayerCameraManager(GetWorld(), 0)->StartCameraShake(UShoot::StaticClass());
 
@@ -513,9 +509,13 @@ void ACharacterBase::TraceUnderCrossHiar(FHitResult& TraceHitResult)
 	{
 		GEngine->GameViewport->GetViewportSize(ViewportSize);
 	}
+	//크로스헤어 뷰포트에서의 좌표
 	FVector2D CrossHairLocation(ViewportSize.X / 2.f, ViewportSize.Y / 2.f);
+
 	FVector CrossHairPostion;
 	FVector CrossHairDirection;
+
+	//주어진 2D 화면 공간 좌표를 3D 세계 공간 지점과 방향으로 변환
 	bool bScreenToWorld = UGameplayStatics::DeprojectScreenToWorld
 	(
 		UGameplayStatics::GetPlayerController(this, 0),
@@ -532,23 +532,24 @@ void ACharacterBase::TraceUnderCrossHiar(FHitResult& TraceHitResult)
 			Start += CrossHairDirection * (DistanceToCharacter + 100.f);
 		}
 
-		FVector End = Start + CrossHairDirection * 10000.f;
-
-		GetWorld()->LineTraceSingleByChannel(
-			TraceHitResult,
-			Start,
-			End,
-			ECollisionChannel::ECC_Visibility
-		);
-
-
-		if (!TraceHitResult.bBlockingHit)
+		if (CurWeapon)
 		{
-			TraceHitResult.ImpactPoint = End;
-		}
-		else
-		{
-			//DrawDebugSphere(GetWorld(), TraceHitResult.ImpactPoint, 12.f, 12, FColor::Red);
+			FVector End = Start + CrossHairDirection * CurWeapon->Range;
+
+			GetWorld()->LineTraceSingleByChannel(
+				TraceHitResult,
+				Start,
+				End,
+				ECollisionChannel::ECC_Visibility
+			);
+			if (!TraceHitResult.bBlockingHit)
+			{
+				TraceHitResult.ImpactPoint = End;
+			}
+			else
+			{
+				//DrawDebugSphere(GetWorld(), TraceHitResult.ImpactPoint, 12.f, 12, FColor::Red);
+			}
 		}
 	}
 	
@@ -761,7 +762,6 @@ void ACharacterBase::Tick(float DeltaTime)
 
 	SetHUDCrosshair(DeltaTime);
 	FHitResult HitResult;
-
 	TraceUnderCrossHiar(HitResult);
 	HitTarget = HitResult.ImpactPoint;
 

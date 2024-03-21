@@ -77,7 +77,7 @@ public:
 	FORCEINLINE float MaxGetHealth() const { return MaxHealth; }
 	FORCEINLINE float GetStamina() const { return Stamina; }
 	FORCEINLINE float MaxGetStamina() const { return MaxStamina; }
-	void PlayFireActionMontage(bool bAiming);
+	void PlayFireActionMontage();
 	FVector GetHitTarget() { return HitTarget; }
 	UFUNCTION()
 	void ReciveDamage(AActor* DamagedActor, float Damage, const UDamageType* DamageType, class AController* InstigatorController, AActor* DamageCauser);
@@ -176,6 +176,7 @@ protected:
 	TObjectPtr<class UTexture2D> CrosshairsTop;
 	UPROPERTY(EditAnywhere, Category = Crosshair)
 	TObjectPtr<class UTexture2D> CrosshairsBottom;
+	//크로스헤어기준으로 사거리만큼 조준했을때 마지막 충돌위치
 	FVector HitTarget;
 
 	//입력값

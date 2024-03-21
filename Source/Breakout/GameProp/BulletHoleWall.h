@@ -16,7 +16,8 @@ class BREAKOUT_API ABulletHoleWall : public AActor
 public:	
 	ABulletHoleWall();
 	virtual void Tick(float DeltaTime) override;
-	void SetBulletHole(const FHitResult& SweepResult);
+	void SetBulletHole(const FVector SweepResult);
+	//void SetBulletHole(const FHitResult& SweepResult);
 	FMeshData MeshBoolean(FMeshData DataA, FTransform TransformA, FMeshData DataB, FTransform TransformB);
 
 	UE::Geometry::FDynamicMesh3 ConvertToFDynamicMesh3(FMeshData& Data);

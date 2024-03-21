@@ -46,7 +46,7 @@ void AShotGun::Fire(const FVector& HitTarget)
 			}
 			else if (DamagedWall)
 			{
-				DamagedWall->SetBulletHole(FireHit);
+				DamagedWall->SetBulletHole(FireHit.ImpactPoint);
 			}
 
 			if (ImpactParticles)
