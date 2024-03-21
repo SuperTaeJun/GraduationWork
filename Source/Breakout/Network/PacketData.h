@@ -46,6 +46,7 @@ struct CS_LOGIN_PACKET
 	char type;
 	char id[MAX_INFO_SIZE];
 	char pw[MAX_INFO_SIZE];
+	float x, y;
 	float z;
 
 };

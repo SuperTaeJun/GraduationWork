@@ -141,6 +141,8 @@ void ClientSocket::Send_Login_Info(char* id, char* pw)
 	auto player= Cast<ACharacterBase>(UGameplayStatics::GetPlayerCharacter(MyCharacterController, 0));
 	//cs_login_packet
 	auto location = player->GetActorLocation();
+	packet.x = location.X;
+	packet.y = location.Y;
 	packet.z = location.Z;
 	SendPacket(&packet);
 	//UE_LOG(LogClass, Warning, TEXT("Sending login info - id: %s, pw: %s"), ANSI_TO_TCHAR(id), ANSI_TO_TCHAR(pw));
@@ -195,12 +197,13 @@ uint32 ClientSocket::Run()
 	FPlatformProcess::Sleep(0.03);
 	//Connect();
 	//Send_Login_Info();
-
+	unsigned char buffer[10000];
+	PacketProcess(buffer);
 	FPlatformProcess::Sleep(0.03);
 	while (StopTaskCounter.GetValue() == 0 && MyCharacterController != nullptr)
 	{
 		// 블로킹 소켓을 이용하여 패킷 수신
-		unsigned char buffer[10000];
+
 		int receivedBytes = recv(ServerSocket, reinterpret_cast<char*>(buffer), 10000, 0);
 
 		if (receivedBytes > 0)
