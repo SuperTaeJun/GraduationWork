@@ -44,6 +44,10 @@ private:
 
 	UPROPERTY(EditAnywhere, Category = "Weapon Properties")
 	float Firerate=0.15;
+
+public:
+	UPROPERTY(EditAnywhere, Category = "Weapon Properties")
+	float Range = 1500.f;
 protected:
 	virtual void BeginPlay() override;
 
@@ -56,9 +60,14 @@ protected:
 	UPROPERTY(EditAnywhere)
 	class UParticleSystem* ImpactParticles;
 
+	UPROPERTY(EditAnywhere)
+	class UNiagaraSystem* ImpactNiagara;
+
 	//총알 따라가는 파티클
 	UPROPERTY(EditAnywhere)
-	UParticleSystem* BeamParticles;
+	class UParticleSystem* BeamParticles;
+	UPROPERTY(EditAnywhere)
+	class UNiagaraSystem* BeamNiagara;
 public:
 	FORCEINLINE USkeletalMeshComponent* GetWeaponMesh() const { return WeaponMesh; }
 

@@ -53,12 +53,9 @@ void ABulletHoleWall::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
-void ABulletHoleWall::SetBulletHole(const FHitResult& SweepResult)
+void ABulletHoleWall::SetBulletHole(const FVector SweepResult)
 {
-	//ProceduralMesh->SetWorldLocation(FVector(0.f,0.f,0.f));
-	UE_LOG(LogTemp, Warning, TEXT("BulletHole"));
-	UE_LOG(LogTemp, Warning, TEXT("LOCATION : %s"), *SweepResult.ImpactPoint.ToString());
-	HitLoc = SweepResult.Location;
+	HitLoc = SweepResult;
 	Sphere->SetWorldLocation(HitLoc);
 
 

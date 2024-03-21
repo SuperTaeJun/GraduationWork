@@ -11,8 +11,10 @@
 #include "particles/ParticleSystemComponent.h"
 #include "Character/CharacterBase.h"
 #include "GameProp/BulletHoleWall.h"
+#include "NiagaraFunctionLibrary.h"
+#include "NiagaraComponent.h"
 
-#define TRACE_LENGTH 10000.f
+//#define TRACE_LENGTH 1000.f
 
 AWeaponBase::AWeaponBase()
 {
@@ -38,21 +40,21 @@ FVector AWeaponBase::TraceEndWithScatter(const FVector& TraceStart, const FVecto
 	//UE_LOG(LogTemp, Log, TEXT("TRACE"));
 	FVector ToTargetNormalized = (HitTarget - TraceStart).GetSafeNormal();
 	FVector SphereCenter = TraceStart + ToTargetNormalized * DistanceToSphere;
-	FVector RandVec = UKismetMathLibrary::RandomUnitVector() * FMath::FRandRange(0.f, SphereRadius);
-	FVector EndLoc = SphereCenter + RandVec;
+	FVector RandVector = UKismetMathLibrary::RandomUnitVector() * FMath::FRandRange(0.f, SphereRadius);
+	FVector EndLoc = SphereCenter + RandVector;
 	FVector ToEndLoc = EndLoc - TraceStart;
 
-	DrawDebugSphere(GetWorld(), SphereCenter, SphereRadius, 12, FColor::Red, false, 0.5f);
-	DrawDebugSphere(GetWorld(), EndLoc, 4.f, 12, FColor::Orange, false, 0.5f);
-	DrawDebugLine(
-		GetWorld(),
-		TraceStart,
-		FVector(TraceStart + ToEndLoc * TRACE_LENGTH / ToEndLoc.Size()),
-		FColor::Cyan,
-		false,
-		0.5f);
+	//DrawDebugSphere(GetWorld(), SphereCenter, SphereRadius, 12, FColor::Red, false, 0.5f);
+	//DrawDebugSphere(GetWorld(), EndLoc, 4.f, 12, FColor::Orange, false, 0.5f);
+	//DrawDebugLine(
+	//	GetWorld(),
+	//	TraceStart,
+	//	FVector(TraceStart + ToEndLoc * TRACE_LENGTH / ToEndLoc.Size()),
+	//	FColor::Cyan,
+	//	false,
+	//	0.5f);
 
-	return FVector(TraceStart + ToEndLoc * TRACE_LENGTH / ToEndLoc.Size());
+	return FVector(TraceStart + ToEndLoc * Range / ToEndLoc.Size());
 }
 
 void AWeaponBase::WeaponTraceHit(const FVector& TraceStart, const FVector& HitTarget, FHitResult& OutHit)
@@ -63,17 +65,46 @@ void AWeaponBase::WeaponTraceHit(const FVector& TraceStart, const FVector& HitTa
 	{
 		FVector End = bUseScatter ? TraceEndWithScatter(TraceStart, HitTarget) : TraceStart + (HitTarget - TraceStart) * 1.25f;
 
-		World->LineTraceSingleByChannel(
+		World->LineTraceSingleByChannel
+		(
 			OutHit,
 			TraceStart,
 			End,
 			ECollisionChannel::ECC_Visibility
 		);
+		//DrawDebugLine
+		//(
+		//	World,
+		//	TraceStart,
+		//	End,
+		//	FColor::Cyan,
+		//	false,
+		//	0.5f
+		//);
+
 		FVector BeamEnd = End;
 		if (OutHit.bBlockingHit)
 		{
 			BeamEnd = OutHit.ImpactPoint;
 		}
+		if (BeamNiagara)
+		{
+			UNiagaraComponent* Beam = UNiagaraFunctionLibrary::SpawnSystemAtLocation(
+				World,
+				BeamNiagara,
+				TraceStart,
+				FRotator::ZeroRotator,
+				FVector(1.f),
+				true
+			);
+
+			if (Beam)
+			{
+				Beam->SetVectorParameter(FName("End"), BeamEnd);
+			}
+
+		}
+
 		if (BeamParticles)
 		{
 			UParticleSystemComponent* Beam = UGameplayStatics::SpawnEmitterAtLocation(
@@ -104,11 +135,11 @@ void AWeaponBase::Fire(const FVector& HitTarget)
 	if (OwnerPawn == nullptr) return;
 	AController* InstigatorController = OwnerPawn->GetController();
 
-	const USkeletalMeshSocket* MuzzleFlashSocket = GetWeaponMesh()->GetSocketByName("MuzzleFlash");
-	if (MuzzleFlashSocket && InstigatorController)
+	const USkeletalMeshSocket* MuzzleSocket = GetWeaponMesh()->GetSocketByName("MuzzleFlash");
+	if (MuzzleSocket && InstigatorController)
 	{
 		//UE_LOG(LogTemp, Log, TEXT("TTEST"));
-		FTransform SocketTransform = MuzzleFlashSocket->GetSocketTransform(GetWeaponMesh());
+		FTransform SocketTransform = MuzzleSocket->GetSocketTransform(GetWeaponMesh());
 		FVector Start = SocketTransform.GetLocation();
 
 		FHitResult FireHit;
@@ -118,12 +149,6 @@ void AWeaponBase::Fire(const FVector& HitTarget)
 		UWorld* World = GetWorld();
 		if (World)
 		{
-			/*	World->LineTraceSingleByChannel(
-					FireHit,
-					Start,
-					End,
-					ECollisionChannel::ECC_Visibility
-				);*/
 			if (FireHit.bBlockingHit)
 			{
 				ACharacterBase* DamagedCharacter = Cast<ACharacterBase>(FireHit.GetActor());
@@ -144,17 +169,19 @@ void AWeaponBase::Fire(const FVector& HitTarget)
 				}
 				else if (DamagedWall)
 				{
-					DamagedWall->SetBulletHole(FireHit);
+					DamagedWall->SetBulletHole(FireHit.ImpactPoint);
 				}
-				if (ImpactParticles)
+				if (ImpactNiagara)
 				{
-					UGameplayStatics::SpawnEmitterAtLocation(
+					UNiagaraFunctionLibrary::SpawnSystemAtLocation
+					(
 						World,
-						ImpactParticles,
+						ImpactNiagara,
 						FireHit.ImpactPoint,
 						FireHit.ImpactNormal.Rotation()
 					);
 				}
+
 			}
 		}
 	}
