@@ -75,7 +75,7 @@ public:
 
 	// 스폰시킬 다른 캐릭터
 	UPROPERTY(EditAnywhere, Category = "Spawning")
-	TSubclassOf<class ACharacter> ToSpawn;
+	TSubclassOf<class ACharacterBase> ToSpawn;
 
 	virtual void OnPossess(APawn* InPawn) override;
 private:
