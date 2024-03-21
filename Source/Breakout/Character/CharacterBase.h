@@ -227,7 +227,8 @@ protected:
 	void SelectGrande(const FInputActionValue& Value);
 	void SelectWall(const FInputActionValue& Value);
 	void SelectTrap(const FInputActionValue& Value);
-	void Custom_Jump(const FInputActionValue& Value);
+	virtual void Jump(const FInputActionValue& Value);
+	virtual void StopJump(const FInputActionValue& Value);
 	virtual void Skill_S(const FInputActionValue& Value);
 	virtual void Skill_E(const FInputActionValue& Value);
 };

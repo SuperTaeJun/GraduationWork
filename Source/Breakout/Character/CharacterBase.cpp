@@ -713,10 +713,18 @@ void ACharacterBase::SelectTrap(const FInputActionValue& Value)
 	//UI연결해야함
 }
 
-void ACharacterBase::Custom_Jump(const FInputActionValue& Value)
+void ACharacterBase::Jump(const FInputActionValue& Value)
 {
-	if(CanJump)
+	if (CanJump)
 		Super::Jump();
+
+	CanJump = false;
+
+}
+
+void ACharacterBase::StopJump(const FInputActionValue& Value)
+{
+	Super::StopJumping();
 }
 
 void ACharacterBase::Skill_S(const FInputActionValue& Value)
@@ -754,6 +762,11 @@ void ACharacterBase::Tick(float DeltaTime)
 		break;
 	}
 
+	if (!Movement->IsFalling())
+	{
+		CanJump = true;
+	}
+
 	//UE_LOG(LogTemp, Warning, TEXT("HHHHHH : %s"),*GetVelocity().ToString());
 
 	UpdateStamina(DeltaTime);
@@ -780,7 +793,8 @@ void ACharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	{
 		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ACharacterBase::Move);// trigger 매 틱마다
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ACharacterBase::Look);
-		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Triggered, this, &ACharacterBase::Custom_Jump);
+		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &ACharacterBase::Jump);
+		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &ACharacterBase::StopJump);
 		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Triggered, this, &ACharacterBase::Sprint_S);
 		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Completed, this, &ACharacterBase::Sprint_E);
 		EnhancedInputComponent->BindAction(InterAction, ETriggerEvent::Triggered, this, &ACharacterBase::Inter);
