@@ -11,6 +11,7 @@
 #include "Character/Character1.h"
 #include "Components/Image.h"
 #include "Game/BOGameInstance.h"
+#include "Network/PacketData.h"
 #include <string>
 #include "ClientSocket.h"
 
@@ -41,7 +42,27 @@ void ACharacterController::BeginPlay()
 		UE_LOG(LogClass, Warning, TEXT("IOCP Server connect success!"));
 		FString c_id = "testuser";
 		FString c_pw = "1234";
-		c_socket->Send_Login_Info(TCHAR_TO_UTF8(*c_id), TCHAR_TO_UTF8(*c_pw));
+		switch (Cast<UBOGameInstance>(GetGameInstance())->GetCharacterType())
+		{
+		case ECharacterType::ECharacter1:
+
+			c_socket->Send_Login_Info(TCHAR_TO_UTF8(*c_id), TCHAR_TO_UTF8(*c_pw), PlayerType::Character1);
+			break;
+		case ECharacterType::ECharacter2:
+			c_socket->Send_Login_Info(TCHAR_TO_UTF8(*c_id), TCHAR_TO_UTF8(*c_pw), PlayerType::Character2);
+			break;
+		case ECharacterType::ECharacter3:
+			c_socket->Send_Login_Info(TCHAR_TO_UTF8(*c_id), TCHAR_TO_UTF8(*c_pw), PlayerType::Character3);
+			break;
+		case ECharacterType::ECharacter4:
+			c_socket->Send_Login_Info(TCHAR_TO_UTF8(*c_id), TCHAR_TO_UTF8(*c_pw), PlayerType::Character4);
+			break;
+		default:
+			c_socket->Send_Login_Info(TCHAR_TO_UTF8(*c_id), TCHAR_TO_UTF8(*c_pw), PlayerType::Character1);
+			break;
+		}
+	
+		
 	}
 	else
 	{
@@ -323,6 +344,31 @@ void ACharacterController::UpdateSyncPlayer()
 			S_LOCATION, S_ROTATOR, SpawnActor);
 		SpawnCharacter->SpawnDefaultController();
 		SpawnCharacter->_SessionId = NewPlayer.front()->Id;
+		
+		switch (NewPlayer.front()->p_type)
+		{
+		case PlayerType::Character1:
+			if (SkMeshAsset1)
+				SpawnCharacter->GetMesh()->SetSkeletalMesh(SkMeshAsset1);
+			break;
+		case  PlayerType::Character2:
+			if (SkMeshAsset2)
+				SpawnCharacter->GetMesh()->SetSkeletalMesh(SkMeshAsset2);
+			break;
+		case  PlayerType::Character3:
+			if (SkMeshAsset3)
+				SpawnCharacter->GetMesh()->SetSkeletalMesh(SkMeshAsset3);
+			break;
+		case  PlayerType::Character4:
+			if (SkMeshAsset4)
+				SpawnCharacter->GetMesh()->SetSkeletalMesh(SkMeshAsset4);
+			break;
+		default:
+			if (SkMeshAsset1)
+				SpawnCharacter->GetMesh()->SetSkeletalMesh(SkMeshAsset1);
+			break;
+		}
+
 		if (PlayerInfo != nullptr)
 		{
 			CPlayer info;

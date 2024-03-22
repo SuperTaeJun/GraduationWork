@@ -29,6 +29,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TObjectPtr<class UNiagaraComponent> NiagaraComp;
 private:
+	/*UPROPERTY(EditAnywhere)
+	TObjectPtr<USkeletalMesh> SkMeshAsset;*/
+
 	TDoubleLinkedList<FCharacterFrameData> FrameDatas;
 	void StoreFrameData(float DeltaTime);
 	void Replay(float DeltaTime);
@@ -49,6 +52,7 @@ private:
 	float RecordedCoolTime = 0.f;
 
 	void UpdateHUDCool(float Cool, float MaxCool);
+	
 };
 
 USTRUCT(BluePrintType)

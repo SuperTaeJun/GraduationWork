@@ -24,6 +24,15 @@ class BREAKOUT_API ACharacterController : public APlayerController
 protected:
 	virtual void BeginPlay() override;
 
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<USkeletalMesh> SkMeshAsset1;
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<USkeletalMesh> SkMeshAsset2;
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<USkeletalMesh> SkMeshAsset3;
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<USkeletalMesh> SkMeshAsset4;
+
 public:
 	ACharacterController();
 	CPlayer initplayer;

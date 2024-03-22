@@ -48,6 +48,7 @@ struct CS_LOGIN_PACKET
 	char pw[MAX_INFO_SIZE];
 	float x, y;
 	float z;
+	PlayerType p_type;
 
 };
 struct SC_LOGIN_BACK {
@@ -59,6 +60,7 @@ struct SC_LOGIN_BACK {
 	float x, y, z;
 	float yaw;
 	int cl_id;
+	PlayerType p_type;
 };
 struct CS_MOVE_PACKET
 {
@@ -80,6 +82,7 @@ struct SC_PLAYER_SYNC {
 	float yaw;
 	char object_type;
 	char name[MAX_INFO_SIZE];
+	PlayerType p_type;
 };
 struct CS_SELECT_CHARACTER
 {
