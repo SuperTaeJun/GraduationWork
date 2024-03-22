@@ -11,6 +11,7 @@
 #include "Character/Character1.h"
 #include "Components/Image.h"
 #include "Game/BOGameInstance.h"
+#include "Network/PacketData.h"
 #include <string>
 #include "ClientSocket.h"
 
@@ -22,8 +23,10 @@ ACharacterController::ACharacterController()
 
 	p_cnt = -1;
 	bNewPlayerEntered = false;
+	bNewWeaponEntered = false;
 	bInitPlayerSetting = false;
 	PrimaryActorTick.bCanEverTick = true;
+	Set_Weapon = false;
 }
 
 void ACharacterController::BeginPlay()
@@ -41,7 +44,27 @@ void ACharacterController::BeginPlay()
 		UE_LOG(LogClass, Warning, TEXT("IOCP Server connect success!"));
 		FString c_id = "testuser";
 		FString c_pw = "1234";
-		c_socket->Send_Login_Info(TCHAR_TO_UTF8(*c_id), TCHAR_TO_UTF8(*c_pw));
+		switch (Cast<UBOGameInstance>(GetGameInstance())->GetCharacterType())
+		{
+		case ECharacterType::ECharacter1:
+
+			c_socket->Send_Login_Info(TCHAR_TO_UTF8(*c_id), TCHAR_TO_UTF8(*c_pw), PlayerType::Character1);
+			break;
+		case ECharacterType::ECharacter2:
+			c_socket->Send_Login_Info(TCHAR_TO_UTF8(*c_id), TCHAR_TO_UTF8(*c_pw), PlayerType::Character2);
+			break;
+		case ECharacterType::ECharacter3:
+			c_socket->Send_Login_Info(TCHAR_TO_UTF8(*c_id), TCHAR_TO_UTF8(*c_pw), PlayerType::Character3);
+			break;
+		case ECharacterType::ECharacter4:
+			c_socket->Send_Login_Info(TCHAR_TO_UTF8(*c_id), TCHAR_TO_UTF8(*c_pw), PlayerType::Character4);
+			break;
+		default:
+			c_socket->Send_Login_Info(TCHAR_TO_UTF8(*c_id), TCHAR_TO_UTF8(*c_pw), PlayerType::Character1);
+			break;
+		}
+	
+		
 	}
 	else
 	{
@@ -195,7 +218,8 @@ void ACharacterController::Tick(float DeltaTime)
 	//새 플레이어 스폰
 	if (bNewPlayerEntered)
 		UpdateSyncPlayer();
-
+	if (bNewWeaponEntered)
+		UpdateWeaponMesh();
 	UpdateWorld();
 	//UE_LOG(LogTemp, Warning, TEXT("HHHHHH : %s"), *GetOwner()->GetVelocity().ToString());
 	UpdatePlayer();
@@ -213,6 +237,7 @@ void ACharacterController::SetInitPlayerInfo(const CPlayer &owner_player)
 	UE_LOG(LogClass, Warning, TEXT("SetInitPlayerInfo"));
 	initplayer = owner_player;
 	bInitPlayerSetting = true;
+	//Set_Weapon = true;
 }
 void ACharacterController::SetNewCharacterInfo(std::shared_ptr<CPlayer> InitPlayer)
 {
@@ -220,6 +245,14 @@ void ACharacterController::SetNewCharacterInfo(std::shared_ptr<CPlayer> InitPlay
 		bNewPlayerEntered = true;
 		NewPlayer.push(InitPlayer);
 		UE_LOG(LogTemp, Warning, TEXT("The value of size_: %d"), NewPlayer.size());
+	}
+}
+void ACharacterController::SetNewWeaponMesh(std::shared_ptr<CPlayer> InitPlayer)
+{
+	if (InitPlayer != nullptr) {
+		bNewWeaponEntered = true;
+		NewPlayer.push(InitPlayer);
+		
 	}
 }
 
@@ -274,11 +307,26 @@ bool ACharacterController::UpdateWorld()
 				PlayerVelocity.Y = info->VeloY;
 				PlayerVelocity.Z = info->VeloZ;
 
-				
+				if (info->w_type == WeaponType::RIFLE)
+				{
+					FName RifleSocketName = FName("RifleSocket");
+					OtherPlayer->SetWeapon(Rifle, RifleSocketName);
+				}
+				else if (info->w_type == WeaponType::SHOTGUN)
+				{
+					FName ShotgunSocketName = FName("ShotgunSocket");
+					OtherPlayer->SetWeapon(ShotGun, ShotgunSocketName);
+				}
+				else if (info->w_type == WeaponType::LAUNCHER)
+				{
+					FName LancherSocketName = FName("LancherSocket");
+					OtherPlayer->SetWeapon(Lancher, LancherSocketName);
+				}
 				OtherPlayer->AddMovementInput(PlayerVelocity);
 				OtherPlayer->SetActorRotation(PlayerRotation);
 				OtherPlayer->SetActorLocation(PlayerLocation);
 				OtherPlayer->GetCharacterMovement()->MaxWalkSpeed = info->Max_Speed;
+
 			}
 			else {
 
@@ -305,24 +353,130 @@ void ACharacterController::UpdateSyncPlayer()
 			NewPlayer.pop();
 			continue;
 		}
-		FVector S_LOCATION;
-		
-		S_LOCATION.X = NewPlayer.front()->X;
-		S_LOCATION.Y = NewPlayer.front()->Y;
-		S_LOCATION.Z = NewPlayer.front()->Z;
-		FRotator S_ROTATOR;
-		S_ROTATOR.Yaw = NewPlayer.front()->Yaw;
-		S_ROTATOR.Pitch = 0.0f;
-		S_ROTATOR.Roll = 0.0f;
-		FActorSpawnParameters SpawnActor;
-		SpawnActor.Owner = this;
-		SpawnActor.Instigator = GetInstigator();
-		SpawnActor.Name = FName(*FString(to_string(NewPlayer.front()->Id).c_str()));
-		ToSpawn = ACharacterBase::StaticClass();
-		ACharacterBase* SpawnCharacter = world->SpawnActor<ACharacterBase>(ToSpawn,
-			S_LOCATION, S_ROTATOR, SpawnActor);
-		SpawnCharacter->SpawnDefaultController();
-		SpawnCharacter->_SessionId = NewPlayer.front()->Id;
+		switch (NewPlayer.front()->p_type)
+		{
+		case PlayerType::Character1:
+			if (SkMeshAsset1) {
+				FVector S_LOCATION;
+				S_LOCATION.X = NewPlayer.front()->X;
+				S_LOCATION.Y = NewPlayer.front()->Y;
+				S_LOCATION.Z = NewPlayer.front()->Z;
+				FRotator S_ROTATOR;
+				S_ROTATOR.Yaw = NewPlayer.front()->Yaw;
+				S_ROTATOR.Pitch = 0.0f;
+				S_ROTATOR.Roll = 0.0f;
+				FActorSpawnParameters SpawnActor;
+				SpawnActor.Owner = this;
+				SpawnActor.Instigator = GetInstigator();
+				SpawnActor.Name = FName(*FString(to_string(NewPlayer.front()->Id).c_str()));
+				ToSpawn = ACharacter1::StaticClass();
+				ACharacter1* SpawnCharacter = world->SpawnActor<ACharacter1>(ToSpawn,
+					S_LOCATION, S_ROTATOR, SpawnActor);
+				SpawnCharacter->SpawnDefaultController();
+				SpawnCharacter->_SessionId = NewPlayer.front()->Id;
+				SpawnCharacter->GetMesh()->SetSkeletalMesh(SkMeshAsset1);
+				if(Anim1)
+					SpawnCharacter->GetMesh()->SetAnimClass(Anim1);
+			}
+			break;
+		case  PlayerType::Character2:
+			if (SkMeshAsset2) {
+				FVector S_LOCATION;
+				S_LOCATION.X = NewPlayer.front()->X;
+				S_LOCATION.Y = NewPlayer.front()->Y;
+				S_LOCATION.Z = NewPlayer.front()->Z;
+				FRotator S_ROTATOR;
+				S_ROTATOR.Yaw = NewPlayer.front()->Yaw;
+				S_ROTATOR.Pitch = 0.0f;
+				S_ROTATOR.Roll = 0.0f;
+				FActorSpawnParameters SpawnActor;
+				SpawnActor.Owner = this;
+				SpawnActor.Instigator = GetInstigator();
+				SpawnActor.Name = FName(*FString(to_string(NewPlayer.front()->Id).c_str()));
+				ToSpawn = ACharacter1::StaticClass();
+				ACharacter1* SpawnCharacter = world->SpawnActor<ACharacter1>(ToSpawn,
+					S_LOCATION, S_ROTATOR, SpawnActor);
+				SpawnCharacter->SpawnDefaultController();
+				SpawnCharacter->_SessionId = NewPlayer.front()->Id;
+				SpawnCharacter->GetMesh()->SetSkeletalMesh(SkMeshAsset2);
+				if (Anim2)
+					SpawnCharacter->GetMesh()->SetAnimClass(Anim2);
+			}
+			break;
+		case  PlayerType::Character3:
+			if (SkMeshAsset3) {
+				FVector S_LOCATION;
+				S_LOCATION.X = NewPlayer.front()->X;
+				S_LOCATION.Y = NewPlayer.front()->Y;
+				S_LOCATION.Z = NewPlayer.front()->Z;
+				FRotator S_ROTATOR;
+				S_ROTATOR.Yaw = NewPlayer.front()->Yaw;
+				S_ROTATOR.Pitch = 0.0f;
+				S_ROTATOR.Roll = 0.0f;
+				FActorSpawnParameters SpawnActor;
+				SpawnActor.Owner = this;
+				SpawnActor.Instigator = GetInstigator();
+				SpawnActor.Name = FName(*FString(to_string(NewPlayer.front()->Id).c_str()));
+				ToSpawn = ACharacter1::StaticClass();
+				ACharacter1* SpawnCharacter = world->SpawnActor<ACharacter1>(ToSpawn,
+					S_LOCATION, S_ROTATOR, SpawnActor);
+				SpawnCharacter->SpawnDefaultController();
+				SpawnCharacter->_SessionId = NewPlayer.front()->Id;
+				SpawnCharacter->GetMesh()->SetSkeletalMesh(SkMeshAsset3);
+				if (Anim3)
+					SpawnCharacter->GetMesh()->SetAnimClass(Anim3);
+			}
+			break;
+		case  PlayerType::Character4:
+			if (SkMeshAsset4) {
+				FVector S_LOCATION;
+				S_LOCATION.X = NewPlayer.front()->X;
+				S_LOCATION.Y = NewPlayer.front()->Y;
+				S_LOCATION.Z = NewPlayer.front()->Z;
+				FRotator S_ROTATOR;
+				S_ROTATOR.Yaw = NewPlayer.front()->Yaw;
+				S_ROTATOR.Pitch = 0.0f;
+				S_ROTATOR.Roll = 0.0f;
+				FActorSpawnParameters SpawnActor;
+				SpawnActor.Owner = this;
+				SpawnActor.Instigator = GetInstigator();
+				SpawnActor.Name = FName(*FString(to_string(NewPlayer.front()->Id).c_str()));
+				ToSpawn = ACharacter1::StaticClass();
+				ACharacter1* SpawnCharacter = world->SpawnActor<ACharacter1>(ToSpawn,
+					S_LOCATION, S_ROTATOR, SpawnActor);
+				SpawnCharacter->SpawnDefaultController();
+				SpawnCharacter->_SessionId = NewPlayer.front()->Id;
+				SpawnCharacter->GetMesh()->SetSkeletalMesh(SkMeshAsset4);
+				if (Anim4)
+					SpawnCharacter->GetMesh()->SetAnimClass(Anim4);
+			}
+			break;
+		default:
+			if (SkMeshAsset1) {
+				FVector S_LOCATION;
+				S_LOCATION.X = NewPlayer.front()->X;
+				S_LOCATION.Y = NewPlayer.front()->Y;
+				S_LOCATION.Z = NewPlayer.front()->Z;
+				FRotator S_ROTATOR;
+				S_ROTATOR.Yaw = NewPlayer.front()->Yaw;
+				S_ROTATOR.Pitch = 0.0f;
+				S_ROTATOR.Roll = 0.0f;
+				FActorSpawnParameters SpawnActor;
+				SpawnActor.Owner = this;
+				SpawnActor.Instigator = GetInstigator();
+				SpawnActor.Name = FName(*FString(to_string(NewPlayer.front()->Id).c_str()));
+				ToSpawn = ACharacter1::StaticClass();
+				ACharacter1* SpawnCharacter = world->SpawnActor<ACharacter1>(ToSpawn,
+					S_LOCATION, S_ROTATOR, SpawnActor);
+				SpawnCharacter->SpawnDefaultController();
+				SpawnCharacter->_SessionId = NewPlayer.front()->Id;
+				SpawnCharacter->GetMesh()->SetSkeletalMesh(SkMeshAsset1);
+				if (Anim1)
+					SpawnCharacter->GetMesh()->SetAnimClass(Anim1);
+			}
+			break;
+		}
+
 		if (PlayerInfo != nullptr)
 		{
 			CPlayer info;
@@ -343,6 +497,10 @@ void ACharacterController::UpdateSyncPlayer()
 		NewPlayer.pop();
 	}
 	bNewPlayerEntered = false;
+}
+void ACharacterController::UpdateSyncWeapon()
+{
+	
 }
 //void ACharacterController::UpdateSyncPlayer()
 //{
@@ -418,6 +576,29 @@ void ACharacterController::UpdatePlayer()
 	m_Player->GetActorEyesViewPoint(MyCameraLocation, MyCameraRotation);
 	c_socket->Send_Move_Packet(id, MyLocation, MyRotation, MyVelocity, max_speed);
 	//UE_LOG(LogClass, Warning, TEXT("send move packet"));
+}
+
+void ACharacterController::Set_Weapon_Type(EWeaponType Type)
+{
+	switch (Type)
+	{
+	case EWeaponType::E_Rifle:
+		c_socket->Send_Weapon_Type(WeaponType::RIFLE, id);
+		break;
+	case EWeaponType::E_Shotgun:
+		c_socket->Send_Weapon_Type(WeaponType::SHOTGUN, id);
+		break;
+	case EWeaponType::E_Launcher:
+		c_socket->Send_Weapon_Type(WeaponType::LAUNCHER, id);
+		break;
+	default:
+		break;
+	}
+}
+
+void ACharacterController::UpdateWeaponMesh()
+{
+
 }
 
 //pawn 

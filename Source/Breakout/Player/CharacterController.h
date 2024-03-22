@@ -24,6 +24,33 @@ class BREAKOUT_API ACharacterController : public APlayerController
 protected:
 	virtual void BeginPlay() override;
 
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<USkeletalMesh> SkMeshAsset1;
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<USkeletalMesh> SkMeshAsset2;
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<USkeletalMesh> SkMeshAsset3;
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<USkeletalMesh> SkMeshAsset4;
+
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<UClass> Anim1;
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<UClass> Anim2;
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<UClass> Anim3;
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<UClass> Anim4;
+
+	UPROPERTY(EditAnywhere, Category = "Combat System", meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<class AWeaponBase> Rifle;
+
+	UPROPERTY(EditAnywhere, Category = "Combat System", meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<class AWeaponBase> ShotGun;
+
+	UPROPERTY(EditAnywhere, Category = "Combat System", meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<class AWeaponBase> Lancher;
+
 public:
 	ACharacterController();
 	CPlayer initplayer;
@@ -59,10 +86,12 @@ public:
 	void SetInitPlayerInfo(const CPlayer& owner_player);
 	//-----------------------------------------------------
 	void SetNewCharacterInfo(std::shared_ptr<CPlayer> InitPlayer);
+	void SetNewWeaponMesh(std::shared_ptr<CPlayer> InitPlayer);
 
 	void UpdatePlayer();
 	//동기화 용
 	void UpdateSyncPlayer();
+	void UpdateSyncWeapon();
 	bool UpdateWorld();
 	//초기 컨트롤러 세팅
 
@@ -76,15 +105,18 @@ public:
 	// 스폰시킬 다른 캐릭터
 	UPROPERTY(EditAnywhere, Category = "Spawning")
 	TSubclassOf<class ACharacterBase> ToSpawn;
-
+	void Set_Weapon_Type(EWeaponType Type);
+	void UpdateWeaponMesh();
 	virtual void OnPossess(APawn* InPawn) override;
 private:
 	TObjectPtr<class AMainHUD> MainHUD;
 	int id;
 	bool bNewPlayerEntered = false;
+	bool bNewWeaponEntered = false;
 	bool bInitPlayerSetting = false;
 	//ClientSocket* c_socket;
 	CPlayerInfo* PlayerInfo;  
 	int p_cnt;
 	bool connect;
+	bool Set_Weapon;
 };

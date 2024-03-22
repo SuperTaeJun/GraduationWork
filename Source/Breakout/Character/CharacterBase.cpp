@@ -27,12 +27,16 @@
 #include "NiagaraComponent.h"
 #include "NiagaraDataInterfaceArrayFunctionLibrary.h"
 
+
+
 ACharacterBase::ACharacterBase()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
 	TurningType = ETurningInPlace::ETIP_NotTurning;
 	CharacterState = ECharacterState::ECS_DEFAULT;
+
+
 
 	GetMesh()->SetRelativeLocationAndRotation(FVector(0.f, 0.f, -90.f), FRotator(0.f, -90.f, 0.f));
 
@@ -77,6 +81,7 @@ ACharacterBase::ACharacterBase()
 	BoobyTrapNum = 10;
 	//bShowSelectUi = false;
 	ObtainedEscapeToolNum = 0;
+	CurWeaponType = EWeaponType::ECS_DEFAULT;
 }
 
 //float ACharacterBase::GetAO_Yaw()
@@ -266,8 +271,9 @@ void ACharacterBase::SetWeapon(TSubclassOf<class AWeaponBase> Weapon, FName Sock
 		if (WeaponSocket && SpawnWeapon)
 		{
 			WeaponSocket->AttachActor(SpawnWeapon, GetMesh());
+			SpawnWeapon->SetOwner(this);
 		}
-		SpawnWeapon->SetOwner(this);
+
 	}
 
 }
@@ -695,22 +701,18 @@ void ACharacterBase::SelectGrande(const FInputActionValue& Value)
 {
 	BojoMugiType = EBojoMugiType::E_Grenade;
 
-	//할것
-	//UI연결해야함
 }
 
 void ACharacterBase::SelectWall(const FInputActionValue& Value)
 {
 	BojoMugiType = EBojoMugiType::E_Wall;
-	//할것
-	//UI연결해야함
+
 }
 
 void ACharacterBase::SelectTrap(const FInputActionValue& Value)
 {
 	BojoMugiType = EBojoMugiType::E_BoobyTrap;
-	//할것
-	//UI연결해야함
+
 }
 
 void ACharacterBase::Jump(const FInputActionValue& Value)

@@ -16,6 +16,7 @@
 #include "Network/PacketData.h"
 #include "Windows/PostWindowsApi.h"
 #include "Windows/HideWindowsPlatformTypes.h"
+#include "Game/BOGameInstance.h"
 #include "CoreMinimal.h"
 
 class ClientSocket;
@@ -103,6 +104,8 @@ public:
 	bool  IsAlive = true;
 	FVector FMyLocation;
 	FVector FMyDirection;
+	PlayerType p_type;
+	WeaponType w_type;
 	friend ostream& operator<<(ostream& stream, CPlayer& info)
 	{
 		stream << info.Id << endl;
@@ -232,7 +235,7 @@ public:
 	void CloseSocket();
 
 	void PacketProcess(unsigned char* ptr);
-	void Send_Login_Info(char* id, char* pw);
+	void Send_Login_Info(char* id, char* pw, PlayerType character_type);
 	void Send_Move_Packet(int sessionID, FVector Location, FRotator Rotation, FVector Velocity,float Max_speed);
 	void Send_Character_Type(PlayerType type);
 	void Send_Weapon_Type(WeaponType type, int id);

@@ -17,8 +17,9 @@ ACharacter1::ACharacter1()
 	ConstructorHelpers::FObjectFinder<UNiagaraSystem> DashFxRef(TEXT("/Game/Niagara/DashFX.DashFX"));
 	NiagaraComp->bAutoActivate = false;
 	NiagaraComp->SetAsset(DashFxRef.Object);
-
 	bCoolTimeFinish = true;
+
+
 }
 
 void ACharacter1::BeginPlay()

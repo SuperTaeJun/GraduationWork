@@ -81,6 +81,7 @@ void ClientSocket::PacketProcess(unsigned char* ptr)
 		player.X = packet->x;
 		player.Y = packet->y;
 		player.Z = packet->z;
+		player.p_type = packet->p_type;
 		PlayerInfo.players[player.Id] = player;
 		MyCharacterController->SetPlayerID(player.Id);
 		MyCharacterController->SetPlayerInfo(&PlayerInfo);
@@ -98,6 +99,7 @@ void ClientSocket::PacketProcess(unsigned char* ptr)
 		info->Y = packet->y;
 		info->Z = packet->z;
 		info->Yaw = packet->yaw;
+		info->p_type = packet->p_type;
 		//float z = packet->z;
 		//UE_LOG(LogClass, Warning, TEXT("recv data"));
 		MyCharacterController->SetNewCharacterInfo(info);
@@ -121,7 +123,12 @@ void ClientSocket::PacketProcess(unsigned char* ptr)
 	case SC_CHAR_BACK: {
 		break;
 	}
-	case SC_WEP_BACK: {
+	case SC_OTHER_WEAPO: {
+		SC_SYNC_WEAPO* packet = reinterpret_cast<SC_SYNC_WEAPO*>(ptr);
+		PlayerInfo.players[packet->id].w_type = packet->weapon_type;
+		//float z = packet->z;
+		//UE_LOG(LogClass, Warning, TEXT("recv data"));
+		
 		break;
 	}
 	default:
@@ -129,7 +136,7 @@ void ClientSocket::PacketProcess(unsigned char* ptr)
 	}
 }
 
-void ClientSocket::Send_Login_Info(char* id, char* pw)
+void ClientSocket::Send_Login_Info(char* id, char* pw, PlayerType character_type)
 {
 	//패킷 조립
 	CS_LOGIN_PACKET packet;
@@ -144,6 +151,7 @@ void ClientSocket::Send_Login_Info(char* id, char* pw)
 	packet.x = location.X;
 	packet.y = location.Y;
 	packet.z = location.Z;
+	packet.p_type = character_type;
 	SendPacket(&packet);
 	//UE_LOG(LogClass, Warning, TEXT("Sending login info - id: %s, pw: %s"), ANSI_TO_TCHAR(id), ANSI_TO_TCHAR(pw));
 
@@ -178,12 +186,12 @@ void ClientSocket::Send_Character_Type(PlayerType type)
 	SendPacket(&packet);
 }
 
-void ClientSocket::Send_Weapon_Type(WeaponType type, int id)
+void ClientSocket::Send_Weapon_Type(WeaponType type, int sessionID)
 {
 	CS_SELECT_WEAPO packet;
 	packet.size = sizeof(packet);
 	packet.type = CS_SELECT_WEP;
-	packet.id = id;
+	packet.id = sessionID;
 	packet.weapon_type = type;
 	SendPacket(&packet);
 }
