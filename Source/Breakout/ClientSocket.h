@@ -105,6 +105,7 @@ public:
 	FVector FMyLocation;
 	FVector FMyDirection;
 	PlayerType p_type;
+	WeaponType w_type;
 	friend ostream& operator<<(ostream& stream, CPlayer& info)
 	{
 		stream << info.Id << endl;

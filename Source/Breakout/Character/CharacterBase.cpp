@@ -81,6 +81,7 @@ ACharacterBase::ACharacterBase()
 	BoobyTrapNum = 10;
 	//bShowSelectUi = false;
 	ObtainedEscapeToolNum = 0;
+	CurWeaponType = EWeaponType::ECS_DEFAULT;
 }
 
 //float ACharacterBase::GetAO_Yaw()
@@ -270,8 +271,9 @@ void ACharacterBase::SetWeapon(TSubclassOf<class AWeaponBase> Weapon, FName Sock
 		if (WeaponSocket && SpawnWeapon)
 		{
 			WeaponSocket->AttachActor(SpawnWeapon, GetMesh());
+			SpawnWeapon->SetOwner(this);
 		}
-		SpawnWeapon->SetOwner(this);
+
 	}
 
 }

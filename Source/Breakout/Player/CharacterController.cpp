@@ -23,8 +23,10 @@ ACharacterController::ACharacterController()
 
 	p_cnt = -1;
 	bNewPlayerEntered = false;
+	bNewWeaponEntered = false;
 	bInitPlayerSetting = false;
 	PrimaryActorTick.bCanEverTick = true;
+	Set_Weapon = false;
 }
 
 void ACharacterController::BeginPlay()
@@ -216,7 +218,8 @@ void ACharacterController::Tick(float DeltaTime)
 	//새 플레이어 스폰
 	if (bNewPlayerEntered)
 		UpdateSyncPlayer();
-
+	if (bNewWeaponEntered)
+		UpdateWeaponMesh();
 	UpdateWorld();
 	//UE_LOG(LogTemp, Warning, TEXT("HHHHHH : %s"), *GetOwner()->GetVelocity().ToString());
 	UpdatePlayer();
@@ -234,6 +237,7 @@ void ACharacterController::SetInitPlayerInfo(const CPlayer &owner_player)
 	UE_LOG(LogClass, Warning, TEXT("SetInitPlayerInfo"));
 	initplayer = owner_player;
 	bInitPlayerSetting = true;
+	//Set_Weapon = true;
 }
 void ACharacterController::SetNewCharacterInfo(std::shared_ptr<CPlayer> InitPlayer)
 {
@@ -241,6 +245,14 @@ void ACharacterController::SetNewCharacterInfo(std::shared_ptr<CPlayer> InitPlay
 		bNewPlayerEntered = true;
 		NewPlayer.push(InitPlayer);
 		UE_LOG(LogTemp, Warning, TEXT("The value of size_: %d"), NewPlayer.size());
+	}
+}
+void ACharacterController::SetNewWeaponMesh(std::shared_ptr<CPlayer> InitPlayer)
+{
+	if (InitPlayer != nullptr) {
+		bNewWeaponEntered = true;
+		NewPlayer.push(InitPlayer);
+		
 	}
 }
 
@@ -295,11 +307,26 @@ bool ACharacterController::UpdateWorld()
 				PlayerVelocity.Y = info->VeloY;
 				PlayerVelocity.Z = info->VeloZ;
 
-				
+				if (info->w_type == WeaponType::RIFLE)
+				{
+					FName RifleSocketName = FName("RifleSocket");
+					OtherPlayer->SetWeapon(Rifle, RifleSocketName);
+				}
+				else if (info->w_type == WeaponType::SHOTGUN)
+				{
+					FName ShotgunSocketName = FName("ShotgunSocket");
+					OtherPlayer->SetWeapon(ShotGun, ShotgunSocketName);
+				}
+				else if (info->w_type == WeaponType::LAUNCHER)
+				{
+					FName LancherSocketName = FName("LancherSocket");
+					OtherPlayer->SetWeapon(Lancher, LancherSocketName);
+				}
 				OtherPlayer->AddMovementInput(PlayerVelocity);
 				OtherPlayer->SetActorRotation(PlayerRotation);
 				OtherPlayer->SetActorLocation(PlayerLocation);
 				OtherPlayer->GetCharacterMovement()->MaxWalkSpeed = info->Max_Speed;
+
 			}
 			else {
 
@@ -471,6 +498,10 @@ void ACharacterController::UpdateSyncPlayer()
 	}
 	bNewPlayerEntered = false;
 }
+void ACharacterController::UpdateSyncWeapon()
+{
+	
+}
 //void ACharacterController::UpdateSyncPlayer()
 //{
 //	UWorld* const World = GetWorld();
@@ -545,6 +576,29 @@ void ACharacterController::UpdatePlayer()
 	m_Player->GetActorEyesViewPoint(MyCameraLocation, MyCameraRotation);
 	c_socket->Send_Move_Packet(id, MyLocation, MyRotation, MyVelocity, max_speed);
 	//UE_LOG(LogClass, Warning, TEXT("send move packet"));
+}
+
+void ACharacterController::Set_Weapon_Type(EWeaponType Type)
+{
+	switch (Type)
+	{
+	case EWeaponType::E_Rifle:
+		c_socket->Send_Weapon_Type(WeaponType::RIFLE, id);
+		break;
+	case EWeaponType::E_Shotgun:
+		c_socket->Send_Weapon_Type(WeaponType::SHOTGUN, id);
+		break;
+	case EWeaponType::E_Launcher:
+		c_socket->Send_Weapon_Type(WeaponType::LAUNCHER, id);
+		break;
+	default:
+		break;
+	}
+}
+
+void ACharacterController::UpdateWeaponMesh()
+{
+
 }
 
 //pawn 

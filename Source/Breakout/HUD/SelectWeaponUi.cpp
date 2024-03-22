@@ -18,6 +18,7 @@ void USelectWeaponUi::NativeConstruct()
 	ShotgunButton->OnClicked.AddDynamic(this, &USelectWeaponUi::ShotgunButtonPressed);
 	LancherButton->OnClicked.AddDynamic(this, &USelectWeaponUi::LancherButtonPressed);
 
+	MyCharacterController = Cast<ACharacterController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 }
 // 무기 선택 창 패킷 보낼 곳
 void USelectWeaponUi::RifleButtonPressed()
@@ -38,6 +39,8 @@ void USelectWeaponUi::RifleButtonPressed()
 	FName RifleSocketName = FName("RifleSocket");
 	Character->SetWeapon(Rifle, RifleSocketName);
 	Controller->SetHUDAmmo(30);
+
+	MyCharacterController->Set_Weapon_Type(EWeaponType::E_Rifle);
 }
 
 void USelectWeaponUi::ShotgunButtonPressed()
@@ -60,6 +63,8 @@ void USelectWeaponUi::ShotgunButtonPressed()
 
 	Character->SetWeapon(ShotGun,ShotguSocketName);
 	Controller->SetHUDAmmo(5);
+
+	MyCharacterController->Set_Weapon_Type(EWeaponType::E_Shotgun);
 }
 
 void USelectWeaponUi::LancherButtonPressed()
@@ -81,4 +86,6 @@ void USelectWeaponUi::LancherButtonPressed()
 
 	Character->SetWeapon(Lancher, LancherSocketName);
 	Controller->SetHUDAmmo(2);
+
+	MyCharacterController->Set_Weapon_Type(EWeaponType::E_Launcher);
 }

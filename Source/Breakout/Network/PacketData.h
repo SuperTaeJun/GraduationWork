@@ -37,7 +37,7 @@ const char SC_LOGIN_OK = 1;
 const char SC_OTHER_PLAYER = 2;
 const char SC_MOVE_PLAYER = 3;
 const char SC_CHAR_BACK = 4;
-const char SC_WEP_BACK = 5;
+const char SC_OTHER_WEAPO = 5;
 
 #pragma pack (push, 1)
 struct CS_LOGIN_PACKET
@@ -98,20 +98,14 @@ struct CS_SELECT_WEAPO
 	int id;
 	WeaponType weapon_type;
 };
-struct SC_SELECT_CHARACTER
-{
-	unsigned char size;
-	char type;
-	int id;
-	PlayerType character_type;
-};
-struct SC_SELECT_WEAPO
+struct SC_SYNC_WEAPO
 {
 	unsigned char size;
 	char type;
 	int id;
 	WeaponType weapon_type;
 };
+
 #pragma pack(pop)
 /**
  * 

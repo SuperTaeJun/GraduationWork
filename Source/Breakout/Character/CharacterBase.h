@@ -26,12 +26,13 @@ public:
 
 	FORCEINLINE float GetAO_Yaw() const { return AO_Yaw; }
 	FORCEINLINE float GetAO_Pitch() const { return AO_Pitch; }
-	//FORCEINLINE AWeaponBase* GetCurWeapon() const { return CurWeapon; }
+	FORCEINLINE AWeaponBase* GetCurWeapon() const { return CurWeapon; }
 
 	/*float GetAO_Yaw();
 	float GetAO_Pitch();*/
 	int		_SessionId;
 
+	EWeaponType CurWeaponType;
 protected:
 	virtual void BeginPlay() override;
 
@@ -250,6 +251,16 @@ enum class EBojoMugiType : uint8
 	E_Grenade UMETA(DisplayName = "Grenade"),
 	E_Wall UMETA(DisplayName = "Wall"),
 	E_BoobyTrap UMETA(DisplayName = "BoobyTrap"),
+
+	ECS_DEFAULT UMETA(DisplayName = "Default")
+};
+
+UENUM(BlueprintType)
+enum class EWeaponType : uint8
+{
+	E_Rifle UMETA(DisplayName = "Rifle"),
+	E_Shotgun UMETA(DisplayName = "Shotgun"),
+	E_Launcher UMETA(DisplayName = "Launcher"),
 
 	ECS_DEFAULT UMETA(DisplayName = "Default")
 };

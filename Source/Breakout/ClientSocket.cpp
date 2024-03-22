@@ -123,7 +123,12 @@ void ClientSocket::PacketProcess(unsigned char* ptr)
 	case SC_CHAR_BACK: {
 		break;
 	}
-	case SC_WEP_BACK: {
+	case SC_OTHER_WEAPO: {
+		SC_SYNC_WEAPO* packet = reinterpret_cast<SC_SYNC_WEAPO*>(ptr);
+		PlayerInfo.players[packet->id].w_type = packet->weapon_type;
+		//float z = packet->z;
+		//UE_LOG(LogClass, Warning, TEXT("recv data"));
+		
 		break;
 	}
 	default:
@@ -181,12 +186,12 @@ void ClientSocket::Send_Character_Type(PlayerType type)
 	SendPacket(&packet);
 }
 
-void ClientSocket::Send_Weapon_Type(WeaponType type, int id)
+void ClientSocket::Send_Weapon_Type(WeaponType type, int sessionID)
 {
 	CS_SELECT_WEAPO packet;
 	packet.size = sizeof(packet);
 	packet.type = CS_SELECT_WEP;
-	packet.id = id;
+	packet.id = sessionID;
 	packet.weapon_type = type;
 	SendPacket(&packet);
 }
