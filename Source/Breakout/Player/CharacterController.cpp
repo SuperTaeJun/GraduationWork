@@ -326,46 +326,127 @@ void ACharacterController::UpdateSyncPlayer()
 			NewPlayer.pop();
 			continue;
 		}
-		FVector S_LOCATION;
-		
-		S_LOCATION.X = NewPlayer.front()->X;
-		S_LOCATION.Y = NewPlayer.front()->Y;
-		S_LOCATION.Z = NewPlayer.front()->Z;
-		FRotator S_ROTATOR;
-		S_ROTATOR.Yaw = NewPlayer.front()->Yaw;
-		S_ROTATOR.Pitch = 0.0f;
-		S_ROTATOR.Roll = 0.0f;
-		FActorSpawnParameters SpawnActor;
-		SpawnActor.Owner = this;
-		SpawnActor.Instigator = GetInstigator();
-		SpawnActor.Name = FName(*FString(to_string(NewPlayer.front()->Id).c_str()));
-		ToSpawn = ACharacterBase::StaticClass();
-		ACharacterBase* SpawnCharacter = world->SpawnActor<ACharacterBase>(ToSpawn,
-			S_LOCATION, S_ROTATOR, SpawnActor);
-		SpawnCharacter->SpawnDefaultController();
-		SpawnCharacter->_SessionId = NewPlayer.front()->Id;
-		
 		switch (NewPlayer.front()->p_type)
 		{
 		case PlayerType::Character1:
-			if (SkMeshAsset1)
+			if (SkMeshAsset1) {
+				FVector S_LOCATION;
+				S_LOCATION.X = NewPlayer.front()->X;
+				S_LOCATION.Y = NewPlayer.front()->Y;
+				S_LOCATION.Z = NewPlayer.front()->Z;
+				FRotator S_ROTATOR;
+				S_ROTATOR.Yaw = NewPlayer.front()->Yaw;
+				S_ROTATOR.Pitch = 0.0f;
+				S_ROTATOR.Roll = 0.0f;
+				FActorSpawnParameters SpawnActor;
+				SpawnActor.Owner = this;
+				SpawnActor.Instigator = GetInstigator();
+				SpawnActor.Name = FName(*FString(to_string(NewPlayer.front()->Id).c_str()));
+				ToSpawn = ACharacter1::StaticClass();
+				ACharacter1* SpawnCharacter = world->SpawnActor<ACharacter1>(ToSpawn,
+					S_LOCATION, S_ROTATOR, SpawnActor);
+				SpawnCharacter->SpawnDefaultController();
+				SpawnCharacter->_SessionId = NewPlayer.front()->Id;
 				SpawnCharacter->GetMesh()->SetSkeletalMesh(SkMeshAsset1);
+				if(Anim1)
+					SpawnCharacter->GetMesh()->SetAnimClass(Anim1);
+			}
 			break;
 		case  PlayerType::Character2:
-			if (SkMeshAsset2)
+			if (SkMeshAsset2) {
+				FVector S_LOCATION;
+				S_LOCATION.X = NewPlayer.front()->X;
+				S_LOCATION.Y = NewPlayer.front()->Y;
+				S_LOCATION.Z = NewPlayer.front()->Z;
+				FRotator S_ROTATOR;
+				S_ROTATOR.Yaw = NewPlayer.front()->Yaw;
+				S_ROTATOR.Pitch = 0.0f;
+				S_ROTATOR.Roll = 0.0f;
+				FActorSpawnParameters SpawnActor;
+				SpawnActor.Owner = this;
+				SpawnActor.Instigator = GetInstigator();
+				SpawnActor.Name = FName(*FString(to_string(NewPlayer.front()->Id).c_str()));
+				ToSpawn = ACharacter1::StaticClass();
+				ACharacter1* SpawnCharacter = world->SpawnActor<ACharacter1>(ToSpawn,
+					S_LOCATION, S_ROTATOR, SpawnActor);
+				SpawnCharacter->SpawnDefaultController();
+				SpawnCharacter->_SessionId = NewPlayer.front()->Id;
 				SpawnCharacter->GetMesh()->SetSkeletalMesh(SkMeshAsset2);
+				if (Anim2)
+					SpawnCharacter->GetMesh()->SetAnimClass(Anim2);
+			}
 			break;
 		case  PlayerType::Character3:
-			if (SkMeshAsset3)
+			if (SkMeshAsset3) {
+				FVector S_LOCATION;
+				S_LOCATION.X = NewPlayer.front()->X;
+				S_LOCATION.Y = NewPlayer.front()->Y;
+				S_LOCATION.Z = NewPlayer.front()->Z;
+				FRotator S_ROTATOR;
+				S_ROTATOR.Yaw = NewPlayer.front()->Yaw;
+				S_ROTATOR.Pitch = 0.0f;
+				S_ROTATOR.Roll = 0.0f;
+				FActorSpawnParameters SpawnActor;
+				SpawnActor.Owner = this;
+				SpawnActor.Instigator = GetInstigator();
+				SpawnActor.Name = FName(*FString(to_string(NewPlayer.front()->Id).c_str()));
+				ToSpawn = ACharacter1::StaticClass();
+				ACharacter1* SpawnCharacter = world->SpawnActor<ACharacter1>(ToSpawn,
+					S_LOCATION, S_ROTATOR, SpawnActor);
+				SpawnCharacter->SpawnDefaultController();
+				SpawnCharacter->_SessionId = NewPlayer.front()->Id;
 				SpawnCharacter->GetMesh()->SetSkeletalMesh(SkMeshAsset3);
+				if (Anim3)
+					SpawnCharacter->GetMesh()->SetAnimClass(Anim3);
+			}
 			break;
 		case  PlayerType::Character4:
-			if (SkMeshAsset4)
+			if (SkMeshAsset4) {
+				FVector S_LOCATION;
+				S_LOCATION.X = NewPlayer.front()->X;
+				S_LOCATION.Y = NewPlayer.front()->Y;
+				S_LOCATION.Z = NewPlayer.front()->Z;
+				FRotator S_ROTATOR;
+				S_ROTATOR.Yaw = NewPlayer.front()->Yaw;
+				S_ROTATOR.Pitch = 0.0f;
+				S_ROTATOR.Roll = 0.0f;
+				FActorSpawnParameters SpawnActor;
+				SpawnActor.Owner = this;
+				SpawnActor.Instigator = GetInstigator();
+				SpawnActor.Name = FName(*FString(to_string(NewPlayer.front()->Id).c_str()));
+				ToSpawn = ACharacter1::StaticClass();
+				ACharacter1* SpawnCharacter = world->SpawnActor<ACharacter1>(ToSpawn,
+					S_LOCATION, S_ROTATOR, SpawnActor);
+				SpawnCharacter->SpawnDefaultController();
+				SpawnCharacter->_SessionId = NewPlayer.front()->Id;
 				SpawnCharacter->GetMesh()->SetSkeletalMesh(SkMeshAsset4);
+				if (Anim4)
+					SpawnCharacter->GetMesh()->SetAnimClass(Anim4);
+			}
 			break;
 		default:
-			if (SkMeshAsset1)
+			if (SkMeshAsset1) {
+				FVector S_LOCATION;
+				S_LOCATION.X = NewPlayer.front()->X;
+				S_LOCATION.Y = NewPlayer.front()->Y;
+				S_LOCATION.Z = NewPlayer.front()->Z;
+				FRotator S_ROTATOR;
+				S_ROTATOR.Yaw = NewPlayer.front()->Yaw;
+				S_ROTATOR.Pitch = 0.0f;
+				S_ROTATOR.Roll = 0.0f;
+				FActorSpawnParameters SpawnActor;
+				SpawnActor.Owner = this;
+				SpawnActor.Instigator = GetInstigator();
+				SpawnActor.Name = FName(*FString(to_string(NewPlayer.front()->Id).c_str()));
+				ToSpawn = ACharacter1::StaticClass();
+				ACharacter1* SpawnCharacter = world->SpawnActor<ACharacter1>(ToSpawn,
+					S_LOCATION, S_ROTATOR, SpawnActor);
+				SpawnCharacter->SpawnDefaultController();
+				SpawnCharacter->_SessionId = NewPlayer.front()->Id;
 				SpawnCharacter->GetMesh()->SetSkeletalMesh(SkMeshAsset1);
+				if (Anim1)
+					SpawnCharacter->GetMesh()->SetAnimClass(Anim1);
+			}
 			break;
 		}
 

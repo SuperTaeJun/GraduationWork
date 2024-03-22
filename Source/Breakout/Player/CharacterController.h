@@ -33,6 +33,15 @@ protected:
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<USkeletalMesh> SkMeshAsset4;
 
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<UClass> Anim1;
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<UClass> Anim2;
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<UClass> Anim3;
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<UClass> Anim4;
+
 public:
 	ACharacterController();
 	CPlayer initplayer;
