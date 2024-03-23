@@ -12,8 +12,7 @@
 				"Engine",
 				"GameplayCameras",
 				"UMG",
-				"Niagara",
-				"GeometryScriptingEditor"
+				"Niagara"
 			]
 		}
 	],
@@ -30,8 +29,9 @@
 			"Enabled": false
 		},
 		{
-			"Name": "GeometryScripting",
-			"Enabled": true
+			"Name": "MeshOpsPlugin",
+			"Enabled": false,
+			"MarketplaceURL": "com.epicgames.launcher://ue/marketplace/product/84e127de57ed4e12877b1337b4e25ad1"
 		}
 	]
 }

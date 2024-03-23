@@ -14,9 +14,9 @@
 ACharacter1::ACharacter1()
 {
 	NiagaraComp = CreateDefaultSubobject<UNiagaraComponent>(TEXT("NiagaraComp"));
-	ConstructorHelpers::FObjectFinder<UNiagaraSystem> DashFxRef(TEXT("/Game/Niagara/DashFX.DashFX"));
+	//ConstructorHelpers::FObjectFinder<UNiagaraSystem> DashFxRef(TEXT("/Game/Niagara/SKill/Skill1/NS_Skill1.NS_Skill1"));
 	NiagaraComp->bAutoActivate = false;
-	NiagaraComp->SetAsset(DashFxRef.Object);
+	//NiagaraComp->SetAsset(DashFxRef.Object);
 	bCoolTimeFinish = true;
 
 
