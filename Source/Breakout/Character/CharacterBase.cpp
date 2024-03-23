@@ -701,22 +701,18 @@ void ACharacterBase::SelectGrande(const FInputActionValue& Value)
 {
 	BojoMugiType = EBojoMugiType::E_Grenade;
 
-	//할것
-	//UI연결해야함
 }
 
 void ACharacterBase::SelectWall(const FInputActionValue& Value)
 {
 	BojoMugiType = EBojoMugiType::E_Wall;
-	//할것
-	//UI연결해야함
+
 }
 
 void ACharacterBase::SelectTrap(const FInputActionValue& Value)
 {
 	BojoMugiType = EBojoMugiType::E_BoobyTrap;
-	//할것
-	//UI연결해야함
+
 }
 
 void ACharacterBase::Jump(const FInputActionValue& Value)
