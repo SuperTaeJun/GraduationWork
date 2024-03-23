@@ -26,7 +26,7 @@ public:
 
 	FORCEINLINE float GetAO_Yaw() const { return AO_Yaw; }
 	FORCEINLINE float GetAO_Pitch() const { return AO_Pitch; }
-	FORCEINLINE AWeaponBase* GetCurWeapon() const { return CurWeapon; }
+	class AWeaponBase* GetCurWeapon() const { return CurWeapon; }
 
 	/*float GetAO_Yaw();
 	float GetAO_Pitch();*/
@@ -228,8 +228,8 @@ protected:
 	void SelectGrande(const FInputActionValue& Value);
 	void SelectWall(const FInputActionValue& Value);
 	void SelectTrap(const FInputActionValue& Value);
-	virtual void Jump(const FInputActionValue& Value);
-	virtual void StopJump(const FInputActionValue& Value);
+	void StartJump(const FInputActionValue& Value);
+	void StopJump(const FInputActionValue& Value);
 	virtual void Skill_S(const FInputActionValue& Value);
 	virtual void Skill_E(const FInputActionValue& Value);
 };

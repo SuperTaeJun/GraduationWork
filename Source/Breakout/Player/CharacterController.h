@@ -8,6 +8,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "GameFramework/PlayerController.h"
 #include <memory>
+#include "Character/CharacterBase.h"
 #include "CharacterController.generated.h"
 ClientSocket* c_socket = nullptr;
 class CPlayer;
@@ -64,6 +65,7 @@ public:
 	void SetHUDStamina(float Stamina, float MaxStamina);
 	void SetHUDAmmo(int32 Ammo);
 	void SetHUDEscapeTool(int32 EscapeTool);
+	void SetHUDBojoImage(EBojoMugiType Type);
 	void SetHUDCrosshair(const struct FCrosshairPackage& Package);
 	//skill
 	void SetHUDSkill();
