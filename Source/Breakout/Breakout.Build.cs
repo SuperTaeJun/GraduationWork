@@ -13,8 +13,7 @@ public class Breakout : ModuleRules
         PublicDependencyModuleNames.AddRange(new string[] { 
 			"Core", "CoreUObject", "Engine", 
 			"InputCore", "EnhancedInput", "UMG", 
-			"ProceduralMeshComponent", "MeshDescription", "Niagara" ,
-			"GeometryScriptingCore","GeometryFramework",
+			"ProceduralMeshComponent", "Niagara" ,
 			"GeometryCore","DynamicMesh"
 		});
 
