@@ -206,37 +206,73 @@ bool ClientSocket::Init()
 uint32 ClientSocket::Run()
 {
 	FPlatformProcess::Sleep(0.03);
+
 	//Connect();
-	//Send_Login_Info();
-	unsigned char buffer[10000];
-	PacketProcess(buffer);
-	FPlatformProcess::Sleep(0.03);
+	Iocp = CreateIoCompletionPort(INVALID_HANDLE_VALUE, NULL, NULL, 0);
+	CreateIoCompletionPort(reinterpret_cast<HANDLE>(ServerSocket), Iocp, 0, 0);
+
+	RecvPacket();
+
+	//Send_LoginPacket();
+
+	SleepEx(0, true);
+
+	// recv while loop 시작
+	// StopTaskCounter 클래스 변수를 사용해 Thread Safety하게 해줌
 	while (StopTaskCounter.GetValue() == 0 && MyCharacterController != nullptr)
 	{
-		// 블로킹 소켓을 이용하여 패킷 수신
+		DWORD num_byte;
+		LONG64 iocp_key;
+		WSAOVERLAPPED* p_over;
 
-		int receivedBytes = recv(ServerSocket, reinterpret_cast<char*>(buffer), 10000, 0);
+		BOOL ret = GetQueuedCompletionStatus(Iocp, &num_byte, (PULONG_PTR)&iocp_key, &p_over, INFINITE);
 
-		if (receivedBytes > 0)
-		{
-			// 패킷 처리
-			PacketProcess(buffer);
+		Overlap* exp_over = reinterpret_cast<Overlap*>(p_over);
+
+		if (false == ret) {
+			int err_no = WSAGetLastError();
+			if (exp_over->_op == IO_SEND)
+				delete exp_over;
+			continue;
 		}
-		else if (receivedBytes == 0)
-		{
-			// 연결이 끊긴 경우 처리
-			// 예: closesocket(ServerSocket);
+
+		switch (exp_over->_op) {
+		case IO_RECV: {
+			if (num_byte == 0) {
+				//Disconnect();
+				continue;
+			}
+			int remain_data = num_byte + _prev_size;
+			unsigned char* packet_start = exp_over->_net_buf;
+			int packet_size = packet_start[0];
+			while (packet_size <= remain_data) {
+				PacketProcess(packet_start);
+				remain_data -= packet_size;
+				packet_start += packet_size;
+				if (remain_data > 0) packet_size = packet_start[0];
+				else break;
+			}
+
+			if (0 < remain_data) {
+				_prev_size = remain_data;
+				memcpy(&exp_over->_net_buf, packet_start, remain_data);
+			}
+
+			RecvPacket();
+			SleepEx(0, true);
 			break;
 		}
-		else
-		{
-			// 오류 처리
-			int errorNumber = WSAGetLastError();
-			// 예: handle error
+		case IO_SEND: {
+			if (num_byte != exp_over->_wsa_buf.len) {
+				//Disconnect();
+			}
+			delete exp_over;
 			break;
 		}
+
+		}
+
 	}
-
 	return 0;
 }
 
@@ -273,10 +309,10 @@ void ClientSocket::RecvPacket()
 {
 	//UE_LOG(LogClass, Warning, TEXT("recv data"));
 	DWORD recv_flag = 0;
-	ZeroMemory(&_recv_over.overlapped, sizeof(_recv_over.overlapped));
-	_recv_over.wsabuf.buf = reinterpret_cast<char*>(_recv_over.recvBuffer + _prev_size);
-	_recv_over.wsabuf.len = sizeof(_recv_over.recvBuffer) - _prev_size;
-	int ret = WSARecv(ServerSocket, &_recv_over.wsabuf, 1, 0, &recv_flag, &_recv_over.overlapped, NULL);
+	ZeroMemory(&_recv_over._wsa_over, sizeof(_recv_over._wsa_over));
+	_recv_over._wsa_buf.buf = reinterpret_cast<char*>(_recv_over._net_buf + _prev_size);
+	_recv_over._wsa_buf.len = sizeof(_recv_over._net_buf) - _prev_size;
+	int ret = WSARecv(ServerSocket, &_recv_over._wsa_buf, 1, 0, &recv_flag, &_recv_over._wsa_over, NULL);
 	if (SOCKET_ERROR == ret) {
 		int error_num = WSAGetLastError();
 	}
@@ -289,8 +325,8 @@ void ClientSocket::SendPacket(void* packet)
 {
 	//UE_LOG(LogClass, Warning, TEXT("send data"));
 	int psize = reinterpret_cast<unsigned char*>(packet)[0];
-	Overlapped* ex_over = new Overlapped(IO_SEND, psize, packet);
-	int ret = WSASend(ServerSocket, &ex_over->wsabuf, 1, 0, 0, &ex_over->overlapped, NULL);
+	Overlap* ex_over = new Overlap(IO_SEND, psize, packet);
+	int ret = WSASend(ServerSocket, &ex_over->_wsa_buf, 1, 0, 0, &ex_over->_wsa_over, NULL);
 	if (SOCKET_ERROR == ret) {
 		int error_num = WSAGetLastError();
 		if (ERROR_IO_PENDING != error_num)

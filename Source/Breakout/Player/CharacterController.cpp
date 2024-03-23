@@ -18,8 +18,8 @@
 ACharacterController::ACharacterController()
 {
 	//c_socket = ClientSocket::GetSingleton();
-	//c_socket = ClientSocket::GetSingleton();
-	c_socket = new ClientSocket();
+	c_socket = ClientSocket::GetSingleton();
+	//c_socket = new ClientSocket();
 	c_socket->SetPlayerController(this);
 	p_cnt = -1;
 	bNewPlayerEntered = false;
@@ -35,7 +35,7 @@ void ACharacterController::BeginPlay()
 	
 	FInputModeGameOnly GameOnlyInput;
 	SetInputMode(GameOnlyInput);
-	//c_socket->StartListen();
+	c_socket->StartListen();
 	MainHUD = Cast<AMainHUD>(GetHUD());
 	//아아 여기
 	
@@ -243,8 +243,7 @@ void ACharacterController::Tick(float DeltaTime)
 	//새 플레이어 스폰
 	if (bNewPlayerEntered)
 		UpdateSyncPlayer();
-	if (bNewWeaponEntered)
-		UpdateWeaponMesh();
+	
 	UpdateWorld();
 	//UE_LOG(LogTemp, Warning, TEXT("HHHHHH : %s"), *GetOwner()->GetVelocity().ToString());
 	UpdatePlayer();
