@@ -18,9 +18,9 @@
 ACharacterController::ACharacterController()
 {
 	//c_socket = ClientSocket::GetSingleton();
-	c_socket = ClientSocket::GetSingleton();
-	//c_socket = new ClientSocket();
-	
+	//c_socket = ClientSocket::GetSingleton();
+	c_socket = new ClientSocket();
+	c_socket->SetPlayerController(this);
 	p_cnt = -1;
 	bNewPlayerEntered = false;
 	bNewWeaponEntered = false;
@@ -32,7 +32,7 @@ ACharacterController::ACharacterController()
 void ACharacterController::BeginPlay()
 {
 	
-	c_socket->SetPlayerController(this);
+	
 	FInputModeGameOnly GameOnlyInput;
 	SetInputMode(GameOnlyInput);
 	c_socket->StartListen();
