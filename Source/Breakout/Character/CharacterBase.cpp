@@ -135,6 +135,8 @@ void ACharacterBase::BeginPlay()
 		UpdateHpHUD();
 		UpdateStaminaHUD();
 		UpdateObtainedEscapeTool();
+		MainController->SetHUDBojoImage(BojoMugiType);
+
 	}
 	if(Aim)
 		Aim->SetAutoActivate(false);
@@ -701,21 +703,22 @@ void ACharacterBase::SelectGrande(const FInputActionValue& Value)
 {
 	BojoMugiType = EBojoMugiType::E_Grenade;
 
+	MainController->SetHUDBojoImage(BojoMugiType);
 }
 
 void ACharacterBase::SelectWall(const FInputActionValue& Value)
 {
 	BojoMugiType = EBojoMugiType::E_Wall;
-
+	MainController->SetHUDBojoImage(BojoMugiType);
 }
 
 void ACharacterBase::SelectTrap(const FInputActionValue& Value)
 {
 	BojoMugiType = EBojoMugiType::E_BoobyTrap;
-
+	MainController->SetHUDBojoImage(BojoMugiType);
 }
 
-void ACharacterBase::Jump(const FInputActionValue& Value)
+void ACharacterBase::StartJump(const FInputActionValue& Value)
 {
 	if (CanJump)
 		Super::Jump();
@@ -795,7 +798,7 @@ void ACharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	{
 		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ACharacterBase::Move);// trigger ¸Å Æ½¸¶´Ù
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ACharacterBase::Look);
-		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &ACharacterBase::Jump);
+		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &ACharacterBase::StartJump);
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &ACharacterBase::StopJump);
 		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Triggered, this, &ACharacterBase::Sprint_S);
 		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Completed, this, &ACharacterBase::Sprint_E);

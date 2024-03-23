@@ -38,6 +38,9 @@ public:
 
 	UPROPERTY(meta = (BindWidget))
 	class UTextBlock* SkillCool;
+	UPROPERTY(meta = (BindWidget))
+	class UImage* BojomugiImage;
+
 
 	UPROPERTY(EditAnywhere)
 	class UTexture2D* SkillIcon1;
@@ -48,4 +51,10 @@ public:
 	UPROPERTY(EditAnywhere)
 	class UTexture2D* SkillIcon4;
 
+	UPROPERTY(EditAnywhere)
+	class UTexture2D* GrenadeImage;
+	UPROPERTY(EditAnywhere)
+	class UTexture2D* WallImage;
+	UPROPERTY(EditAnywhere)
+	class UTexture2D* BoobtTrapImage;
 };

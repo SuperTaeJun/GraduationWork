@@ -7,7 +7,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/ProgressBar.h"
 #include "Components/TextBlock.h"
-#include "Character/CharacterBase.h"
+//#include "Character/CharacterBase.h"
 #include "Character/Character1.h"
 #include "Components/Image.h"
 #include "Game/BOGameInstance.h"
@@ -127,6 +127,29 @@ void ACharacterController::SetHUDEscapeTool(int32 EscapeTool)
 		MainHUD->CharacterUi->ToolAmount->SetText(FText::FromString(EscapeToolText));
 	}
 }
+
+void ACharacterController::SetHUDBojoImage(EBojoMugiType Type)
+{
+	if (MainHUD)
+	{
+		switch (Type)
+		{
+		case EBojoMugiType::E_Grenade:	
+			MainHUD->CharacterUi->BojomugiImage->SetBrushFromTexture(MainHUD->CharacterUi->GrenadeImage);
+			break;
+		case EBojoMugiType::E_Wall:
+			MainHUD->CharacterUi->BojomugiImage->SetBrushFromTexture(MainHUD->CharacterUi->WallImage);
+			break;
+		case EBojoMugiType::E_BoobyTrap:
+			MainHUD->CharacterUi->BojomugiImage->SetBrushFromTexture(MainHUD->CharacterUi->BoobtTrapImage);
+			break;
+		default:
+			MainHUD->CharacterUi->BojomugiImage->SetBrushFromTexture(MainHUD->CharacterUi->GrenadeImage);
+			break;
+		}
+	}
+}
+
 
 void ACharacterController::SetHUDCrosshair(const FCrosshairPackage& Package)
 {
