@@ -24,7 +24,10 @@ protected:
 	(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, 
 		FVector NomalImpulse, const FHitResult& Hit);
 
+	void AllowHitEvent();
 
+	FTimerHandle HitTimer;
+	void SetAllowHitEventTimer();
 	virtual void Destroyed() override;
 
 protected:

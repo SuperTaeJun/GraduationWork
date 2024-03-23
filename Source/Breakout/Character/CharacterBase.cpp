@@ -363,7 +363,7 @@ void ACharacterBase::SetSpawnGrenade(TSubclassOf<AProjectileBase> Projectile)
 		FVector ToHitTarget = HitTarget - StartLocation;
 		FActorSpawnParameters SpawnParms;
 		SpawnParms.Owner = this;
-		SpawnParms.Instigator = this;
+		//SpawnParms.Instigator = this;
 		TObjectPtr<UWorld> World = GetWorld();
 		if (World)
 		{

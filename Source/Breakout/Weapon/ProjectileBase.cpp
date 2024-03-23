@@ -18,6 +18,7 @@ AProjectileBase::AProjectileBase()
 	CollisionBox->SetCollisionResponseToChannel(ECollisionChannel::ECC_Visibility, ECollisionResponse::ECR_Block);
 	CollisionBox->SetCollisionResponseToChannel(ECollisionChannel::ECC_WorldStatic, ECollisionResponse::ECR_Block);
 	CollisionBox->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Block);
+	
 
 	ProjectileMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ProjectileMesh"));
 	ProjectileMesh->SetupAttachment(RootComponent);
@@ -34,8 +35,7 @@ void AProjectileBase::BeginPlay()
 	Super::BeginPlay();
 
 	CollisionBox->IgnoreActorWhenMoving(GetOwner(), true);
-
-	CollisionBox->OnComponentHit.AddDynamic(this, &AProjectileBase::OnHit);
+	SetAllowHitEventTimer();
 }
 
 void AProjectileBase::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NomalImpulse, const FHitResult& Hit)
@@ -66,6 +66,16 @@ void AProjectileBase::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActo
 		DrawDebugSphere(GetWorld(), GetActorLocation(), 500.f, 20, FColor::Purple, false, 10, 0, 1);
 		Destroy();
 	}
+}
+
+void AProjectileBase::AllowHitEvent()
+{
+	CollisionBox->OnComponentHit.AddDynamic(this, &AProjectileBase::OnHit);
+}
+
+void AProjectileBase::SetAllowHitEventTimer()
+{
+	GetWorldTimerManager().SetTimer(HitTimer, this, &AProjectileBase::AllowHitEvent, 0.1);
 }
 
 void AProjectileBase::Destroyed()
