@@ -20,7 +20,7 @@ ACharacterController::ACharacterController()
 	//c_socket = ClientSocket::GetSingleton();
 	c_socket = ClientSocket::GetSingleton();
 	//c_socket = new ClientSocket();
-	c_socket->SetPlayerController(this);
+	
 	p_cnt = -1;
 	bNewPlayerEntered = false;
 	bNewWeaponEntered = false;
@@ -32,7 +32,7 @@ ACharacterController::ACharacterController()
 void ACharacterController::BeginPlay()
 {
 	
-	
+	c_socket->SetPlayerController(this);
 	FInputModeGameOnly GameOnlyInput;
 	SetInputMode(GameOnlyInput);
 	c_socket->StartListen();
@@ -330,22 +330,25 @@ bool ACharacterController::UpdateWorld()
 				PlayerVelocity.X = info->VeloX;
 				PlayerVelocity.Y = info->VeloY;
 				PlayerVelocity.Z = info->VeloZ;
-
-				if (info->w_type == WeaponType::RIFLE)
+				if(!OtherPlayer->GetCurWeapon())
 				{
-					FName RifleSocketName = FName("RifleSocket");
-					OtherPlayer->SetWeapon(Rifle, RifleSocketName);
+					if (info->w_type == WeaponType::RIFLE)
+					{
+						FName RifleSocketName = FName("RifleSocket");
+						OtherPlayer->SetWeapon(Rifle, RifleSocketName);
+					}
+					else if (info->w_type == WeaponType::SHOTGUN)
+					{
+						FName ShotgunSocketName = FName("ShotgunSocket");
+						OtherPlayer->SetWeapon(ShotGun, ShotgunSocketName);
+					}
+					else if (info->w_type == WeaponType::LAUNCHER)
+					{
+						FName LancherSocketName = FName("LancherSocket");
+						OtherPlayer->SetWeapon(Lancher, LancherSocketName);
+					}
 				}
-				else if (info->w_type == WeaponType::SHOTGUN)
-				{
-					FName ShotgunSocketName = FName("ShotgunSocket");
-					OtherPlayer->SetWeapon(ShotGun, ShotgunSocketName);
-				}
-				else if (info->w_type == WeaponType::LAUNCHER)
-				{
-					FName LancherSocketName = FName("LancherSocket");
-					OtherPlayer->SetWeapon(Lancher, LancherSocketName);
-				}
+				
 				OtherPlayer->AddMovementInput(PlayerVelocity);
 				OtherPlayer->SetActorRotation(PlayerRotation);
 				OtherPlayer->SetActorLocation(PlayerLocation);
