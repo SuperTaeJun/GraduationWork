@@ -9,7 +9,7 @@
 #include "GameFramework/PlayerController.h"
 #include <memory>
 #include "CharacterController.generated.h"
-ClientSocket* c_socket = nullptr;
+//ClientSocket* c_socket = nullptr;
 class CPlayer;
 class ClientSocket;
 class CPlayerInfo;
@@ -114,7 +114,7 @@ private:
 	bool bNewPlayerEntered = false;
 	bool bNewWeaponEntered = false;
 	bool bInitPlayerSetting = false;
-	//ClientSocket* c_socket;
+	ClientSocket* c_socket;
 	CPlayerInfo* PlayerInfo;  
 	int p_cnt;
 	bool connect;

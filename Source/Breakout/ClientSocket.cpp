@@ -26,10 +26,17 @@ ClientSocket::~ClientSocket() {
 
 bool ClientSocket::InitSocket()
 {
+	
+	return true;
+}
+
+bool ClientSocket::Connect(const char* s_IP, int port)
+{
+
 	WSADATA wsaData;
 	// 윈속 버전을 2.2로 초기화
-	int nResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
-	if (nResult != 0) {
+	if(::WSAStartup(MAKEWORD(2, 2), &wsaData))
+	{
 		UE_LOG(LogTemp, Error, TEXT("INITAILAIZING ERROR"));
 		return false;
 	}
@@ -39,11 +46,7 @@ bool ClientSocket::InitSocket()
 	if (ServerSocket == INVALID_SOCKET) {
 		return false;
 	}
-	return true;
-}
 
-bool ClientSocket::Connect(const char* s_IP, int port)
-{
 	// 접속할 서버 정보를 저장할 구조체
 	SOCKADDR_IN stServerAddr;
 	// 접속할 서버 포트 및 IP

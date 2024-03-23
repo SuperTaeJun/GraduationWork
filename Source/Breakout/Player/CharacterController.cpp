@@ -18,9 +18,9 @@
 ACharacterController::ACharacterController()
 {
 	//c_socket = ClientSocket::GetSingleton();
-	c_socket = ClientSocket::GetSingleton();
+	//c_socket = ClientSocket::GetSingleton();
+	c_socket = new ClientSocket();
 	c_socket->SetPlayerController(this);
-
 	p_cnt = -1;
 	bNewPlayerEntered = false;
 	bNewWeaponEntered = false;
@@ -31,15 +31,14 @@ ACharacterController::ACharacterController()
 
 void ACharacterController::BeginPlay()
 {
+	
+	
 	FInputModeGameOnly GameOnlyInput;
 	SetInputMode(GameOnlyInput);
-	c_socket->StartListen();
+	//c_socket->StartListen();
 	MainHUD = Cast<AMainHUD>(GetHUD());
-	c_socket->InitSocket();
-
-
-
 	//아아 여기
+	
 	connect = c_socket->Connect("192.168.103.18", 8000);
 	if (connect)
 	{

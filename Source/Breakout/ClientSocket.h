@@ -152,7 +152,7 @@ public:
 	WSAOVERLAPPED	overlapped;
 	WSABUF			wsabuf;
 	SOCKET			socket;
-	unsigned char			recvBuffer[buffsize + 1];
+	unsigned char	recvBuffer[buffsize + 1];
 	int				recvBytes;
 	int				sendBytes;
 	IO_type			type; // read, write, accept, connect ...
@@ -260,7 +260,7 @@ public:
 	Overlapped _recv_over;
 
 	SOCKET ServerSocket;
-	char recvBuffer[MAX_BUFFER];
+	unsigned char recvBuffer[MAX_BUFFER];
 	FRunnableThread* Thread;
 	FThreadSafeCounter StopTaskCounter;
 
