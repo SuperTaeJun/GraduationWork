@@ -37,7 +37,11 @@ void ACharacterController::BeginPlay()
 	MainHUD = Cast<AMainHUD>(GetHUD());
 	c_socket->InitSocket();
 
+<<<<<<< HEAD
 	connect = c_socket->Connect("192.168.103.18",  8000);
+=======
+	connect = c_socket->Connect("192.168.103.18", 8000);
+>>>>>>> 41fa59a301497d34058ad8414588077fe9940f76
 	if (connect)
 	{
 		c_socket->StartListen();
