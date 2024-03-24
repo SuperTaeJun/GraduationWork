@@ -19,24 +19,28 @@
 //* @param	Tangents			Optional array of tangent vector for each vertex.If supplied, must be same length as Vertices array.
 //* @param	bCreateCollision	Indicates whether collision should be created for this section.This adds significant cost.
 
-//USTRUCT(BlueprintType)
+USTRUCT(BlueprintType)
 struct FMeshData
 {
-	//GENERATED_BODY()
+	GENERATED_BODY()
 	
 	FMeshData(TArray<FVector> v = {}, TArray<int32> t = {}, TArray<FVector> n = {}, TArray<FVector2D> u = {}, TArray<FLinearColor> c = {}) : Verts(v), Tris(t), Normals(n), UVs(u), Colors(c) {}
-	
+	UPROPERTY(BlueprintReadWrite)
 	TArray<FVector> Verts = {};
+	UPROPERTY(BlueprintReadWrite)
 	TArray<int32> Tris = {};
+	UPROPERTY(BlueprintReadWrite)
 	TArray<FVector> Normals = {};
+	UPROPERTY(BlueprintReadWrite)
 	TArray<FVector2D> UVs = {};
+	UPROPERTY(BlueprintReadWrite)
 	TArray<FLinearColor> Colors = {};
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<int32> SectSizes = {};
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int32 NumSections = 0;
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<int32> Sects = {};
 
 	FORCEINLINE void Clear() {
@@ -81,18 +85,22 @@ public:
 	virtual void Tick(float DeltaTime) override;
 protected:
 	virtual void BeginPlay() override;
-
-	void UnifyTri(FMeshData& Data);
+	UFUNCTION(BlueprintCallable)
+	void UnifyTri(UPARAM(ref) FMeshData& Data);
 
 protected:
-	UPROPERTY(EditAnywhere, Category = "Mesh")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite,Category = "Mesh")
 	TObjectPtr<class UProceduralMeshComponent> ProceduralMesh;
 
 	UPROPERTY(EditAnywhere, Category = "Mesh")
 	TObjectPtr<class USphereComponent>AreaSphere;
 
+
+	UPROPERTY(BlueprintReadWrite)
 	FMeshData Data1;
+	UPROPERTY(BlueprintReadWrite)
 	FMeshData Data2;
+	UPROPERTY(BlueprintReadWrite)
 	FMeshData InterpData;
 
 	float Time = 0.f;
@@ -102,6 +110,8 @@ protected:
 	double DegSin(double A);
 
 	void InterpMeshData(FMeshData& Data, FMeshData& DataA,FMeshData& DataB, float Alpha, bool Clamp);
-	void GetMeshDataFromStaticMesh(UStaticMesh* Mesh, FMeshData& Data, int32 LODIndex, int32 SectionIndex, bool GetAllSections);
-	void SetColorData(FMeshData& Data, FLinearColor Color);
+	UFUNCTION(BlueprintCallable)
+	void GetMeshDataFromStaticMesh(UStaticMesh* Mesh, UPARAM(ref) FMeshData& Data, int32 LODIndex, int32 SectionIndex, bool GetAllSections);
+	UFUNCTION(BlueprintCallable)
+	void SetColorData(UPARAM(ref) FMeshData& Data, FLinearColor Color);
 };

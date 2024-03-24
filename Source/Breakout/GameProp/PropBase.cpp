@@ -15,68 +15,16 @@ APropBase::APropBase()
 
 	ProceduralMesh = CreateDefaultSubobject<UProceduralMeshComponent>(TEXT("ProceduralMesh"));
 	ProceduralMesh->SetupAttachment(RootComponent);
-	
-	//메쉬 에셋 가져오기
-	ConstructorHelpers::FObjectFinder<UStaticMesh> SMMesh1(TEXT("/Game/FPS_Weapon_Bundle/Weapons/Meshes/KA74U/SM_KA74U_X.SM_KA74U_X"));
-
-	ConstructorHelpers::FObjectFinder<UStaticMesh> SMMesh2(TEXT("/Game/FPS_Weapon_Bundle/Weapons/Meshes/SMG11/SM_SMG11_X.SM_SMG11_X"));
-
-	////메쉬 데이터에 스테틱 메쉬 데이터 넣기
-	GetMeshDataFromStaticMesh(SMMesh1.Object, Data1, 0, 0, true);
-	UE_LOG(LogTemp, Log, TEXT("%s"), *Data1.Verts[Data1.Tris[0]].ToString());
-	UnifyTri(Data1);
-	UE_LOG(LogTemp, Log, TEXT("%s"), *Data1.Verts[Data1.Tris[0]].ToString());
-	GetMeshDataFromStaticMesh(SMMesh2.Object, Data2, 0, 0, true);
-	UnifyTri(Data2);
-
-	//if (Data1.Verts.Num() < Data2.Verts.Num())
-	//{
-	//	int Loop = Data2.Verts.Num() - Data1.Verts.Num();
-
-	//	for (int i = 0; i < Loop / 3 - 1; ++i)
-	//	{
-	//		RandValue = FMath::RandRange(0, Data1.Verts.Num() - 1);
-
-	//		for (int j = 0; j < 2; ++j)
-	//		{
-	//			Data1.Tris.Add(RandValue);
-	//			Data1.Verts.Add(Data1.Verts[RandValue]);
-	//			Data1.Normals.Add(FVector(0.f, 0.f, 0.f));
-	//			Data1.UVs.Add(FVector2D(0.f, 0.f));
-	//			Data1.Colors.Add(FLinearColor::Red);
-	//		}
-
-	//	}
-	//}
-
-	SetColorData(Data1, FLinearColor::Red);
-	SetColorData(Data2, FLinearColor::Red);
-	InterpData = Data1;
-
-	TArray<FProcMeshTangent> Tangents = {};
-	ProceduralMesh->CreateMeshSection_LinearColor
-	(
-		0,  //SECK INDEX
-		Data1.Verts,  //V
-		Data1.Tris, //T
-		Data1.Normals, //N
-		Data1.UVs, //UV
-		Data1.Colors, //C
-		Tangents, //T
-		false // COLLISION
-	);
-
 
 }
 
-// Called when the game starts or when spawned
 void APropBase::BeginPlay()
 {
 	Super::BeginPlay();
 
 }
 
-void APropBase::UnifyTri(FMeshData& Data)
+void APropBase::UnifyTri(UPARAM(ref) FMeshData& Data)
 {
 	//UE_LOG(LogTemp, Log, TEXT("%d"), Data1.Tris.Num());
 
@@ -208,7 +156,7 @@ void APropBase::InterpMeshData(FMeshData& Data, FMeshData& DataA, FMeshData& Dat
 	}
 }
 
-void APropBase::GetMeshDataFromStaticMesh(UStaticMesh* Mesh, FMeshData& Data, int32 LODIndex, int32 SectionIndex, bool GetAllSections)
+void APropBase::GetMeshDataFromStaticMesh(UStaticMesh* Mesh, UPARAM(ref) FMeshData& Data, int32 LODIndex, int32 SectionIndex, bool GetAllSections)
 {
 	int32 n = 0, svi = 0, vi = 0, sec = 0;
 	int32* NewIndexPtr = nullptr;
@@ -272,7 +220,7 @@ void APropBase::GetMeshDataFromStaticMesh(UStaticMesh* Mesh, FMeshData& Data, in
 	}
 }
 
-void APropBase::SetColorData(FMeshData& Data, FLinearColor Color)
+void APropBase::SetColorData(UPARAM(ref) FMeshData& Data, FLinearColor Color)
 {
 	Data.Colors = {};
 	Data.Colors.SetNumUninitialized(Data.Verts.Num());

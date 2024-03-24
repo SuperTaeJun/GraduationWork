@@ -19,27 +19,6 @@ ABulletHoleWall::ABulletHoleWall()
 	Sphere = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Sphere"));
 	Sphere->SetupAttachment(RootComponent);
 
-
-	ConstructorHelpers::FObjectFinder<UStaticMesh> SMMesh1(TEXT("/Game/Maps/_GENERATED/TAEJUN/Box_24A10B9B.Box_24A10B9B"));
-	GetMeshDataFromStaticMesh(SMMesh1.Object, MeshDataA, 0, 0, true);
-	ConstructorHelpers::FObjectFinder<UStaticMesh> SMMesh2(TEXT("/Game/BP/GameProp/BulletHole/SM_BulletHole.SM_BulletHole"));
-	GetMeshDataFromStaticMesh(SMMesh2.Object, MeshDataB, 0, 0, true);
-	
-	SetColorData(MeshDataA, FLinearColor::Red);
-	SetColorData(MeshDataB, FLinearColor::Red);
-
-	TArray<FProcMeshTangent> Tangents = {};
-	ProceduralMesh->CreateMeshSection_LinearColor
-	(
-		0,  //SECK INDEX
-		MeshDataA.Verts,  //V
-		MeshDataA.Tris, //T
-		MeshDataA.Normals, //N
-		MeshDataA.UVs, //UV
-		MeshDataA.Colors, //C
-		Tangents, //T
-		true // COLLISION
-	);
 }
 
 void ABulletHoleWall::BeginPlay()
@@ -324,7 +303,7 @@ FMeshData ABulletHoleWall::TransformMeshData(FMeshData& Data, FTransform Transfo
 	return newdata;
 }
 
-void ABulletHoleWall::GetMeshDataFromStaticMesh(UStaticMesh* Mesh, FMeshData& Data, int32 LODIndex, int32 SectionIndex, bool GetAllSections)
+void ABulletHoleWall::GetMeshDataFromStaticMesh(UStaticMesh* Mesh, UPARAM(ref) FMeshData& Data, int32 LODIndex, int32 SectionIndex, bool GetAllSections)
 {
 	int32 n = 0, svi = 0, vi = 0, sec = 0;
 	int32* NewIndexPtr = nullptr;
@@ -387,7 +366,7 @@ void ABulletHoleWall::GetMeshDataFromStaticMesh(UStaticMesh* Mesh, FMeshData& Da
 		Data.NumSections += 1;
 	}
 }
-void ABulletHoleWall::SetColorData(FMeshData& Data, FLinearColor Color)
+void ABulletHoleWall::SetColorData(UPARAM(ref) FMeshData& Data, FLinearColor Color)
 {
 	Data.Colors = {};
 	Data.Colors.SetNumUninitialized(Data.Verts.Num());

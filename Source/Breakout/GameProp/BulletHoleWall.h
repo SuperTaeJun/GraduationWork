@@ -27,24 +27,26 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
-	UPROPERTY(VisibleAnywhere, Category = "Mesh")
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite,Category = "Mesh")
 	TObjectPtr<class UProceduralMeshComponent> ProceduralMesh;
 	UPROPERTY(EditAnywhere, Category = "Mesh")
 	TObjectPtr<class UStaticMeshComponent > Sphere;
 
+	UPROPERTY(BlueprintReadWrite)
 	FMeshData MeshDataA;
+	UPROPERTY(BlueprintReadWrite)
 	FMeshData MeshDataB;
-//	TArray<FMeshData> ProcMeshData;
 
 	FVector HitLoc;
 	FVector HitNomal;
-
 	FVector DirWorld;
 
 private:
 
-	FMeshData TransformMeshData(FMeshData& Data, FTransform Transform, bool InPlace, FVector Pivot);
-	void GetMeshDataFromStaticMesh(UStaticMesh* Mesh, FMeshData& Data, int32 LODIndex, int32 SectionIndex, bool GetAllSections);
-	void SetColorData(FMeshData& Data, FLinearColor Color);
+	UFUNCTION(BlueprintCallable)
+	void GetMeshDataFromStaticMesh(UStaticMesh* Mesh, UPARAM(ref) FMeshData& Data, int32 LODIndex, int32 SectionIndex, bool GetAllSections);
+	UFUNCTION(BlueprintCallable)
+	void SetColorData(UPARAM(ref) FMeshData& Data, FLinearColor Color);
 	FMeshData SetRandomVertex(FMeshData& MeshData, float Min, float Max, float Tolerance);
+	FMeshData TransformMeshData(FMeshData& Data, FTransform Transform, bool InPlace, FVector Pivot);
 };

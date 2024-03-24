@@ -15,7 +15,8 @@ ACharacter4::ACharacter4()
 {
 	NiagaraComp = CreateDefaultSubobject<UNiagaraComponent>(TEXT("NiagaraComp"));
 	NiagaraComp->SetAutoActivate(false);
-
+	ConstructorHelpers::FObjectFinder<UNiagaraSystem> FxRef(TEXT("/Script/Niagara.NiagaraSystem'/Game/Niagara/SKill/Skill4/NS_Skill4_S.NS_Skill4_S''"));
+	NiagaraComp->SetAsset(FxRef.Object);
 }
 
 void ACharacter4::BeginPlay()
