@@ -8,7 +8,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/ProgressBar.h"
 #include "Components/TextBlock.h"
-//#include "Character/CharacterBase.h"
+#include "Character/CharacterBase.h"
 #include "Character/Character1.h"
 #include "Components/Image.h"
 #include "Game/BOGameInstance.h"
@@ -19,9 +19,8 @@
 ACharacterController::ACharacterController()
 {
 	//c_socket = ClientSocket::GetSingleton();
-	c_socket = ClientSocket::GetSingleton();
-	//c_socket = new ClientSocket();
-	c_socket->SetPlayerController(this);
+	//c_socket = ClientSocket::GetSingleton();
+	
 	p_cnt = -1;
 	bNewPlayerEntered = false;
 	bNewWeaponEntered = false;
@@ -39,7 +38,8 @@ void ACharacterController::BeginPlay()
 
 	MainHUD = Cast<AMainHUD>(GetHUD());
 	////아아 여기
-	
+	c_socket = new ClientSocket();
+	c_socket->SetPlayerController(this);
 	c_socket->StartListen();
 	connect = c_socket->Connect("192.168.101.241", 7777);
 
