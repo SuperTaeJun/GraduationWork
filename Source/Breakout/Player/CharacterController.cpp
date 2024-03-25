@@ -429,8 +429,8 @@ void ACharacterController::UpdateSyncPlayer()
 				SpawnActor.Owner = this;
 				SpawnActor.Instigator = GetInstigator();
 				SpawnActor.Name = FName(*FString(to_string(NewPlayer.front()->Id).c_str()));
-				ToSpawn = ACharacter1::StaticClass();
-				ACharacter1* SpawnCharacter = world->SpawnActor<ACharacter1>(ToSpawn,
+				ToSpawn = ACharacter2::StaticClass();
+				ACharacter2* SpawnCharacter = world->SpawnActor<ACharacter2>(ToSpawn,
 					S_LOCATION, S_ROTATOR, SpawnActor);
 				SpawnCharacter->SpawnDefaultController();
 				SpawnCharacter->_SessionId = NewPlayer.front()->Id;
@@ -453,8 +453,8 @@ void ACharacterController::UpdateSyncPlayer()
 				SpawnActor.Owner = this;
 				SpawnActor.Instigator = GetInstigator();
 				SpawnActor.Name = FName(*FString(to_string(NewPlayer.front()->Id).c_str()));
-				ToSpawn = ACharacter1::StaticClass();
-				ACharacter1* SpawnCharacter = world->SpawnActor<ACharacter1>(ToSpawn,
+				ToSpawn = ACharacter3::StaticClass();
+				ACharacter3* SpawnCharacter = world->SpawnActor<ACharacter3>(ToSpawn,
 					S_LOCATION, S_ROTATOR, SpawnActor);
 				SpawnCharacter->SpawnDefaultController();
 				SpawnCharacter->_SessionId = NewPlayer.front()->Id;
@@ -477,8 +477,8 @@ void ACharacterController::UpdateSyncPlayer()
 				SpawnActor.Owner = this;
 				SpawnActor.Instigator = GetInstigator();
 				SpawnActor.Name = FName(*FString(to_string(NewPlayer.front()->Id).c_str()));
-				ToSpawn = ACharacter1::StaticClass();
-				ACharacter1* SpawnCharacter = world->SpawnActor<ACharacter1>(ToSpawn,
+				ToSpawn = ACharacter4::StaticClass();
+				ACharacter4* SpawnCharacter = world->SpawnActor<ACharacter4>(ToSpawn,
 					S_LOCATION, S_ROTATOR, SpawnActor);
 				SpawnCharacter->SpawnDefaultController();
 				SpawnCharacter->_SessionId = NewPlayer.front()->Id;
