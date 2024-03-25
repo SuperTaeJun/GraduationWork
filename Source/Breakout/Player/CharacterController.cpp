@@ -8,8 +8,12 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/ProgressBar.h"
 #include "Components/TextBlock.h"
-//#include "Character/CharacterBase.h"
+#include "Character/CharacterBase.h"
 #include "Character/Character1.h"
+#include "Character/Character2.h"
+#include "Character/Character3.h"
+#include "Character/Character4.h"
+
 #include "Components/Image.h"
 #include "Game/BOGameInstance.h"
 #include "Network/PacketData.h"
