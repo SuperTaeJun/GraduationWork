@@ -1,3 +1,4 @@
+
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
@@ -18,9 +19,8 @@
 ACharacterController::ACharacterController()
 {
 	//c_socket = ClientSocket::GetSingleton();
-	//c_socket = ClientSocket::GetSingleton();
-	c_socket = new ClientSocket();
-	c_socket->SetPlayerController(this);
+	c_socket = ClientSocket::GetSingleton();
+
 	p_cnt = -1;
 	bNewPlayerEntered = false;
 	bNewWeaponEntered = false;
@@ -31,17 +31,20 @@ ACharacterController::ACharacterController()
 
 void ACharacterController::BeginPlay()
 {
-	
-	
+
+
 	FInputModeGameOnly GameOnlyInput;
 	SetInputMode(GameOnlyInput);
-	c_socket->StartListen();
+
 	MainHUD = Cast<AMainHUD>(GetHUD());
-	//아아 여기
-	
-	connect = c_socket->Connect("192.168.103.18", 8000);
+	////아아 여기
+	//c_socket = new ClientSocket();
+	c_socket->SetPlayerController(this);
+	c_socket->StartListen();
+	connect = c_socket->Connect("192.168.101.241", 8000);
 	if (connect)
 	{
+		
 		c_socket->StartListen();
 		UE_LOG(LogClass, Warning, TEXT("IOCP Server connect success!"));
 		FString c_id = "testuser";
@@ -65,14 +68,14 @@ void ACharacterController::BeginPlay()
 			c_socket->Send_Login_Info(TCHAR_TO_UTF8(*c_id), TCHAR_TO_UTF8(*c_pw), PlayerType::Character1);
 			break;
 		}
-	
-		
+
+
 	}
 	else
 	{
 		UE_LOG(LogClass, Warning, TEXT("IOCP Server connect FAIL!"));
 	}
-
+	SleepEx(0.0, true);
 }
 
 
@@ -134,7 +137,7 @@ void ACharacterController::SetHUDBojoImage(EBojoMugiType Type)
 	{
 		switch (Type)
 		{
-		case EBojoMugiType::E_Grenade:	
+		case EBojoMugiType::E_Grenade:
 			MainHUD->CharacterUi->BojomugiImage->SetBrushFromTexture(MainHUD->CharacterUi->GrenadeImage);
 			break;
 		case EBojoMugiType::E_Wall:
@@ -181,7 +184,7 @@ void ACharacterController::SetHUDSkill()
 
 void ACharacterController::SetHUDSkillOpacity(float Opacity)
 {
-	if(MainHUD)
+	if (MainHUD)
 		MainHUD->CharacterUi->SkillImage->SetColorAndOpacity(FLinearColor(1.f, 1.f, 1.f, Opacity));
 }
 
@@ -243,10 +246,11 @@ void ACharacterController::Tick(float DeltaTime)
 	//새 플레이어 스폰
 	if (bNewPlayerEntered)
 		UpdateSyncPlayer();
-	
+
 	UpdateWorld();
 	//UE_LOG(LogTemp, Warning, TEXT("HHHHHH : %s"), *GetOwner()->GetVelocity().ToString());
 	UpdatePlayer();
+	SleepEx(0, true);
 }
 
 void ACharacterController::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -256,7 +260,7 @@ void ACharacterController::EndPlay(const EEndPlayReason::Type EndPlayReason)
 }
 
 
-void ACharacterController::SetInitPlayerInfo(const CPlayer &owner_player)
+void ACharacterController::SetInitPlayerInfo(const CPlayer& owner_player)
 {
 	UE_LOG(LogClass, Warning, TEXT("SetInitPlayerInfo"));
 	initplayer = owner_player;
@@ -265,7 +269,7 @@ void ACharacterController::SetInitPlayerInfo(const CPlayer &owner_player)
 }
 void ACharacterController::SetNewCharacterInfo(std::shared_ptr<CPlayer> InitPlayer)
 {
-	if (InitPlayer != nullptr){
+	if (InitPlayer != nullptr) {
 		bNewPlayerEntered = true;
 		NewPlayer.push(InitPlayer);
 		UE_LOG(LogTemp, Warning, TEXT("The value of size_: %d"), NewPlayer.size());
@@ -276,7 +280,7 @@ void ACharacterController::SetNewWeaponMesh(std::shared_ptr<CPlayer> InitPlayer)
 	if (InitPlayer != nullptr) {
 		bNewWeaponEntered = true;
 		NewPlayer.push(InitPlayer);
-		
+
 	}
 }
 
@@ -330,7 +334,7 @@ bool ACharacterController::UpdateWorld()
 				PlayerVelocity.X = info->VeloX;
 				PlayerVelocity.Y = info->VeloY;
 				PlayerVelocity.Z = info->VeloZ;
-				if(!OtherPlayer->GetCurWeapon())
+				if (!OtherPlayer->GetCurWeapon())
 				{
 					if (info->w_type == WeaponType::RIFLE)
 					{
@@ -348,7 +352,7 @@ bool ACharacterController::UpdateWorld()
 						OtherPlayer->SetWeapon(Lancher, LancherSocketName);
 					}
 				}
-				
+
 				OtherPlayer->AddMovementInput(PlayerVelocity);
 				OtherPlayer->SetActorRotation(PlayerRotation);
 				OtherPlayer->SetActorLocation(PlayerLocation);
@@ -402,7 +406,7 @@ void ACharacterController::UpdateSyncPlayer()
 				SpawnCharacter->SpawnDefaultController();
 				SpawnCharacter->_SessionId = NewPlayer.front()->Id;
 				SpawnCharacter->GetMesh()->SetSkeletalMesh(SkMeshAsset1);
-				if(Anim1)
+				if (Anim1)
 					SpawnCharacter->GetMesh()->SetAnimClass(Anim1);
 			}
 			break;
@@ -527,7 +531,7 @@ void ACharacterController::UpdateSyncPlayer()
 }
 void ACharacterController::UpdateSyncWeapon()
 {
-	
+
 }
 //void ACharacterController::UpdateSyncPlayer()
 //{

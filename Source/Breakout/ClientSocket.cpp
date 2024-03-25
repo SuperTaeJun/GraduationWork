@@ -17,8 +17,8 @@ ClientSocket::ClientSocket() :StopTaskCounter(0)
 }
 
 ClientSocket::~ClientSocket() {
-	delete Thread;
-	Thread = nullptr;
+	/*delete Thread;
+	Thread = nullptr;*/
 
 	closesocket(ServerSocket);
 	WSACleanup();
@@ -72,7 +72,7 @@ void ClientSocket::CloseSocket()
 void ClientSocket::PacketProcess(unsigned char* ptr)
 {
 	//UE_LOG(LogClass, Warning, TEXT("init?"));
-	//static bool first_time = true;
+	static bool first_time = true;
 	switch (ptr[1])
 	{
 	case SC_LOGIN_OK: {
@@ -89,12 +89,12 @@ void ClientSocket::PacketProcess(unsigned char* ptr)
 		MyCharacterController->SetPlayerID(player.Id);
 		MyCharacterController->SetPlayerInfo(&PlayerInfo);
 		MyCharacterController->SetInitPlayerInfo(player);
-		//UE_LOG(LogClass, Warning, TEXT("recv - id: %d, x: %d"), player.Id, player.X);
+		UE_LOG(LogClass, Warning, TEXT("recv - id: %d, x: %d"), player.Id, player.X);
 		break;
 	}
 	case SC_OTHER_PLAYER:
 	{
-		UE_LOG(LogClass, Warning, TEXT("other ROGIN?"));
+		//UE_LOG(LogClass, Warning, TEXT("other ROGIN?"));
 		SC_PLAYER_SYNC* packet = reinterpret_cast<SC_PLAYER_SYNC*>(ptr);
 		auto info = make_shared<CPlayer>();
 		info->Id = packet->id;
@@ -104,7 +104,7 @@ void ClientSocket::PacketProcess(unsigned char* ptr)
 		info->Yaw = packet->yaw;
 		info->p_type = packet->p_type;
 		//float z = packet->z;
-		//UE_LOG(LogClass, Warning, TEXT("recv data"));
+		UE_LOG(LogClass, Warning, TEXT("recv - info->id: %d,"), info->Id);
 		MyCharacterController->SetNewCharacterInfo(info);
 		break;
 	}
@@ -120,7 +120,7 @@ void ClientSocket::PacketProcess(unsigned char* ptr)
 		PlayerInfo.players[packet->id].VeloY = packet->vy;
 		PlayerInfo.players[packet->id].VeloZ = packet->vz;
 		PlayerInfo.players[packet->id].Max_Speed = packet->Max_speed;
-
+		UE_LOG(LogClass, Warning, TEXT("recv - move player id : %d,"), packet->id);
 		break;
 	}
 	case SC_CHAR_BACK: {
@@ -145,8 +145,8 @@ void ClientSocket::Send_Login_Info(char* id, char* pw, PlayerType character_type
 	CS_LOGIN_PACKET packet;
 	packet.size = sizeof(packet);
 	packet.type = CS_LOGIN;
-	strcpy(packet.id, _id);
-	strcpy(packet.pw, _pw);
+	strcpy(packet.id, id);
+	strcpy(packet.pw, pw);
 
 	auto player= Cast<ACharacterBase>(UGameplayStatics::GetPlayerCharacter(MyCharacterController, 0));
 	//cs_login_packet
@@ -156,7 +156,7 @@ void ClientSocket::Send_Login_Info(char* id, char* pw, PlayerType character_type
 	packet.z = location.Z;
 	packet.p_type = character_type;
 	SendPacket(&packet);
-	//UE_LOG(LogClass, Warning, TEXT("Sending login info - id: %s, pw: %s"), ANSI_TO_TCHAR(id), ANSI_TO_TCHAR(pw));
+	UE_LOG(LogClass, Warning, TEXT("Sending login info - id: %s, pw: %s"), ANSI_TO_TCHAR(id), ANSI_TO_TCHAR(pw));
 
 }
 
@@ -207,7 +207,7 @@ uint32 ClientSocket::Run()
 {
 	FPlatformProcess::Sleep(0.03);
 
-	//Connect();
+	////Connect();
 	Iocp = CreateIoCompletionPort(INVALID_HANDLE_VALUE, NULL, NULL, 0);
 	CreateIoCompletionPort(reinterpret_cast<HANDLE>(ServerSocket), Iocp, 0, 0);
 
@@ -219,7 +219,7 @@ uint32 ClientSocket::Run()
 
 	// recv while loop 시작
 	// StopTaskCounter 클래스 변수를 사용해 Thread Safety하게 해줌
-	while (StopTaskCounter.GetValue() == 0 && MyCharacterController != nullptr)
+	while (StopTaskCounter.GetValue() == 0)
 	{
 		DWORD num_byte;
 		LONG64 iocp_key;
@@ -274,6 +274,28 @@ uint32 ClientSocket::Run()
 
 	}
 	return 0;
+
+	//FPlatformProcess::Sleep(0.03);
+	//PacketProcess(m_sRecvBuffer);
+	//SleepEx(0, true);
+	//while (StopTaskCounter.GetValue() == 0 /*&& m_PlayerController != nullptr*/)
+	//{
+	//	int nRecvLen = recv(ServerSocket, reinterpret_cast<char*>(m_sRecvBuffer), MAX_BUFFER, 0);
+
+	//	if (nRecvLen == 0)
+	//	{
+	//		UE_LOG(LogTemp, Warning, TEXT("Recv 0 Btye. break while"));
+	//		break;
+	//	}
+
+	//	BYTE OP;
+	//	memcpy(&OP, m_sRecvBuffer, sizeof(BYTE));
+
+	//	PacketProcess(m_sRecvBuffer);
+	//	SleepEx(0, true);
+	//}
+	//UE_LOG(LogTemp, Warning, TEXT("Recv Close"));
+	//return 0;
 }
 
 void ClientSocket::Stop()
