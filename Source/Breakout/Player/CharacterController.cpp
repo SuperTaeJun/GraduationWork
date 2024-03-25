@@ -44,7 +44,7 @@ void ACharacterController::BeginPlay()
 	////아아 여기
 	c_socket = new ClientSocket();
 	c_socket->SetPlayerController(this);
-	c_socket->StartListen();
+	//c_socket->StartListen();
 	connect = c_socket->Connect("192.168.101.241", 7777);
 
 	if (connect)
@@ -74,13 +74,13 @@ void ACharacterController::BeginPlay()
 			break;
 		}
 
-		SleepEx(0.0, true);
+		SleepEx(0.5, true);
 	}
 	else
 	{
 		UE_LOG(LogClass, Warning, TEXT("IOCP Server connect FAIL!"));
 	}
-	SleepEx(0.0, true);
+	SleepEx(0.5, true);
 }
 
 

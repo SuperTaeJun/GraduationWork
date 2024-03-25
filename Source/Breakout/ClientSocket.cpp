@@ -291,7 +291,7 @@ uint32 ClientSocket::Run()
 		memcpy(&OP, m_sRecvBuffer, sizeof(BYTE));
 
 		PacketProcess(m_sRecvBuffer);
-		SleepEx(0, true);
+		SleepEx(0.5, true);
 	}
 	UE_LOG(LogTemp, Warning, TEXT("Recv Close"));
 	return 0;
