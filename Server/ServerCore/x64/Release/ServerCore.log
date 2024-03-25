@@ -1,6 +1,0 @@
-﻿  pch.cpp
-  CoreMacro.cpp
-  CorePch.cpp
-  CoreTLS.cpp
-  Lock.cpp
-  ServerCore.vcxproj -> C:\Users\sejin\Downloads\GraduationWork\Server\Libraries\Release\ServerCore.lib
