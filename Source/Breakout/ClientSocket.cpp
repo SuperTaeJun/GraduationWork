@@ -42,18 +42,19 @@ bool ClientSocket::Connect(const char* s_IP, int port)
 	}
 
 	// TCP 소켓 생성
-	ServerSocket = WSASocket(AF_INET, SOCK_STREAM, IPPROTO_IP, 0, 0, WSA_FLAG_OVERLAPPED);
+	ServerSocket = WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, 0, 0, WSA_FLAG_OVERLAPPED);
 	if (ServerSocket == INVALID_SOCKET) {
 		return false;
 	}
 
 	// 접속할 서버 정보를 저장할 구조체
 	SOCKADDR_IN stServerAddr;
+	::memset(&stServerAddr, 0, sizeof(stServerAddr));
 	// 접속할 서버 포트 및 IP
 	stServerAddr.sin_family = AF_INET;
 	::inet_pton(AF_INET, SERVER_IP, &stServerAddr.sin_addr);
 	stServerAddr.sin_port = htons(SERVER_PORT);
-	stServerAddr.sin_addr.s_addr = inet_addr(SERVER_IP);
+	//stServerAddr.sin_addr.s_addr = inet_addr(SERVER_IP);
 
 	int nResult = connect(ServerSocket, (sockaddr*)&stServerAddr, sizeof(sockaddr));
 	if (nResult == SOCKET_ERROR) {
