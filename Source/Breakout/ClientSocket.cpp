@@ -35,7 +35,7 @@ bool ClientSocket::Connect(const char* s_IP, int port)
 
 	WSADATA wsaData;
 	// 윈속 버전을 2.2로 초기화
-	if(::WSAStartup(MAKEWORD(2, 2), &wsaData))
+	if(::WSAStartup(MAKEWORD(2, 2), &wsaData) != 0)
 	{
 		UE_LOG(LogTemp, Error, TEXT("INITAILAIZING ERROR"));
 		return false;
