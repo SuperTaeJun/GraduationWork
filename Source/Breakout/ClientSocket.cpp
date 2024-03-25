@@ -109,21 +109,21 @@ void ClientSocket::PacketProcess(unsigned char* ptr)
 		MyCharacterController->SetNewCharacterInfo(info);
 		break;
 	}
-	case SC_MOVE_PLAYER:
-	{
-		//UE_LOG(LogClass, Warning, TEXT("recv move?"));
-		CS_MOVE_PACKET* packet = reinterpret_cast<CS_MOVE_PACKET*>(ptr);
-		PlayerInfo.players[packet->id].X = packet->x;
-		PlayerInfo.players[packet->id].Y = packet->y;
-		PlayerInfo.players[packet->id].Z = packet->z;
-		PlayerInfo.players[packet->id].Yaw = packet->yaw;
-		PlayerInfo.players[packet->id].VeloX = packet->vx;
-		PlayerInfo.players[packet->id].VeloY = packet->vy;
-		PlayerInfo.players[packet->id].VeloZ = packet->vz;
-		PlayerInfo.players[packet->id].Max_Speed = packet->Max_speed;
-		UE_LOG(LogClass, Warning, TEXT("recv - move player id : %d,"), packet->id);
-		break;
-	}
+	//case SC_MOVE_PLAYER:
+	//{
+	//	//UE_LOG(LogClass, Warning, TEXT("recv move?"));
+	//	CS_MOVE_PACKET* packet = reinterpret_cast<CS_MOVE_PACKET*>(ptr);
+	//	PlayerInfo.players[packet->id].X = packet->x;
+	//	PlayerInfo.players[packet->id].Y = packet->y;
+	//	PlayerInfo.players[packet->id].Z = packet->z;
+	//	PlayerInfo.players[packet->id].Yaw = packet->yaw;
+	//	PlayerInfo.players[packet->id].VeloX = packet->vx;
+	//	PlayerInfo.players[packet->id].VeloY = packet->vy;
+	//	PlayerInfo.players[packet->id].VeloZ = packet->vz;
+	//	PlayerInfo.players[packet->id].Max_Speed = packet->Max_speed;
+	//	UE_LOG(LogClass, Warning, TEXT("recv - move player id : %d,"), packet->id);
+	//	break;
+	//}
 	case SC_CHAR_BACK: {
 		break;
 	}
