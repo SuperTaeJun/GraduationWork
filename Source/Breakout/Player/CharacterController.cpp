@@ -41,7 +41,8 @@ void ACharacterController::BeginPlay()
 	////아아 여기
 	
 	c_socket->StartListen();
-	connect = c_socket->Connect();
+	connect = c_socket->Connect("192.168.123.110", 7777);
+
 	if (connect)
 	{
 		

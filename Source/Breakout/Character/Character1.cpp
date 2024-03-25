@@ -33,7 +33,7 @@ void ACharacter1::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	GEngine->AddOnScreenDebugMessage(1, 1.f, FColor::Blue, FString::Printf(TEXT("RecordedTime : %f"), RecordedTime));
+	//GEngine->AddOnScreenDebugMessage(1, 1.f, FColor::Blue, FString::Printf(TEXT("RecordedTime : %f"), RecordedTime));
 	if (!bCoolTimeFinish && MainController)
 	{
 		RecordedCoolTime += DeltaTime;
