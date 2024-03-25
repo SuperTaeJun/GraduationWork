@@ -9,7 +9,6 @@
 #include "Kismet/GameplayStatics.h"
 #include "GameFramework/PlayerController.h"
 #include <memory>
-
 #include "CharacterController.generated.h"
 //ClientSocket* c_socket = nullptr;
 class CPlayer;
