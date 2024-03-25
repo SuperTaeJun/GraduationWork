@@ -80,7 +80,9 @@ public:
 	void showWeaponSelect();
 	void ShowRespawnSelect();
 	// 초기 플레이어 저장
-	void SetPlayerID(const int playerid) { id = playerid; }
+	void SetPlayerID(const int playerid) {
+		UE_LOG(LogTemp, Warning, TEXT("%d -> my_id"), playerid);
+		id = playerid; }
 	int GetPlayerID() { return id; }
 	void SetPlayerInfo(CPlayerInfo* p_info) {
 		if (p_info != nullptr)

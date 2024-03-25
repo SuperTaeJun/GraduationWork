@@ -233,7 +233,7 @@ public:
 	ClientSocket();
 	virtual ~ClientSocket();
 	bool InitSocket();
-	bool Connect(const char* s_IP, int port);
+	bool Connect();
 	void CloseSocket();
 
 	void PacketProcess(unsigned char* ptr);

@@ -1,7 +1,7 @@
 #pragma once
 
 #define MAX_INFO_SIZE   20
-const short SERVER_PORT = 12345;
+const short SERVER_PORT = 7777;
 
 const int BUFSIZE = 256;
 const int  ReZone_HEIGHT = 2000;
@@ -73,14 +73,14 @@ struct SC_LOGIN_BACK {
 	int clientid;
 	float x, y, z;
 	float yaw;
-	int cl_id;
+	//int cl_id;
 	PlayerType p_type;
 };
 struct CS_MOVE_PACKET
 {
 	unsigned char size;
 	char type;
-	int	id;
+	int	clientid;
 	float Max_speed;
 	float x, y, z;
 	float vx, vy, vz;
@@ -90,7 +90,7 @@ struct CS_MOVE_PACKET
 struct SC_PLAYER_SYNC {
 	unsigned char size;
 	char type;
-	int id;
+	int clientid;
 	float Max_speed;
 	float x, y, z;
 	float yaw;
@@ -102,108 +102,21 @@ struct CS_SELECT_CHARACTER
 {
 	unsigned char size;
 	char type;
-	int id;
+	int clientid;
 	//PlayerType character_type;
 };
 struct CS_SELECT_WEAPO
 {
 	unsigned char size;
 	char type;
-	int id;
+	int clientid;
 	WeaponType weapon_type;
 };
 struct SC_SYNC_WEAPO
 {
 	unsigned char size;
 	char type;
-	int id;
+	int clientid;
 	WeaponType weapon_type;
-};
-
-struct cs_packet_start { // 게임 레디 요청
-	unsigned char size;
-	char	type;
-	bool	ready;
-};
-struct sc_packet_ready { // 타 플레이어 레디
-	unsigned char size;
-	char	type;
-	char	name[MAX_NAME_SIZE];
-};
-
-struct sc_packet_start_ok { // 스폰
-	unsigned char size;
-	char type;
-	char	name[MAX_NAME_SIZE];
-	float x, y, z;
-	char image_num;
-};
-
-struct cs_packet_attack {
-	unsigned char size;
-	char	type;
-	int s_id;
-};
-
-struct cs_packet_damage {
-	unsigned char size;
-	char	type;
-};
-
-struct cs_packet_get_item {
-	unsigned char size;
-	char	type;
-	int s_id;
-	char    item_num;
-};
-
-struct cs_packet_chat {
-	unsigned char size;
-	char	type;
-	int s_id;
-	float x, y, z;
-	char	message[MAX_CHAT_SIZE];
-};
-
-struct cs_packet_teleport {
-	// 서버에서 장애물이 없는 랜덤 좌표로 텔레포트 시킨다.
-	// 더미 클라이언트에서 동접 테스트용으로 사용.
-	unsigned char size;
-	char	type;
-};
-
-struct sc_packet_remove_object {
-	unsigned char size;
-	char type;
-	int id;
-};
-
-struct sc_packet_chat {
-	unsigned char size;
-	char type;
-	int id;
-	char message[MAX_CHAT_SIZE];
-};
-
-struct sc_packet_login_fail {
-	unsigned char size;
-	char type;
-	int	 reason;		// 0: 중복 ID,  1:사용자 Full
-};
-
-struct sc_packet_status_change {
-	unsigned char size;
-	char type;
-	short   state;
-	short	hp, maxhp;
-	bool ice[4]; // 사지분해
-};
-
-
-struct sc_packet_hp_change {
-	unsigned char size;
-	char type;
-	int target;
-	int	hp;
 };
 #pragma pack(pop)

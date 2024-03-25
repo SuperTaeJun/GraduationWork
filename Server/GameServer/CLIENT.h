@@ -53,7 +53,7 @@ public:
     CL_STATE _state;
     atomic_bool   _is_active = false;
 
-    COMBAT _combat;
+    //COMBAT _combat;
 
     atomic_int    _count;
     int      _type;   // 1.Player 2.고블린  3.오거 4.드래곤(Boss)   
@@ -63,7 +63,7 @@ public:
     int      _prev_size;
     int      last_move_time;
 public:
-    CLIENT() : _state(ST_FREE), _combat(COMBAT_END), _prev_size(0)
+    CLIENT() : _state(ST_FREE), _prev_size(0)
     {
         x = 0;
         y = 0;

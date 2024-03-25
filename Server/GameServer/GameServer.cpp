@@ -42,7 +42,7 @@ int main()
 	SOCKADDR_IN server_addr;
 	ZeroMemory(&server_addr, sizeof(server_addr));
 	server_addr.sin_family = AF_INET;
-	server_addr.sin_port = htons(8000);
+	server_addr.sin_port = htons(7777);
 	server_addr.sin_addr.s_addr = htonl(INADDR_ANY);
 	bind(sever_socket, reinterpret_cast<sockaddr*>(&server_addr), sizeof(server_addr));
 	listen(sever_socket, SOMAXCONN);
@@ -119,7 +119,7 @@ void send_login_ok_packet(int _s_id)
 	SC_LOGIN_BACK packet;
 	packet.size = sizeof(packet);
 	packet.type = SC_LOGIN_OK;
-	packet.cl_id = _s_id;
+	packet.clientid = _s_id;
 	packet.x = clients[_s_id].x;
 	packet.y = clients[_s_id].y;
 	packet.z = clients[_s_id].z;
@@ -132,40 +132,6 @@ void send_login_ok_packet(int _s_id)
 	clients[_s_id].do_send(sizeof(packet), &packet);
 }
 
-//로그인 실패
-void send_login_fail_packet(int _s_id)
-{
-	sc_packet_login_fail packet;
-	packet.size = sizeof(packet);
-	//packet.type = SC_PACKET_LOGIN_FAIL;
-	clients[_s_id].do_send(sizeof(packet), &packet);
-}
-
-//오브젝트 제거
-void send_remove_object(int _s_id, int victim)
-{
-	sc_packet_remove_object packet;
-	packet.id = victim;
-	packet.size = sizeof(packet);
-	//packet.type = SC_PACKET_REMOVE_OBJECT;
-	clients[_s_id].do_send(sizeof(packet), &packet);
-}
-
-//오브젝트 생성
-void send_put_object(int _s_id, int target)
-{
-	SC_PLAYER_SYNC packet;
-	packet.id = target;
-	packet.size = sizeof(packet);
-	packet.type = SC_OTHER_PLAYER;
-	packet.x = clients[target].x;
-	packet.y = clients[target].y;
-	packet.z = clients[target].z;
-
-	strcpy_s(packet.name, clients[target].name);
-	packet.object_type = 0;
-	clients[_s_id].do_send(sizeof(packet), &packet);
-}
 
 
 //해제
@@ -232,7 +198,7 @@ void process_packet(int s_id, unsigned char* p)
 			else other.state_lock.unlock();
 
 			SC_PLAYER_SYNC packet;
-			packet.id = cl._s_id;
+			packet.clientid = cl._s_id;
 			strcpy_s(packet.name, cl.name);
 			packet.object_type = 0;
 			packet.size = sizeof(packet);
@@ -243,7 +209,7 @@ void process_packet(int s_id, unsigned char* p)
 			packet.yaw = cl.Yaw;
 			packet.Max_speed = cl.Max_Speed;
 			packet.p_type = cl.p_type;
-			printf_s("[Send put object] id : %d, location : (%f,%f,%f), yaw : %f\n", packet.id, packet.x, packet.y, packet.z, packet.yaw);
+			printf_s("[Send put object] id : %d, location : (%f,%f,%f), yaw : %f\n", packet.clientid, packet.x, packet.y, packet.z, packet.yaw);
 			cout << "이거 누구한테 감 :  ?" << other._s_id << endl;
 			other.do_send(sizeof(packet), &packet);
 		}
@@ -260,7 +226,7 @@ void process_packet(int s_id, unsigned char* p)
 
 
 			SC_PLAYER_SYNC packet;
-			packet.id = other._s_id;
+			packet.clientid = other._s_id;
 			strcpy_s(packet.name, other.name);
 			packet.object_type = 0;
 			packet.size = sizeof(packet);
@@ -271,7 +237,7 @@ void process_packet(int s_id, unsigned char* p)
 			packet.yaw = other.Yaw;
 			packet.Max_speed = other.Max_Speed;
 			packet.p_type = other.p_type;
-			printf_s("[어떤 클라의 Send put object] id : %d, location : (%f,%f,%f), yaw : %f\n", packet.id, packet.x, packet.y, packet.z, packet.yaw);
+			printf_s("[어떤 클라의 Send put object] id : %d, location : (%f,%f,%f), yaw : %f\n", packet.clientid, packet.x, packet.y, packet.z, packet.yaw);
 
 			cl.do_send(sizeof(packet), &packet);
 		}
@@ -281,7 +247,7 @@ void process_packet(int s_id, unsigned char* p)
 	case CS_MOVE: {
 		//cout << "들어옴?" << endl;
 		CS_MOVE_PACKET* packet = reinterpret_cast<CS_MOVE_PACKET*>(p);
-		CLIENT& cl = clients[packet->id];
+		CLIENT& cl = clients[packet->clientid];
 		cl.x = packet->x;
 		cl.y = packet->y;
 		cl.z = packet->z;
@@ -290,7 +256,7 @@ void process_packet(int s_id, unsigned char* p)
 		cl.VY = packet->vy;
 		cl.VZ = packet->vz;
 		cl.Max_Speed = packet->Max_speed;
-		cout <<"플레이어["<< packet->id<<"]" << "  x:" << packet->x << endl;
+		cout <<"플레이어["<< packet->clientid <<"]" << "  x:" << packet->x << endl;
 		//cout <<"플레이어["<< packet->id<<"]" << "  x:" << packet->vx << " y:" << packet->y << " z:" << packet->z << "speed : " << packet->speed << endl;
 		//클라 recv 확인용
 
@@ -308,7 +274,7 @@ void process_packet(int s_id, unsigned char* p)
 	case CS_SELECT_WEP:
 	{
 		CS_SELECT_WEAPO* packet = reinterpret_cast<CS_SELECT_WEAPO*>(p);
-		CLIENT& cl = clients[packet->id];
+		CLIENT& cl = clients[packet->clientid];
 		cl.w_type = packet->weapon_type;
 		cout << "무기 타입" << cl.w_type << endl;
 		for (auto& other : clients) {
@@ -320,7 +286,7 @@ void process_packet(int s_id, unsigned char* p)
 			}
 			else other.state_lock.unlock();
 			SC_SYNC_WEAPO packet;
-			packet.id = cl._s_id;
+			packet.clientid = cl._s_id;
 			packet.size = sizeof(packet);
 			packet.type = SC_OTHER_WEAPO;
 			packet.weapon_type = cl.w_type;
@@ -337,7 +303,7 @@ void process_packet(int s_id, unsigned char* p)
 			}
 			else other.state_lock.unlock();
 			SC_SYNC_WEAPO packet;
-			packet.id = other._s_id;
+			packet.clientid = other._s_id;
 			packet.size = sizeof(packet);
 			packet.type = SC_OTHER_WEAPO;
 			packet.weapon_type = other.w_type;
@@ -346,12 +312,6 @@ void process_packet(int s_id, unsigned char* p)
 		}
 		break;
 	}
-	/*case CS_SELECT_CHAR: {
-		CS_SELECT_CHARACTER* packet = reinterpret_cast<CS_SELECT_CHARACTER*>(p);
-		CLIENT& cl = clients[s_id];
-		cl.p_type = packet->character_type;
-		cout << "cl._s_id : " << cl._s_id << ",  " << cl.p_type << endl;
-	}*/
 	default:
 		cout << " 오류패킷타입 : " << packet_type << endl;
 		break;
@@ -466,7 +426,7 @@ void worker_thread()
 void send_move_packet(int _id, int target)
 {
 	CS_MOVE_PACKET packet;
-	packet.id = target;
+	packet.clientid = target;
 	packet.size = sizeof(packet);
 	packet.type = SC_MOVE_PLAYER;
 	packet.x = clients[target].x;

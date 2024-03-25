@@ -30,7 +30,7 @@ bool ClientSocket::InitSocket()
 	return true;
 }
 
-bool ClientSocket::Connect(const char* s_IP, int port)
+bool ClientSocket::Connect()
 {
 
 	WSADATA wsaData;
@@ -51,9 +51,9 @@ bool ClientSocket::Connect(const char* s_IP, int port)
 	SOCKADDR_IN stServerAddr;
 	// 접속할 서버 포트 및 IP
 	stServerAddr.sin_family = AF_INET;
-	::inet_pton(AF_INET, s_IP, &stServerAddr.sin_addr);
-	stServerAddr.sin_port = htons(port);
-	stServerAddr.sin_addr.s_addr = inet_addr(s_IP);
+	::inet_pton(AF_INET, SERVER_IP, &stServerAddr.sin_addr);
+	stServerAddr.sin_port = htons(SERVER_PORT);
+	stServerAddr.sin_addr.s_addr = inet_addr(SERVER_IP);
 
 	int nResult = connect(ServerSocket, (sockaddr*)&stServerAddr, sizeof(sockaddr));
 	if (nResult == SOCKET_ERROR) {
@@ -131,7 +131,7 @@ void ClientSocket::PacketProcess(unsigned char* ptr)
 		PlayerInfo.players[packet->id].w_type = packet->weapon_type;
 		//float z = packet->z;
 		//UE_LOG(LogClass, Warning, TEXT("recv data"));
-		
+
 		break;
 	}
 	default:
@@ -148,7 +148,7 @@ void ClientSocket::Send_Login_Info(char* id, char* pw, PlayerType character_type
 	strcpy(packet.id, id);
 	strcpy(packet.pw, pw);
 
-	auto player= Cast<ACharacterBase>(UGameplayStatics::GetPlayerCharacter(MyCharacterController, 0));
+	auto player = Cast<ACharacterBase>(UGameplayStatics::GetPlayerCharacter(MyCharacterController, 0));
 	//cs_login_packet
 	auto location = player->GetActorLocation();
 	packet.x = location.X;
@@ -198,104 +198,103 @@ void ClientSocket::Send_Weapon_Type(WeaponType type, int sessionID)
 	packet.weapon_type = type;
 	SendPacket(&packet);
 }
-
 bool ClientSocket::Init()
 {
 	return true;
 }
 uint32 ClientSocket::Run()
 {
-	FPlatformProcess::Sleep(0.03);
-
-	////Connect();
-	Iocp = CreateIoCompletionPort(INVALID_HANDLE_VALUE, NULL, NULL, 0);
-	CreateIoCompletionPort(reinterpret_cast<HANDLE>(ServerSocket), Iocp, 0, 0);
-
-	RecvPacket();
-
-	//Send_LoginPacket();
-
-	SleepEx(0, true);
-
-	// recv while loop 시작
-	// StopTaskCounter 클래스 변수를 사용해 Thread Safety하게 해줌
-	while (StopTaskCounter.GetValue() == 0)
-	{
-		DWORD num_byte;
-		LONG64 iocp_key;
-		WSAOVERLAPPED* p_over;
-
-		BOOL ret = GetQueuedCompletionStatus(Iocp, &num_byte, (PULONG_PTR)&iocp_key, &p_over, INFINITE);
-
-		Overlap* exp_over = reinterpret_cast<Overlap*>(p_over);
-
-		if (false == ret) {
-			int err_no = WSAGetLastError();
-			if (exp_over->_op == IO_SEND)
-				delete exp_over;
-			continue;
-		}
-
-		switch (exp_over->_op) {
-		case IO_RECV: {
-			if (num_byte == 0) {
-				//Disconnect();
-				continue;
-			}
-			int remain_data = num_byte + _prev_size;
-			unsigned char* packet_start = exp_over->_net_buf;
-			int packet_size = packet_start[0];
-			while (packet_size <= remain_data) {
-				PacketProcess(packet_start);
-				remain_data -= packet_size;
-				packet_start += packet_size;
-				if (remain_data > 0) packet_size = packet_start[0];
-				else break;
-			}
-
-			if (0 < remain_data) {
-				_prev_size = remain_data;
-				memcpy(&exp_over->_net_buf, packet_start, remain_data);
-			}
-
-			RecvPacket();
-			SleepEx(0, true);
-			break;
-		}
-		case IO_SEND: {
-			if (num_byte != exp_over->_wsa_buf.len) {
-				//Disconnect();
-			}
-			delete exp_over;
-			break;
-		}
-
-		}
-
-	}
-	return 0;
-
 	//FPlatformProcess::Sleep(0.03);
-	//PacketProcess(m_sRecvBuffer);
-	//SleepEx(0, true);
-	//while (StopTaskCounter.GetValue() == 0 /*&& m_PlayerController != nullptr*/)
-	//{
-	//	int nRecvLen = recv(ServerSocket, reinterpret_cast<char*>(m_sRecvBuffer), MAX_BUFFER, 0);
 
-	//	if (nRecvLen == 0)
-	//	{
-	//		UE_LOG(LogTemp, Warning, TEXT("Recv 0 Btye. break while"));
+	//////Connect();
+	//Iocp = CreateIoCompletionPort(INVALID_HANDLE_VALUE, NULL, NULL, 0);
+	//CreateIoCompletionPort(reinterpret_cast<HANDLE>(ServerSocket), Iocp, 0, 0);
+
+	//RecvPacket();
+
+	////Send_LoginPacket();
+
+	//SleepEx(0, true);
+	////StopTaskCounter.GetValue() == 0
+	//// recv while loop 시작
+	//// StopTaskCounter 클래스 변수를 사용해 Thread Safety하게 해줌
+	//while (true)
+	//{
+	//	DWORD num_byte;
+	//	LONG64 iocp_key;
+	//	WSAOVERLAPPED* p_over;
+
+	//	BOOL ret = GetQueuedCompletionStatus(Iocp, &num_byte, (PULONG_PTR)&iocp_key, &p_over, INFINITE);
+
+	//	Overlap* exp_over = reinterpret_cast<Overlap*>(p_over);
+
+	//	if (false == ret) {
+	//		int err_no = WSAGetLastError();
+	//		if (exp_over->_op == IO_SEND)
+	//			delete exp_over;
+	//		continue;
+	//	}
+
+	//	switch (exp_over->_op) {
+	//	case IO_RECV: {
+	//		if (num_byte == 0) {
+	//			//Disconnect();
+	//			continue;
+	//		}
+	//		int remain_data = num_byte + _prev_size;
+	//		unsigned char* packet_start = exp_over->_net_buf;
+	//		int packet_size = packet_start[0];
+	//		while (packet_size <= remain_data) {
+	//			PacketProcess(packet_start);
+	//			remain_data -= packet_size;
+	//			packet_start += packet_size;
+	//			if (remain_data > 0) packet_size = packet_start[0];
+	//			else break;
+	//		}
+
+	//		if (0 < remain_data) {
+	//			_prev_size = remain_data;
+	//			memcpy(&exp_over->_net_buf, packet_start, remain_data);
+	//		}
+
+	//		RecvPacket();
+	//		SleepEx(0, true);
+	//		break;
+	//	}
+	//	case IO_SEND: {
+	//		if (num_byte != exp_over->_wsa_buf.len) {
+	//			//Disconnect();
+	//		}
+	//		delete exp_over;
 	//		break;
 	//	}
 
-	//	BYTE OP;
-	//	memcpy(&OP, m_sRecvBuffer, sizeof(BYTE));
+	//	}
 
-	//	PacketProcess(m_sRecvBuffer);
-	//	SleepEx(0, true);
 	//}
-	//UE_LOG(LogTemp, Warning, TEXT("Recv Close"));
 	//return 0;
+
+	FPlatformProcess::Sleep(0.03);
+	PacketProcess(m_sRecvBuffer);
+	SleepEx(0, true);
+	while (StopTaskCounter.GetValue() == 0 /*&& m_PlayerController != nullptr*/)
+	{
+		int nRecvLen = recv(ServerSocket, reinterpret_cast<char*>(m_sRecvBuffer), MAX_BUFFER, 0);
+
+		if (nRecvLen == 0)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Recv 0 Btye. break while"));
+			break;
+		}
+
+		BYTE OP;
+		memcpy(&OP, m_sRecvBuffer, sizeof(BYTE));
+
+		PacketProcess(m_sRecvBuffer);
+		SleepEx(0, true);
+	}
+	UE_LOG(LogTemp, Warning, TEXT("Recv Close"));
+	return 0;
 }
 
 void ClientSocket::Stop()
