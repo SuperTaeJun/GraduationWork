@@ -41,7 +41,7 @@ void ACharacterController::BeginPlay()
 	//c_socket = new ClientSocket();
 	c_socket->SetPlayerController(this);
 	c_socket->StartListen();
-	connect = c_socket->Connect("192.168.101.241", 8000);
+	connect = c_socket->Connect("192.168.123.110", 7777);
 	if (connect)
 	{
 		

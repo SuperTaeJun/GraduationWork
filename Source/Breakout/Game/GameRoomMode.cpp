@@ -6,4 +6,5 @@ AGameRoomMode::AGameRoomMode()
 {
 	FInputModeUIOnly Mode;
 	
+	bUseSeamlessTravel = true;
 }

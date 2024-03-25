@@ -21,6 +21,7 @@ void USelectCharacterUi::Character1ButtonPressed()
 	/*PlayerType type = Character1;
 	c_socket->Send_Character_Type(type);*/
 	UGameplayStatics::OpenLevel(GetWorld(), TEXT("Testmap"));
+
 	//UE_LOG(LogClass, Warning, TEXT("MY type : %d"), type);
 }
 
