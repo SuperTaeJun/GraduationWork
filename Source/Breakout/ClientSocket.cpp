@@ -42,7 +42,7 @@ bool ClientSocket::Connect(const char* s_IP, int port)
 	}
 
 	// TCP 家南 积己
-	ServerSocket = WSASocket(AF_INET, SOCK_STREAM, IPPROTO_IP, NULL, 0, WSA_FLAG_OVERLAPPED);
+	ServerSocket = WSASocket(AF_INET, SOCK_STREAM, IPPROTO_IP, 0, 0, WSA_FLAG_OVERLAPPED);
 	if (ServerSocket == INVALID_SOCKET) {
 		return false;
 	}
