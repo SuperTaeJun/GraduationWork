@@ -1,3 +1,4 @@
+
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
@@ -7,8 +8,12 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/ProgressBar.h"
 #include "Components/TextBlock.h"
-//#include "Character/CharacterBase.h"
+#include "Character/CharacterBase.h"
 #include "Character/Character1.h"
+#include "Character/Character2.h"
+#include "Character/Character3.h"
+#include "Character/Character4.h"
+
 #include "Components/Image.h"
 #include "Game/BOGameInstance.h"
 #include "Network/PacketData.h"
@@ -18,8 +23,7 @@
 ACharacterController::ACharacterController()
 {
 	//c_socket = ClientSocket::GetSingleton();
-	//c_socket = ClientSocket::GetSingleton();
-	c_socket = new ClientSocket();
+	c_socket = ClientSocket::GetSingleton();
 	c_socket->SetPlayerController(this);
 	p_cnt = -1;
 	bNewPlayerEntered = false;
@@ -31,17 +35,21 @@ ACharacterController::ACharacterController()
 
 void ACharacterController::BeginPlay()
 {
-	
-	
+
+
 	FInputModeGameOnly GameOnlyInput;
 	SetInputMode(GameOnlyInput);
-	c_socket->StartListen();
+
 	MainHUD = Cast<AMainHUD>(GetHUD());
-	//아아 여기
-	
-	connect = c_socket->Connect("192.168.103.18", 8000);
+	////아아 여기
+	/*c_socket = new ClientSocket();
+	c_socket->SetPlayerController(this);*/
+	c_socket->StartListen();
+	connect = c_socket->Connect("192.168.101.241", 7777);
+
 	if (connect)
 	{
+		
 		c_socket->StartListen();
 		UE_LOG(LogClass, Warning, TEXT("IOCP Server connect success!"));
 		FString c_id = "testuser";
@@ -65,14 +73,14 @@ void ACharacterController::BeginPlay()
 			c_socket->Send_Login_Info(TCHAR_TO_UTF8(*c_id), TCHAR_TO_UTF8(*c_pw), PlayerType::Character1);
 			break;
 		}
-	
-		
+
+		SleepEx(0.5, true);
 	}
 	else
 	{
 		UE_LOG(LogClass, Warning, TEXT("IOCP Server connect FAIL!"));
 	}
-
+	SleepEx(0.5, true);
 }
 
 
@@ -134,7 +142,7 @@ void ACharacterController::SetHUDBojoImage(EBojoMugiType Type)
 	{
 		switch (Type)
 		{
-		case EBojoMugiType::E_Grenade:	
+		case EBojoMugiType::E_Grenade:
 			MainHUD->CharacterUi->BojomugiImage->SetBrushFromTexture(MainHUD->CharacterUi->GrenadeImage);
 			break;
 		case EBojoMugiType::E_Wall:
@@ -181,7 +189,7 @@ void ACharacterController::SetHUDSkill()
 
 void ACharacterController::SetHUDSkillOpacity(float Opacity)
 {
-	if(MainHUD)
+	if (MainHUD)
 		MainHUD->CharacterUi->SkillImage->SetColorAndOpacity(FLinearColor(1.f, 1.f, 1.f, Opacity));
 }
 
@@ -243,10 +251,11 @@ void ACharacterController::Tick(float DeltaTime)
 	//새 플레이어 스폰
 	if (bNewPlayerEntered)
 		UpdateSyncPlayer();
-	
-	UpdateWorld();
+
+	//UpdateWorld();
 	//UE_LOG(LogTemp, Warning, TEXT("HHHHHH : %s"), *GetOwner()->GetVelocity().ToString());
 	UpdatePlayer();
+	SleepEx(0, true);
 }
 
 void ACharacterController::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -256,7 +265,7 @@ void ACharacterController::EndPlay(const EEndPlayReason::Type EndPlayReason)
 }
 
 
-void ACharacterController::SetInitPlayerInfo(const CPlayer &owner_player)
+void ACharacterController::SetInitPlayerInfo(const CPlayer& owner_player)
 {
 	UE_LOG(LogClass, Warning, TEXT("SetInitPlayerInfo"));
 	initplayer = owner_player;
@@ -265,7 +274,7 @@ void ACharacterController::SetInitPlayerInfo(const CPlayer &owner_player)
 }
 void ACharacterController::SetNewCharacterInfo(std::shared_ptr<CPlayer> InitPlayer)
 {
-	if (InitPlayer != nullptr){
+	if (InitPlayer != nullptr) {
 		bNewPlayerEntered = true;
 		NewPlayer.push(InitPlayer);
 		UE_LOG(LogTemp, Warning, TEXT("The value of size_: %d"), NewPlayer.size());
@@ -276,93 +285,93 @@ void ACharacterController::SetNewWeaponMesh(std::shared_ptr<CPlayer> InitPlayer)
 	if (InitPlayer != nullptr) {
 		bNewWeaponEntered = true;
 		NewPlayer.push(InitPlayer);
-		
+
 	}
 }
 
-bool ACharacterController::UpdateWorld()
-{
-	UWorld* const world = GetWorld();
-	if (world == nullptr)
-		return false;
-	if (PlayerInfo == nullptr) return false;
-	if (PlayerInfo->players.size() == 1)
-	{
-		return false;
-	}
-	TArray<AActor*> SpawnPlayer;
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACharacterBase::StaticClass(), SpawnPlayer);
-	//UE_LOG(LogTemp, Warning, TEXT("Before loop"));
-	if (p_cnt == -1)
-	{
-		//UE_LOG(LogTemp, Warning, TEXT("Inside loop"));
-		p_cnt = PlayerInfo->players.size();
-		UE_LOG(LogTemp, Warning, TEXT("The value of size_: %d"), p_cnt);
-		return false;
-	}
-	else
-	{
-		for (auto& player : SpawnPlayer)
-		{
-			ACharacterBase* OtherPlayer = Cast<ACharacterBase>(player);
-			//UE_LOG(LogTemp, Warning, TEXT("Updating player info for ID %d"), OtherPlayer->p_id);
-			if (!OtherPlayer || OtherPlayer->_SessionId == -1 || OtherPlayer->_SessionId == id)
-			{
-				continue;
-			}
-			CPlayer* info = &PlayerInfo->players[OtherPlayer->_SessionId];
-
-
-			if (info->IsAlive)
-			{
-				FVector PlayerLocation;
-				PlayerLocation.X = info->X;
-				PlayerLocation.Y = info->Y;
-				PlayerLocation.Z = info->Z;
-
-				FRotator PlayerRotation;
-				PlayerRotation.Yaw = info->Yaw;
-				PlayerRotation.Pitch = 0.0f;
-				PlayerRotation.Roll = 0.0f;
-
-				//속도
-				FVector PlayerVelocity;
-				PlayerVelocity.X = info->VeloX;
-				PlayerVelocity.Y = info->VeloY;
-				PlayerVelocity.Z = info->VeloZ;
-				if(!OtherPlayer->GetCurWeapon())
-				{
-					if (info->w_type == WeaponType::RIFLE)
-					{
-						FName RifleSocketName = FName("RifleSocket");
-						OtherPlayer->SetWeapon(Rifle, RifleSocketName);
-					}
-					else if (info->w_type == WeaponType::SHOTGUN)
-					{
-						FName ShotgunSocketName = FName("ShotgunSocket");
-						OtherPlayer->SetWeapon(ShotGun, ShotgunSocketName);
-					}
-					else if (info->w_type == WeaponType::LAUNCHER)
-					{
-						FName LancherSocketName = FName("LancherSocket");
-						OtherPlayer->SetWeapon(Lancher, LancherSocketName);
-					}
-				}
-				
-				OtherPlayer->AddMovementInput(PlayerVelocity);
-				OtherPlayer->SetActorRotation(PlayerRotation);
-				OtherPlayer->SetActorLocation(PlayerLocation);
-				OtherPlayer->GetCharacterMovement()->MaxWalkSpeed = info->Max_Speed;
-
-			}
-			else {
-
-			}
-
-		}
-	}
-	return true;
-}
+//bool ACharacterController::UpdateWorld()
+//{
+//	UWorld* const world = GetWorld();
+//	if (world == nullptr)
+//		return false;
+//	if (PlayerInfo == nullptr) return false;
+//	if (PlayerInfo->players.size() == 1)
+//	{
+//		return false;
+//	}
+//	TArray<AActor*> SpawnPlayer;
+//	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACharacterBase::StaticClass(), SpawnPlayer);
+//	//UE_LOG(LogTemp, Warning, TEXT("Before loop"));
+//	if (p_cnt == -1)
+//	{
+//		//UE_LOG(LogTemp, Warning, TEXT("Inside loop"));
+//		p_cnt = PlayerInfo->players.size();
+//		UE_LOG(LogTemp, Warning, TEXT("The value of size_: %d"), p_cnt);
+//		return false;
+//	}
+//	else
+//	{
+//		for (auto& player : SpawnPlayer)
+//		{
+//			ACharacterBase* OtherPlayer = Cast<ACharacterBase>(player);
+//			//UE_LOG(LogTemp, Warning, TEXT("Updating player info for ID %d"), OtherPlayer->p_id);
+//			if (!OtherPlayer || OtherPlayer->_SessionId == -1 || OtherPlayer->_SessionId == id)
+//			{
+//				continue;
+//			}
+//			CPlayer* info = &PlayerInfo->players[OtherPlayer->_SessionId];
+//
+//
+//			if (info->IsAlive)
+//			{
+//				FVector PlayerLocation;
+//				PlayerLocation.X = info->X;
+//				PlayerLocation.Y = info->Y;
+//				PlayerLocation.Z = info->Z;
+//
+//				FRotator PlayerRotation;
+//				PlayerRotation.Yaw = info->Yaw;
+//				PlayerRotation.Pitch = 0.0f;
+//				PlayerRotation.Roll = 0.0f;
+//
+//				//속도
+//				FVector PlayerVelocity;
+//				PlayerVelocity.X = info->VeloX;
+//				PlayerVelocity.Y = info->VeloY;
+//				PlayerVelocity.Z = info->VeloZ;
+//				if (!OtherPlayer->GetCurWeapon())
+//				{
+//					if (info->w_type == WeaponType::RIFLE)
+//					{
+//						FName RifleSocketName = FName("RifleSocket");
+//						OtherPlayer->SetWeapon(Rifle, RifleSocketName);
+//					}
+//					else if (info->w_type == WeaponType::SHOTGUN)
+//					{
+//						FName ShotgunSocketName = FName("ShotgunSocket");
+//						OtherPlayer->SetWeapon(ShotGun, ShotgunSocketName);
+//					}
+//					else if (info->w_type == WeaponType::LAUNCHER)
+//					{
+//						FName LancherSocketName = FName("LancherSocket");
+//						OtherPlayer->SetWeapon(Lancher, LancherSocketName);
+//					}
+//				}
+//
+//				OtherPlayer->AddMovementInput(PlayerVelocity);
+//				OtherPlayer->SetActorRotation(PlayerRotation);
+//				OtherPlayer->SetActorLocation(PlayerLocation);
+//				OtherPlayer->GetCharacterMovement()->MaxWalkSpeed = info->Max_Speed;
+//
+//			}
+//			else {
+//
+//			}
+//
+//		}
+//	}
+//	return true;
+//}
 void ACharacterController::UpdateSyncPlayer()
 {
 	// 동기화 용
@@ -402,7 +411,7 @@ void ACharacterController::UpdateSyncPlayer()
 				SpawnCharacter->SpawnDefaultController();
 				SpawnCharacter->_SessionId = NewPlayer.front()->Id;
 				SpawnCharacter->GetMesh()->SetSkeletalMesh(SkMeshAsset1);
-				if(Anim1)
+				if (Anim1)
 					SpawnCharacter->GetMesh()->SetAnimClass(Anim1);
 			}
 			break;
@@ -420,8 +429,8 @@ void ACharacterController::UpdateSyncPlayer()
 				SpawnActor.Owner = this;
 				SpawnActor.Instigator = GetInstigator();
 				SpawnActor.Name = FName(*FString(to_string(NewPlayer.front()->Id).c_str()));
-				ToSpawn = ACharacter1::StaticClass();
-				ACharacter1* SpawnCharacter = world->SpawnActor<ACharacter1>(ToSpawn,
+				ToSpawn = ACharacter2::StaticClass();
+				ACharacter2* SpawnCharacter = world->SpawnActor<ACharacter2>(ToSpawn,
 					S_LOCATION, S_ROTATOR, SpawnActor);
 				SpawnCharacter->SpawnDefaultController();
 				SpawnCharacter->_SessionId = NewPlayer.front()->Id;
@@ -444,8 +453,8 @@ void ACharacterController::UpdateSyncPlayer()
 				SpawnActor.Owner = this;
 				SpawnActor.Instigator = GetInstigator();
 				SpawnActor.Name = FName(*FString(to_string(NewPlayer.front()->Id).c_str()));
-				ToSpawn = ACharacter1::StaticClass();
-				ACharacter1* SpawnCharacter = world->SpawnActor<ACharacter1>(ToSpawn,
+				ToSpawn = ACharacter3::StaticClass();
+				ACharacter3* SpawnCharacter = world->SpawnActor<ACharacter3>(ToSpawn,
 					S_LOCATION, S_ROTATOR, SpawnActor);
 				SpawnCharacter->SpawnDefaultController();
 				SpawnCharacter->_SessionId = NewPlayer.front()->Id;
@@ -468,8 +477,8 @@ void ACharacterController::UpdateSyncPlayer()
 				SpawnActor.Owner = this;
 				SpawnActor.Instigator = GetInstigator();
 				SpawnActor.Name = FName(*FString(to_string(NewPlayer.front()->Id).c_str()));
-				ToSpawn = ACharacter1::StaticClass();
-				ACharacter1* SpawnCharacter = world->SpawnActor<ACharacter1>(ToSpawn,
+				ToSpawn = ACharacter4::StaticClass();
+				ACharacter4* SpawnCharacter = world->SpawnActor<ACharacter4>(ToSpawn,
 					S_LOCATION, S_ROTATOR, SpawnActor);
 				SpawnCharacter->SpawnDefaultController();
 				SpawnCharacter->_SessionId = NewPlayer.front()->Id;
@@ -527,7 +536,7 @@ void ACharacterController::UpdateSyncPlayer()
 }
 void ACharacterController::UpdateSyncWeapon()
 {
-	
+
 }
 //void ACharacterController::UpdateSyncPlayer()
 //{

@@ -35,34 +35,43 @@ public:
 	LockQueue& operator=(const LockQueue&) = delete;
 
 	void Push(T value)
+		//void Push(int32 value)
 	{
 		lock_guard<mutex> lock(_mutex);
 		_queue.push(std::move(value));
+		_condVar.notify_one();
 	}
 
-	bool Pop()
+	bool TryPop(T& value)
+		//bool TryPop(int32& value)
 	{
 		lock_guard<mutex> lock(_mutex);
 		if (_queue.empty())
 			return false;
 
-		T ret = std::move(_queue.front());
+		value = std::move(_queue.front());
 		_queue.pop();
 		return true;
 	}
 
-	void PopAll(OUT std::vector<T>& items)
+	void WaitPop(T& value)
+		//void WaitPop(int32& value)
 	{
-		lock_guard<mutex> lock(_mutex);
-		while (T item = Pop()) {
-			_queue.push_back(item);
-		}
+		unique_lock<mutex> lock(_mutex);
+		_condVar.wait(lock, [this] { return _queue.empty() == false; });
+		value = std::move(_queue.front());
+		_queue.pop();
 	}
 
 	void Clear()
 	{
-		lock_guard<mutex> lock(_mutex);
-		_queue = std::queue<T>();
+		unique_lock<mutex> lock(_mutex);
+		if (_queue.empty() == false)
+		{
+			queue<T> _empty;
+			//queue<int32> _empty;
+			swap(_queue, _empty);
+		}
 	}
 
 	int Size()
@@ -72,10 +81,11 @@ public:
 	}
 
 private:
-	std::mutex _mutex;
 	std::queue<T> _queue;
+	//std::queue<int32> _queue;
+	std::mutex _mutex;
+	std::condition_variable _condVar;
 };
-
 // 플레이어 클래스 
 class CPlayer
 {
@@ -89,7 +99,7 @@ public:
 	char	userId[20] = {};
 	char	userPw[20] = {};
 	// 위치
-	float X = 0;
+	float X;
 	float Y = 0;
 	float Z = 0;
 	// 회전값
@@ -255,7 +265,7 @@ public:
 	unsigned char recvBuffer[MAX_BUFFER];
 	FRunnableThread* Thread;
 	FThreadSafeCounter StopTaskCounter;
-
+	void process_data(unsigned char* net_buf, size_t io_byte);
 	int _prev_size = 0;
 	int local_id = -1;
 	bool login_cond = false;
@@ -263,4 +273,6 @@ private:
 	ACharacterController* MyCharacterController;
 	CPlayerInfo PlayerInfo;
 	//CPlayer NewPlayer;
+	unsigned char 	m_sRecvBuffer[MAX_BUFFER];
+	char 	m_sSendBuffer[MAX_BUFFER];
 };

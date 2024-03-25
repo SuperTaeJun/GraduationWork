@@ -2,22 +2,19 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="Main">
-      <UniqueIdentifier>{e8dccf15-3bdd-4854-8dd2-f0ba5d770abc}</UniqueIdentifier>
+      <UniqueIdentifier>{9792fe4d-0486-4a73-a045-af030becf46d}</UniqueIdentifier>
     </Filter>
     <Filter Include="Utils">
-      <UniqueIdentifier>{37e6aaa6-0769-426b-aa67-d42e60cd791c}</UniqueIdentifier>
+      <UniqueIdentifier>{b1fdab16-f1e0-45a4-bb9c-1c2f181c7743}</UniqueIdentifier>
     </Filter>
-    <Filter Include="IOCP">
-      <UniqueIdentifier>{513ba284-27d9-4f26-9bc6-0c27dc079fe4}</UniqueIdentifier>
+    <Filter Include="Client">
+      <UniqueIdentifier>{574c9acc-b226-48a4-820b-4ce4cb110a60}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Enum">
+      <UniqueIdentifier>{f1aa7514-5563-4c11-b70f-b7cf1a82d1a9}</UniqueIdentifier>
     </Filter>
     <Filter Include="Overlapped">
-      <UniqueIdentifier>{25ef3cb2-55e6-4183-ab84-6834310e4792}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ClientInfo">
-      <UniqueIdentifier>{158202da-dbf3-4d00-8e16-bb7af8b0f24a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Send&amp;Recv Packet">
-      <UniqueIdentifier>{84e15239-0634-4218-b530-02e8fcc18288}</UniqueIdentifier>
+      <UniqueIdentifier>{5e2f35d2-9b0c-4aa1-9903-b362245d1e5d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -27,31 +24,25 @@
     <ClCompile Include="pch.cpp">
       <Filter>Utils</Filter>
     </ClCompile>
-    <ClCompile Include="lOCPServer.cpp">
-      <Filter>IOCP</Filter>
+    <ClCompile Include="CLIENT.cpp">
+      <Filter>Client</Filter>
     </ClCompile>
-    <ClCompile Include="ClientInfo.cpp">
-      <Filter>ClientInfo</Filter>
-    </ClCompile>
-    <ClCompile Include="PacketHandler.cpp">
-      <Filter>Send&amp;Recv Packet</Filter>
+    <ClCompile Include="Overlap.cpp">
+      <Filter>Overlapped</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
       <Filter>Utils</Filter>
     </ClInclude>
-    <ClInclude Include="lOCPServer.h">
-      <Filter>IOCP</Filter>
+    <ClInclude Include="CLIENT.h">
+      <Filter>Client</Filter>
     </ClInclude>
-    <ClInclude Include="Overlapped.h">
+    <ClInclude Include="Overlap.h">
       <Filter>Overlapped</Filter>
     </ClInclude>
-    <ClInclude Include="ClientInfo.h">
-      <Filter>ClientInfo</Filter>
-    </ClInclude>
-    <ClInclude Include="PacketHandler.h">
-      <Filter>Send&amp;Recv Packet</Filter>
+    <ClInclude Include="Enum.h">
+      <Filter>Enum</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

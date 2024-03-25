@@ -1,3 +1,4 @@
+
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
@@ -8,20 +9,19 @@
 #include "Kismet/GameplayStatics.h"
 #include "GameFramework/PlayerController.h"
 #include <memory>
-#include "Character/CharacterBase.h"
 #include "CharacterController.generated.h"
 //ClientSocket* c_socket = nullptr;
 class CPlayer;
 class ClientSocket;
 class CPlayerInfo;
 /**
- * 
+ *
  */
 UCLASS()
 class BREAKOUT_API ACharacterController : public APlayerController
 {
 	GENERATED_BODY()
-	
+
 protected:
 	virtual void BeginPlay() override;
 
@@ -58,8 +58,8 @@ public:
 	// 다른 캐릭터들의 정보
 	std::queue<std::shared_ptr<CPlayer>> NewPlayer;
 	//int my_session_id;
-	
-	
+
+
 	//virtual void OnPossess(APawn* InPawn) override;
 	void SetHUDHealth(float Health, float MaxHealth);
 	void SetHUDStamina(float Stamina, float MaxStamina);
@@ -79,11 +79,13 @@ public:
 	void showWeaponSelect();
 	void ShowRespawnSelect();
 	// 초기 플레이어 저장
-	void SetPlayerID(const int playerid) { id = playerid; }
+	void SetPlayerID(const int playerid) {
+		UE_LOG(LogTemp, Warning, TEXT("%d -> my_id"), playerid);
+		id = playerid; }
 	int GetPlayerID() { return id; }
-	void SetPlayerInfo(CPlayerInfo* p_info) { 
-		if (p_info != nullptr) 
-			PlayerInfo = p_info; 
+	void SetPlayerInfo(CPlayerInfo* p_info) {
+		if (p_info != nullptr)
+			PlayerInfo = p_info;
 	}
 	void SetInitPlayerInfo(const CPlayer& owner_player);
 	//-----------------------------------------------------
@@ -117,7 +119,7 @@ private:
 	bool bNewWeaponEntered = false;
 	bool bInitPlayerSetting = false;
 	ClientSocket* c_socket;
-	CPlayerInfo* PlayerInfo;  
+	CPlayerInfo* PlayerInfo;
 	int p_cnt;
 	bool connect;
 	bool Set_Weapon;
