@@ -30,7 +30,7 @@ bool ClientSocket::InitSocket()
 	return true;
 }
 
-bool ClientSocket::Connect()
+bool ClientSocket::Connect(const char* s_IP, int port)
 {
 
 	WSADATA wsaData;
