@@ -23,8 +23,7 @@
 ACharacterController::ACharacterController()
 {
 	//c_socket = ClientSocket::GetSingleton();
-	c_socket = ClientSocket::GetSingleton();
-	c_socket->SetPlayerController(this);
+
 	p_cnt = -1;
 	bNewPlayerEntered = false;
 	bNewWeaponEntered = false;
@@ -41,6 +40,8 @@ void ACharacterController::BeginPlay()
 	SetInputMode(GameOnlyInput);
 
 	MainHUD = Cast<AMainHUD>(GetHUD());
+	c_socket = ClientSocket::GetSingleton();
+	c_socket->SetPlayerController(this);
 	////아아 여기
 	/*c_socket = new ClientSocket();
 	c_socket->SetPlayerController(this);*/
@@ -252,7 +253,7 @@ void ACharacterController::Tick(float DeltaTime)
 	if (bNewPlayerEntered)
 		UpdateSyncPlayer();
 
-	//UpdateWorld();
+	UpdateWorld();
 	//UE_LOG(LogTemp, Warning, TEXT("HHHHHH : %s"), *GetOwner()->GetVelocity().ToString());
 	UpdatePlayer();
 	SleepEx(0, true);
@@ -289,89 +290,89 @@ void ACharacterController::SetNewWeaponMesh(std::shared_ptr<CPlayer> InitPlayer)
 	}
 }
 
-//bool ACharacterController::UpdateWorld()
-//{
-//	UWorld* const world = GetWorld();
-//	if (world == nullptr)
-//		return false;
-//	if (PlayerInfo == nullptr) return false;
-//	if (PlayerInfo->players.size() == 1)
-//	{
-//		return false;
-//	}
-//	TArray<AActor*> SpawnPlayer;
-//	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACharacterBase::StaticClass(), SpawnPlayer);
-//	//UE_LOG(LogTemp, Warning, TEXT("Before loop"));
-//	if (p_cnt == -1)
-//	{
-//		//UE_LOG(LogTemp, Warning, TEXT("Inside loop"));
-//		p_cnt = PlayerInfo->players.size();
-//		UE_LOG(LogTemp, Warning, TEXT("The value of size_: %d"), p_cnt);
-//		return false;
-//	}
-//	else
-//	{
-//		for (auto& player : SpawnPlayer)
-//		{
-//			ACharacterBase* OtherPlayer = Cast<ACharacterBase>(player);
-//			//UE_LOG(LogTemp, Warning, TEXT("Updating player info for ID %d"), OtherPlayer->p_id);
-//			if (!OtherPlayer || OtherPlayer->_SessionId == -1 || OtherPlayer->_SessionId == id)
-//			{
-//				continue;
-//			}
-//			CPlayer* info = &PlayerInfo->players[OtherPlayer->_SessionId];
-//
-//
-//			if (info->IsAlive)
-//			{
-//				FVector PlayerLocation;
-//				PlayerLocation.X = info->X;
-//				PlayerLocation.Y = info->Y;
-//				PlayerLocation.Z = info->Z;
-//
-//				FRotator PlayerRotation;
-//				PlayerRotation.Yaw = info->Yaw;
-//				PlayerRotation.Pitch = 0.0f;
-//				PlayerRotation.Roll = 0.0f;
-//
-//				//속도
-//				FVector PlayerVelocity;
-//				PlayerVelocity.X = info->VeloX;
-//				PlayerVelocity.Y = info->VeloY;
-//				PlayerVelocity.Z = info->VeloZ;
-//				if (!OtherPlayer->GetCurWeapon())
-//				{
-//					if (info->w_type == WeaponType::RIFLE)
-//					{
-//						FName RifleSocketName = FName("RifleSocket");
-//						OtherPlayer->SetWeapon(Rifle, RifleSocketName);
-//					}
-//					else if (info->w_type == WeaponType::SHOTGUN)
-//					{
-//						FName ShotgunSocketName = FName("ShotgunSocket");
-//						OtherPlayer->SetWeapon(ShotGun, ShotgunSocketName);
-//					}
-//					else if (info->w_type == WeaponType::LAUNCHER)
-//					{
-//						FName LancherSocketName = FName("LancherSocket");
-//						OtherPlayer->SetWeapon(Lancher, LancherSocketName);
-//					}
-//				}
-//
-//				OtherPlayer->AddMovementInput(PlayerVelocity);
-//				OtherPlayer->SetActorRotation(PlayerRotation);
-//				OtherPlayer->SetActorLocation(PlayerLocation);
-//				OtherPlayer->GetCharacterMovement()->MaxWalkSpeed = info->Max_Speed;
-//
-//			}
-//			else {
-//
-//			}
-//
-//		}
-//	}
-//	return true;
-//}
+bool ACharacterController::UpdateWorld()
+{
+	UWorld* const world = GetWorld();
+	if (world == nullptr)
+		return false;
+	if (PlayerInfo == nullptr) return false;
+	if (PlayerInfo->players.size() == 1)
+	{
+		return false;
+	}
+	TArray<AActor*> SpawnPlayer;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACharacterBase::StaticClass(), SpawnPlayer);
+	//UE_LOG(LogTemp, Warning, TEXT("Before loop"));
+	if (p_cnt == -1)
+	{
+		//UE_LOG(LogTemp, Warning, TEXT("Inside loop"));
+		p_cnt = PlayerInfo->players.size();
+		UE_LOG(LogTemp, Warning, TEXT("The value of size_: %d"), p_cnt);
+		return false;
+	}
+	else
+	{
+		for (auto& player : SpawnPlayer)
+		{
+			ACharacterBase* OtherPlayer = Cast<ACharacterBase>(player);
+			//UE_LOG(LogTemp, Warning, TEXT("Updating player info for ID %d"), OtherPlayer->p_id);
+			if (!OtherPlayer || OtherPlayer->_SessionId == -1 || OtherPlayer->_SessionId == id)
+			{
+				continue;
+			}
+			CPlayer* info = &PlayerInfo->players[OtherPlayer->_SessionId];
+
+
+			if (info->IsAlive)
+			{
+				FVector PlayerLocation;
+				PlayerLocation.X = info->X;
+				PlayerLocation.Y = info->Y;
+				PlayerLocation.Z = info->Z;
+
+				FRotator PlayerRotation;
+				PlayerRotation.Yaw = info->Yaw;
+				PlayerRotation.Pitch = 0.0f;
+				PlayerRotation.Roll = 0.0f;
+
+				//속도
+				FVector PlayerVelocity;
+				PlayerVelocity.X = info->VeloX;
+				PlayerVelocity.Y = info->VeloY;
+				PlayerVelocity.Z = info->VeloZ;
+				if (!OtherPlayer->GetCurWeapon())
+				{
+					if (info->w_type == WeaponType::RIFLE)
+					{
+						FName RifleSocketName = FName("RifleSocket");
+						OtherPlayer->SetWeapon(Rifle, RifleSocketName);
+					}
+					else if (info->w_type == WeaponType::SHOTGUN)
+					{
+						FName ShotgunSocketName = FName("ShotgunSocket");
+						OtherPlayer->SetWeapon(ShotGun, ShotgunSocketName);
+					}
+					else if (info->w_type == WeaponType::LAUNCHER)
+					{
+						FName LancherSocketName = FName("LancherSocket");
+						OtherPlayer->SetWeapon(Lancher, LancherSocketName);
+					}
+				}
+
+				OtherPlayer->AddMovementInput(PlayerVelocity);
+				OtherPlayer->SetActorRotation(PlayerRotation);
+				OtherPlayer->SetActorLocation(PlayerLocation);
+				OtherPlayer->GetCharacterMovement()->MaxWalkSpeed = info->Max_Speed;
+
+			}
+			else {
+
+			}
+
+		}
+	}
+	return true;
+}
 void ACharacterController::UpdateSyncPlayer()
 {
 	// 동기화 용
