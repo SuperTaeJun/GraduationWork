@@ -23,9 +23,6 @@ AWeaponBase::AWeaponBase()
 	WeaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("WeaponMesh"));
 	SetRootComponent(WeaponMesh);
 
-	StaticMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMesh"));
-	StaticMesh->SetupAttachment(RootComponent);
-
 }
 
 // Called when the game starts or when spawned
@@ -93,7 +90,7 @@ void AWeaponBase::WeaponTraceHit(const FVector& TraceStart, const FVector& HitTa
 				World,
 				BeamNiagara,
 				TraceStart,
-				FRotator::ZeroRotator,
+				WeaponMesh->GetComponentRotation(),
 				FVector(1.f),
 				true
 			);
@@ -103,21 +100,6 @@ void AWeaponBase::WeaponTraceHit(const FVector& TraceStart, const FVector& HitTa
 				Beam->SetVectorParameter(FName("End"), BeamEnd);
 			}
 
-		}
-
-		if (BeamParticles)
-		{
-			UParticleSystemComponent* Beam = UGameplayStatics::SpawnEmitterAtLocation(
-				World,
-				BeamParticles,
-				TraceStart,
-				FRotator::ZeroRotator,
-				true
-			);
-			if (Beam)
-			{
-				Beam->SetVectorParameter(FName("Target"), BeamEnd);
-			}
 		}
 	}
 }

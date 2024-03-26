@@ -28,8 +28,6 @@ public:
 private:
 	UPROPERTY(EditAnywhere, Category = "Weapon Properties")
 	TObjectPtr<class USkeletalMeshComponent> WeaponMesh;
-	UPROPERTY(EditAnywhere, Category = "Weapon Properties")
-	TObjectPtr<class UStaticMeshComponent> StaticMesh;
 
 	//총알 흐터짐 요소들
 	UPROPERTY(EditAnywhere, Category = "Weapon Scatter")
@@ -56,18 +54,11 @@ protected:
 
 
 
-	//총알 충돌했을때 파티클
-	UPROPERTY(EditAnywhere)
-	class UParticleSystem* ImpactParticles;
-
 	UPROPERTY(EditAnywhere)
 	class UNiagaraSystem* ImpactNiagara;
-
-	//총알 따라가는 파티클
-	UPROPERTY(EditAnywhere)
-	class UParticleSystem* BeamParticles;
 	UPROPERTY(EditAnywhere)
 	class UNiagaraSystem* BeamNiagara;
+
 public:
 	FORCEINLINE USkeletalMeshComponent* GetWeaponMesh() const { return WeaponMesh; }
 

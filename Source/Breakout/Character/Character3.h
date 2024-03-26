@@ -28,8 +28,6 @@ protected:
 	virtual void Skill_E(const FInputActionValue& Value) override;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TObjectPtr<class UMaterialInstance> Material;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TObjectPtr<class UMaterialInstance> OldMaterial;
 
 	TObjectPtr<class UMaterialInstanceDynamic> DynamicMaterial;

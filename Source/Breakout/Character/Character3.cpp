@@ -31,8 +31,12 @@ ACharacter3::ACharacter3()
 void ACharacter3::BeginPlay()
 {
 	Super::BeginPlay();
-	DynamicMaterial = UMaterialInstanceDynamic::Create(Material, this);
-
+	DynamicMaterial = UMaterialInstanceDynamic::Create(OldMaterial, this);
+	if (DynamicMaterial)
+	{
+		GetMesh()->SetMaterial(0, DynamicMaterial);
+		DynamicMaterial->SetScalarParameterValue(FName("Alpha"), 0.f);
+	}
 	if(MainController)
 		MainController->SetHUDCoolVisibility(false);
 }
@@ -98,27 +102,33 @@ void ACharacter3::GhostStart()
 
 		GetMesh()->SetVisibility(true, true);
 		CurWeapon->GetWeaponMesh()->SetVisibility(false);
-		if (DynamicMaterial)
-			GetMesh()->SetMaterial(0, DynamicMaterial);
-
+		//if (DynamicMaterial)
+		//	GetMesh()->SetMaterial(0, DynamicMaterial);
+		// 1=스킬사용할때 머터리얼 0=기본머터리얼
+		DynamicMaterial->SetScalarParameterValue(FName("Alpha"), 1.f);
 		GetWorld()->GetTimerManager().SetTimer(GhostTimer, this, &ACharacter3::GhostEnd, 4.f, false);
 	}
 }
 
 void ACharacter3::GhostEnd()
 {
-	MainController->SetHUDCoolVisibility(true);
-	MainController->SetHUDSkillOpacity(0.3);
+	if (bGhost)
+	{
+		MainController->SetHUDCoolVisibility(true);
+		MainController->SetHUDSkillOpacity(0.3);
 
-	GetCapsuleComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Visibility, ECollisionResponse::ECR_Block);
-	MovementComp->MaxWalkSpeed = OldMaxWalkSpeed;
-	MovementComp->MaxAcceleration = OldMaxAcceleration;
-	NiagaraComp->Deactivate();
-	GetMesh()->SetVisibility(true, true);
-	CurWeapon->GetWeaponMesh()->SetVisibility(true);
-	bCoolTimeFinish = false;
-	if (OldMaterial)
-		GetMesh()->SetMaterial(0, OldMaterial);
-	bGhost = false;
+		GetCapsuleComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Visibility, ECollisionResponse::ECR_Block);
+		MovementComp->MaxWalkSpeed = OldMaxWalkSpeed;
+		MovementComp->MaxAcceleration = OldMaxAcceleration;
+		NiagaraComp->Deactivate();
+		//GetMesh()->SetVisibility(true, true);
+		CurWeapon->GetWeaponMesh()->SetVisibility(true);
+		bCoolTimeFinish = false;
+		//if (OldMaterial)
+		//	GetMesh()->SetMaterial(0, OldMaterial);
+		bGhost = false;
+		// 1=스킬사용할때 머터리얼 0=기본머터리얼
+		DynamicMaterial->SetScalarParameterValue(FName("Alpha"), 0.f);
+	}
 }
 

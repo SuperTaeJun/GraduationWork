@@ -9,6 +9,9 @@
 #include "Character/CharacterBase.h"
 #include "DrawDebugHelpers.h"
 #include "GameProp/BulletHoleWall.h"
+#include "NiagaraFunctionLibrary.h"
+#include "NiagaraComponent.h"
+
 void AShotGun::Fire(const FVector& HitTarget)
 {
 	//AWeaponBase::Fire(HitTarget);
@@ -49,11 +52,12 @@ void AShotGun::Fire(const FVector& HitTarget)
 				DamagedWall->SetBulletHole(FireHit.ImpactPoint);
 			}
 
-			if (ImpactParticles)
+			if (ImpactNiagara && FireHit.bBlockingHit)
 			{
-				UGameplayStatics::SpawnEmitterAtLocation(
+				UNiagaraFunctionLibrary::SpawnSystemAtLocation
+				(
 					GetWorld(),
-					ImpactParticles,
+					ImpactNiagara,
 					FireHit.ImpactPoint,
 					FireHit.ImpactNormal.Rotation()
 				);
