@@ -21,9 +21,10 @@ void USelectCharacterUi::Character1ButtonPressed()
 	/*PlayerType type = Character1;
 	c_socket->Send_Character_Type(type);*/
 	//UGameplayStatics::OpenLevel(GetWorld(), TEXT("/Game/Maps/MainMap.MainMap"));
-	GetWorld()->ServerTravel(FString("/Game/Maps/Testmap"));
+	//GetWorld()->ServerTravel(FString("/Game/Maps/Testmap"));
 	//GetWorld()->SeamlessTravel(FString("/Game/Maps/Testmap?listen"));
 	//UE_LOG(LogClass, Warning, TEXT("MY type : %d"), type);
+	UGameplayStatics::OpenLevel(GetWorld(), TEXT("Testmap"));
 }
 
 void USelectCharacterUi::Character2ButtonPressed()
@@ -31,8 +32,8 @@ void USelectCharacterUi::Character2ButtonPressed()
 	Cast<UBOGameInstance>(GetGameInstance())->SetCharacterType(ECharacterType::ECharacter2);
 	/*PlayerType type = Character2;
 	c_socket->Send_Character_Type(type);*/
-	GetWorld()->ServerTravel(FString("/Game/Maps/Testmap"));
-	//UGameplayStatics::OpenLevel(GetWorld(), TEXT("Testmap"));
+	//GetWorld()->ServerTravel(FString("/Game/Maps/Testmap"));
+	UGameplayStatics::OpenLevel(GetWorld(), TEXT("Testmap"));
 	//GetWorld()->SeamlessTravel(FString("/Game/Maps/Testmap?listen"));
 	//UE_LOG(LogClass, Warning, TEXT("MY type : %d"), type);
 }
@@ -42,8 +43,8 @@ void USelectCharacterUi::Character3ButtonPressed()
 	Cast<UBOGameInstance>(GetGameInstance())->SetCharacterType(ECharacterType::ECharacter3);
 	/*PlayerType type = Character3;
 	c_socket->Send_Character_Type(type);*/
-	//UGameplayStatics::OpenLevel(GetWorld(), TEXT("Testmap"));
-	GetWorld()->ServerTravel(FString("/Game/Maps/Testmap"));
+	UGameplayStatics::OpenLevel(GetWorld(), TEXT("Testmap"));
+	//GetWorld()->ServerTravel(FString("/Game/Maps/Testmap"));
 	//GetWorld()->SeamlessTravel(FString("/Game/Maps/Testmap?listen"));
 	//UE_LOG(LogClass, Warning, TEXT("MY type : %d"), type);
 }
@@ -53,8 +54,8 @@ void USelectCharacterUi::Character4ButtonPressed()
 	Cast<UBOGameInstance>(GetGameInstance())->SetCharacterType(ECharacterType::ECharacter4);
 	//PlayerType type = Character4;
 	//c_socket->Send_Character_Type(type);
-	//UGameplayStatics::OpenLevel(GetWorld(), TEXT("Testmap"));
-	GetWorld()->ServerTravel(FString("/Game/Maps/Testmap"));
+	UGameplayStatics::OpenLevel(GetWorld(), TEXT("Testmap"));
+	//GetWorld()->ServerTravel(FString("/Game/Maps/Testmap"));
 	//GetWorld()->SeamlessTravel(FString("/Game/Maps/Testmap?listen"));
 	//UE_LOG(LogClass, Warning, TEXT("MY type : %d"), type);
 }

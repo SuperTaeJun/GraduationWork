@@ -17,8 +17,8 @@ ClientSocket::ClientSocket() :StopTaskCounter(0)
 }
 
 ClientSocket::~ClientSocket() {
-	/*delete Thread;
-	Thread = nullptr;*/
+	delete Thread;
+	Thread = nullptr;
 
 	closesocket(ServerSocket);
 	WSACleanup();
@@ -275,27 +275,7 @@ uint32 ClientSocket::Run()
 	}
 	return 0;
 
-	//FPlatformProcess::Sleep(0.03);
-	//PacketProcess(m_sRecvBuffer);
-	//SleepEx(0, true);
-	//while (StopTaskCounter.GetValue() == 0 /*&& m_PlayerController != nullptr*/)
-	//{
-	//	int nRecvLen = recv(ServerSocket, reinterpret_cast<char*>(m_sRecvBuffer), MAX_BUFFER, 0);
-
-	//	if (nRecvLen == 0)
-	//	{
-	//		UE_LOG(LogTemp, Warning, TEXT("Recv 0 Btye. break while"));
-	//		break;
-	//	}
-
-	//	BYTE OP;
-	//	memcpy(&OP, m_sRecvBuffer, sizeof(BYTE));
-
-	//	PacketProcess(m_sRecvBuffer);
-	//	SleepEx(0.5, true);
-	//}
-	//UE_LOG(LogTemp, Warning, TEXT("Recv Close"));
-	//return 0;
+	
 }
 
 void ClientSocket::Stop()

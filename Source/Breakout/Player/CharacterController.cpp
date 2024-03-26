@@ -23,7 +23,8 @@
 ACharacterController::ACharacterController()
 {
 	//c_socket = ClientSocket::GetSingleton();
-
+	c_socket = ClientSocket::GetSingleton();
+	c_socket->SetPlayerController(this);
 	p_cnt = -1;
 	bNewPlayerEntered = false;
 	bNewWeaponEntered = false;
@@ -35,19 +36,18 @@ ACharacterController::ACharacterController()
 void ACharacterController::BeginPlay()
 {
 
-
+	//_socket = new ClientSocket();
+	
 	FInputModeGameOnly GameOnlyInput;
 	SetInputMode(GameOnlyInput);
 
 	MainHUD = Cast<AMainHUD>(GetHUD());
-	c_socket = ClientSocket::GetSingleton();
-	c_socket->SetPlayerController(this);
+	
 	////아아 여기
 	/*c_socket = new ClientSocket();
 	c_socket->SetPlayerController(this);*/
 	c_socket->StartListen();
-	connect = c_socket->Connect("192.168.101.241", 7777);
-
+	connect = c_socket->Connect("127.0.0.1", 7777);
 	if (connect)
 	{
 		
@@ -81,7 +81,7 @@ void ACharacterController::BeginPlay()
 	{
 		UE_LOG(LogClass, Warning, TEXT("IOCP Server connect FAIL!"));
 	}
-	SleepEx(0.5, true);
+	SleepEx(0.0, true);
 }
 
 
