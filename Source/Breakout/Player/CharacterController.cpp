@@ -23,6 +23,7 @@
 ACharacterController::ACharacterController()
 {
 	//c_socket = ClientSocket::GetSingleton();
+	UE_LOG(LogTemp, Warning, TEXT("INIT (S)"));
 	c_socket = ClientSocket::GetSingleton();
 	c_socket->SetPlayerController(this);
 	p_cnt = -1;
@@ -35,7 +36,7 @@ ACharacterController::ACharacterController()
 
 void ACharacterController::BeginPlay()
 {
-
+	UE_LOG(LogTemp, Warning, TEXT("INIT (B)"));
 	//_socket = new ClientSocket();
 	
 	FInputModeGameOnly GameOnlyInput;
