@@ -53,7 +53,7 @@ bool ClientSocket::Connect(const char* s_IP, int port)
 	// 접속할 서버 포트 및 IP
 	stServerAddr.sin_family = AF_INET;
 	::inet_pton(AF_INET, SERVER_IP, &stServerAddr.sin_addr);
-	stServerAddr.sin_port = htons(SERVER_PORT);
+	stServerAddr.sin_port = htons(9001);
 	//stServerAddr.sin_addr.s_addr = inet_addr(SERVER_IP);
 
 	int nResult = connect(ServerSocket, (sockaddr*)&stServerAddr, sizeof(stServerAddr));
@@ -219,7 +219,7 @@ uint32 ClientSocket::Run()
 	//StopTaskCounter.GetValue() == 0
 	// recv while loop 시작
 	// StopTaskCounter 클래스 변수를 사용해 Thread Safety하게 해줌
-	while (StopTaskCounter.GetValue() == 0)
+	while (StopTaskCounter.GetValue() == 0 && MyCharacterController != nullptr)
 	{
 		DWORD num_byte;
 		LONG64 iocp_key;
