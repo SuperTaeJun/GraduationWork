@@ -203,33 +203,104 @@ bool ClientSocket::Init()
 {
 	return true;
 }
+//uint32 ClientSocket::Run()
+//{
+//	FPlatformProcess::Sleep(0.03);
+//
+//	////Connect();
+//	Iocp = CreateIoCompletionPort(INVALID_HANDLE_VALUE, NULL, NULL, 0);
+//	CreateIoCompletionPort(reinterpret_cast<HANDLE>(ServerSocket), Iocp, 0, 0);
+//
+//	RecvPacket();
+//
+//	//Send_LoginPacket();
+//
+//	SleepEx(0, true);
+//	//StopTaskCounter.GetValue() == 0
+//	// recv while loop 시작
+//	// StopTaskCounter 클래스 변수를 사용해 Thread Safety하게 해줌
+//	while (StopTaskCounter.GetValue() == 0 && MyCharacterController != nullptr)
+//	{
+//		DWORD num_byte;
+//		LONG64 iocp_key;
+//		WSAOVERLAPPED* p_over;
+//
+//		BOOL ret = GetQueuedCompletionStatus(Iocp, &num_byte, (PULONG_PTR)&iocp_key, &p_over, INFINITE);
+//
+//		Overlap* exp_over = reinterpret_cast<Overlap*>(p_over);
+//
+//		if (false == ret) {
+//			int err_no = WSAGetLastError();
+//			if (exp_over->_op == IO_SEND)
+//				delete exp_over;
+//			continue;
+//		}
+//
+//		switch (exp_over->_op) {
+//		case IO_RECV: {
+//			if (num_byte == 0) {
+//				//Disconnect();
+//				continue;
+//			}
+//			int remain_data = num_byte + _prev_size;
+//			unsigned char* packet_start = exp_over->_net_buf;
+//			int packet_size = packet_start[0];
+//			while (packet_size <= remain_data) {
+//				PacketProcess(packet_start);
+//				remain_data -= packet_size;
+//				packet_start += packet_size;
+//				if (remain_data > 0) packet_size = packet_start[0];
+//				else break;
+//			}
+//
+//			if (0 < remain_data) {
+//				_prev_size = remain_data;
+//				memcpy(&exp_over->_net_buf, packet_start, remain_data);
+//			}
+//
+//			RecvPacket();
+//			SleepEx(0, true);
+//			break;
+//		}
+//		case IO_SEND: {
+//			if (num_byte != exp_over->_wsa_buf.len) {
+//				//Disconnect();
+//			}
+//			delete exp_over;
+//			break;
+//		}
+//
+//		}
+//
+//	}
+//	return 0;
+//
+//	
+//}
 uint32 ClientSocket::Run()
 {
 	FPlatformProcess::Sleep(0.03);
 
-	////Connect();
+	// 서버에 연결하고 IOCP 초기화
 	Iocp = CreateIoCompletionPort(INVALID_HANDLE_VALUE, NULL, NULL, 0);
 	CreateIoCompletionPort(reinterpret_cast<HANDLE>(ServerSocket), Iocp, 0, 0);
 
+	// 패킷 수신 시작
 	RecvPacket();
 
-	//Send_LoginPacket();
-
-	SleepEx(0, true);
-	//StopTaskCounter.GetValue() == 0
-	// recv while loop 시작
-	// StopTaskCounter 클래스 변수를 사용해 Thread Safety하게 해줌
+	// 패킷을 계속해서 수신하는 메인 루프 진입
 	while (StopTaskCounter.GetValue() == 0 && MyCharacterController != nullptr)
 	{
 		DWORD num_byte;
 		LONG64 iocp_key;
 		WSAOVERLAPPED* p_over;
 
+		// 오버랩된 I/O 작업의 완료를 기다림
 		BOOL ret = GetQueuedCompletionStatus(Iocp, &num_byte, (PULONG_PTR)&iocp_key, &p_over, INFINITE);
 
 		Overlap* exp_over = reinterpret_cast<Overlap*>(p_over);
 
-		if (false == ret) {
+		if (!ret) {
 			int err_no = WSAGetLastError();
 			if (exp_over->_op == IO_SEND)
 				delete exp_over;
@@ -239,43 +310,28 @@ uint32 ClientSocket::Run()
 		switch (exp_over->_op) {
 		case IO_RECV: {
 			if (num_byte == 0) {
-				//Disconnect();
+				// 연결 끊김 처리
+				// 선택적으로 여기서 재연결 로직을 구현할 수 있습니다.
 				continue;
 			}
-			int remain_data = num_byte + _prev_size;
-			unsigned char* packet_start = exp_over->_net_buf;
-			int packet_size = packet_start[0];
-			while (packet_size <= remain_data) {
-				PacketProcess(packet_start);
-				remain_data -= packet_size;
-				packet_start += packet_size;
-				if (remain_data > 0) packet_size = packet_start[0];
-				else break;
-			}
-
-			if (0 < remain_data) {
-				_prev_size = remain_data;
-				memcpy(&exp_over->_net_buf, packet_start, remain_data);
-			}
-
+			// 수신된 패킷 처리
+			PacketProcess(exp_over->_net_buf);
+			// 더 많은 패킷을 받기 위해 계속 수신 대기
 			RecvPacket();
-			SleepEx(0, true);
 			break;
 		}
 		case IO_SEND: {
+			// 필요한 경우 송신 작업 완료 처리
 			if (num_byte != exp_over->_wsa_buf.len) {
-				//Disconnect();
+				// 에러 처리
 			}
 			delete exp_over;
 			break;
 		}
-
 		}
-
 	}
-	return 0;
 
-	
+	return 0;
 }
 
 void ClientSocket::Stop()

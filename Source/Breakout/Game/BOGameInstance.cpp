@@ -28,5 +28,5 @@
 void UBOGameInstance::Init()
 {
 	Super::Init();
-	ACharacterController* ChController = Cast<ACharacterController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+	//ACharacterController* ChController = Cast<ACharacterController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 }

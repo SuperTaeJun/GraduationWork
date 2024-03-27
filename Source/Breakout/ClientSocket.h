@@ -241,11 +241,11 @@ public:
 	void Send_Move_Packet(int sessionID, FVector Location, FRotator Rotation, FVector Velocity,float Max_speed);
 	void Send_Character_Type(PlayerType type);
 	void Send_Weapon_Type(WeaponType type, int id);
-	virtual bool Init();
-	virtual uint32 Run();
-	virtual void Stop();
-	virtual void Exit();
-	char	_id[MAX_NAME_SIZE];
+	virtual bool Init() override;
+	virtual uint32 Run() override;
+	virtual void Stop() override;
+	virtual void Exit() override;
+	char	_id[MAX_NAME_SIZE]; 
 	char	_pw[MAX_NAME_SIZE];
 	// 스레드 시작 및 종료
 	bool StartListen();

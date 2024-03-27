@@ -36,6 +36,7 @@ ACharacterController::ACharacterController()
 
 void ACharacterController::BeginPlay()
 {
+	Super::BeginPlay();
 	UE_LOG(LogTemp, Warning, TEXT("INIT (B)"));
 	//_socket = new ClientSocket();
 	
@@ -49,12 +50,12 @@ void ACharacterController::BeginPlay()
 }
 void ACharacterController::SetSocket()
 {
-	c_socket = new ClientSocket();         // 에디터용
-	//mySocket = ClientSocket::GetSingleton(); // 패키징 용
+	//c_socket = new ClientSocket();         // 에디터용
+	c_socket = ClientSocket::GetSingleton(); // 패키징 용
 
 	c_socket->SetPlayerController(this);
 	g_socket = c_socket;
-	connect = c_socket->Connect("127.0.0.1", 7777);
+	connect = c_socket->Connect("127.0.0.1", 8001);
 
 	if (connect)
 	{
@@ -547,66 +548,6 @@ void ACharacterController::UpdateSyncWeapon()
 {
 
 }
-//void ACharacterController::UpdateSyncPlayer()
-//{
-//	UWorld* const World = GetWorld();
-//	if (!World) return;
-//
-//	while (!NewPlayer.empty())
-//	{
-//		auto NewPlayerInfo = NewPlayer.front();
-//		if (!NewPlayerInfo) continue;
-//
-//		if (NewPlayerInfo->Id == id)
-//		{
-//			// Skip spawning the player if it's the local player
-//			NewPlayer.pop();
-//			continue;
-//		}
-//
-//		FVector SpawnLocation1;
-//		SpawnLocation1.X = NewPlayerInfo->X;
-//		SpawnLocation1.Y = NewPlayerInfo->Y;
-//		SpawnLocation1.Z = NewPlayerInfo->Z;
-//
-//		FRotator SpawnRotation;
-//		SpawnRotation.Yaw = NewPlayerInfo->Yaw;
-//		SpawnRotation.Pitch = 0.0f;
-//		SpawnRotation.Roll = 0.0f;
-//
-//		FActorSpawnParameters SpawnParams;
-//		SpawnParams.Owner = this;
-//		SpawnParams.Instigator = GetInstigator();
-//		SpawnParams.Name = FName(*FString::FromInt(NewPlayerInfo->Id));
-//
-//		ACharacterBase* SpawnedCharacter = World->SpawnActor<ACharacterBase>(ACharacterBase::StaticClass(),
-//			SpawnLocation, SpawnRotation, SpawnParams);
-//		if (SpawnedCharacter)
-//		{
-//			SpawnedCharacter->SpawnDefaultController();
-//			SpawnedCharacter->_SessionId = NewPlayerInfo->Id;
-//
-//			if (PlayerInfo != nullptr)
-//			{
-//				CPlayer Info;
-//				Info.Id = NewPlayerInfo->Id;
-//				Info.X = NewPlayerInfo->X;
-//				Info.Y = NewPlayerInfo->Y;
-//				Info.Z = NewPlayerInfo->Z;
-//				Info.Yaw = NewPlayerInfo->Yaw;
-//
-//				PlayerInfo->players[NewPlayerInfo->Id] = Info;
-//				p_cnt = PlayerInfo->players.size();
-//			}
-//
-//			UE_LOG(LogClass, Warning, TEXT("Another player spawned"));
-//		}
-//
-//		NewPlayer.pop(); // Remove processed entry from the queue
-//	}
-//
-//	bNewPlayerEntered = false;
-//}
 
 void ACharacterController::UpdatePlayer()
 {
