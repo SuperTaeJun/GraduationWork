@@ -100,7 +100,7 @@ public:
 	void UpdateSyncWeapon();
 	bool UpdateWorld();
 	//초기 컨트롤러 세팅
-
+	void SetSocket();
 	void InitPlayer();
 	//Tick함수
 	virtual void Tick(float DeltaTime);

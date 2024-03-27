@@ -24,13 +24,14 @@ class BREAKOUT_API UBOGameInstance : public UGameInstance
 	GENERATED_BODY()
 
 public:
+	virtual void Init() override;
 	ECharacterType CharacterType;
 
 	void SetCharacterType(ECharacterType _CharacterType) { CharacterType = _CharacterType; }
 	ECharacterType GetCharacterType() { return CharacterType; }
 
-	/*UFUNCTION(BlueprintCallable)
-	void ConnectToServer();*/
+	//UFUNCTION(BlueprintCallable)
+	//void ConnectToServer();
 
 public:
 	/*ClientSocket* m_Socket;
