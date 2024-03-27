@@ -2,7 +2,8 @@
 
 
 #include "Game/BOGameInstance.h"
-
+#include "Kismet/GameplayStatics.h"
+#include "Player/CharacterController.h"
 //void UBOGameInstance::ConnectToServer()
 //{
 //	m_Socket = ClientSocket::GetSingleton();
@@ -23,3 +24,9 @@
 //	}
 //
 //}
+
+void UBOGameInstance::Init()
+{
+	Super::Init();
+	ACharacterController* ChController = Cast<ACharacterController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+}

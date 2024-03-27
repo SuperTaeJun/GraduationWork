@@ -24,6 +24,7 @@ class BREAKOUT_API UBOGameInstance : public UGameInstance
 	GENERATED_BODY()
 
 public:
+	virtual void Init() override;
 	ECharacterType CharacterType;
 
 	void SetCharacterType(ECharacterType _CharacterType) { CharacterType = _CharacterType; }
