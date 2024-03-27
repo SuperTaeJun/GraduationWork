@@ -20,6 +20,7 @@
 #include <string>
 #include "ClientSocket.h"
 
+ClientSocket* g_socket = nullptr;
 ACharacterController::ACharacterController()
 {
 
@@ -42,16 +43,22 @@ void ACharacterController::BeginPlay()
 	SetInputMode(GameOnlyInput);
 
 	MainHUD = Cast<AMainHUD>(GetHUD());
-	c_socket = ClientSocket::GetSingleton();
+	
+	SetSocket();
+	SleepEx(0.0, true);
+}
+void ACharacterController::SetSocket()
+{
+	c_socket = new ClientSocket();         // 에디터용
+	//mySocket = ClientSocket::GetSingleton(); // 패키징 용
+
 	c_socket->SetPlayerController(this);
-	////아아 여기
-	/*c_socket = new ClientSocket();*/
-	//c_socket->SetPlayerController(this);
-	//c_socket->StartListen();
+	g_socket = c_socket;
 	connect = c_socket->Connect("127.0.0.1", 7777);
+
 	if (connect)
 	{
-		
+
 		c_socket->StartListen();
 		UE_LOG(LogClass, Warning, TEXT("IOCP Server connect success!"));
 		FString c_id = "testuser";
@@ -82,9 +89,9 @@ void ACharacterController::BeginPlay()
 	{
 		UE_LOG(LogClass, Warning, TEXT("IOCP Server connect FAIL!"));
 	}
-	SleepEx(0.0, true);
-}
+	
 
+}
 
 //void ACharacterController::OnPossess(APawn* InPawn)
 //{
