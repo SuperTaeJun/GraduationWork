@@ -10,8 +10,8 @@
 
 
 #define	MAX_BUFFER		256
-#define SERVER_PORT		9001
-#define SERVER_IP		"192.168.219.103"
+#define SERVER_PORT		8001
+#define SERVER_IP		"127.0.0.1"
 #define MAX_CLIENTS		100
 #define MAX_INFO_SIZE   20
 
@@ -46,9 +46,10 @@ struct CS_LOGIN_PACKET
 	char type;
 	char id[MAX_INFO_SIZE];
 	char pw[MAX_INFO_SIZE];
-	float x, y;
-	float z;
-	PlayerType p_type;
+	/*float x, y;
+	float z;*/
+	//PlayerType p_type;
+
 
 };
 struct SC_LOGIN_BACK {
@@ -57,10 +58,10 @@ struct SC_LOGIN_BACK {
 	/*char id[MAX_INFO_SIZE];
 	char pw[MAX_INFO_SIZE];*/
 	int clientid;
-	float x, y, z;
+	/*float x, y, z;
 	float yaw;
-	int cl_id;
-	PlayerType p_type;
+	int cl_id;*/
+	//PlayerType p_type;
 };
 struct CS_MOVE_PACKET
 {
@@ -72,7 +73,6 @@ struct CS_MOVE_PACKET
 	float vx, vy, vz;
 	float yaw;
 };
-//동기화 용 패킷
 struct SC_PLAYER_SYNC {
 	unsigned char size;
 	char type;
@@ -82,14 +82,14 @@ struct SC_PLAYER_SYNC {
 	float yaw;
 	char object_type;
 	char name[MAX_INFO_SIZE];
-	PlayerType p_type;
+	//PlayerType p_type;
 };
 struct CS_SELECT_CHARACTER
 {
 	unsigned char size;
 	char type;
 	int id;
-	PlayerType character_type;
+	//PlayerType character_type;
 };
 struct CS_SELECT_WEAPO
 {
@@ -105,8 +105,8 @@ struct SC_SYNC_WEAPO
 	int id;
 	WeaponType weapon_type;
 };
-
 #pragma pack(pop)
+
 /**
  * 
  */

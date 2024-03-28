@@ -51,7 +51,7 @@ void ACharacterController::BeginPlay()
 	if (connect)
 	{
 
-		c_socket->StartListen();
+		//c_socket->StartListen();
 		UE_LOG(LogClass, Warning, TEXT("IOCP Server connect success!"));
 		FString c_id = "testuser";
 		FString c_pw = "1234";
