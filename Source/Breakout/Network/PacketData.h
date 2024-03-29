@@ -11,7 +11,7 @@
 
 #define	MAX_BUFFER		256
 #define SERVER_PORT		8001
-#define SERVER_IP		"192.168.219.103"
+#define SERVER_IP		"192.168.219.102"
 #define MAX_CLIENTS		100
 #define MAX_INFO_SIZE   20
 
@@ -59,7 +59,9 @@ struct SC_LOGIN_BACK {
 	int32 cl_id;*/
 	//PlayerType p_type;
 };
+#pragma pack(pop)
 
+#pragma pack (push, 1)
 struct CS_MOVE_PACKET
 {
 	unsigned char size;
