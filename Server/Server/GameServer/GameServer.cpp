@@ -40,7 +40,7 @@ int main()
 	SOCKADDR_IN server_addr;
 	ZeroMemory(&server_addr, sizeof(server_addr));
 	server_addr.sin_family = AF_INET;
-	server_addr.sin_port = htons(8001);
+	server_addr.sin_port = htons(SERVER_PORT);
 	server_addr.sin_addr.s_addr = htonl(INADDR_ANY);
 	bind(sever_socket, reinterpret_cast<sockaddr*>(&server_addr), sizeof(server_addr));
 	listen(sever_socket, SOMAXCONN);

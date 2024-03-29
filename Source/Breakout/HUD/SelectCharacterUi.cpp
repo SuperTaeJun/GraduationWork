@@ -6,7 +6,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Game/BOGameInstance.h"
 #include "ClientSocket.h"
-#include "Network/PacketData.h"
+//#include "Network/PacketData.h"
 void USelectCharacterUi::NativeConstruct()
 {
 	Character1Button->OnClicked.AddDynamic(this, &USelectCharacterUi::Character1ButtonPressed);

@@ -13,14 +13,14 @@
 #include <queue>
 #include <vector>
 #include <iostream>
-#include "Network/PacketData.h"
+//#include "Network/PacketData.h"
+#include "../../Server/Server/ServerCore/protocol.h"
 #include "Windows/PostWindowsApi.h"
 #include "Windows/HideWindowsPlatformTypes.h"
 #include "Game/BOGameInstance.h"
 #include "CoreMinimal.h"
 
-class ClientSocket;
-class ABOGameMode;
+
 class ACharacterController;
 using namespace std;
 
@@ -148,7 +148,7 @@ public:
 };
 
 const int buffsize = 1000;
-const int  MAX_NAME_SIZE = 20;
+//const int  MAX_NAME_SIZE = 20;
 enum IO_type
 {
 	IO_RECV,
@@ -262,10 +262,9 @@ public:
 	Overlap _recv_over;
 
 	SOCKET ServerSocket;
-	unsigned char recvBuffer[MAX_BUFFER];
+	unsigned char recvBuffer[1000];
 	FRunnableThread* Thread;
 	FThreadSafeCounter StopTaskCounter;
-	void process_data(unsigned char* net_buf, size_t io_byte);
 	int _prev_size = 0;
 	int local_id = -1;
 	bool login_cond = false;
@@ -273,6 +272,4 @@ private:
 	ACharacterController* MyCharacterController;
 	CPlayerInfo PlayerInfo;
 	//CPlayer NewPlayer;
-	unsigned char 	m_sRecvBuffer[MAX_BUFFER];
-	char 	m_sSendBuffer[MAX_BUFFER];
 };

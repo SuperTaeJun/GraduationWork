@@ -16,7 +16,8 @@
 
 #include "Components/Image.h"
 #include "Game/BOGameInstance.h"
-#include "Network/PacketData.h"
+//#include "Network/PacketData.h"
+#include "../../Server/Server/ServerCore/protocol.h"
 #include <string>
 #include "ClientSocket.h"
 
