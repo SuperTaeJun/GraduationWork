@@ -11,7 +11,7 @@
 
 #define	MAX_BUFFER		256
 #define SERVER_PORT		8001
-#define SERVER_IP		"192.168.219.102"
+#define SERVER_IP		"192.168.219.101"
 #define MAX_CLIENTS		100
 #define MAX_INFO_SIZE   20
 
