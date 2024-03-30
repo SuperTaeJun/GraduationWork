@@ -183,10 +183,11 @@ void Disconnect(int _s_id)
 //패킷 판별
 void process_packet(int s_id, unsigned char* p)
 {
-	unsigned char packet_type = p[1];
+	//unsigned char packet_type = p[1];
 	CLIENT& cl = clients[s_id];
-
-	switch (packet_type) {
+	cout << "packet_type 4" << p[1] << "4" << endl;
+	switch (int(p[1]))
+	{
 	case CS_LOGIN: {
 		cs_login_packet* packet = reinterpret_cast<cs_login_packet*>(p);
 
@@ -205,7 +206,8 @@ void process_packet(int s_id, unsigned char* p)
 		
 	
 	}
-	case CS_SELECT_CHAR: {
+	case CS_SELECT_CHAR: 
+	{
 		cs_character_select* packet = reinterpret_cast<cs_character_select*>(p);
 		CLIENT& cl = clients[s_id];
 		cl.x = packet->x;
@@ -268,7 +270,8 @@ void process_packet(int s_id, unsigned char* p)
 		this_thread::sleep_for(0.5ms);
 		break;
 	}
-	case CS_MOVE: {
+	case CS_MOVE: 
+	{
 		//cout << "들어옴?" << endl;
 		cs_move_packet* packet = reinterpret_cast<cs_move_packet*>(p);
 		CLIENT& cl = clients[s_id];
@@ -343,7 +346,7 @@ void process_packet(int s_id, unsigned char* p)
 		cout << "cl._s_id : " << cl._s_id << ",  " << cl.p_type << endl;
 	}*/
 	default:
-		cout << " 오류패킷타입 : " << p << endl;
+		//cout << " 오류패킷타입 : " << p << endl;
 		break;
 	}
 

@@ -74,7 +74,7 @@ void ClientSocket::PacketProcess(unsigned char* ptr)
 {
 	//UE_LOG(LogClass, Warning, TEXT("init?"));
 	static bool first_time = true;
-	switch (ptr[1])
+	switch (int(ptr[1]))
 	{
 	case SC_LOGIN_OK: {
 		sc_login_back* packet = reinterpret_cast<sc_login_back*>(ptr);

@@ -26,16 +26,16 @@ const int  MAX_CHAT_SIZE = 100;
 const int  MAX_USER = 10000;
 const int  MAX_OBJ = 20;
 
-const char CS_LOGIN = 1;
-const char CS_MOVE = 2;
-const char CS_SELECT_CHAR = 3;
-const char CS_SELECT_WEP = 4;
+constexpr int CS_LOGIN = 1;
+constexpr int CS_MOVE = 2;
+constexpr int CS_SELECT_CHAR = 3;
+constexpr int CS_SELECT_WEP = 4;
 
-const char SC_LOGIN_OK = 1;
-const char SC_OTHER_PLAYER = 2;
-const char SC_MOVE_PLAYER = 3;
-const char SC_SELECT_CHAR = 4;
-const char SC_OTHER_WEAPO = 5;
+constexpr int SC_LOGIN_OK = 1;
+constexpr int SC_OTHER_PLAYER = 2;
+constexpr int SC_MOVE_PLAYER = 3;
+constexpr int SC_SELECT_CHAR = 4;
+constexpr int SC_OTHER_WEAPO = 5;
 
 
 //const char CS_PACKET_DAMAGE = 7;
@@ -59,13 +59,13 @@ const char SC_OTHER_WEAPO = 5;
 struct cs_login_packet
 {
 	unsigned char size;
-	char type;
+	int type;
 	char id[MAX_INFO_SIZE];
 	char pw[MAX_INFO_SIZE];
 };	
 struct sc_login_back {
 	unsigned char size;
-	char type;
+	int type;
 	/*char id[MAX_INFO_SIZE];
 	char pw[MAX_INFO_SIZE];*/
 	int clientid;
@@ -76,7 +76,7 @@ struct sc_login_back {
 };
 struct cs_character_select {
 	unsigned char size;
-	char type;
+	int type;
 	int clientid;
 	float x, y;
 	float z;
@@ -89,7 +89,7 @@ struct cs_character_select {
 struct cs_move_packet
 {
 	unsigned char size;
-	char type;
+	int type;
 	int	id;
 	float Max_speed;
 	float x, y, z;
@@ -98,7 +98,7 @@ struct cs_move_packet
 };
 struct sc_put_object {
 	unsigned char size;
-	char type;
+	int type;
 	int id;
 	float Max_speed;
 	float x, y, z;
@@ -110,14 +110,14 @@ struct sc_put_object {
 struct CS_SELECT_WEAPO
 {
 	unsigned char size;
-	char type;
+	int type;
 	int id;
 	WeaponType weapon_type;
 };
 struct SC_SYNC_WEAPO
 {
 	unsigned char size;
-	char type;
+	int type;
 	int id;
 	WeaponType weapon_type;
 };
