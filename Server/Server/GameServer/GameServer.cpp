@@ -38,7 +38,7 @@ int main()
 	::WSAStartup(MAKEWORD(2, 2), &WSAData);
 	sever_socket = WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, 0, 0, WSA_FLAG_OVERLAPPED);
 	SOCKADDR_IN server_addr;
-	ZeroMemory(&server_addr, sizeof(server_addr));
+	ZeroMemory(&server_addr, sizeof(serv0er_addr));
 	server_addr.sin_family = AF_INET;
 	server_addr.sin_port = htons(SERVER_PORT);
 	server_addr.sin_addr.s_addr = htonl(INADDR_ANY);
