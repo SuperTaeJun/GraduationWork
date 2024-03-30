@@ -7,7 +7,6 @@
 #include "Components/CapsuleComponent.h"
 #include "FX/Skill4Actor.h"
 #include "Player/CharacterController.h"
-
 #include "InputMappingContext.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
@@ -15,7 +14,7 @@ ACharacter4::ACharacter4()
 {
 	NiagaraComp = CreateDefaultSubobject<UNiagaraComponent>(TEXT("NiagaraComp"));
 	NiagaraComp->SetAutoActivate(false);
-	ConstructorHelpers::FObjectFinder<UNiagaraSystem> FxRef(TEXT("/Script/Niagara.NiagaraSystem'/Game/Niagara/SKill/Skill4/NS_Skill4_S.NS_Skill4_S''"));
+	ConstructorHelpers::FObjectFinder<UNiagaraSystem> FxRef(TEXT("/Game/Niagara/SKill/Skill4/NS_Skill4_S.NS_Skill4_S"));
 	NiagaraComp->SetAsset(FxRef.Object);
 }
 

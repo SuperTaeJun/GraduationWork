@@ -18,7 +18,7 @@ ACharacter3::ACharacter3()
 {
 	NiagaraComp = CreateDefaultSubobject<UNiagaraComponent>(TEXT("NiagaraComp"));
 	NiagaraComp->SetAutoActivate(false);
-	ConstructorHelpers::FObjectFinder<UNiagaraSystem> FxRef(TEXT("/Script/Niagara.NiagaraSystem'/Game/Niagara/SKill/Skill3/NS_Skill3.NS_Skill3''"));
+	ConstructorHelpers::FObjectFinder<UNiagaraSystem> FxRef(TEXT("/Game/Niagara/SKill/Skill3/NS_Skill3.NS_Skill3"));
 	NiagaraComp->SetAsset(FxRef.Object);
 	MovementComp = GetCharacterMovement();
 

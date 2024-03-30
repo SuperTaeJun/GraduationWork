@@ -21,7 +21,6 @@ AProjectileBase::AProjectileBase()
 	CollisionBox->SetCollisionResponseToChannel(ECollisionChannel::ECC_WorldStatic, ECollisionResponse::ECR_Block);
 	CollisionBox->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Block);
 	
-
 	ProjectileMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ProjectileMesh"));
 	ProjectileMesh->SetupAttachment(RootComponent);
 	ProjectileMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
@@ -30,6 +29,7 @@ AProjectileBase::AProjectileBase()
 	ProjectileMovementComponent = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileMovementComponent"));
 	ProjectileMovementComponent->bRotationFollowsVelocity = true;
 
+	ImpactNiagara = ConstructorHelpers::FObjectFinder<UNiagaraSystem>(TEXT("Niagara")).Object;
 }
 
 void AProjectileBase::BeginPlay()
@@ -64,8 +64,8 @@ void AProjectileBase::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActo
 				FiringController // InstigatorController
 			);
 		}
-		DrawDebugSphere(GetWorld(), GetActorLocation(), 100.f, 20, FColor::Black, false, 10, 0, 1);
-		DrawDebugSphere(GetWorld(), GetActorLocation(), 300.f, 20, FColor::Purple, false, 10, 0, 1);
+	//	DrawDebugSphere(GetWorld(), GetActorLocation(), 100.f, 20, FColor::Black, false, 10, 0, 1);
+	//	DrawDebugSphere(GetWorld(), GetActorLocation(), 300.f, 20, FColor::Purple, false, 10, 0, 1);
 		Destroy();
 	}
 }

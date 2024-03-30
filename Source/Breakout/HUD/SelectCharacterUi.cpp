@@ -21,7 +21,9 @@ void USelectCharacterUi::Character1ButtonPressed()
 	/*PlayerType type = Character1;
 	c_socket->Send_Character_Type(type);*/
 
-	GetWorld()->SeamlessTravel(FString("/Game/Maps/Testmap"));
+	//GetWorld()->ServerTravel(FString("/Game/Maps/Testmap"),true);
+	GetWorld()->ServerTravel(FString("/Game/Maps/MainMap"), true);
+
 
 }
 
@@ -30,7 +32,8 @@ void USelectCharacterUi::Character2ButtonPressed()
 	Cast<UBOGameInstance>(GetGameInstance())->SetCharacterType(ECharacterType::ECharacter2);
 	/*PlayerType type = Character2;
 	c_socket->Send_Character_Type(type);*/
-	GetWorld()->ServerTravel(FString("/Game/Maps/Testmap"));
+	GetWorld()->ServerTravel(FString("/Game/Maps/MainMap"), true);
+
 }
 
 void USelectCharacterUi::Character3ButtonPressed()
@@ -38,8 +41,7 @@ void USelectCharacterUi::Character3ButtonPressed()
 	Cast<UBOGameInstance>(GetGameInstance())->SetCharacterType(ECharacterType::ECharacter3);
 	/*PlayerType type = Character3;
 	c_socket->Send_Character_Type(type);*/
-	GetWorld()->ServerTravel(FString("/Game/Maps/Testmap"));
-
+	GetWorld()->ServerTravel(FString("/Game/Maps/MainMap"), true);
 
 }
 
@@ -48,5 +50,6 @@ void USelectCharacterUi::Character4ButtonPressed()
 	Cast<UBOGameInstance>(GetGameInstance())->SetCharacterType(ECharacterType::ECharacter4);
 	//PlayerType type = Character4;
 	//c_socket->Send_Character_Type(type);
-	GetWorld()->ServerTravel(FString("/Game/Maps/Testmap"));
+	GetWorld()->ServerTravel(FString("/Game/Maps/MainMap"), true);
+
 }

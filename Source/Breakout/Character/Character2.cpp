@@ -18,7 +18,7 @@ ACharacter2::ACharacter2()
 	FXroc->SetupAttachment(RootComponent);
 
 	NiagaraComp = CreateDefaultSubobject<UNiagaraComponent>(TEXT("NiagaraComp"));
-	ConstructorHelpers::FObjectFinder<UNiagaraSystem> DashFxRef(TEXT("/Script/Niagara.NiagaraSystem'/Game/Niagara/SKill/Skill2/NS_Skill2.NS_Skill2'"));
+	ConstructorHelpers::FObjectFinder<UNiagaraSystem> DashFxRef(TEXT("/Game/Niagara/SKill/Skill2/NS_Skill2.NS_Skill2"));
 	NiagaraComp->bAutoActivate = false;
 	NiagaraComp->SetAsset(DashFxRef.Object);
 	NiagaraComp->SetupAttachment(FXroc);
