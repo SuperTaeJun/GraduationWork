@@ -16,6 +16,7 @@
 class CPlayer;
 class ClientSocket;
 class CPlayerInfo;
+class UBOGameInstance;
 /**
  *
  */
@@ -120,9 +121,10 @@ private:
 	bool bNewPlayerEntered = false;
 	bool bNewWeaponEntered = false;
 	bool bInitPlayerSetting = false;
-	ClientSocket* c_socket;
+	//ClientSocket* c_socket;
 	CPlayerInfo* PlayerInfo;
 	int p_cnt;
 	bool connect;
 	bool Set_Weapon;
+	UBOGameInstance* inst;
 };

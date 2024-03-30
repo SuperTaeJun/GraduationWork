@@ -1,6 +1,6 @@
 #pragma once
 #define SERVER_PORT		8001
-#define SERVER_IP		"192.168.87.28"
+#define SERVER_IP		"192.168.101.186"
 
 #define MAX_INFO_SIZE   20
 //const char CS_PACKET_ATTACK = 3;
@@ -30,10 +30,11 @@ const char CS_LOGIN = 1;
 const char CS_MOVE = 2;
 const char CS_SELECT_CHAR = 3;
 const char CS_SELECT_WEP = 4;
+
 const char SC_LOGIN_OK = 1;
 const char SC_OTHER_PLAYER = 2;
 const char SC_MOVE_PLAYER = 3;
-const char SC_CHAR_BACK = 4;
+const char SC_SELECT_CHAR = 4;
 const char SC_OTHER_WEAPO = 5;
 
 
@@ -55,18 +56,14 @@ const char SC_OTHER_WEAPO = 5;
 //const char SC_PACKET_GET_ITEM = 12;
 
 #pragma pack (push, 1)
-struct CS_LOGIN_PACKET
+struct cs_login_packet
 {
 	unsigned char size;
 	char type;
 	char id[MAX_INFO_SIZE];
 	char pw[MAX_INFO_SIZE];
-	/*float x, y;
-	float z;*/
-	//PlayerType p_type;
-
 };	
-struct SC_LOGIN_BACK {
+struct sc_login_back {
 	unsigned char size;
 	char type;
 	/*char id[MAX_INFO_SIZE];
@@ -77,11 +74,19 @@ struct SC_LOGIN_BACK {
 	int32 cl_id;*/
 	//PlayerType p_type;
 };
+struct cs_character_select {
+	unsigned char size;
+	char type;
+	int clientid;
+	float x, y;
+	float z;
+	PlayerType p_type;
+};
 #pragma pack(pop)
 
 
 #pragma pack (push, 1)
-struct CS_MOVE_PACKET
+struct cs_move_packet
 {
 	unsigned char size;
 	char type;
@@ -91,7 +96,7 @@ struct CS_MOVE_PACKET
 	float vx, vy, vz;
 	float yaw;
 };
-struct SC_PLAYER_SYNC {
+struct sc_put_object {
 	unsigned char size;
 	char type;
 	int id;
@@ -100,14 +105,7 @@ struct SC_PLAYER_SYNC {
 	float yaw;
 	//char object_type;
 	char name[MAX_INFO_SIZE];
-	//PlayerType p_type;
-};
-struct CS_SELECT_CHARACTER
-{
-	unsigned char size;
-	char type;
-	int id;
-	//PlayerType character_type;
+	PlayerType p_type;
 };
 struct CS_SELECT_WEAPO
 {

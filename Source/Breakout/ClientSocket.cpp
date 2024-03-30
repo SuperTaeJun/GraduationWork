@@ -77,7 +77,7 @@ void ClientSocket::PacketProcess(unsigned char* ptr)
 	switch (ptr[1])
 	{
 	case SC_LOGIN_OK: {
-		SC_LOGIN_BACK* packet = reinterpret_cast<SC_LOGIN_BACK*>(ptr);
+		sc_login_back* packet = reinterpret_cast<sc_login_back*>(ptr);
 		//UE_LOG(LogClass, Warning, TEXT("RECV ROGIN?"));
 		login_cond = true;
 		CPlayer player;
@@ -87,16 +87,16 @@ void ClientSocket::PacketProcess(unsigned char* ptr)
 		player.Z = packet->z;
 		player.p_type = packet->p_type;*/
 		PlayerInfo.players[player.Id] = player;
-		MyCharacterController->SetPlayerID(player.Id);
-		MyCharacterController->SetPlayerInfo(&PlayerInfo);
-		MyCharacterController->SetInitPlayerInfo(player);
-		UE_LOG(LogClass, Warning, TEXT("recv - id: %d, x: %d"), player.Id, player.X);
+		//MyCharacterController->SetPlayerID(player.Id);
+		//MyCharacterController->SetPlayerInfo(&PlayerInfo);
+		//MyCharacterController->SetInitPlayerInfo(player);
+		//UE_LOG(LogClass, Warning, TEXT("recv - id: %d, x: %d"), player.Id, player.X);
 		break;
 	}
 	case SC_OTHER_PLAYER:
 	{
 		//UE_LOG(LogClass, Warning, TEXT("other ROGIN?"));
-		SC_PLAYER_SYNC* packet = reinterpret_cast<SC_PLAYER_SYNC*>(ptr);
+		sc_put_object* packet = reinterpret_cast<sc_put_object*>(ptr);
 		auto info = make_shared<CPlayer>();
 		info->Id = packet->id;
 		info->X = packet->x;
@@ -112,7 +112,7 @@ void ClientSocket::PacketProcess(unsigned char* ptr)
 	case SC_MOVE_PLAYER:
 	{
 		//UE_LOG(LogClass, Warning, TEXT("recv move?"));
-		CS_MOVE_PACKET* packet = reinterpret_cast<CS_MOVE_PACKET*>(ptr);
+		cs_move_packet* packet = reinterpret_cast<cs_move_packet*>(ptr);
 		PlayerInfo.players[packet->id].X = packet->x;
 		PlayerInfo.players[packet->id].Y = packet->y;
 		PlayerInfo.players[packet->id].Z = packet->z;
@@ -124,7 +124,19 @@ void ClientSocket::PacketProcess(unsigned char* ptr)
 		UE_LOG(LogClass, Warning, TEXT("recv - move player id : %d,"), packet->id);
 		break;
 	}
-	case SC_CHAR_BACK: {
+	case SC_SELECT_CHAR: {
+		cs_character_select* packet = reinterpret_cast<cs_character_select*>(ptr);
+		CPlayer player;
+		player.Id = packet->clientid;
+		player.X = packet->x;
+		player.Y = packet->y;
+		player.Z = packet->z;
+		player.p_type = packet->p_type;
+		PlayerInfo.players[player.Id] = player;
+		MyCharacterController->SetPlayerID(player.Id);
+		MyCharacterController->SetPlayerInfo(&PlayerInfo);
+		MyCharacterController->SetInitPlayerInfo(player);
+		//UE_LOG(LogClass, Warning, TEXT("recv - id: %d, x: %d"), player.Id, player.X);
 		break;
 	}
 	case SC_OTHER_WEAPO: {
@@ -132,7 +144,6 @@ void ClientSocket::PacketProcess(unsigned char* ptr)
 		PlayerInfo.players[packet->id].w_type = packet->weapon_type;
 		//float z = packet->z;
 		//UE_LOG(LogClass, Warning, TEXT("recv data"));
-
 		break;
 	}
 	default:
@@ -140,22 +151,15 @@ void ClientSocket::PacketProcess(unsigned char* ptr)
 	}
 }
 
-void ClientSocket::Send_Login_Info(char* id, char* pw, PlayerType character_type)
+void ClientSocket::Send_Login_Info(char* id, char* pw)
 {
 	//패킷 조립
-	CS_LOGIN_PACKET packet;
+	cs_login_packet packet;
 	packet.size = sizeof(packet);
 	packet.type = CS_LOGIN;
 	strcpy(packet.id, id);
 	strcpy(packet.pw, pw);
 
-	auto player = Cast<ACharacterBase>(UGameplayStatics::GetPlayerCharacter(MyCharacterController, 0));
-	//cs_login_packet
-	//auto location = player->GetActorLocation();
-	//packet.x = location.X;
-	//packet.y = location.Y;
-	//packet.z = location.Z;
-	//packet.p_type = character_type;
 	SendPacket(&packet);
 	UE_LOG(LogClass, Warning, TEXT("Sending login info - id: %s, pw: %s"), ANSI_TO_TCHAR(id), ANSI_TO_TCHAR(pw));
 
@@ -164,7 +168,7 @@ void ClientSocket::Send_Login_Info(char* id, char* pw, PlayerType character_type
 void ClientSocket::Send_Move_Packet(int sessionID, FVector Location, FRotator Rotation, FVector Velocity, float Max_speed)
 {
 	if (login_cond) {
-		CS_MOVE_PACKET packet;
+		cs_move_packet packet;
 		packet.size = sizeof(packet);
 		packet.type = CS_MOVE;
 		packet.id = sessionID;
@@ -183,10 +187,13 @@ void ClientSocket::Send_Move_Packet(int sessionID, FVector Location, FRotator Ro
 
 void ClientSocket::Send_Character_Type(PlayerType type)
 {
-	CS_SELECT_CHARACTER packet;
-	packet.size = sizeof(packet);
-	packet.type = CS_SELECT_CHAR;
-	//packet.character_type = type;
+	auto player = Cast<ACharacterBase>(UGameplayStatics::GetPlayerCharacter(MyCharacterController, 0));
+	cs_character_select packet;
+	auto location = player->GetActorLocation();
+	packet.x = location.X;
+	packet.y = location.Y;
+	packet.z = location.Z;
+	packet.p_type = type;
 	SendPacket(&packet);
 }
 

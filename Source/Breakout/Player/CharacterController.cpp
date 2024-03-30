@@ -31,58 +31,62 @@ ACharacterController::ACharacterController()
 	bInitPlayerSetting = false;
 	PrimaryActorTick.bCanEverTick = true;
 	Set_Weapon = false;
+
+	//inst = Cast<UBOGameInstance>(GetGameInstance());
 }
 
 void ACharacterController::BeginPlay()
 {
-
-
 	FInputModeGameOnly GameOnlyInput;
 	SetInputMode(GameOnlyInput);
-
 	MainHUD = Cast<AMainHUD>(GetHUD());
-	c_socket = ClientSocket::GetSingleton();
-	c_socket->SetPlayerController(this);
-	////아아 여기
-	/*c_socket = new ClientSocket();
-	c_socket->SetPlayerController(this);*/
-	c_socket->StartListen();
-	connect = c_socket->Connect("192.168.101.241", 7777);
-
-	if (connect)
-	{
-
-		//c_socket->StartListen();
-		UE_LOG(LogClass, Warning, TEXT("IOCP Server connect success!"));
-		FString c_id = "testuser";
-		FString c_pw = "1234";
+	//c_socket = ClientSocket::GetSingleton();
+	
+	inst = Cast<UBOGameInstance>(GetGameInstance());
+	inst->m_Socket->SetPlayerController(this);
+	if (inst) {
 		switch (Cast<UBOGameInstance>(GetGameInstance())->GetCharacterType())
 		{
 		case ECharacterType::ECharacter1:
 
-			c_socket->Send_Login_Info(TCHAR_TO_UTF8(*c_id), TCHAR_TO_UTF8(*c_pw), PlayerType::Character1);
+			inst->m_Socket->Send_Character_Type(PlayerType::Character1);
 			break;
 		case ECharacterType::ECharacter2:
-			c_socket->Send_Login_Info(TCHAR_TO_UTF8(*c_id), TCHAR_TO_UTF8(*c_pw), PlayerType::Character2);
+			inst->m_Socket->Send_Character_Type(PlayerType::Character2);
 			break;
 		case ECharacterType::ECharacter3:
-			c_socket->Send_Login_Info(TCHAR_TO_UTF8(*c_id), TCHAR_TO_UTF8(*c_pw), PlayerType::Character3);
+			inst->m_Socket->Send_Character_Type(PlayerType::Character3);
 			break;
 		case ECharacterType::ECharacter4:
-			c_socket->Send_Login_Info(TCHAR_TO_UTF8(*c_id), TCHAR_TO_UTF8(*c_pw), PlayerType::Character4);
+			inst->m_Socket->Send_Character_Type(PlayerType::Character4);
 			break;
 		default:
-			c_socket->Send_Login_Info(TCHAR_TO_UTF8(*c_id), TCHAR_TO_UTF8(*c_pw), PlayerType::Character1);
+			inst->m_Socket->Send_Character_Type(PlayerType::Character1);
 			break;
 		}
+	}
+	//////아아 여기
+	///*c_socket = new ClientSocket();
+	//c_socket->SetPlayerController(this);*/
+	//c_socket->StartListen();
+	//connect = c_socket->Connect("192.168.101.241", 7777);
 
-		SleepEx(0.5, true);
-	}
-	else
-	{
-		UE_LOG(LogClass, Warning, TEXT("IOCP Server connect FAIL!"));
-	}
-	SleepEx(0.5, true);
+	//if (connect)
+	//{
+
+	//	//c_socket->StartListen();
+	//	UE_LOG(LogClass, Warning, TEXT("IOCP Server connect success!"));
+	//	FString c_id = "testuser";
+	//	FString c_pw = "1234";
+	//	
+
+	//	SleepEx(0.0, true);
+	//}
+	//else
+	//{
+	//	UE_LOG(LogClass, Warning, TEXT("IOCP Server connect FAIL!"));
+	//}
+	//SleepEx(0.0, true);
 }
 
 
@@ -97,6 +101,7 @@ void ACharacterController::BeginPlay()
 //	}
 //
 //}
+
 void ACharacterController::SetHUDHealth(float Health, float MaxHealth)
 {
 	if (MainHUD)
@@ -257,13 +262,13 @@ void ACharacterController::Tick(float DeltaTime)
 	UpdateWorld();
 	//UE_LOG(LogTemp, Warning, TEXT("HHHHHH : %s"), *GetOwner()->GetVelocity().ToString());
 	UpdatePlayer();
-	SleepEx(0, true);
+	//SleepEx(0, true);
 }
 
 void ACharacterController::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
-	c_socket->CloseSocket();
-	c_socket->StopListen();
+	inst->m_Socket->CloseSocket();
+	inst->m_Socket->StopListen();
 }
 
 
@@ -612,7 +617,7 @@ void ACharacterController::UpdatePlayer()
 	FVector MyCameraLocation;
 	FRotator MyCameraRotation;
 	m_Player->GetActorEyesViewPoint(MyCameraLocation, MyCameraRotation);
-	c_socket->Send_Move_Packet(id, MyLocation, MyRotation, MyVelocity, max_speed);
+	inst->m_Socket->Send_Move_Packet(id, MyLocation, MyRotation, MyVelocity, max_speed);
 	//UE_LOG(LogClass, Warning, TEXT("send move packet"));
 }
 
@@ -621,13 +626,13 @@ void ACharacterController::Set_Weapon_Type(EWeaponType Type)
 	switch (Type)
 	{
 	case EWeaponType::E_Rifle:
-		c_socket->Send_Weapon_Type(WeaponType::RIFLE, id);
+		inst->m_Socket->Send_Weapon_Type(WeaponType::RIFLE, id);
 		break;
 	case EWeaponType::E_Shotgun:
-		c_socket->Send_Weapon_Type(WeaponType::SHOTGUN, id);
+		inst->m_Socket->Send_Weapon_Type(WeaponType::SHOTGUN, id);
 		break;
 	case EWeaponType::E_Launcher:
-		c_socket->Send_Weapon_Type(WeaponType::LAUNCHER, id);
+		inst->m_Socket->Send_Weapon_Type(WeaponType::LAUNCHER, id);
 		break;
 	default:
 		break;

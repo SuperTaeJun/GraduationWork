@@ -6,22 +6,7 @@
 #include "Player/CharacterController.h"
 //void UBOGameInstance::ConnectToServer()
 //{
-//	m_Socket = ClientSocket::GetSingleton();
-//	m_Socket->InitSocket();
-//
-//	connect = m_Socket->Connect("127.0.0.1", 12345);
-//	if (connect)
-//	{
-//		m_Socket->StartListen();
-//		UE_LOG(LogClass, Warning, TEXT("IOCP Server connect success!"));
-//		FString id = "testuser";
-//		FString pw = "1234";
-//		m_Socket->Send_Login_Info(TCHAR_TO_UTF8(*id), TCHAR_TO_UTF8(*pw));
-//	}
-//	else
-//	{
-//		UE_LOG(LogClass, Warning, TEXT("IOCP Server connect FAIL!"));
-//	}
+
 //
 //}
 
@@ -29,4 +14,17 @@ void UBOGameInstance::Init()
 {
 	Super::Init();
 	//ACharacterController* ChController = Cast<ACharacterController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+	m_Socket = ClientSocket::GetSingleton();
+	m_Socket->InitSocket();
+	/*m_Socket->SetPlayerController(ChController);*/
+	m_Socket->StartListen();
+	connect = m_Socket->Connect("192.168.101.241", 7777);
+	if (connect)
+	{
+		//c_socket->StartListen();
+		UE_LOG(LogClass, Warning, TEXT("IOCP Server connect success!"));
+		FString c_id = "testuser";
+		FString c_pw = "1234";
+		m_Socket->Send_Login_Info(TCHAR_TO_UTF8(*c_id), TCHAR_TO_UTF8(*c_pw));
+	}
 }

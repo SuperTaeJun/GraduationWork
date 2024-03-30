@@ -38,7 +38,7 @@ int main()
 	::WSAStartup(MAKEWORD(2, 2), &WSAData);
 	sever_socket = WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, 0, 0, WSA_FLAG_OVERLAPPED);
 	SOCKADDR_IN server_addr;
-	ZeroMemory(&server_addr, sizeof(serv0er_addr));
+	ZeroMemory(&server_addr, sizeof(server_addr));
 	server_addr.sin_family = AF_INET;
 	server_addr.sin_port = htons(SERVER_PORT);
 	server_addr.sin_addr.s_addr = htonl(INADDR_ANY);
@@ -115,7 +115,7 @@ int get_id()
 //로그인 허용
 void send_login_ok_packet(int _s_id)
 {
-	SC_LOGIN_BACK packet;
+	sc_login_back packet;
 	packet.size = sizeof(packet);
 	packet.type = SC_LOGIN_OK;
 	packet.clientid = _s_id;
@@ -127,7 +127,7 @@ void send_login_ok_packet(int _s_id)
 	/*packet.Yaw = clients[_s_id].Yaw;
 	packet.Pitch = clients[_s_id].Pitch;
 	packet.Roll = clients[_s_id].Roll;*/
-	printf("[Send login ok] id : %d(%)\n", packet.clientid);
+	//printf("[Send login ok] id : %d(%)\n", packet.clientid);
 	clients[_s_id].do_send(sizeof(packet), &packet);
 }
 
@@ -137,7 +137,7 @@ void send_login_ok_packet(int _s_id)
 //오브젝트 생성
 void send_put_object(int _s_id, int target)
 {
-	SC_PLAYER_SYNC packet;
+	sc_put_object packet;
 	packet.id = target;
 	packet.size = sizeof(packet);
 	packet.type = SC_OTHER_PLAYER;
@@ -188,23 +188,30 @@ void process_packet(int s_id, unsigned char* p)
 
 	switch (packet_type) {
 	case CS_LOGIN: {
-		CS_LOGIN_PACKET* packet = reinterpret_cast<CS_LOGIN_PACKET*>(p);
+		cs_login_packet* packet = reinterpret_cast<cs_login_packet*>(p);
 
 		CLIENT& cl = clients[s_id];
 		cout <<"[Recv login] ID :" << packet->id << ", PASSWORD : " << packet->pw << endl;
 		cl.state_lock.lock();
 		cl._state = ST_INGAME;
 		cl.state_lock.unlock();
-		/*cl.x = packet->x;
-		cl.y = packet->y;
-		cl.z = packet->z;*/
-		//cl.p_type = packet->p_type;
+		
 		//cl.Yaw = s_id * 40.0f;
 		cout << "cl.x : " << cl.x << endl;
 		send_login_ok_packet(cl._s_id);
 		cout << "플레이어[" << s_id << "]" << " 로그인 성공" << endl;
 
 		 //새로 접속한 플레이어의 정보를 주위 플레이어에게 보낸다
+		
+	
+	}
+	case CS_SELECT_CHAR: {
+		cs_character_select* packet = reinterpret_cast<cs_character_select*>(p);
+		CLIENT& cl = clients[s_id];
+		cl.x = packet->x;
+		cl.y = packet->y;
+		cl.z = packet->z;
+		//cl.p_type = packet->p_type;
 		for (auto& other : clients) {
 			if (other._s_id == cl._s_id) continue;
 			other.state_lock.lock();
@@ -214,7 +221,7 @@ void process_packet(int s_id, unsigned char* p)
 			}
 			else other.state_lock.unlock();
 
-			SC_PLAYER_SYNC packet;
+			sc_put_object packet;
 			packet.id = cl._s_id;
 			strcpy_s(packet.name, cl.name);
 			//packet.object_type = 0;
@@ -223,8 +230,8 @@ void process_packet(int s_id, unsigned char* p)
 			packet.x = cl.x;
 			packet.y = cl.y;
 			packet.z = cl.z;
-			packet.yaw = cl.Yaw;
-			packet.Max_speed = cl.Max_Speed;
+			//packet.yaw = cl.Yaw;
+			//packet.Max_speed = cl.Max_Speed;
 			//packet.p_type = cl.p_type;
 			printf_s("[Send put object] id : %d, location : (%f,%f,%f), yaw : %f\n", packet.id, packet.x, packet.y, packet.z, packet.yaw);
 			cout << "이거 누구한테 감 :  ?" << other._s_id << endl;
@@ -242,7 +249,7 @@ void process_packet(int s_id, unsigned char* p)
 			else other.state_lock.unlock();
 
 
-			SC_PLAYER_SYNC packet;
+			sc_put_object packet;
 			packet.id = other._s_id;
 			strcpy_s(packet.name, other.name);
 			//packet.object_type = 0;
@@ -251,8 +258,8 @@ void process_packet(int s_id, unsigned char* p)
 			packet.x = other.x;
 			packet.y = other.y;
 			packet.z = other.z;
-			packet.yaw = other.Yaw;
-			packet.Max_speed = other.Max_Speed;
+			/*packet.yaw = other.Yaw;
+			packet.Max_speed = other.Max_Speed;*/
 			//packet.p_type = other.p_type;
 			printf_s("[어떤 클라의 Send put object] id : %d, location : (%f,%f,%f), yaw : %f\n", packet.id, packet.x, packet.y, packet.z, packet.yaw);
 
@@ -260,11 +267,10 @@ void process_packet(int s_id, unsigned char* p)
 		}
 		this_thread::sleep_for(0.5ms);
 		break;
-	
 	}
 	case CS_MOVE: {
 		//cout << "들어옴?" << endl;
-		CS_MOVE_PACKET* packet = reinterpret_cast<CS_MOVE_PACKET*>(p);
+		cs_move_packet* packet = reinterpret_cast<cs_move_packet*>(p);
 		CLIENT& cl = clients[s_id];
 		cl.x = packet->x;
 		cl.y = packet->y;
@@ -446,7 +452,7 @@ void worker_thread()
 //이동
 void send_move_packet(int _id, int target)
 {
-	CS_MOVE_PACKET packet;
+	cs_move_packet packet;
 	packet.id = target;
 	packet.size = sizeof(packet);
 	packet.type = SC_MOVE_PLAYER;

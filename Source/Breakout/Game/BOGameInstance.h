@@ -34,6 +34,6 @@ public:
 	//void ConnectToServer();
 
 public:
-	/*ClientSocket* m_Socket;
-	bool connect;*/
+	ClientSocket* m_Socket;
+	bool connect;
 };
