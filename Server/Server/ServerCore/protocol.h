@@ -71,7 +71,7 @@ struct SC_LOGIN_BACK {
 	char type;
 	/*char id[MAX_INFO_SIZE];
 	char pw[MAX_INFO_SIZE];*/
-	int32 clientid;
+	int clientid;
 	/*float x, y, z;
 	float yaw;
 	int32 cl_id;*/
@@ -85,7 +85,7 @@ struct CS_MOVE_PACKET
 {
 	unsigned char size;
 	char type;
-	int32	id;
+	int	id;
 	float Max_speed;
 	float x, y, z;
 	float vx, vy, vz;
@@ -94,7 +94,7 @@ struct CS_MOVE_PACKET
 struct SC_PLAYER_SYNC {
 	unsigned char size;
 	char type;
-	int32 id;
+	int id;
 	float Max_speed;
 	float x, y, z;
 	float yaw;
@@ -106,21 +106,21 @@ struct CS_SELECT_CHARACTER
 {
 	unsigned char size;
 	char type;
-	int32 id;
+	int id;
 	//PlayerType character_type;
 };
 struct CS_SELECT_WEAPO
 {
 	unsigned char size;
 	char type;
-	int32 id;
+	int id;
 	WeaponType weapon_type;
 };
 struct SC_SYNC_WEAPO
 {
 	unsigned char size;
 	char type;
-	int32 id;
+	int id;
 	WeaponType weapon_type;
 };
 #pragma pack(pop)
