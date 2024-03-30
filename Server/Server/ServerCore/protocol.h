@@ -77,7 +77,10 @@ struct SC_LOGIN_BACK {
 	int32 cl_id;*/
 	//PlayerType p_type;
 };
+#pragma pack(pop)
 
+
+#pragma pack (push, 1)
 struct CS_MOVE_PACKET
 {
 	unsigned char size;
