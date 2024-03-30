@@ -7,9 +7,9 @@
 #include "CLIENT.h"
 #include "Overlap.h"
 #include <thread>
-
+#include <string>
 #include <atomic>
-
+using namespace std;
 HANDLE g_h_iocp;
 SOCKET sever_socket;
 concurrency::concurrent_priority_queue <timer_ev> timer_q;
@@ -185,7 +185,7 @@ void process_packet(int s_id, unsigned char* p)
 {
 	unsigned char packet_type = p[1];
 	CLIENT& cl = clients[s_id];
-
+	cout << "packet type :" << to_string(packet_type) << endl;
 	switch (packet_type) {
 	case CS_LOGIN: {
 		CS_LOGIN_PACKET* packet = reinterpret_cast<CS_LOGIN_PACKET*>(p);

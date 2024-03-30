@@ -23,7 +23,7 @@ void USelectCharacterUi::Character1ButtonPressed()
 
 	//GetWorld()->ServerTravel(FString("/Game/Maps/Testmap"),true);
 	GetWorld()->ServerTravel(FString("/Game/Maps/MainMap"), true);
-
+	//UGameplayStatics::OpenLevel(GetWorld(), FName("MainMap"));
 
 }
 
