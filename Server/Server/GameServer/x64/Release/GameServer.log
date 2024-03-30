@@ -4,8 +4,8 @@
 C:\Users\sejin\Downloads\GraduationWork\Server\Server\GameServer\GameServer.cpp(130,9): warning C4476: 'printf' : 서식 지정자에 알 수 없는 형식 필드 문자 ')'이(가) 있습니다.
   Overlap.cpp
   코드를 생성하고 있습니다.
-  339 of 346 functions (98.0%) were compiled, the rest were copied from previous compilation.
-    4 functions were new in current compilation
-    1 functions had inline decision re-evaluated but remain unchanged
+  0 of 346 functions ( 0.0%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    0 functions had inline decision re-evaluated but remain unchanged
   코드를 생성했습니다.
   GameServer.vcxproj -> C:\Users\sejin\Downloads\GraduationWork\Server\Server\Binary\Release\GameServer.exe
