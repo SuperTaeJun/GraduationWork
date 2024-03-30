@@ -185,7 +185,7 @@ void process_packet(int s_id, unsigned char* p)
 {
 	//unsigned char packet_type = p[1];
 	CLIENT& cl = clients[s_id];
-	cout << "packet_type 4" << p[1] << "4" << endl;
+	cout << "packet_type 4" << int(p[1]) << "4" << endl;
 	switch (int(p[1]))
 	{
 	case CS_LOGIN: {
