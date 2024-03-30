@@ -27,7 +27,7 @@ const int  MAX_USER = 10000;
 const int  MAX_OBJ = 20;
 
 const char CS_LOGIN = 1;
-const char CS_MOVE = 2;
+const char CS_MOVE = 0;
 const char CS_SELECT_CHAR = 3;
 const char CS_SELECT_WEP = 4;
 const char SC_LOGIN_OK = 1;
