@@ -4,7 +4,5 @@
 #include "Game/GameRoomMode.h"
 AGameRoomMode::AGameRoomMode()
 {
-	FInputModeUIOnly Mode;
-	
 	bUseSeamlessTravel = true;
 }

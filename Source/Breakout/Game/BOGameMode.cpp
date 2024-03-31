@@ -10,6 +10,7 @@
 
 ABOGameMode::ABOGameMode()
 {
+	bUseSeamlessTravel = true;
 	/*m_Socket = ClientSocket::GetSingleton();
 	m_Socket->InitSocket();
 

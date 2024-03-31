@@ -9,12 +9,6 @@
 
 void AMainHUD::BeginPlay()
 {
-	APlayerController* PlayerController = GetOwningPlayerController();
-	if (PlayerController)
-	{
-		SelectWeapon = CreateWidget<USelectWeaponUi>(PlayerController, SelectWeaponClass);
-		RespawnSelectUi = CreateWidget<URespawnSelect>(PlayerController, RespawnSelectUiClass);
-	}
 	AddCharacterOverlay();
 }
 
@@ -82,14 +76,26 @@ void AMainHUD::DrawHUD()
 
 void AMainHUD::AddSelectWeapon()
 {
-	if(SelectWeapon)
-		SelectWeapon->AddToViewport();
+	APlayerController* PlayerController = GetOwningPlayerController();
+	if (PlayerController)
+	{
+		SelectWeapon = CreateWidget<USelectWeaponUi>(PlayerController, SelectWeaponClass);
+		if (SelectWeapon)
+			SelectWeapon->AddToViewport();
+	}
+
 }
 
 void AMainHUD::AddSelectRespawn()
 {
-	if (RespawnSelectUi)
-		RespawnSelectUi->AddToViewport();
+	APlayerController* PlayerController = GetOwningPlayerController();
+	if (PlayerController)
+	{
+		RespawnSelectUi = CreateWidget<URespawnSelect>(PlayerController, RespawnSelectUiClass);
+		if (RespawnSelectUi)
+			RespawnSelectUi->AddToViewport();
+	}
+
 }
 
 void AMainHUD::RemoveSelectWeapon()

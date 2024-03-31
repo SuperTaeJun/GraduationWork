@@ -4,6 +4,8 @@
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Sound/SoundCue.h"
+#include "NiagaraFunctionLibrary.h"
+#include "NiagaraComponent.h"
 #include "Components/StaticMeshComponent.h"
 
 AProjectileBase::AProjectileBase()
@@ -19,7 +21,6 @@ AProjectileBase::AProjectileBase()
 	CollisionBox->SetCollisionResponseToChannel(ECollisionChannel::ECC_WorldStatic, ECollisionResponse::ECR_Block);
 	CollisionBox->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Block);
 	
-
 	ProjectileMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ProjectileMesh"));
 	ProjectileMesh->SetupAttachment(RootComponent);
 	ProjectileMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
@@ -28,6 +29,7 @@ AProjectileBase::AProjectileBase()
 	ProjectileMovementComponent = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileMovementComponent"));
 	ProjectileMovementComponent->bRotationFollowsVelocity = true;
 
+	ImpactNiagara = ConstructorHelpers::FObjectFinder<UNiagaraSystem>(TEXT("Niagara")).Object;
 }
 
 void AProjectileBase::BeginPlay()
@@ -53,8 +55,8 @@ void AProjectileBase::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActo
 				Damage, // BaseDamage
 				10.f, // MinimumDamage
 				GetActorLocation(), // Origin
-				200.f, // DamageInnerRadius
-				500.f, // DamageOuterRadius
+				100.f, // DamageInnerRadius
+				300.f, // DamageOuterRadius
 				1.f, // DamageFalloff
 				UDamageType::StaticClass(), // DamageTypeClass
 				TArray<AActor*>(), // IgnoreActors
@@ -62,8 +64,8 @@ void AProjectileBase::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActo
 				FiringController // InstigatorController
 			);
 		}
-		DrawDebugSphere(GetWorld(), GetActorLocation(), 200.f, 20, FColor::Black, false, 10, 0, 1);
-		DrawDebugSphere(GetWorld(), GetActorLocation(), 500.f, 20, FColor::Purple, false, 10, 0, 1);
+	//	DrawDebugSphere(GetWorld(), GetActorLocation(), 100.f, 20, FColor::Black, false, 10, 0, 1);
+	//	DrawDebugSphere(GetWorld(), GetActorLocation(), 300.f, 20, FColor::Purple, false, 10, 0, 1);
 		Destroy();
 	}
 }
@@ -80,10 +82,9 @@ void AProjectileBase::SetAllowHitEventTimer()
 
 void AProjectileBase::Destroyed()
 {
-	if (ImpactParticles)
+	if (ImpactNiagara)
 	{
-		UE_LOG(LogTemp, Log, TEXT("PARTICLE"));
-		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ImpactParticles, GetActorTransform());
+		UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), ImpactNiagara, GetActorTransform().GetLocation());
 	}
 	if (ImpactSound)
 	{

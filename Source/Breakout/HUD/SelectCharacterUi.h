@@ -19,6 +19,12 @@ class BREAKOUT_API USelectCharacterUi : public UUserWidget
 
 public:
 	virtual void NativeConstruct() override;
+	void SetAllCharacterMeshWithTag();
+
+	TObjectPtr<class ASkeletalMeshActor> Character1Mesh;
+	TObjectPtr<class ASkeletalMeshActor> Character2Mesh;
+	TObjectPtr<class ASkeletalMeshActor> Character3Mesh;
+	TObjectPtr<class ASkeletalMeshActor> Character4Mesh;
 
 	UPROPERTY(meta = (BindWidget))
 	class UButton* Character1Button;
@@ -40,6 +46,17 @@ public:
 	void Character3ButtonPressed();
 	UFUNCTION()
 	void Character4ButtonPressed();
+
+	UFUNCTION()
+	void EndHovered();
+	UFUNCTION()
+	void Button1Hovered();
+	UFUNCTION()
+	void Button2Hovered();
+	UFUNCTION()
+	void Button3Hovered();
+	UFUNCTION()
+	void Button4Hovered();
 private:
 	ACharacterController* MyCharacterController;
 };

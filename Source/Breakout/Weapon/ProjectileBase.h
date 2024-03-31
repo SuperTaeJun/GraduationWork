@@ -41,12 +41,7 @@ protected:
 	TObjectPtr<class UProjectileMovementComponent> ProjectileMovementComponent;
 
 	UPROPERTY(EditAnywhere)
-	TObjectPtr<class UParticleSystem> Tracer;
-
-	TObjectPtr<class UParticleSystemComponent> TracerComponent;
-
-	UPROPERTY(EditAnywhere)
-	TObjectPtr<class UParticleSystem>ImpactParticles;
+	TObjectPtr<class UNiagaraSystem>ImpactNiagara;
 
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<class USoundCue> ImpactSound;

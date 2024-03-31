@@ -6,16 +6,22 @@
 
 void AGameRoomHUD::BeginPlay()
 {
-	APlayerController* PlayerController = GetOwningPlayerController();
-	SelectCharacter = CreateWidget<USelectCharacterUi>(PlayerController, SelectCharacterClass); 
-
-	FInputModeUIOnly UiGameInput;
-	PlayerController->SetInputMode(UiGameInput);
-
 	AddSelectCharacter();
+	
+
 }
 
 void AGameRoomHUD::AddSelectCharacter()
 {
-	SelectCharacter->AddToViewport();
+	APlayerController* PlayerController = GetOwningPlayerController();
+	if (PlayerController)
+	{
+		PlayerController->bShowMouseCursor = true;
+		SelectCharacter = CreateWidget<USelectCharacterUi>(PlayerController, SelectCharacterClass);
+
+		FInputModeUIOnly UiGameInput;
+		PlayerController->SetInputMode(UiGameInput);
+		if(SelectCharacter)
+			SelectCharacter->AddToViewport();
+	}
 }
