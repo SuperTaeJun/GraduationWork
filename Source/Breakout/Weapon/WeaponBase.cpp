@@ -23,6 +23,7 @@ AWeaponBase::AWeaponBase()
 	WeaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("WeaponMesh"));
 	SetRootComponent(WeaponMesh);
 
+
 }
 
 // Called when the game starts or when spawned

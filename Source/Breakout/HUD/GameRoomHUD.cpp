@@ -16,6 +16,7 @@ void AGameRoomHUD::AddSelectCharacter()
 	APlayerController* PlayerController = GetOwningPlayerController();
 	if (PlayerController)
 	{
+		PlayerController->bShowMouseCursor = true;
 		SelectCharacter = CreateWidget<USelectCharacterUi>(PlayerController, SelectCharacterClass);
 
 		FInputModeUIOnly UiGameInput;
