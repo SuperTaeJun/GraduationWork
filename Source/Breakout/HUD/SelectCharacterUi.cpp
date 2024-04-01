@@ -6,6 +6,9 @@
 #include "Kismet/GameplayStatics.h"
 #include "Game/BOGameInstance.h"
 #include "ClientSocket.h"
+#include "Kismet/GameplayStatics.h"
+#include "Animation/SkeletalMeshActor.h"
+
 //#include "Network/PacketData.h"
 void USelectCharacterUi::NativeConstruct()
 {
@@ -13,7 +16,40 @@ void USelectCharacterUi::NativeConstruct()
 	Character2Button->OnClicked.AddDynamic(this, &USelectCharacterUi::Character2ButtonPressed);
 	Character3Button->OnClicked.AddDynamic(this, &USelectCharacterUi::Character3ButtonPressed);
 	Character4Button->OnClicked.AddDynamic(this, &USelectCharacterUi::Character4ButtonPressed);
+
+	Character1Button->OnHovered.AddDynamic(this, &USelectCharacterUi::Button1Hovered);
+	Character1Button->OnUnhovered.AddDynamic(this, &USelectCharacterUi::EndHovered);
+	Character2Button->OnHovered.AddDynamic(this, &USelectCharacterUi::Button2Hovered);
+	Character2Button->OnUnhovered.AddDynamic(this, &USelectCharacterUi::EndHovered);
+	Character3Button->OnHovered.AddDynamic(this, &USelectCharacterUi::Button3Hovered);
+	Character3Button->OnUnhovered.AddDynamic(this, &USelectCharacterUi::EndHovered);
+	Character4Button->OnHovered.AddDynamic(this, &USelectCharacterUi::Button4Hovered);
+	Character4Button->OnUnhovered.AddDynamic(this, &USelectCharacterUi::EndHovered);
+
+	//월드에있는 캐릭터메쉬 가져오기
+	SetAllCharacterMeshWithTag();
 }
+
+void USelectCharacterUi::SetAllCharacterMeshWithTag()
+{
+	FName Tag1 = FName(TEXT("Character1"));
+	FName Tag2 = FName(TEXT("Character2"));
+	FName Tag3 = FName(TEXT("Character3"));
+	FName Tag4 = FName(TEXT("Character4"));
+	TArray<AActor*> FindActor;
+	UGameplayStatics::GetAllActorsWithTag(GetWorld(), Tag1, FindActor);
+	Character1Mesh = Cast<ASkeletalMeshActor>(FindActor[0]);
+
+	UGameplayStatics::GetAllActorsWithTag(GetWorld(), Tag2, FindActor);
+	Character2Mesh = Cast<ASkeletalMeshActor>(FindActor[0]);
+
+	UGameplayStatics::GetAllActorsWithTag(GetWorld(), Tag3, FindActor);
+	Character3Mesh = Cast<ASkeletalMeshActor>(FindActor[0]);
+
+	UGameplayStatics::GetAllActorsWithTag(GetWorld(), Tag4, FindActor);
+	Character4Mesh = Cast<ASkeletalMeshActor>(FindActor[0]);
+}
+
 // 캐릭터 선택 패킷 보내는 곳
 void USelectCharacterUi::Character1ButtonPressed()
 {
@@ -52,4 +88,35 @@ void USelectCharacterUi::Character4ButtonPressed()
 	//c_socket->Send_Character_Type(type);
 	GetWorld()->ServerTravel(FString("/Game/Maps/MainMap"), true);
 
+}
+
+void USelectCharacterUi::EndHovered()
+{
+	if (Character1Mesh && Character2Mesh && Character3Mesh && Character4Mesh)
+	{
+		Character1Mesh->SetActorHiddenInGame(true);
+		Character2Mesh->SetActorHiddenInGame(true);
+		Character3Mesh->SetActorHiddenInGame(true);
+		Character4Mesh->SetActorHiddenInGame(true);
+	}
+}
+
+void USelectCharacterUi::Button1Hovered()
+{
+	Character1Mesh->SetActorHiddenInGame(false);
+}
+
+void USelectCharacterUi::Button2Hovered()
+{
+	Character2Mesh->SetActorHiddenInGame(false);
+}
+
+void USelectCharacterUi::Button3Hovered()
+{
+	Character3Mesh->SetActorHiddenInGame(false);
+}
+
+void USelectCharacterUi::Button4Hovered()
+{
+	Character4Mesh->SetActorHiddenInGame(false);
 }
