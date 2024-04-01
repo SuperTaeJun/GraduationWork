@@ -24,7 +24,7 @@
 ACharacterController::ACharacterController()
 {
 	//c_socket = ClientSocket::GetSingleton();
-
+	login_cond = false;
 	p_cnt = -1;
 	bNewPlayerEntered = false;
 	bNewWeaponEntered = false;
@@ -76,13 +76,13 @@ void ACharacterController::BeginPlay()
 			break;
 		}
 
-		SleepEx(0.5, true);
+		SleepEx(0, true);
 	}
 	else
 	{
 		UE_LOG(LogClass, Warning, TEXT("IOCP Server connect FAIL!"));
 	}
-	SleepEx(0.5, true);
+	SleepEx(0, true);
 }
 
 
@@ -237,6 +237,31 @@ void ACharacterController::ShowRespawnSelect()
 	}
 }
 
+void ACharacterController::RecvPacket()
+{
+	//UE_LOG(LogClass, Warning, TEXT("RECVPACKET"));
+
+	int bufferSize = c_socket->buffer.unsafe_size();
+
+	while (remainData < bufferSize)
+	{
+		while (remainData < BUFSIZE && remainData < bufferSize)
+		{
+			c_socket->buffer.try_pop(data[remainData++]);
+		}
+
+		while (remainData > 0 && data[0] <= remainData)
+		{
+			if (c_socket->PacketProcess(data) == false)
+				return;
+			remainData -= data[0];
+			bufferSize -= data[0];
+			memcpy(data, data + data[0], BUFSIZE - data[0]);
+		}
+	}
+
+}
+
 void ACharacterController::InitPlayer()
 {
 	auto my_player = Cast<ACharacterBase>(UGameplayStatics::GetPlayerCharacter(this, 0));
@@ -248,8 +273,10 @@ void ACharacterController::InitPlayer()
 void ACharacterController::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	RecvPacket();
 	if (bInitPlayerSetting)
 		InitPlayer();
+
 	//새 플레이어 스폰
 	if (bNewPlayerEntered)
 		UpdateSyncPlayer();
@@ -257,7 +284,7 @@ void ACharacterController::Tick(float DeltaTime)
 	UpdateWorld();
 	//UE_LOG(LogTemp, Warning, TEXT("HHHHHH : %s"), *GetOwner()->GetVelocity().ToString());
 	UpdatePlayer();
-	SleepEx(0, true);
+	//SleepEx(0, true);
 }
 
 void ACharacterController::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -536,70 +563,6 @@ void ACharacterController::UpdateSyncPlayer()
 	}
 	bNewPlayerEntered = false;
 }
-void ACharacterController::UpdateSyncWeapon()
-{
-
-}
-//void ACharacterController::UpdateSyncPlayer()
-//{
-//	UWorld* const World = GetWorld();
-//	if (!World) return;
-//
-//	while (!NewPlayer.empty())
-//	{
-//		auto NewPlayerInfo = NewPlayer.front();
-//		if (!NewPlayerInfo) continue;
-//
-//		if (NewPlayerInfo->Id == id)
-//		{
-//			// Skip spawning the player if it's the local player
-//			NewPlayer.pop();
-//			continue;
-//		}
-//
-//		FVector SpawnLocation1;
-//		SpawnLocation1.X = NewPlayerInfo->X;
-//		SpawnLocation1.Y = NewPlayerInfo->Y;
-//		SpawnLocation1.Z = NewPlayerInfo->Z;
-//
-//		FRotator SpawnRotation;
-//		SpawnRotation.Yaw = NewPlayerInfo->Yaw;
-//		SpawnRotation.Pitch = 0.0f;
-//		SpawnRotation.Roll = 0.0f;
-//
-//		FActorSpawnParameters SpawnParams;
-//		SpawnParams.Owner = this;
-//		SpawnParams.Instigator = GetInstigator();
-//		SpawnParams.Name = FName(*FString::FromInt(NewPlayerInfo->Id));
-//
-//		ACharacterBase* SpawnedCharacter = World->SpawnActor<ACharacterBase>(ACharacterBase::StaticClass(),
-//			SpawnLocation, SpawnRotation, SpawnParams);
-//		if (SpawnedCharacter)
-//		{
-//			SpawnedCharacter->SpawnDefaultController();
-//			SpawnedCharacter->_SessionId = NewPlayerInfo->Id;
-//
-//			if (PlayerInfo != nullptr)
-//			{
-//				CPlayer Info;
-//				Info.Id = NewPlayerInfo->Id;
-//				Info.X = NewPlayerInfo->X;
-//				Info.Y = NewPlayerInfo->Y;
-//				Info.Z = NewPlayerInfo->Z;
-//				Info.Yaw = NewPlayerInfo->Yaw;
-//
-//				PlayerInfo->players[NewPlayerInfo->Id] = Info;
-//				p_cnt = PlayerInfo->players.size();
-//			}
-//
-//			UE_LOG(LogClass, Warning, TEXT("Another player spawned"));
-//		}
-//
-//		NewPlayer.pop(); // Remove processed entry from the queue
-//	}
-//
-//	bNewPlayerEntered = false;
-//}
 
 void ACharacterController::UpdatePlayer()
 {

@@ -116,3 +116,38 @@
 //{
 //public:
 //};
+
+
+//
+//void RecvPacket();
+//void SendPacket(void* packet);
+
+
+//void ClientSocket::RecvPacket()
+//{
+//	//UE_LOG(LogClass, Warning, TEXT("recv data"));
+//	DWORD recv_flag = 0;
+//	ZeroMemory(&_recv_over._wsa_over, sizeof(_recv_over._wsa_over));
+//	_recv_over._wsa_buf.buf = reinterpret_cast<char*>(_recv_over._net_buf + _prev_size);
+//	_recv_over._wsa_buf.len = sizeof(_recv_over._net_buf) - _prev_size;
+//	int ret = WSARecv(ServerSocket, &_recv_over._wsa_buf, 1, 0, &recv_flag, &_recv_over._wsa_over, NULL);
+//	if (SOCKET_ERROR == ret) {
+//		int error_num = WSAGetLastError();
+//	}
+//	/*if (ret > 0) {
+//		UE_LOG(LogClass, Warning, TEXT("recv ตส "));
+//	}*/
+//}
+//
+//void ClientSocket::SendPacket(void* packet)
+//{
+//	//UE_LOG(LogClass, Warning, TEXT("send data"));
+//	int psize = reinterpret_cast<unsigned char*>(packet)[0];
+//	Overlap* ex_over = new Overlap(IO_SEND, psize, packet);
+//	int ret = WSASend(ServerSocket, &ex_over->_wsa_buf, 1, 0, 0, &ex_over->_wsa_over, NULL);
+//	if (SOCKET_ERROR == ret) {
+//		int error_num = WSAGetLastError();
+//		if (ERROR_IO_PENDING != error_num)
+//			WSAGetLastError();
+//	}
+//}

@@ -18,7 +18,7 @@ enum WeaponType
 	SHOTGUN,
 	LAUNCHER
 };
-const int BUFSIZE = 2048;
+constexpr int BUFSIZE = 1048;
 const int  ReZone_HEIGHT = 2000;
 const int  ReZone_WIDTH = 2000;
 const int  MAX_NAME_SIZE = 20;
@@ -58,7 +58,7 @@ const char SC_OTHER_WEAPO = 5;
 struct CS_LOGIN_PACKET
 {
 	unsigned char size;
-	char type;
+	unsigned type;
 	char id[MAX_INFO_SIZE];
 	char pw[MAX_INFO_SIZE];
 	/*float x, y;
@@ -68,7 +68,7 @@ struct CS_LOGIN_PACKET
 };	
 struct SC_LOGIN_BACK {
 	unsigned char size;
-	char type;
+	unsigned type;
 	/*char id[MAX_INFO_SIZE];
 	char pw[MAX_INFO_SIZE];*/
 	int clientid;
@@ -84,7 +84,7 @@ struct SC_LOGIN_BACK {
 struct CS_MOVE_PACKET
 {
 	unsigned char size;
-	char type;
+	unsigned type;
 	int	id;
 	float Max_speed;
 	float x, y, z;
@@ -93,7 +93,7 @@ struct CS_MOVE_PACKET
 };
 struct SC_PLAYER_SYNC {
 	unsigned char size;
-	char type;
+	unsigned type;
 	int id;
 	float Max_speed;
 	float x, y, z;
@@ -105,21 +105,21 @@ struct SC_PLAYER_SYNC {
 struct CS_SELECT_CHARACTER
 {
 	unsigned char size;
-	char type;
+	unsigned type;
 	int id;
 	//PlayerType character_type;
 };
 struct CS_SELECT_WEAPO
 {
 	unsigned char size;
-	char type;
+	unsigned type;
 	int id;
 	WeaponType weapon_type;
 };
 struct SC_SYNC_WEAPO
 {
 	unsigned char size;
-	char type;
+	unsigned type;
 	int id;
 	WeaponType weapon_type;
 };

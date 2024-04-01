@@ -60,7 +60,7 @@ public:
 	// 다른 캐릭터들의 정보
 	std::queue<std::shared_ptr<CPlayer>> NewPlayer;
 	//int my_session_id;
-
+	//bool ProcessPacket(char* p);
 
 	//virtual void OnPossess(APawn* InPawn) override;
 	void SetHUDHealth(float Health, float MaxHealth);
@@ -100,7 +100,7 @@ public:
 	void UpdateSyncWeapon();
 	bool UpdateWorld();
 	//초기 컨트롤러 세팅
-	void SetSocket();
+	void RecvPacket();
 	void InitPlayer();
 	//Tick함수
 	virtual void Tick(float DeltaTime);
@@ -125,4 +125,7 @@ private:
 	int p_cnt;
 	bool connect;
 	bool Set_Weapon;
+	char data[BUFSIZE] = { 0 };
+	int remainData = 0;
+	bool login_cond;
 };
