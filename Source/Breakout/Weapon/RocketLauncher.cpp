@@ -4,6 +4,8 @@
 #include "Weapon/RocketLauncher.h"
 #include "Engine/SkeletalMeshSocket.h"
 #include "Weapon/ProjectileBase.h"
+#include "NiagaraFunctionLibrary.h"
+#include "NiagaraComponent.h"
 void ARocketLauncher::Fire(const FVector& HitTarget)
 {
 	APawn* InstigatorPawn = Cast<APawn>(GetOwner());
@@ -23,7 +25,16 @@ void ARocketLauncher::Fire(const FVector& HitTarget)
 			{
 				World->SpawnActor<AProjectileBase>(ProjectileClass, SocketTransform.GetLocation(), TargetRotation, SpawnParameters);
 			}
-		}
-	}
+			if (ImpactNiagara)
+			{
+				UNiagaraFunctionLibrary::SpawnSystemAtLocation(
+					World,
+					ImpactNiagara,
+					SocketTransform.GetLocation()
+				);
 
+			}
+		}
+
+	}
 }
