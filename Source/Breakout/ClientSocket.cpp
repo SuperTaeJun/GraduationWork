@@ -158,7 +158,7 @@ void ClientSocket::Send_Login_Info(char* id, char* pw, PlayerType character_type
 	//packet.p_type = character_type;
 	SendPacket(&packet);
 	UE_LOG(LogClass, Warning, TEXT("Sending login info - id: %s, pw: %s"), ANSI_TO_TCHAR(id), ANSI_TO_TCHAR(pw));
-
+	
 }
 
 void ClientSocket::Send_Move_Packet(int sessionID, FVector Location, FRotator Rotation, FVector Velocity, float Max_speed)
@@ -166,7 +166,7 @@ void ClientSocket::Send_Move_Packet(int sessionID, FVector Location, FRotator Ro
 	if (login_cond) {
 		CS_MOVE_PACKET packet;
 		packet.size = sizeof(packet);
-		packet.type = CS_MOVE;
+		packet.type = CS_MOVE_Packet;
 		packet.id = sessionID;
 		packet.x = Location.X;
 		packet.y = Location.Y;

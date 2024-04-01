@@ -53,7 +53,7 @@ int main()
 	Overlap   accept_ex;
 	*(reinterpret_cast<SOCKET*>(&accept_ex._net_buf)) = c_socket;
 	ZeroMemory(&accept_ex._wsa_over, sizeof(accept_ex._wsa_over));
-	accept_ex._op = IO_ACCEPT; 
+	accept_ex._op = IO_ACCEPT;
 
 	AcceptEx(sever_socket, c_socket, accept_buf, 0, sizeof(SOCKADDR_IN) + 16,
 		sizeof(SOCKADDR_IN) + 16, NULL, &accept_ex._wsa_over);
@@ -72,14 +72,14 @@ int main()
 	// 적절한 작업 스레드의 갯수는 (CPU * 2) + 1
 	//int nThreadCnt = sysInfo.dwNumberOfProcessors;
 	//int nThreadCnt = 5;
-	
+
 
 	for (int i = 0; i < 32; ++i)
 		worker_threads.emplace_back(worker_thread);
 
 	for (auto& th : worker_threads)
 		th.join();
-	
+
 	for (auto& cl : clients) {
 		if (ST_INGAME == cl._state)
 			Disconnect(cl._s_id);
@@ -158,7 +158,7 @@ void Disconnect(int _s_id)
 	/*cl.vl.lock();
 	unordered_set <int> my_vl = cl.viewlist;
 	cl.vl.unlock();
-	
+
 	for (auto& other : my_vl) {
 		CLIENT& target = clients[other];
 
@@ -191,7 +191,7 @@ void process_packet(int s_id, unsigned char* p)
 		CS_LOGIN_PACKET* packet = reinterpret_cast<CS_LOGIN_PACKET*>(p);
 
 		CLIENT& cl = clients[s_id];
-		cout <<"[Recv login] ID :" << packet->id << ", PASSWORD : " << packet->pw << endl;
+		cout << "[Recv login] ID :" << packet->id << ", PASSWORD : " << packet->pw << endl;
 		cl.state_lock.lock();
 		cl._state = ST_INGAME;
 		cl.state_lock.unlock();
@@ -204,7 +204,7 @@ void process_packet(int s_id, unsigned char* p)
 		send_login_ok_packet(cl._s_id);
 		cout << "플레이어[" << s_id << "]" << " 로그인 성공" << endl;
 
-		 //새로 접속한 플레이어의 정보를 주위 플레이어에게 보낸다
+		//새로 접속한 플레이어의 정보를 주위 플레이어에게 보낸다
 		for (auto& other : clients) {
 			if (other._s_id == cl._s_id) continue;
 			other.state_lock.lock();
@@ -260,12 +260,12 @@ void process_packet(int s_id, unsigned char* p)
 		}
 		this_thread::sleep_for(0.5ms);
 		break;
-	
+
 	}
-	case CS_MOVE: {
+	case CS_MOVE_Packet: {
 		//cout << "들어옴?" << endl;
 		CS_MOVE_PACKET* packet = reinterpret_cast<CS_MOVE_PACKET*>(p);
-		CLIENT& cl = clients[s_id];
+		CLIENT& cl = clients[packet->id];
 		cl.x = packet->x;
 		cl.y = packet->y;
 		cl.z = packet->z;
@@ -274,12 +274,12 @@ void process_packet(int s_id, unsigned char* p)
 		cl.VY = packet->vy;
 		cl.VZ = packet->vz;
 		cl.Max_Speed = packet->Max_speed;
-		cout <<"플레이어["<< packet->id<<"]" << "  x:" << packet->x << endl;
+		cout << "플레이어[" << packet->id << "]" << "  x:" << packet->x << endl;
 		//cout <<"플레이어["<< packet->id<<"]" << "  x:" << packet->vx << " y:" << packet->y << " z:" << packet->z << "speed : " << packet->speed << endl;
 		//클라 recv 확인용
 
 		for (auto& other : clients) {
-			if (other._s_id == cl._s_id)
+			if (other._s_id == s_id)
 				continue;
 			if (ST_INGAME != other._state)
 				continue;
@@ -403,6 +403,7 @@ void worker_thread()
 		case IO_ACCEPT: {
 			cout << "Accept Completed.\n";
 			SOCKET c_socket = *(reinterpret_cast<SOCKET*>(exp_over->_net_buf));
+
 			int n__s_id = get_id();
 			if (-1 == n__s_id) {
 				cout << "user over.\n";
@@ -437,8 +438,9 @@ void worker_thread()
 			*(reinterpret_cast<SOCKET*>(exp_over->_net_buf)) = c_socket;
 			AcceptEx(sever_socket, c_socket, exp_over->_net_buf + 8, 0, sizeof(SOCKADDR_IN) + 16,
 				sizeof(SOCKADDR_IN) + 16, NULL, &exp_over->_wsa_over);
-			break;
+		
 		}
+					  break;
 		}
 	}
 }

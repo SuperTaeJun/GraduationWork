@@ -1,6 +1,6 @@
 #pragma once
 #define SERVER_PORT		8001
-#define SERVER_IP		"192.168.101.186"
+#define SERVER_IP		"192.168.219.100"
 
 #define MAX_INFO_SIZE   20
 //const char CS_PACKET_ATTACK = 3;
@@ -18,7 +18,7 @@ enum WeaponType
 	SHOTGUN,
 	LAUNCHER
 };
-const int BUFSIZE = 256;
+const int BUFSIZE = 2048;
 const int  ReZone_HEIGHT = 2000;
 const int  ReZone_WIDTH = 2000;
 const int  MAX_NAME_SIZE = 20;
@@ -27,7 +27,7 @@ const int  MAX_USER = 10000;
 const int  MAX_OBJ = 20;
 
 const char CS_LOGIN = 1;
-const char CS_MOVE = 0;
+const char CS_MOVE_Packet = 0;
 const char CS_SELECT_CHAR = 3;
 const char CS_SELECT_WEP = 4;
 const char SC_LOGIN_OK = 1;

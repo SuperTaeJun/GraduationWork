@@ -63,7 +63,7 @@ public:
     int      _prev_size;
     int      last_move_time;
 public:
-    CLIENT() : _state(ST_FREE), _combat(COMBAT_END), _prev_size(0)
+    CLIENT() : _state(ST_FREE), _prev_size(0)
     {
         x = 0;
         y = 0;
