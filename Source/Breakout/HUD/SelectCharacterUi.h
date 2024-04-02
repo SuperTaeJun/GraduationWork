@@ -38,6 +38,11 @@ public:
 	UPROPERTY(meta = (BindWidget))
 	class UButton* Character4Button;
 
+	UPROPERTY(meta = (BindWidget))
+	class UButton* MatchingButton;
+
+	UFUNCTION()
+	void Matching();
 	UFUNCTION()
 	void Character1ButtonPressed();
 	UFUNCTION()
@@ -59,4 +64,5 @@ public:
 	void Button4Hovered();
 private:
 	ACharacterController* MyCharacterController;
+	bool bClicked;
 };

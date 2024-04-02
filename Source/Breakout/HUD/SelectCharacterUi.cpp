@@ -26,8 +26,11 @@ void USelectCharacterUi::NativeConstruct()
 	Character4Button->OnHovered.AddDynamic(this, &USelectCharacterUi::Button4Hovered);
 	Character4Button->OnUnhovered.AddDynamic(this, &USelectCharacterUi::EndHovered);
 
+	MatchingButton->OnClicked.AddDynamic(this, &USelectCharacterUi::Matching);
+
 	//월드에있는 캐릭터메쉬 가져오기
 	SetAllCharacterMeshWithTag();
+	bClicked = false;
 }
 
 void USelectCharacterUi::SetAllCharacterMeshWithTag()
@@ -50,26 +53,37 @@ void USelectCharacterUi::SetAllCharacterMeshWithTag()
 	Character4Mesh = Cast<ASkeletalMeshActor>(FindActor[0]);
 }
 
+void USelectCharacterUi::Matching()
+{
+	if(bClicked)
+		GetWorld()->ServerTravel(FString("/Game/Maps/MainMap"), true);
+}
+
 // 캐릭터 선택 패킷 보내는 곳
 void USelectCharacterUi::Character1ButtonPressed()
 {
 	Cast<UBOGameInstance>(GetGameInstance())->SetCharacterType(ECharacterType::ECharacter1);
 	/*PlayerType type = Character1;
 	c_socket->Send_Character_Type(type);*/
+	Character1Mesh->SetActorHiddenInGame(false);
+	Character2Mesh->SetActorHiddenInGame(true);
+	Character3Mesh->SetActorHiddenInGame(true);
+	Character4Mesh->SetActorHiddenInGame(true);
 
-	//GetWorld()->ServerTravel(FString("/Game/Maps/Testmap"),true);
-	GetWorld()->ServerTravel(FString("/Game/Maps/MainMap"), true);
-	//UGameplayStatics::OpenLevel(GetWorld(), FName("MainMap"));
-
+	bClicked = true;
 }
 
 void USelectCharacterUi::Character2ButtonPressed()
 {
 	Cast<UBOGameInstance>(GetGameInstance())->SetCharacterType(ECharacterType::ECharacter2);
 	/*PlayerType type = Character2;
-	c_socket->Send_Character_Type(type);*/
-	GetWorld()->ServerTravel(FString("/Game/Maps/MainMap"), true);
+	/c_socket->Send_Character_Type(type);*/
+	Character1Mesh->SetActorHiddenInGame(true);
+	Character2Mesh->SetActorHiddenInGame(false);
+	Character3Mesh->SetActorHiddenInGame(true);
+	Character4Mesh->SetActorHiddenInGame(true);
 
+	bClicked = true;
 }
 
 void USelectCharacterUi::Character3ButtonPressed()
@@ -77,8 +91,12 @@ void USelectCharacterUi::Character3ButtonPressed()
 	Cast<UBOGameInstance>(GetGameInstance())->SetCharacterType(ECharacterType::ECharacter3);
 	/*PlayerType type = Character3;
 	c_socket->Send_Character_Type(type);*/
-	GetWorld()->ServerTravel(FString("/Game/Maps/MainMap"), true);
+	Character1Mesh->SetActorHiddenInGame(true);
+	Character2Mesh->SetActorHiddenInGame(true);
+	Character3Mesh->SetActorHiddenInGame(false);
+	Character4Mesh->SetActorHiddenInGame(true);
 
+	bClicked = true;
 }
 
 void USelectCharacterUi::Character4ButtonPressed()
@@ -86,37 +104,48 @@ void USelectCharacterUi::Character4ButtonPressed()
 	Cast<UBOGameInstance>(GetGameInstance())->SetCharacterType(ECharacterType::ECharacter4);
 	//PlayerType type = Character4;
 	//c_socket->Send_Character_Type(type);
-	GetWorld()->ServerTravel(FString("/Game/Maps/MainMap"), true);
+	Character1Mesh->SetActorHiddenInGame(true);
+	Character2Mesh->SetActorHiddenInGame(true);
+	Character3Mesh->SetActorHiddenInGame(true);
+	Character4Mesh->SetActorHiddenInGame(false);
 
+	bClicked = true;
 }
 
 void USelectCharacterUi::EndHovered()
 {
 	if (Character1Mesh && Character2Mesh && Character3Mesh && Character4Mesh)
 	{
-		Character1Mesh->SetActorHiddenInGame(true);
-		Character2Mesh->SetActorHiddenInGame(true);
-		Character3Mesh->SetActorHiddenInGame(true);
-		Character4Mesh->SetActorHiddenInGame(true);
+		if (!bClicked)
+		{
+			Character1Mesh->SetActorHiddenInGame(true);
+			Character2Mesh->SetActorHiddenInGame(true);
+			Character3Mesh->SetActorHiddenInGame(true);
+			Character4Mesh->SetActorHiddenInGame(true);
+		}
 	}
 }
 
 void USelectCharacterUi::Button1Hovered()
 {
-	Character1Mesh->SetActorHiddenInGame(false);
+	if (!bClicked)
+		Character1Mesh->SetActorHiddenInGame(false);
 }
 
 void USelectCharacterUi::Button2Hovered()
 {
-	Character2Mesh->SetActorHiddenInGame(false);
+	if (!bClicked)
+		Character2Mesh->SetActorHiddenInGame(false);
 }
 
 void USelectCharacterUi::Button3Hovered()
 {
-	Character3Mesh->SetActorHiddenInGame(false);
+	if (!bClicked)
+		Character3Mesh->SetActorHiddenInGame(false);
 }
 
 void USelectCharacterUi::Button4Hovered()
 {
-	Character4Mesh->SetActorHiddenInGame(false);
+	if (!bClicked)
+		Character4Mesh->SetActorHiddenInGame(false);
 }
