@@ -28,7 +28,7 @@ void send_move_packet(int _id, int target);
 void send_remove_object(int _s_id, int victim);
 void send_put_object(int _s_id, int target);
 void Disconnect(int _s_id);
-void process_packet(int _s_id, unsigned char* p);
+void process_packet(int _s_id);
 void worker_thread();
 
 int main()
@@ -181,7 +181,7 @@ void Disconnect(int _s_id)
 
 
 //패킷 판별
-void process_packet(int s_id, unsigned char* p)
+void process_packet(int s_id, char* p)
 {
 	unsigned char packet_type = p[1];
 	CLIENT& cl = clients[s_id];
@@ -374,7 +374,7 @@ void worker_thread()
 			}
 			CLIENT& cl = clients[_s_id];
 			int remain_data = num_byte + cl._prev_size;
-			unsigned char* packet_start = exp_over->_net_buf;
+			char* packet_start = exp_over->_net_buf;
 			int packet_size = packet_start[0];
 
 			while (packet_size <= remain_data) {

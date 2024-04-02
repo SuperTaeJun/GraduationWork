@@ -43,7 +43,7 @@ bool ClientSocket::Connect(const char* s_IP, int port)
 	}
 
 	// TCP 家南 积己
-	ServerSocket = WSASocket(AF_INET, SOCK_STREAM, 0, NULL, 0, WSA_FLAG_OVERLAPPED);
+	ServerSocket = WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, NULL, 0, WSA_FLAG_OVERLAPPED);
 	if (ServerSocket == INVALID_SOCKET) {
 		return false;
 	}
@@ -166,7 +166,7 @@ void ClientSocket::Send_Login_Info(char* id, char* pw, PlayerType character_type
 
 void ClientSocket::Send_Move_Packet(int sessionID, FVector Location, FRotator Rotation, FVector Velocity, float Max_speed)
 {
-	if (login_cond == true) {
+	//if (login_cond == true) {
 		CS_MOVE_PACKET packet;
 		packet.size = sizeof(packet);
 		packet.type = CS_MOVE_Packet;
@@ -182,7 +182,7 @@ void ClientSocket::Send_Move_Packet(int sessionID, FVector Location, FRotator Ro
 		Send(packet.size, &packet);
 		//SendPacket(&packet);
 		//UE_LOG(LogClass, Warning, TEXT("send move"));
-	}
+	//}
 }
 
 void ClientSocket::Send_Character_Type(PlayerType type)
