@@ -6,7 +6,8 @@ public class Breakout : ModuleRules
 {
 	public Breakout(ReadOnlyTargetRules Target) : base(Target)
 	{
-		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
+        PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
+        bEnableExceptions = true;
 
         PublicIncludePaths.AddRange(new string[] { "Breakout" });
 
