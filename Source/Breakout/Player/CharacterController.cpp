@@ -273,7 +273,7 @@ void ACharacterController::InitPlayer()
 void ACharacterController::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	RecvPacket();
+	//RecvPacket();
 	if (bInitPlayerSetting)
 		InitPlayer();
 

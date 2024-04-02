@@ -99,7 +99,7 @@ public:
     WSAOVERLAPPED   _wsa_over;
     IO_type         _op;
     WSABUF         _wsa_buf;
-    unsigned char   _net_buf[buffsize];
+     char   _net_buf[buffsize];
     int            _target;
 public:
     Overlap(IO_type _op, char num_bytes, void* mess) : _op(_op)
@@ -181,7 +181,8 @@ public:
     virtual void Exit() override;
     char    _id[MAX_NAME_SIZE];
     char    _pw[MAX_NAME_SIZE];
-
+    void RecvPacket();
+    void SendPacket(void* packet);
     bool StartListen();
     void StopListen();
     bool Send(const int SendSize, void* SendData);
