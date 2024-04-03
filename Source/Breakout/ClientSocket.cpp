@@ -12,11 +12,11 @@
 #include "Runtime/Core/Public/GenericPlatform/GenericPlatformAffinity.h"
 #include "Runtime/Core/Public/HAL/RunnableThread.h"
 #pragma region Main Thread Code
-ClientSocket::ClientSocket(UBOGameInstance* inst) :StopTaskCounter(0)
+ClientSocket::ClientSocket() :StopTaskCounter(0)
 {
-	gameinst = inst;
+	/*gameinst = inst;*/
 	
-	Thread = FRunnableThread::Create(this, TEXT("Network Thread"));
+	
 	
 }
 
@@ -237,15 +237,15 @@ uint32 ClientSocket::Run()
 	Iocp = CreateIoCompletionPort(INVALID_HANDLE_VALUE, NULL, NULL, 0);
 	CreateIoCompletionPort(reinterpret_cast<HANDLE>(ServerSocket), Iocp, 0, 0);
 
-	RecvPacket();
+	//RecvPacket();
 
 	//Send_LoginPacket();
 
-	SleepEx(0, true);
+	//SleepEx(0, true);
 	//StopTaskCounter.GetValue() == 0
 	// recv while loop 시작
 	// StopTaskCounter 클래스 변수를 사용해 Thread Safety하게 해줌
-	while (true)
+	while (gameinst != nullptr)
 	{
 		DWORD num_byte;
 		LONG64 iocp_key;
@@ -317,13 +317,13 @@ void ClientSocket::Exit()
 	}
 }
 
-//bool ClientSocket::StartListen()
-//{
-//	// 스레드 시작
-//	if (Thread != nullptr) return false;
-//	Thread = FRunnableThread::Create(this, TEXT("ClientSocket"), 0, TPri_BelowNormal);
-//	return (Thread != nullptr);
-//}
+bool ClientSocket::StartListen()
+{
+	// 스레드 시작
+	if (Thread != nullptr) return false;
+	Thread = FRunnableThread::Create(this, TEXT("ClientSocket"), 0, TPri_BelowNormal);
+	return (Thread != nullptr);
+}
 //
 //void ClientSocket::StopListen()
 //{
