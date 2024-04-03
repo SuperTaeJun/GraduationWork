@@ -225,7 +225,7 @@ void ClientSocket::Send_Weapon_Type(WeaponType type, int sessionID)
 }
 bool ClientSocket::Init()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Thread has been initialized"));
+	//UE_LOG(LogTemp, Warning, TEXT("Thread has been initialized"));
 	return true;
 }
 uint32 ClientSocket::Run()
