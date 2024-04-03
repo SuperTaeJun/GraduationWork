@@ -5,6 +5,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Player/CharacterController.h"
 
+
 void UBOGameInstance::Init()
 {
 	Super::Init();
@@ -16,8 +17,7 @@ void UBOGameInstance::Init()
 	{
 		//c_socket->StartListen();
 		UE_LOG(LogClass, Warning, TEXT("IOCP Server connect success!"));
-		FString c_id = "testuser";
-		FString c_pw = "1234";
-		m_Socket->Send_Login_Info(TCHAR_TO_UTF8(*c_id), TCHAR_TO_UTF8(*c_pw));
+		
 	}
 }
+

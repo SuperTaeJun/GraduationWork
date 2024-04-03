@@ -20,6 +20,13 @@ public:
 
 	TObjectPtr<class USelectCharacterUi> SelectCharacter;
 
+
+	UPROPERTY(EditAnywhere, Category = "Player State")
+	TSubclassOf<class UUserWidget>LoginUiClass;
+
+	TObjectPtr<class ULogin> LoginUi;
+
+	void AddLoginUi();
 	void AddSelectCharacter();
 protected:
 	virtual void BeginPlay() override;

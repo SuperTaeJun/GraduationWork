@@ -16,7 +16,6 @@
 #include "../../Server/Server/ServerCore/protocol.h"
 #include "Windows/PostWindowsApi.h"
 #include "Windows/HideWindowsPlatformTypes.h"
-#include "Game/BOGameInstance.h"
 #include "CoreMinimal.h"
 #include <concurrent_queue.h>
 
@@ -169,7 +168,6 @@ public:
     bool InitSocket();
     bool Connect();
     void CloseSocket();
-
     bool PacketProcess(char* ptr);
     void Send_Login_Info(char* id, char* pw);
     void Send_Move_Packet(int sessionID, FVector Location, FRotator Rotation, FVector Velocity, float Max_speed);
@@ -207,5 +205,6 @@ private:
     ACharacterController* MyCharacterController;
     CPlayerInfo PlayerInfo;
     UBOGameInstance* gameinst;
+   
 };
 
