@@ -29,6 +29,8 @@ public:
 
 	void SetCharacterType(ECharacterType _CharacterType) { CharacterType = _CharacterType; }
 	ECharacterType GetCharacterType() { return CharacterType; }
+
+
 public:
 	ClientSocket* m_Socket;
 	bool connect;

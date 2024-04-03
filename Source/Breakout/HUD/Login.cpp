@@ -4,7 +4,7 @@
 #include "HUD/Login.h"
 #include "Components/Button.h"
 #include "Components/EditableText.h"
-
+#include "Game/BOGameInstance.h"
 
 void ULogin::NativeConstruct()
 {
@@ -19,5 +19,13 @@ void ULogin::PressLogin()
 {
 	//UE_LOG(LogTemp, Warning, TEXT("ID : %s"), ID->GetText().ToString());
 	//UE_LOG(LogTemp, Warning, TEXT("Password : %s"), Password->GetText().ToString());
-	GetWorld()->ServerTravel(FString("/Game/Maps/GameRoom"), true);
+
+	FString IDToString = ID->GetText().ToString();
+	FString PasswordToString = Password->GetText().ToString();
+
+	if(Cast<UBOGameInstance>(GetGameInstance())->m_Socket)
+		Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Login_Info(TCHAR_TO_UTF8(*IDToString), TCHAR_TO_UTF8(*PasswordToString));
+
+	RemoveFromParent();
 }
+

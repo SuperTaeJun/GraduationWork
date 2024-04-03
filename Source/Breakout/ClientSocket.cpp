@@ -4,7 +4,7 @@
 #include "ClientSocket.h"
 #include <sstream>
 #include <process.h>
-
+#include "Game/BOGameInstance.h"
 #include "Game/BOGameMode.h"
 #include "Character/Character1.h"
 #include "Character/CharacterBase.h"
@@ -76,6 +76,7 @@ void ClientSocket::CloseSocket()
 	WSACleanup();
 }
 
+
 bool ClientSocket::PacketProcess(char* ptr)
 {
 	//UE_LOG(LogClass, Warning, TEXT("init?"));
@@ -85,7 +86,7 @@ bool ClientSocket::PacketProcess(char* ptr)
 	case SC_LOGIN_OK: {
 		SC_LOGIN_BACK* packet = reinterpret_cast<SC_LOGIN_BACK*>(ptr);
 		//to_do
-
+		UE_LOG(LogClass, Warning, TEXT("aaaaa"));
 		//UE_LOG(LogClass, Warning, TEXT("RECV ROGIN?"));
 		//login_cond = true;
 		//CPlayer player;
