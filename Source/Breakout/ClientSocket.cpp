@@ -12,17 +12,22 @@
 #include "Runtime/Core/Public/GenericPlatform/GenericPlatformAffinity.h"
 #include "Runtime/Core/Public/HAL/RunnableThread.h"
 #pragma region Main Thread Code
-ClientSocket::ClientSocket() :StopTaskCounter(0)
+ClientSocket::ClientSocket(UBOGameInstance* inst) :StopTaskCounter(0)
 {
-
+	gameinst = inst;
+	
+	Thread = FRunnableThread::Create(this, TEXT("Network Thread"));
+	
 }
 
 ClientSocket::~ClientSocket() {
-	/*delete Thread;
-	Thread = nullptr;*/
-
-	closesocket(ServerSocket);
-	WSACleanup();
+	if (Thread)
+	{
+		// 스레드 종료
+		Thread->WaitForCompletion();
+		Thread->Kill();
+		delete Thread;
+	}
 }
 
 bool ClientSocket::InitSocket()
@@ -31,7 +36,7 @@ bool ClientSocket::InitSocket()
 	return true;
 }
 
-bool ClientSocket::Connect(const char* s_IP, int port)
+bool ClientSocket::Connect()
 {
 
 	WSADATA wsaData;
@@ -79,19 +84,21 @@ bool ClientSocket::PacketProcess(char* ptr)
 	{
 	case SC_LOGIN_OK: {
 		SC_LOGIN_BACK* packet = reinterpret_cast<SC_LOGIN_BACK*>(ptr);
+		//to_do
+
 		//UE_LOG(LogClass, Warning, TEXT("RECV ROGIN?"));
-		login_cond = true;
-		CPlayer player;
-		player.Id = packet->clientid;
-		/*player.X = packet->x;
-		player.Y = packet->y;
-		player.Z = packet->z;
-		player.p_type = packet->p_type;*/
-		PlayerInfo.players[player.Id] = player;
-		MyCharacterController->SetPlayerID(player.Id);
-		MyCharacterController->SetPlayerInfo(&PlayerInfo);
-		MyCharacterController->SetInitPlayerInfo(player);
-		UE_LOG(LogClass, Warning, TEXT("recv - id: %d, x: %d"), player.Id, player.X);
+		//login_cond = true;
+		//CPlayer player;
+		//player.Id = packet->clientid;
+		///*player.X = packet->x;
+		//player.Y = packet->y;
+		//player.Z = packet->z;
+		//player.p_type = packet->p_type;*/
+		//PlayerInfo.players[player.Id] = player;
+		//MyCharacterController->SetPlayerID(player.Id);
+		//MyCharacterController->SetPlayerInfo(&PlayerInfo);
+		//MyCharacterController->SetInitPlayerInfo(player);
+		//UE_LOG(LogClass, Warning, TEXT("recv - id: %d, x: %d"), player.Id, player.X);
 		break;
 	}
 	case SC_OTHER_PLAYER:
@@ -126,6 +133,17 @@ bool ClientSocket::PacketProcess(char* ptr)
 		break;
 	}
 	case SC_CHAR_BACK: {
+		SC_SELECT_CHARACTER_BACK* packet = reinterpret_cast<SC_SELECT_CHARACTER_BACK*>(ptr);
+		CPlayer player;
+		player.Id = packet->clientid;
+		//player.X = packet->x;
+		//player.Y = packet->y;
+		//player.Z = packet->z;
+		player.p_type = packet->p_type;
+		PlayerInfo.players[player.Id] = player;
+		MyCharacterController->SetPlayerID(player.Id);
+		MyCharacterController->SetPlayerInfo(&PlayerInfo);
+		MyCharacterController->SetInitPlayerInfo(player);
 		break;
 	}
 	case SC_OTHER_WEAPO: {
@@ -142,16 +160,14 @@ bool ClientSocket::PacketProcess(char* ptr)
 	return true;
 }
 
-void ClientSocket::Send_Login_Info(char* id, char* pw, PlayerType character_type)
+void ClientSocket::Send_Login_Info(char* id, char* pw)
 {
 	//패킷 조립
 	CS_LOGIN_PACKET packet;
 	packet.size = sizeof(packet);
 	packet.type = CS_LOGIN;
-	strcpy(packet.id, id);
-	strcpy(packet.pw, pw);
-
-	auto player = Cast<ACharacterBase>(UGameplayStatics::GetPlayerCharacter(MyCharacterController, 0));
+	strcpy_s(packet.id, id);
+	strcpy_s(packet.pw, pw);
 	//cs_login_packet
 	//auto location = player->GetActorLocation();
 	//packet.x = location.X;
@@ -187,11 +203,12 @@ void ClientSocket::Send_Move_Packet(int sessionID, FVector Location, FRotator Ro
 
 void ClientSocket::Send_Character_Type(PlayerType type)
 {
+	auto player = Cast<ACharacterBase>(UGameplayStatics::GetPlayerCharacter(MyCharacterController, 0));
 	CS_SELECT_CHARACTER packet;
 	packet.size = sizeof(packet);
 	packet.type = CS_SELECT_CHAR;
 	//Send(packet.size, &packet);
-	//packet.character_type = type;
+	packet.p_type = type;
 	SendPacket(&packet);
 }
 
@@ -207,6 +224,7 @@ void ClientSocket::Send_Weapon_Type(WeaponType type, int sessionID)
 }
 bool ClientSocket::Init()
 {
+	UE_LOG(LogTemp, Warning, TEXT("Thread has been initialized"));
 	return true;
 }
 uint32 ClientSocket::Run()
@@ -226,7 +244,7 @@ uint32 ClientSocket::Run()
 	//StopTaskCounter.GetValue() == 0
 	// recv while loop 시작
 	// StopTaskCounter 클래스 변수를 사용해 Thread Safety하게 해줌
-	while (StopTaskCounter.GetValue() == 0)
+	while (true)
 	{
 		DWORD num_byte;
 		LONG64 iocp_key;
@@ -281,52 +299,7 @@ uint32 ClientSocket::Run()
 
 	}
 	return 0;
-	//
-	//	//FPlatformProcess::Sleep(0.03);
-	//	//PacketProcess(m_sRecvBuffer);
-	//	//SleepEx(0, true);
-	//	//while (StopTaskCounter.GetValue() == 0 /*&& m_PlayerController != nullptr*/)
-	//	//{
-	//	//	int nRecvLen = recv(ServerSocket, reinterpret_cast<char*>(m_sRecvBuffer), MAX_BUFFER, 0);
-	//
-	//	//	if (nRecvLen == 0)
-	//	//	{
-	//	//		UE_LOG(LogTemp, Warning, TEXT("Recv 0 Btye. break while"));
-	//	//		break;
-	//	//	}
-	//
-	//	//	BYTE OP;
-	//	//	memcpy(&OP, m_sRecvBuffer, sizeof(BYTE));
-	//
-	//	//	PacketProcess(m_sRecvBuffer);
-	//	//	SleepEx(0.5, true);
-	//	//}
-	//	//UE_LOG(LogTemp, Warning, TEXT("Recv Close"));
-	//	//return 0;
-	//	char RecvBuff[BUFSIZE];
-	//	while (1)
-	//	{
-	//		UE_LOG(LogTemp, Warning, TEXT("Pushed into "));
-	//		int RecvLen = recv(ServerSocket, reinterpret_cast<char*>(RecvBuff), BUFSIZE, 0);
-	//		if (RecvLen != SOCKET_ERROR)
-	//		{
-	//			for (int i = 0; i < RecvLen; ++i) {
-	//				buffer.push(RecvBuff[i]);
-	//
-	//				UE_LOG(LogTemp, Warning, TEXT("Pushed into buffer: %c"), RecvBuff[i]); // 언리얼 엔진 로그 출력
-	//			}
-	//		}
-	//		else
-	//		{
-	//			buffer.push(2);
-	//			buffer.push(SOCKET_ERROR);
-	//			UE_LOG(LogTemp, Warning, TEXT("Pushed into buffer")); // 언리얼 엔진 로그 출력
-	//			return 0;
-	//		}
-	//	}
-	//
-	//	return 0;
-	//}
+
 }
 void ClientSocket::Stop()
 {
@@ -336,26 +309,31 @@ void ClientSocket::Stop()
 
 void ClientSocket::Exit()
 {
+	if (ServerSocket)
+	{
+		closesocket(ServerSocket);
+		WSACleanup();
+	}
 }
 
-bool ClientSocket::StartListen()
-{
-	// 스레드 시작
-	if (Thread != nullptr) return false;
-	Thread = FRunnableThread::Create(this, TEXT("ClientSocket"), 0, TPri_BelowNormal);
-	return (Thread != nullptr);
-}
-
-void ClientSocket::StopListen()
-{
-	// 스레드 종료
-	Stop();
-	Thread->WaitForCompletion();
-	Thread->Kill();
-	delete Thread;
-	Thread = nullptr;
-	StopTaskCounter.Reset();
-}
+//bool ClientSocket::StartListen()
+//{
+//	// 스레드 시작
+//	if (Thread != nullptr) return false;
+//	Thread = FRunnableThread::Create(this, TEXT("ClientSocket"), 0, TPri_BelowNormal);
+//	return (Thread != nullptr);
+//}
+//
+//void ClientSocket::StopListen()
+//{
+//	// 스레드 종료
+//	Stop();
+//	Thread->WaitForCompletion();
+//	Thread->Kill();
+//	delete Thread;
+//	Thread = nullptr;
+//	StopTaskCounter.Reset();
+//}
 
 void ClientSocket::SetPlayerController(ACharacterController* CharacterController)
 {
@@ -386,13 +364,10 @@ void ClientSocket::RecvPacket()
 	if (SOCKET_ERROR == ret) {
 		int error_num = WSAGetLastError();
 	}
-	/*if (ret > 0) {
-		UE_LOG(LogClass, Warning, TEXT("recv 됨 "));
-	}*/
+
 }
 void ClientSocket::SendPacket(void* packet)
 {
-	//UE_LOG(LogClass, Warning, TEXT("send data"));
 	int psize = reinterpret_cast<unsigned char*>(packet)[0];
 	Overlap* ex_over = new Overlap(IO_SEND, psize, packet);
 	int ret = WSASend(ServerSocket, &ex_over->_wsa_buf, 1, 0, 0, &ex_over->_wsa_over, NULL);

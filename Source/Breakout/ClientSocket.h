@@ -20,7 +20,7 @@
 #include "CoreMinimal.h"
 #include <concurrent_queue.h>
 
-
+class UBOGameInstance;
 class ACharacterController;
 using namespace std;
 
@@ -164,14 +164,14 @@ public:
 class BREAKOUT_API ClientSocket : public FRunnable
 {
 public:
-    ClientSocket();
+    ClientSocket(UBOGameInstance* inst);
     virtual ~ClientSocket();
     bool InitSocket();
-    bool Connect(const char* s_IP, int port);
+    bool Connect();
     void CloseSocket();
 
     bool PacketProcess(char* ptr);
-    void Send_Login_Info(char* id, char* pw, PlayerType character_type);
+    void Send_Login_Info(char* id, char* pw);
     void Send_Move_Packet(int sessionID, FVector Location, FRotator Rotation, FVector Velocity, float Max_speed);
     void Send_Character_Type(PlayerType type);
     void Send_Weapon_Type(WeaponType type, int id);
@@ -183,14 +183,14 @@ public:
     char    _pw[MAX_NAME_SIZE];
     void RecvPacket();
     void SendPacket(void* packet);
-    bool StartListen();
-    void StopListen();
+   // bool StartListen();
+    //void StopListen();
     bool Send(const int SendSize, void* SendData);
 
-    static ClientSocket* GetSingleton() {
+ /*   static ClientSocket* GetSingleton() {
         static ClientSocket ins;
         return &ins;
-    }
+    }*/
     void SetPlayerController(ACharacterController* CharacterController);
     HANDLE Iocp;
     Overlap _recv_over;
@@ -206,5 +206,6 @@ public:
 private:
     ACharacterController* MyCharacterController;
     CPlayerInfo PlayerInfo;
+    UBOGameInstance* gameinst;
 };
 

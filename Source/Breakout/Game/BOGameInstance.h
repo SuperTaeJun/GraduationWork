@@ -29,11 +29,7 @@ public:
 
 	void SetCharacterType(ECharacterType _CharacterType) { CharacterType = _CharacterType; }
 	ECharacterType GetCharacterType() { return CharacterType; }
-
-	//UFUNCTION(BlueprintCallable)
-	//void ConnectToServer();
-
 public:
-	/*ClientSocket* m_Socket;
-	bool connect;*/
+	ClientSocket* m_Socket;
+	bool connect;
 };

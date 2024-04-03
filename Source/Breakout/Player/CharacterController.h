@@ -16,6 +16,7 @@
 class CPlayer;
 class ClientSocket;
 class CPlayerInfo;
+class UBOGameInstance;
 /**
  *
  */
@@ -97,7 +98,6 @@ public:
 	void UpdatePlayer();
 	//동기화 용
 	void UpdateSyncPlayer();
-	void UpdateSyncWeapon();
 	bool UpdateWorld();
 	//초기 컨트롤러 세팅
 	void RecvPacket();
@@ -112,7 +112,7 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Spawning")
 	TSubclassOf<class ACharacterBase> ToSpawn;
 	void Set_Weapon_Type(EWeaponType Type);
-	void UpdateWeaponMesh();
+	//void UpdateWeaponMesh();
 	virtual void OnPossess(APawn* InPawn) override;
 private:
 	TObjectPtr<class AMainHUD> MainHUD;
@@ -120,7 +120,7 @@ private:
 	bool bNewPlayerEntered = false;
 	bool bNewWeaponEntered = false;
 	bool bInitPlayerSetting = false;
-	ClientSocket* c_socket;
+	//ClientSocket* c_socket;
 	CPlayerInfo* PlayerInfo;
 	int p_cnt;
 	bool connect;
@@ -128,4 +128,5 @@ private:
 	char data[BUFSIZE] = { 0 };
 	int remainData = 0;
 	bool login_cond;
+	UBOGameInstance* inst;
 };

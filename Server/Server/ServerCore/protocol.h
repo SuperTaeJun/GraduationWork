@@ -1,6 +1,6 @@
 #pragma once
 #define SERVER_PORT		8001
-#define SERVER_IP		"192.168.120.150"
+#define SERVER_IP		"192.168.100.16"
 
 #define MAX_INFO_SIZE   20
 //const char CS_PACKET_ATTACK = 3;
@@ -30,6 +30,7 @@ const char CS_LOGIN = 1;
 const char CS_MOVE_Packet = 0;
 const char CS_SELECT_CHAR = 3;
 const char CS_SELECT_WEP = 4;
+
 const char SC_LOGIN_OK = 1;
 const char SC_OTHER_PLAYER = 2;
 const char SC_MOVE_PLAYER = 3;
@@ -61,21 +62,10 @@ struct CS_LOGIN_PACKET
 	unsigned type;
 	char id[MAX_INFO_SIZE];
 	char pw[MAX_INFO_SIZE];
-	/*float x, y;
-	float z;*/
-	//PlayerType p_type;
-
 };	
 struct SC_LOGIN_BACK {
 	unsigned char size;
 	unsigned type;
-	/*char id[MAX_INFO_SIZE];
-	char pw[MAX_INFO_SIZE];*/
-	int clientid;
-	/*float x, y, z;
-	float yaw;
-	int32 cl_id;*/
-	//PlayerType p_type;
 };
 #pragma pack(pop)
 
@@ -107,7 +97,13 @@ struct CS_SELECT_CHARACTER
 	unsigned char size;
 	unsigned type;
 	int id;
-	//PlayerType character_type;
+	PlayerType p_type;
+};
+struct SC_SELECT_CHARACTER_BACK {
+	unsigned char size;
+	unsigned type;
+	int clientid;
+	PlayerType p_type;
 };
 struct CS_SELECT_WEAPO
 {
