@@ -687,6 +687,7 @@ void ACharacterBase::GrandeFire_Aiming(const FInputActionValue& Value)
 	{
 		Locations.Add(OnePathData.Location);
 	}
+	SWAimLastLoc =Locations.Last();
 	UNiagaraDataInterfaceArrayFunctionLibrary::SetNiagaraArrayPosition(Aim, FName("PositionArray"), Locations);
 }
 
@@ -695,7 +696,19 @@ void ACharacterBase::GrandeFire(const FInputActionValue& Value)
 	Aim->Deactivate();
 	if (GrendeNum > 0)
 	{
-		GrandeAim();
+		if (BojoMugiType == EBojoMugiType::E_BoobyTrap)
+		{
+			TObjectPtr<UWorld> World = GetWorld();
+			if (World)
+			{
+				FActorSpawnParameters SpawnParms;
+				SpawnParms.Owner = this;
+
+				World->SpawnActor<AProjectileBase>(BoobyTrapClass, SWAimLastLoc, FRotator::ZeroRotator,SpawnParms);
+			}
+		}
+		else
+			GrandeAim();
 	}
 }
 

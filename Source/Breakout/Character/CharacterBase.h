@@ -65,6 +65,7 @@ protected:
 	EBojoMugiType BojoMugiType;
 	int32 ObtainedEscapeToolNum;
 
+	FVector SWAimLastLoc;
 public:
 	void SetWeapon(TSubclassOf<class AWeaponBase> Weapon, FName SocketName);
 	void SetWeaponUi();
