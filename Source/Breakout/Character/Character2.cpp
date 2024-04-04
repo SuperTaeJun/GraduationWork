@@ -54,7 +54,7 @@ void ACharacter2::Tick(float DeltaTime)
 
 	if (MainController)
 	{
-		GEngine->AddOnScreenDebugMessage(1, 1.f, FColor::Blue, FString::Printf(TEXT("DashPoint : %d"), DashPoint));
+		//GEngine->AddOnScreenDebugMessage(1, 1.f, FColor::Blue, FString::Printf(TEXT("DashPoint : %d"), DashPoint));
 		if (DashPoint < 3)
 			DashCoolChargeTime += DeltaTime;
 		if (DashPoint < 3 && DashCoolChargeTime >= 4.f)

@@ -8,10 +8,15 @@
 #include "Components/ProgressBar.h"
 #include "Components/WidgetComponent.h"
 #include "HUD/ETPercentBar.h"
+#include "Components/SphereComponent.h"
+
 AEscapeTool::AEscapeTool()
 {
 	PercentBar = CreateDefaultSubobject<UWidgetComponent>(TEXT("PercentBar"));
 	PercentBar->SetupAttachment(RootComponent);
+
+	AreaSphere->SetCollisionResponseToChannel(ECollisionChannel::ECC_Visibility, ECollisionResponse::ECR_Block);
+	bDetected = false;
 }
 
 void AEscapeTool::BeginPlay()
@@ -45,7 +50,7 @@ void AEscapeTool::Tick(float DeltaTime)
 void AEscapeTool::TransformMesh(float DeltaTime, bool Clamp, bool TransformReverse)
 {
 
-	if (OverlapedCharacter)
+	if (OverlapedCharacter && bDetected)
 	{
 		if (Cur >= 1.f)
 		{
@@ -87,16 +92,18 @@ void AEscapeTool::SetHideMesh()
 
 void AEscapeTool::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	OverlapedCharacter = Cast<ACharacterBase>(OtherActor);
-	if (OverlapedCharacter)
+	if (bDetected)
 	{
-		OverlapedCharacter->OverlappingEscapeTool = this;
-	}
-	PercentBar->SetVisibility(true);
-	//CharacterBase->SetbCanObtainEscapeTool(true);
+		OverlapedCharacter = Cast<ACharacterBase>(OtherActor);
+		if (OverlapedCharacter)
+		{
+			OverlapedCharacter->OverlappingEscapeTool = this;
+		}
+		PercentBar->SetVisibility(true);
 
-//UE_LOG(LogTemp, Log, TEXT("OBTAIN"));
-	bOverlap = 1;
+		bOverlap = 1;
+	}
+
 }
 
 void AEscapeTool::OnSphereEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)

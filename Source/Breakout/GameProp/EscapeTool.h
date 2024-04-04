@@ -22,7 +22,11 @@ public:
 
 	void TransformMesh(float DeltaTime, bool Clamp, bool TransformReverse);
 	void SetHideMesh();
+
+	void SetbDetected(bool _bDetected) { bDetected = _bDetected; }
 private:
+	bool bDetected;
+
 	UFUNCTION()
 	virtual void OnSphereOverlap
 	(

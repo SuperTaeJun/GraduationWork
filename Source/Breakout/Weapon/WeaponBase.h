@@ -16,7 +16,7 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	virtual void Fire(const FVector& HitTarget);
 	FORCEINLINE float GetFirerate() { return Firerate; }
-
+	void DetectTool(FVector& HitRes);
 	UPROPERTY(EditAnywhere)
 	float Damage = 10.f;
 
@@ -51,7 +51,6 @@ protected:
 
 	FVector TraceEndWithScatter(const FVector& TraceStart, const FVector& HitTarget);
 	void WeaponTraceHit(const FVector& TraceStart, const FVector& HitTarget, FHitResult& OutHit);
-
 
 
 	UPROPERTY(EditAnywhere)

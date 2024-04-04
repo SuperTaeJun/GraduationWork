@@ -115,7 +115,7 @@ void ACharacter1::StoreFrameData(float DeltaTime)
 	{
 		if (RecordedTime < MaxSaveTime)
 		{
-			UE_LOG(LogTemp, Log, TEXT("RECORDETIME"));
+			//UE_LOG(LogTemp, Log, TEXT("RECORDETIME"));
 			FrameDatas.AddTail(Package);
 			RecordedTime += Package.DeltaTime;
 			bOutOfData = false;

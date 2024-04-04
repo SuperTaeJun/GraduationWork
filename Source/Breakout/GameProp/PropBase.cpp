@@ -80,7 +80,9 @@ void APropBase::UnifyTri(UPARAM(ref) FMeshData& Data)
 	TArray<FVector> oldnorm = Data.Normals;
 	TArray<FVector2D> olduvs = Data.UVs;
 	TArray<FLinearColor> oldcolors = Data.Colors;
-	TArray<int> oldtris = Data.Tris;
+	TArray<int32> oldtris = Data.Tris;
+	UE_LOG(LogTemp, Warning, TEXT("TRI = %d"), Data.Tris[0]);
+	UE_LOG(LogTemp, Warning, TEXT("TRI = %d"), Data.Tris[50]);
 	vl = Data.Verts.Num();
 	hasNormals = (Data.Normals.Num() >= vl);
 	hasUVs = (Data.UVs.Num() >= vl);
