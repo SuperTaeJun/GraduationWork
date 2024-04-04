@@ -237,15 +237,15 @@ uint32 ClientSocket::Run()
 	Iocp = CreateIoCompletionPort(INVALID_HANDLE_VALUE, NULL, NULL, 0);
 	CreateIoCompletionPort(reinterpret_cast<HANDLE>(ServerSocket), Iocp, 0, 0);
 
-	//RecvPacket();
+	RecvPacket();
 
 	//Send_LoginPacket();
 
-	//SleepEx(0, true);
+	SleepEx(0, true);
 	//StopTaskCounter.GetValue() == 0
 	// recv while loop 시작
 	// StopTaskCounter 클래스 변수를 사용해 Thread Safety하게 해줌
-	while (gameinst != nullptr)
+	while (StopTaskCounter.GetValue() == 0)
 	{
 		DWORD num_byte;
 		LONG64 iocp_key;
