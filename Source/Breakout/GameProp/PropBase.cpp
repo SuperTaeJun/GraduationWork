@@ -71,8 +71,6 @@ void APropBase::UnifyTri(UPARAM(ref) FMeshData& Data)
 			++vl;
 
 		}
-		UE_LOG(LogTemp, Log, TEXT("%s"), *Data.Verts[Data.Tris[0]].ToString());
-
 	}
 
 	//기존 정보를 저장하고 다시 트라이앵글 기준으로 정렬
@@ -81,8 +79,7 @@ void APropBase::UnifyTri(UPARAM(ref) FMeshData& Data)
 	TArray<FVector2D> olduvs = Data.UVs;
 	TArray<FLinearColor> oldcolors = Data.Colors;
 	TArray<int32> oldtris = Data.Tris;
-	UE_LOG(LogTemp, Warning, TEXT("TRI = %d"), Data.Tris[0]);
-	UE_LOG(LogTemp, Warning, TEXT("TRI = %d"), Data.Tris[50]);
+
 	vl = Data.Verts.Num();
 	hasNormals = (Data.Normals.Num() >= vl);
 	hasUVs = (Data.UVs.Num() >= vl);
@@ -105,12 +102,12 @@ void APropBase::UnifyTri(UPARAM(ref) FMeshData& Data)
 			 Data.Colors.Emplace(oldcolors[oldtris[x]]); 
 		Data.Tris.Emplace(x);
 	}
-
+	UE_LOG(LogTemp, Warning, TEXT("UNIFY NUM : %d"), Data.Verts.Num());
 }
 
 void APropBase::InterpMeshData(FMeshData& Data, FMeshData& DataA, FMeshData& DataB, float Alpha, bool Clamp)
 {
-	int x = 0, l = Data.Verts.Num(), al = DataA.Verts.Num(), bl = DataB.Verts.Num();
+	int x = 0, l = Data.Verts.Num(),/*DataA버텍스 갯수*/ al = DataA.Verts.Num(), /*DataB버텍스 갯수*/bl = DataB.Verts.Num();
 	if (l <= 0 || al <= 0 || bl <= 0)
 	{
 		return; 
@@ -128,7 +125,8 @@ void APropBase::InterpMeshData(FMeshData& Data, FMeshData& DataA, FMeshData& Dat
 			return;
 		}
 	}
-	int ml = l = std::min(l, al);
+	int ml = l;
+	ml = std::min(l, al);
 	ml = std::min(ml, bl);
 	const bool hasNormals = (Data.Normals.Num() >= ml && DataA.Normals.Num() >= ml && DataB.Normals.Num() >= ml);
 	const bool hasUVs = (Data.UVs.Num() >= ml && DataA.UVs.Num() >= ml && DataB.UVs.Num() >= ml);
@@ -161,14 +159,12 @@ void APropBase::InterpMeshData(FMeshData& Data, FMeshData& DataA, FMeshData& Dat
 void APropBase::GetMeshDataFromStaticMesh(UStaticMesh* Mesh, UPARAM(ref) FMeshData& Data, int32 LODIndex, int32 SectionIndex, bool GetAllSections)
 {
 	int32 n = 0, svi = 0, vi = 0, sec = 0;
+
+	//이미 사용한 버텍스인지아닌지 판정
 	int32* NewIndexPtr = nullptr;
 	if (Mesh == nullptr || Mesh->GetRenderData() == nullptr || !Mesh->GetRenderData()->LODResources.IsValidIndex(LODIndex)) 
 	{
 		return;
-	}
-	if (!Mesh->bAllowCPUAccess) 
-	{
-		
 	}
 	Data.Clear();
 
@@ -180,21 +176,27 @@ void APropBase::GetMeshDataFromStaticMesh(UStaticMesh* Mesh, UPARAM(ref) FMeshDa
 			Data.CountSections(); return; 
 		}
 		TMap<int32, int32> MeshToSectionVertMap = {};
-		uint32 i = 0, is = LOD.Sections[SectionIndex].FirstIndex, l = LOD.Sections[SectionIndex].FirstIndex + LOD.Sections[SectionIndex].NumTriangles * 3;
+		uint32 i = 0, 
+		is = LOD.Sections[SectionIndex].FirstIndex,
+		l = LOD.Sections[SectionIndex].FirstIndex + LOD.Sections[SectionIndex].NumTriangles * 3;
 		FIndexArrayView Indices = LOD.IndexBuffer.GetArrayView();
 		uint32 il = Indices.Num();
 		const bool hasColors = LOD.VertexBuffers.ColorVertexBuffer.GetNumVertices() >= LOD.VertexBuffers.PositionVertexBuffer.GetNumVertices();
-		for (i = is; i < l; ++i) {
+		for (i = is; i < l; ++i) 
+		{
 			if (i < il) 
 			{
 				vi = Indices[i];
+				//UE_LOG(LogTemp, Warning, TEXT("Indices %d : %d"),i, Indices[i]);
 				NewIndexPtr = MeshToSectionVertMap.Find(vi);
 				if (NewIndexPtr != nullptr)
 				{ 
+					//이미 있는 버텍스
 					svi = *NewIndexPtr; 
 				}
 				else 
 				{
+					//없는 버텍스
 					Data.Verts.Emplace(LOD.VertexBuffers.PositionVertexBuffer.VertexPosition(vi));
 					Data.Normals.Emplace(LOD.VertexBuffers.StaticMeshVertexBuffer.VertexTangentZ(vi));
 					Data.UVs.Emplace(LOD.VertexBuffers.StaticMeshVertexBuffer.GetVertexUV(vi, 0));
@@ -214,12 +216,14 @@ void APropBase::GetMeshDataFromStaticMesh(UStaticMesh* Mesh, UPARAM(ref) FMeshDa
 
 		if (!GetAllSections)
 		{
+			UE_LOG(LogTemp, Warning, TEXT("NotUNIFY NUM : %d"), Data.Verts.Num());
 			Data.CountSections(); return;
 		}
 		SectionIndex += 1;
 		sec += 1;
 		Data.NumSections += 1;
 	}
+
 }
 
 void APropBase::SetColorData(UPARAM(ref) FMeshData& Data, FLinearColor Color)
