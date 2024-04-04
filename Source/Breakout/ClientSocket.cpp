@@ -12,11 +12,11 @@
 #include "Runtime/Core/Public/GenericPlatform/GenericPlatformAffinity.h"
 #include "Runtime/Core/Public/HAL/RunnableThread.h"
 #pragma region Main Thread Code
-ClientSocket::ClientSocket(UBOGameInstance* inst) :StopTaskCounter(0)
+ClientSocket::ClientSocket() :StopTaskCounter(0)
 {
-	gameinst = inst;
+	/*gameinst = inst;*/
 	
-	Thread = FRunnableThread::Create(this, TEXT("Network Thread"));
+	
 	
 }
 
@@ -225,7 +225,7 @@ void ClientSocket::Send_Weapon_Type(WeaponType type, int sessionID)
 }
 bool ClientSocket::Init()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Thread has been initialized"));
+	//UE_LOG(LogTemp, Warning, TEXT("Thread has been initialized"));
 	return true;
 }
 uint32 ClientSocket::Run()
@@ -245,7 +245,7 @@ uint32 ClientSocket::Run()
 	//StopTaskCounter.GetValue() == 0
 	// recv while loop 시작
 	// StopTaskCounter 클래스 변수를 사용해 Thread Safety하게 해줌
-	while (true)
+	while (StopTaskCounter.GetValue() == 0)
 	{
 		DWORD num_byte;
 		LONG64 iocp_key;
@@ -317,13 +317,13 @@ void ClientSocket::Exit()
 	}
 }
 
-//bool ClientSocket::StartListen()
-//{
-//	// 스레드 시작
-//	if (Thread != nullptr) return false;
-//	Thread = FRunnableThread::Create(this, TEXT("ClientSocket"), 0, TPri_BelowNormal);
-//	return (Thread != nullptr);
-//}
+bool ClientSocket::StartListen()
+{
+	// 스레드 시작
+	if (Thread != nullptr) return false;
+	Thread = FRunnableThread::Create(this, TEXT("ClientSocket"), 0, TPri_BelowNormal);
+	return (Thread != nullptr);
+}
 //
 //void ClientSocket::StopListen()
 //{

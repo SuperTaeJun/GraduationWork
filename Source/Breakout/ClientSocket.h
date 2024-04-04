@@ -163,7 +163,7 @@ public:
 class BREAKOUT_API ClientSocket : public FRunnable
 {
 public:
-    ClientSocket(UBOGameInstance* inst);
+    ClientSocket();
     virtual ~ClientSocket();
     bool InitSocket();
     bool Connect();
@@ -181,14 +181,15 @@ public:
     char    _pw[MAX_NAME_SIZE];
     void RecvPacket();
     void SendPacket(void* packet);
-   // bool StartListen();
+    bool StartListen();
     //void StopListen();
     bool Send(const int SendSize, void* SendData);
 
- /*   static ClientSocket* GetSingleton() {
+    static ClientSocket* GetSingleton() {
         static ClientSocket ins;
         return &ins;
-    }*/
+    }
+    void SetGameInstance(UBOGameInstance* inst) { gameinst = inst; }
     void SetPlayerController(ACharacterController* CharacterController);
     HANDLE Iocp;
     Overlap _recv_over;

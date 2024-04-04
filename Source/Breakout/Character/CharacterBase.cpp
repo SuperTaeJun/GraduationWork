@@ -687,6 +687,7 @@ void ACharacterBase::GrandeFire_Aiming(const FInputActionValue& Value)
 	{
 		Locations.Add(OnePathData.Location);
 	}
+	SWAimLastLoc =Locations.Last();
 	UNiagaraDataInterfaceArrayFunctionLibrary::SetNiagaraArrayPosition(Aim, FName("PositionArray"), Locations);
 }
 
@@ -695,7 +696,19 @@ void ACharacterBase::GrandeFire(const FInputActionValue& Value)
 	Aim->Deactivate();
 	if (GrendeNum > 0)
 	{
-		GrandeAim();
+		if (BojoMugiType == EBojoMugiType::E_BoobyTrap)
+		{
+			TObjectPtr<UWorld> World = GetWorld();
+			if (World)
+			{
+				FActorSpawnParameters SpawnParms;
+				SpawnParms.Owner = this;
+
+				World->SpawnActor<AProjectileBase>(BoobyTrapClass, SWAimLastLoc, FRotator::ZeroRotator,SpawnParms);
+			}
+		}
+		else
+			GrandeAim();
 	}
 }
 
@@ -738,6 +751,14 @@ void ACharacterBase::Skill_S(const FInputActionValue& Value)
 
 void ACharacterBase::Skill_E(const FInputActionValue& Value)
 {
+}
+
+void ACharacterBase::Detect(const FInputActionValue& Value)
+{
+	if (CurWeapon)
+	{
+		CurWeapon->DetectTool(HitTarget);
+	}
 }
 
 void ACharacterBase::Tick(float DeltaTime)
@@ -811,8 +832,7 @@ void ACharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 		EnhancedInputComponent->BindAction(SelectGrandeAction, ETriggerEvent::Triggered, this, &ACharacterBase::SelectGrande);
 		EnhancedInputComponent->BindAction(SelectWallAction, ETriggerEvent::Triggered, this, &ACharacterBase::SelectWall);
 		EnhancedInputComponent->BindAction(SelectTrapAction, ETriggerEvent::Triggered, this, &ACharacterBase::SelectTrap);
-		//EnhancedInputComponent->BindAction(SkillAction, ETriggerEvent::Triggered, this, &ACharacterBase::Skill_S);
-		//EnhancedInputComponent->BindAction(SkillAction, ETriggerEvent::Completed, this, &ACharacterBase::Skill_E);
+		EnhancedInputComponent->BindAction(DetectAction, ETriggerEvent::Triggered, this, &ACharacterBase::Detect);
 	}
 }
 

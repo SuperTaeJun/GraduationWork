@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Engine/GameInstance.h"
-#include "ClientSocket.h"
+//#include "ClientSocket.h"
 #include "BOGameInstance.generated.h"
 
 UENUM(BlueprintType)
@@ -32,6 +32,6 @@ public:
 
 
 public:
-	ClientSocket* m_Socket;
+	class ClientSocket* m_Socket;
 	bool connect;
 };

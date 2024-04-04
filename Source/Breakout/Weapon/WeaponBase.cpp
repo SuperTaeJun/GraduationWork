@@ -13,7 +13,7 @@
 #include "GameProp/BulletHoleWall.h"
 #include "NiagaraFunctionLibrary.h"
 #include "NiagaraComponent.h"
-
+#include"GameProp/EscapeTool.h"
 //#define TRACE_LENGTH 1000.f
 
 AWeaponBase::AWeaponBase()
@@ -101,6 +101,45 @@ void AWeaponBase::WeaponTraceHit(const FVector& TraceStart, const FVector& HitTa
 				Beam->SetVectorParameter(FName("End"), BeamEnd);
 			}
 
+		}
+	}
+}
+
+void AWeaponBase::DetectTool(FVector& HitRes)
+{
+	APawn* OwnerPawn = Cast<APawn>(GetOwner());
+	if (OwnerPawn == nullptr) return;
+	AController* InstigatorController = OwnerPawn->GetController();
+
+	const USkeletalMeshSocket* MuzzleSocket = GetWeaponMesh()->GetSocketByName("MuzzleFlash");
+	if (MuzzleSocket && InstigatorController)
+	{
+		//UE_LOG(LogTemp, Log, TEXT("TTEST"));
+		FTransform SocketTransform = MuzzleSocket->GetSocketTransform(GetWeaponMesh());
+		FVector Start = SocketTransform.GetLocation();
+		FHitResult DetectHit;
+		TArray<AActor*> DetectOutput;
+		UKismetSystemLibrary::SphereTraceSingle
+		(
+			GetWorld(),
+			Start,
+			Start+(HitRes- Start) * 0.8,
+			30.f,
+			ETraceTypeQuery::TraceTypeQuery1,
+			true,
+			DetectOutput,
+			EDrawDebugTrace::ForOneFrame,
+			DetectHit,
+			true
+		);
+
+		if (DetectHit.bBlockingHit)
+		{
+			if (Cast<AEscapeTool>(DetectHit.GetActor()))
+			{
+				UE_LOG(LogTemp, Warning, TEXT("DETECT"));
+				Cast<AEscapeTool>(DetectHit.GetActor())->SetbDetected(true);
+			}
 		}
 	}
 }
