@@ -65,6 +65,7 @@ protected:
 	EBojoMugiType BojoMugiType;
 	int32 ObtainedEscapeToolNum;
 
+	FVector SWAimLastLoc;
 public:
 	void SetWeapon(TSubclassOf<class AWeaponBase> Weapon, FName SocketName);
 	void SetWeaponUi();
@@ -213,6 +214,8 @@ protected:
 	TObjectPtr<UInputAction> SelectWallAction;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
 	TObjectPtr<UInputAction> SelectTrapAction;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
+	TObjectPtr<UInputAction> DetectAction;
 
 	void Move(const FInputActionValue& Value);
 	void Look(const FInputActionValue& Value);
@@ -232,6 +235,7 @@ protected:
 	void StopJump(const FInputActionValue& Value);
 	virtual void Skill_S(const FInputActionValue& Value);
 	virtual void Skill_E(const FInputActionValue& Value);
+	void Detect(const FInputActionValue& Value);
 };
 
 UENUM(BlueprintType)

@@ -27,7 +27,7 @@ protected:
 public:
 	UFUNCTION()
 	void OnBounce(const FHitResult& ImpactResult, const FVector& ImpactVelocity);
-	virtual void OnHit
-	(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent,
-		FVector NomalImpulse, const FHitResult& Hit) override;
+	//virtual void OnHit
+	//(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent,
+	//	FVector NomalImpulse, const FHitResult& Hit) override;
 };
