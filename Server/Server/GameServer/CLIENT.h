@@ -65,8 +65,10 @@ public:
 public:
     CLIENT() : _state(ST_FREE), _prev_size(0)
     {
-        x = 0;
-        y = 0;
+        //x = 0;
+        //y = 0;
+        _max_exp = 100;
+        _hp = 100;
     }
 
 

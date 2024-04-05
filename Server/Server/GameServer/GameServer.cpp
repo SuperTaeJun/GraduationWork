@@ -26,12 +26,13 @@ void show_err();
 int get_id();
 void send_select_character_type_packet(int _s_id);
 void send_login_ok_packet(int _s_id);
-void send_login_fail_packet(int _s_id);
+//void send_login_fail_packet(int _s_id);
 void send_move_packet(int _id, int target);
-void send_remove_object(int _s_id, int victim);
+//void send_remove_object(int _s_id, int victim);
 void send_put_object(int _s_id, int target);
 void Disconnect(int _s_id);
 void send_ready_packet(int _s_id);
+void send_damage_packet(int _s_id);
 void worker_thread();
 
 int main()
@@ -77,7 +78,7 @@ int main()
 	//int nThreadCnt = 5;
 
 
-	for (int i = 0; i < 32; ++i)
+	for (int i = 0; i < 10; ++i)
 		worker_threads.emplace_back(worker_thread);
 
 	for (auto& th : worker_threads)
@@ -209,7 +210,7 @@ void process_packet(int s_id, char* p)
 		CLIENT& cl = clients[s_id];
 		cout << "[Recv login] ID :" << packet->id << ", PASSWORD : " << packet->pw << endl;
 		cl.state_lock.lock();
-		cl._state = ST_LOBBY;
+		cl._state = ST_INGAME;
 		cl.state_lock.unlock();
 		/*cl.x = packet->x;
 		cl.y = packet->y;
@@ -367,7 +368,7 @@ void process_packet(int s_id, char* p)
 		if (ready_count >= 2)
 		{
 			for (auto& player : clients) {
-				if (ST_LOBBY != player._state)
+				if (ST_INGAME != player._state)
 					continue;
 				m.lock();
 				send_ready_packet(player._s_id);
@@ -376,6 +377,12 @@ void process_packet(int s_id, char* p)
 			}
 			cl._state = ST_INGAME;
 		}
+		break;
+	}
+	case CS_ATTACK: {
+		CS_ATTACK_PLAYER* packet = reinterpret_cast<CS_ATTACK_PLAYER*>(p);
+		CLIENT& cl = clients[packet->attack_id];
+		send_damage_packet(packet->attack_id);
 		break;
 	}
 	default:
@@ -514,5 +521,14 @@ void send_ready_packet(int _s_id)
 	packet.size = sizeof(packet);
 	packet.type = SC_ALL_READY;
 	packet.ingame = true;
+	clients[_s_id].do_send(sizeof(packet), &packet);
+}
+
+void send_damage_packet(int _s_id)
+{
+	SC_ATTACK_PLAYER packet;
+	packet.size = sizeof(packet);
+	packet.type = SC_DAMAGED;
+	packet.clientid = _s_id;
 	clients[_s_id].do_send(sizeof(packet), &packet);
 }

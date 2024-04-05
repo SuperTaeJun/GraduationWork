@@ -74,8 +74,11 @@ public:
 	bool GetbInRespon() { return bInRespon; }
 	void SetbShowSelect(bool _bShowSelect) {bShowSelectUi = _bShowSelect;}
 	void SetbCanObtainEscapeTool(bool _bCanObtain);
+	void SetHealth(float DamagedHp);
+
 	class AWeaponBase* GetWeapon() { return CurWeapon; }
 	FORCEINLINE float GetHealth() const { return Health; }
+	FORCEINLINE bool GetbFfirePressed() const { return bFirePressed; }
 	FORCEINLINE float MaxGetHealth() const { return MaxHealth; }
 	FORCEINLINE float GetStamina() const { return Stamina; }
 	FORCEINLINE float MaxGetStamina() const { return MaxStamina; }

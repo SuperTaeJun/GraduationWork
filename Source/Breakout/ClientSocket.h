@@ -32,6 +32,7 @@ public:
 
     // 세션 아이디
     int Id = -1;
+    int hp;
     // 아이디 비번
     char    userId[20] = {};
     char    userPw[20] = {};
@@ -49,6 +50,7 @@ public:
     float VeloZ = 0;
     float Max_Speed = 400;
     bool  IsAlive = true;
+    bool  canfire = false;
     FVector FMyLocation;
     FVector FMyDirection;
     PlayerType p_type;
@@ -174,6 +176,8 @@ public:
     void Send_Character_Type(PlayerType type);
     void Send_Weapon_Type(WeaponType type, int id);
     void Send_Ready_Packet(bool ready);
+
+    void Send_AttackPacket(int attack_id);
     virtual bool Init() override;
     virtual uint32 Run() override;
     virtual void Stop() override;
@@ -184,8 +188,7 @@ public:
     void SendPacket(void* packet);
     bool StartListen();
     //void StopListen();
-    bool Send(const int SendSize, void* SendData);
-
+    
     static ClientSocket* GetSingleton() {
         static ClientSocket ins;
         return &ins;

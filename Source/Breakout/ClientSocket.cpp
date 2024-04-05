@@ -161,6 +161,15 @@ bool ClientSocket::PacketProcess(char* ptr)
 		bAllReady = true;
 		break;
 	}
+	case SC_DAMAGED: {
+		UE_LOG(LogTemp, Warning, TEXT("chong"));
+		SC_ATTACK_PLAYER* packet = reinterpret_cast<SC_ATTACK_PLAYER*>(ptr);
+		int attackid = packet->clientid;
+		MyCharacterController->SetAttack(attackid);
+		// = packet->hp;
+		//PlayerInfo.players[packet].w_type = packet->weapon_type;	}
+		break;
+	}
 	default:
 		break;
 	}
@@ -235,6 +244,15 @@ void ClientSocket::Send_Ready_Packet(bool ready)
 	CS_READY_PACKET packet;
 	packet.size = sizeof(packet);
 	packet.type = CS_READY;
+	SendPacket(&packet);
+}
+void ClientSocket::Send_AttackPacket(int attack_id)
+{
+	UE_LOG(LogClass, Warning, TEXT("Send_AttackPacket"));
+	CS_ATTACK_PLAYER packet;
+	packet.size = sizeof(packet);
+	packet.type = CS_ATTACK;
+	packet.attack_id = attack_id;
 	SendPacket(&packet);
 }
 bool ClientSocket::Init()

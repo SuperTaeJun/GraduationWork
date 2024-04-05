@@ -94,7 +94,7 @@ public:
 	//-----------------------------------------------------
 	void SetNewCharacterInfo(std::shared_ptr<CPlayer> InitPlayer);
 	void SetNewWeaponMesh(std::shared_ptr<CPlayer> InitPlayer);
-
+	void SetAttack(int _id);
 	void UpdatePlayer();
 	//동기화 용
 	void UpdateSyncPlayer();

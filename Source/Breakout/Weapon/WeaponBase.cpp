@@ -14,6 +14,7 @@
 #include "NiagaraFunctionLibrary.h"
 #include "NiagaraComponent.h"
 #include"GameProp/EscapeTool.h"
+#include "Game/BOGameInstance.h"
 //#define TRACE_LENGTH 1000.f
 
 AWeaponBase::AWeaponBase()
@@ -158,9 +159,10 @@ void AWeaponBase::Fire(const FVector& HitTarget)
 	AController* InstigatorController = OwnerPawn->GetController();
 
 	const USkeletalMeshSocket* MuzzleSocket = GetWeaponMesh()->GetSocketByName("MuzzleFlash");
-	if (MuzzleSocket && InstigatorController)
+	if (MuzzleSocket /*&& InstigatorController*/)
 	{
-		//UE_LOG(LogTemp, Log, TEXT("TTEST"));
+
+		UE_LOG(LogTemp, Log, TEXT("TTEST"));
 		FTransform SocketTransform = MuzzleSocket->GetSocketTransform(GetWeaponMesh());
 		FVector Start = SocketTransform.GetLocation();
 
@@ -177,17 +179,17 @@ void AWeaponBase::Fire(const FVector& HitTarget)
 				ABulletHoleWall* DamagedWall = Cast<ABulletHoleWall>(FireHit.GetActor());
 				if (DamagedCharacter)
 				{
-					if (HasAuthority())
-					{
-						//UE_LOG(LogTemp, Log, TEXT("HIt"));
-						UGameplayStatics::ApplyDamage(
-							DamagedCharacter,
-							Damage,
-							InstigatorController,
-							this,
-							UDamageType::StaticClass()
-						);
-					}
+					//if (HasAuthority())
+					//{
+					//	//UE_LOG(LogTemp, Log, TEXT("HIt"));
+					//	UGameplayStatics::ApplyDamage(
+					//		DamagedCharacter,
+					//		Damage,
+					//		InstigatorController,
+					//		this,
+					//		UDamageType::StaticClass()
+					//	);
+					//}
 				}
 				else if (DamagedWall)
 				{
@@ -206,6 +208,7 @@ void AWeaponBase::Fire(const FVector& HitTarget)
 
 			}
 		}
+		Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_AttackPacket(Cast<ACharacterBase>(GetOwner())->_SessionId);
 	}
 }
 
