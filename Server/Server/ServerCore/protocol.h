@@ -1,7 +1,7 @@
 #pragma once
 #define SERVER_PORT		8001
 
-#define SERVER_IP		"192.168.0.2"
+#define SERVER_IP		"192.168.103.15"
 #define MAX_INFO_SIZE   20
 //const char CS_PACKET_ATTACK = 3;
 enum PlayerType
@@ -90,19 +90,21 @@ struct SC_PLAYER_SYNC {
 	float yaw;
 	//char object_type;
 	char name[MAX_INFO_SIZE];
-	//PlayerType p_type;
+	PlayerType p_type;
 };
 struct CS_SELECT_CHARACTER
 {
 	unsigned char size;
 	unsigned type;
 	int id;
+	float x, y, z;
 	PlayerType p_type;
 };
 struct SC_SELECT_CHARACTER_BACK {
 	unsigned char size;
 	unsigned type;
 	int clientid;
+	float x, y, z;
 	PlayerType p_type;
 };
 struct CS_SELECT_WEAPO

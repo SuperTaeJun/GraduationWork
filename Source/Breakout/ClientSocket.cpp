@@ -112,7 +112,7 @@ bool ClientSocket::PacketProcess(char* ptr)
 		info->Y = packet->y;
 		info->Z = packet->z;
 		info->Yaw = packet->yaw;
-		//info->p_type = packet->p_type;
+		info->p_type = packet->p_type;
 		//float z = packet->z;
 		UE_LOG(LogClass, Warning, TEXT("recv - info->id: %d,"), info->Id);
 		MyCharacterController->SetNewCharacterInfo(info);
@@ -137,9 +137,9 @@ bool ClientSocket::PacketProcess(char* ptr)
 		SC_SELECT_CHARACTER_BACK* packet = reinterpret_cast<SC_SELECT_CHARACTER_BACK*>(ptr);
 		CPlayer player;
 		player.Id = packet->clientid;
-		//player.X = packet->x;
-		//player.Y = packet->y;
-		//player.Z = packet->z;
+		player.X = packet->x;
+		player.Y = packet->y;
+		player.Z = packet->z;
 		player.p_type = packet->p_type;
 		PlayerInfo.players[player.Id] = player;
 		MyCharacterController->SetPlayerID(player.Id);
@@ -170,11 +170,7 @@ void ClientSocket::Send_Login_Info(char* id, char* pw)
 	strcpy_s(packet.id, id);
 	strcpy_s(packet.pw, pw);
 	//cs_login_packet
-	//auto location = player->GetActorLocation();
-	//packet.x = location.X;
-	//packet.y = location.Y;
-	//packet.z = location.Z;
-	//packet.p_type = character_type;
+	
 	SendPacket(&packet);
 	//Send(packet.size, &packet);
 	UE_LOG(LogClass, Warning, TEXT("Sending login info - id: %s, pw: %s"), ANSI_TO_TCHAR(id), ANSI_TO_TCHAR(pw));
@@ -209,6 +205,11 @@ void ClientSocket::Send_Character_Type(PlayerType type)
 	packet.size = sizeof(packet);
 	packet.type = CS_SELECT_CHAR;
 	//Send(packet.size, &packet);
+	auto location = player->GetActorLocation();
+	packet.x = location.X;
+	packet.y = location.Y;
+	packet.z = location.Z;
+	//packet.p_type = character_type;
 	packet.p_type = type;
 	SendPacket(&packet);
 }
