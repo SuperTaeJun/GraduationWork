@@ -14,6 +14,6 @@ void AGameRoomMode::Tick(float Delta)
 
 	//UE_LOG(LogTemp, Warning, TEXT("HAHAH"));
 	//UE_LOG(LogTemp, Warning, TEXT("INST TICK"));
-	if (true == Cast<UBOGameInstance>(GetGameInstance())->m_Socket->bAllReady)
-		GetWorld()->ServerTravel(FString("/Game/Maps/MainMap"), true);
+	/*if (true == Cast<UBOGameInstance>(GetGameInstance())->m_Socket->bAllReady)
+		GetWorld()->ServerTravel(FString("/Game/Maps/MainMap"), true);*/
 }
