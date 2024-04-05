@@ -27,11 +27,6 @@
 		{
 			"Name": "ActorSequence",
 			"Enabled": false
-		},
-		{
-			"Name": "MeshOpsPlugin",
-			"Enabled": false,
-			"MarketplaceURL": "com.epicgames.launcher://ue/marketplace/product/84e127de57ed4e12877b1337b4e25ad1"
 		}
 	]
 }
