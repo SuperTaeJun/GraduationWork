@@ -20,7 +20,6 @@ class BREAKOUT_API USelectCharacterUi : public UUserWidget
 public:
 	virtual void NativeConstruct() override;
 	void SetAllCharacterMeshWithTag();
-
 	TObjectPtr<class ASkeletalMeshActor> Character1Mesh;
 	TObjectPtr<class ASkeletalMeshActor> Character2Mesh;
 	TObjectPtr<class ASkeletalMeshActor> Character3Mesh;

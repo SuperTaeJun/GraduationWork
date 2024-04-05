@@ -1,7 +1,7 @@
 #pragma once
 #define SERVER_PORT		8001
 
-#define SERVER_IP		"192.168.103.15"
+#define SERVER_IP		"192.168.87.28"
 #define MAX_INFO_SIZE   20
 //const char CS_PACKET_ATTACK = 3;
 enum PlayerType
@@ -30,13 +30,15 @@ const char CS_LOGIN = 1;
 const char CS_MOVE_Packet = 0;
 const char CS_SELECT_CHAR = 3;
 const char CS_SELECT_WEP = 4;
+const char CS_READY = 5;
+
 
 const char SC_LOGIN_OK = 1;
 const char SC_OTHER_PLAYER = 2;
 const char SC_MOVE_PLAYER = 3;
 const char SC_CHAR_BACK = 4;
 const char SC_OTHER_WEAPO = 5;
-
+const char SC_ALL_READY = 6;
 
 //const char CS_PACKET_DAMAGE = 7;
 //const char CS_PACKET_GET_ITEM = 8;
@@ -120,6 +122,15 @@ struct SC_SYNC_WEAPO
 	unsigned type;
 	int id;
 	WeaponType weapon_type;
+};
+struct CS_READY_PACKET {
+	unsigned char size;
+	unsigned type;
+};
+struct SC_ACCEPT_READY {
+	unsigned char size;
+	unsigned type;
+	bool ingame;
 };
 #pragma pack(pop)
 

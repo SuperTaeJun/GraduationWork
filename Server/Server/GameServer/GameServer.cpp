@@ -8,13 +8,15 @@
 #include "Overlap.h"
 #include <thread>
 #include <string>
+#include <mutex>
 #include <atomic>
 using namespace std;
+mutex m;
 HANDLE g_h_iocp;
 SOCKET sever_socket;
 concurrency::concurrent_priority_queue <timer_ev> timer_q;
 array <CLIENT, MAX_USER> clients;
-
+atomic<int> ready_count = 0;
 using std::chrono::duration_cast;
 using std::chrono::milliseconds;
 using std::chrono::seconds;
@@ -29,7 +31,7 @@ void send_move_packet(int _id, int target);
 void send_remove_object(int _s_id, int victim);
 void send_put_object(int _s_id, int target);
 void Disconnect(int _s_id);
-
+void send_ready_packet(int _s_id);
 void worker_thread();
 
 int main()
@@ -207,7 +209,7 @@ void process_packet(int s_id, char* p)
 		CLIENT& cl = clients[s_id];
 		cout << "[Recv login] ID :" << packet->id << ", PASSWORD : " << packet->pw << endl;
 		cl.state_lock.lock();
-		cl._state = ST_INGAME;
+		cl._state = ST_LOBBY;
 		cl.state_lock.unlock();
 		/*cl.x = packet->x;
 		cl.y = packet->y;
@@ -356,6 +358,26 @@ void process_packet(int s_id, char* p)
 		}
 		break;
 	}
+	case CS_READY:
+	{
+		CS_READY_PACKET* packet = reinterpret_cast<CS_READY_PACKET*>(p);
+		CLIENT& cl = clients[s_id];
+		ready_count++;
+		cout << "ready_count" << ready_count << endl;
+		if (ready_count >= 2)
+		{
+			for (auto& player : clients) {
+				if (ST_LOBBY != player._state)
+					continue;
+				m.lock();
+				send_ready_packet(player._s_id);
+				cout << "보낼 플레이어" << player._s_id << endl;
+				m.unlock();
+			}
+			cl._state = ST_INGAME;
+		}
+		break;
+	}
 	default:
 		cout << " 오류패킷타입 : " << p << endl;
 		break;
@@ -486,3 +508,11 @@ void send_move_packet(int _id, int target)
 	clients[_id].do_send(sizeof(packet), &packet);
 }
 
+void send_ready_packet(int _s_id)
+{
+	SC_ACCEPT_READY packet;
+	packet.size = sizeof(packet);
+	packet.type = SC_ALL_READY;
+	packet.ingame = true;
+	clients[_s_id].do_send(sizeof(packet), &packet);
+}

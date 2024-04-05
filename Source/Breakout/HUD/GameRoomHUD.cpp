@@ -3,6 +3,7 @@
 
 #include "HUD/GameRoomHUD.h"
 #include "HUD/SelectCharacterUi.h"
+#include "Game/BOGameInstance.h"
 #include "HUD/Login.h"
 
 void AGameRoomHUD::BeginPlay()

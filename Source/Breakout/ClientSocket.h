@@ -173,6 +173,7 @@ public:
     void Send_Move_Packet(int sessionID, FVector Location, FRotator Rotation, FVector Velocity, float Max_speed);
     void Send_Character_Type(PlayerType type);
     void Send_Weapon_Type(WeaponType type, int id);
+    void Send_Ready_Packet(bool ready);
     virtual bool Init() override;
     virtual uint32 Run() override;
     virtual void Stop() override;
@@ -201,6 +202,7 @@ public:
     int _prev_size = 0;
     int local_id = -1;
     bool login_cond = false;
+    bool bAllReady = false;
     Concurrency::concurrent_queue<char> buffer;
 private:
     ACharacterController* MyCharacterController;

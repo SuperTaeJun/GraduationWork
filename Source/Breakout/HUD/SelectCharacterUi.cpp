@@ -55,8 +55,10 @@ void USelectCharacterUi::SetAllCharacterMeshWithTag()
 
 void USelectCharacterUi::Matching()
 {
-	if(bClicked)
-		GetWorld()->ServerTravel(FString("/Game/Maps/MainMap"), true);
+	if(bClicked){
+		Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Ready_Packet(bClicked);
+	}
+		//GetWorld()->ServerTravel(FString("/Game/Maps/MainMap"), true);
 }
 
 // 캐릭터 선택 패킷 보내는 곳

@@ -155,6 +155,12 @@ bool ClientSocket::PacketProcess(char* ptr)
 
 		break;
 	}
+	case SC_ALL_READY: {
+		SC_ACCEPT_READY* packet = reinterpret_cast<SC_ACCEPT_READY*>(ptr);
+		UE_LOG(LogTemp, Warning, TEXT("recv - all ready packet"));
+		bAllReady = true;
+		break;
+	}
 	default:
 		break;
 	}
@@ -222,6 +228,13 @@ void ClientSocket::Send_Weapon_Type(WeaponType type, int sessionID)
 	packet.id = sessionID;
 	packet.weapon_type = type;
 	//Send(packet.size, &packet);
+	SendPacket(&packet);
+}
+void ClientSocket::Send_Ready_Packet(bool ready)
+{
+	CS_READY_PACKET packet;
+	packet.size = sizeof(packet);
+	packet.type = CS_READY;
 	SendPacket(&packet);
 }
 bool ClientSocket::Init()
@@ -345,16 +358,16 @@ void ClientSocket::SetPlayerController(ACharacterController* CharacterController
 	}
 }
 
-bool ClientSocket::Send(const int SendSize, void* SendData)
-{
-	char buff[BUFSIZE];
-	memcpy(buff, SendData, SendSize);
-
-	int nSendLen = send(ServerSocket, buff, buff[0], 0);
-	UE_LOG(LogNet, Display, TEXT("Send Packet SIZE %d"), nSendLen);
-
-	return true;
-}
+//bool ClientSocket::Send(const int SendSize, void* SendData)
+//{
+//	char buff[BUFSIZE];
+//	memcpy(buff, SendData, SendSize);
+//
+//	int nSendLen = send(ServerSocket, buff, buff[0], 0);
+//	UE_LOG(LogNet, Display, TEXT("Send Packet SIZE %d"), nSendLen);
+//
+//	return true;
+//}
 void ClientSocket::RecvPacket()
 {
 	//UE_LOG(LogClass, Warning, TEXT("recv data"));
