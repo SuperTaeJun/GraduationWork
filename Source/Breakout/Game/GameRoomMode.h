@@ -15,4 +15,6 @@ class BREAKOUT_API AGameRoomMode : public AGameMode
 	GENERATED_BODY()
 public:
 	AGameRoomMode();
+
+	virtual void Tick(float Delta) override;
 };

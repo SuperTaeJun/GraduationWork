@@ -8,13 +8,15 @@
 #include "Overlap.h"
 #include <thread>
 #include <string>
+#include <mutex>
 #include <atomic>
 using namespace std;
+mutex m;
 HANDLE g_h_iocp;
 SOCKET sever_socket;
 concurrency::concurrent_priority_queue <timer_ev> timer_q;
 array <CLIENT, MAX_USER> clients;
-
+atomic<int> ready_count = 0;
 using std::chrono::duration_cast;
 using std::chrono::milliseconds;
 using std::chrono::seconds;
@@ -29,7 +31,7 @@ void send_move_packet(int _id, int target);
 void send_remove_object(int _s_id, int victim);
 void send_put_object(int _s_id, int target);
 void Disconnect(int _s_id);
-void process_packet(int _s_id);
+void send_ready_packet(int _s_id);
 void worker_thread();
 
 int main()
@@ -137,6 +139,9 @@ void send_select_character_type_packet(int _s_id)
 	packet.size = sizeof(packet);
 	packet.type = SC_CHAR_BACK;
 	packet.clientid = _s_id;
+	packet.x = clients[_s_id].x;
+	packet.y = clients[_s_id].y;
+	packet.z = clients[_s_id].z;
 	packet.p_type = clients[_s_id].p_type;
 	clients[_s_id].do_send(sizeof(packet), &packet);
 }
@@ -204,7 +209,7 @@ void process_packet(int s_id, char* p)
 		CLIENT& cl = clients[s_id];
 		cout << "[Recv login] ID :" << packet->id << ", PASSWORD : " << packet->pw << endl;
 		cl.state_lock.lock();
-		cl._state = ST_INGAME;
+		cl._state = ST_LOBBY;
 		cl.state_lock.unlock();
 		/*cl.x = packet->x;
 		cl.y = packet->y;
@@ -223,6 +228,9 @@ void process_packet(int s_id, char* p)
 	case CS_SELECT_CHAR: {
 		CS_SELECT_CHARACTER* packet = reinterpret_cast<CS_SELECT_CHARACTER*>(p);
 		CLIENT& cl = clients[s_id];
+		cl.x = packet->x;
+		cl.y = packet->y;
+		cl.z = packet->z;
 		cl.p_type = packet->p_type;
 		send_select_character_type_packet(cl._s_id);
 		cout << "cl._s_id : " << cl._s_id << ",  " << cl.p_type << endl;
@@ -246,7 +254,7 @@ void process_packet(int s_id, char* p)
 			packet.z = cl.z;
 			packet.yaw = cl.Yaw;
 			packet.Max_speed = cl.Max_Speed;
-			//packet.p_type = cl.p_type;
+			packet.p_type = cl.p_type;
 			printf_s("[Send put object] id : %d, location : (%f,%f,%f), yaw : %f\n", packet.id, packet.x, packet.y, packet.z, packet.yaw);
 			cout << "이거 누구한테 감 :  ?" << other._s_id << endl;
 			other.do_send(sizeof(packet), &packet);
@@ -274,7 +282,7 @@ void process_packet(int s_id, char* p)
 			packet.z = other.z;
 			packet.yaw = other.Yaw;
 			packet.Max_speed = other.Max_Speed;
-			//packet.p_type = other.p_type;
+			packet.p_type = other.p_type;
 			printf_s("[어떤 클라의 Send put object] id : %d, location : (%f,%f,%f), yaw : %f\n", packet.id, packet.x, packet.y, packet.z, packet.yaw);
 
 			cl.do_send(sizeof(packet), &packet);
@@ -347,6 +355,26 @@ void process_packet(int s_id, char* p)
 			packet.weapon_type = other.w_type;
 			//printf_s("[어떤 클라의 Send put object] id : %d, location : (%f,%f,%f), yaw : %f\n", packet.id, packet.x, packet.y, packet.z, packet.yaw);
 			cl.do_send(sizeof(packet), &packet);
+		}
+		break;
+	}
+	case CS_READY:
+	{
+		CS_READY_PACKET* packet = reinterpret_cast<CS_READY_PACKET*>(p);
+		CLIENT& cl = clients[s_id];
+		ready_count++;
+		cout << "ready_count" << ready_count << endl;
+		if (ready_count >= 2)
+		{
+			for (auto& player : clients) {
+				if (ST_LOBBY != player._state)
+					continue;
+				m.lock();
+				send_ready_packet(player._s_id);
+				cout << "보낼 플레이어" << player._s_id << endl;
+				m.unlock();
+			}
+			cl._state = ST_INGAME;
 		}
 		break;
 	}
@@ -480,3 +508,11 @@ void send_move_packet(int _id, int target)
 	clients[_id].do_send(sizeof(packet), &packet);
 }
 
+void send_ready_packet(int _s_id)
+{
+	SC_ACCEPT_READY packet;
+	packet.size = sizeof(packet);
+	packet.type = SC_ALL_READY;
+	packet.ingame = true;
+	clients[_s_id].do_send(sizeof(packet), &packet);
+}

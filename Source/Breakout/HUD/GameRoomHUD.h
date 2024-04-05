@@ -15,6 +15,7 @@ class BREAKOUT_API AGameRoomHUD : public AHUD
 	GENERATED_BODY()
 	
 public:
+
 	UPROPERTY(EditAnywhere, Category = "Player State")
 	TSubclassOf<class UUserWidget>SelectCharacterClass;
 

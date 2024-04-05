@@ -36,7 +36,7 @@ ACharacterBase::ACharacterBase()
 	TurningType = ETurningInPlace::ETIP_NotTurning;
 	CharacterState = ECharacterState::ECS_DEFAULT;
 
-
+	GetCapsuleComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Visibility, ECollisionResponse::ECR_Block);
 
 	GetMesh()->SetRelativeLocationAndRotation(FVector(0.f, 0.f, -90.f), FRotator(0.f, -90.f, 0.f));
 

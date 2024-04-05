@@ -53,7 +53,7 @@ public:
     CL_STATE _state;
     atomic_bool   _is_active = false;
 
-    COMBAT _combat;
+    //COMBAT _combat;
 
     atomic_int    _count;
     int      _type;   // 1.Player 2.고블린  3.오거 4.드래곤(Boss)   
