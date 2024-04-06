@@ -18,12 +18,16 @@ public:
 	ABOGameMode();
 	//virtual void PlayerRemove(class ACharacterBase* RemovedCharacter, class ACharacterController* RemovedCharacterController, class ACharacterController* AttackerController);
 	void Respawn(class ACharacter* RespawnedCh, class AController* RespawnedController, FName TagName);
+	//캐릭터 선택한거 적용
 	virtual UClass* GetDefaultPawnClassForController_Implementation(AController* InController) override;
+	//맨처음 캐릭터 시작위치 지정
+	virtual AActor* ChoosePlayerStart_Implementation(AController* Player) override;
 
 	TSubclassOf<class ACharacterBase>Character1;
 	TSubclassOf<class ACharacterBase>Character2;
 	TSubclassOf<class ACharacterBase>Character3;
 	TSubclassOf<class ACharacterBase>Character4;
+
 //private:
 //	ClientSocket* m_Socket;
 //	bool connect;

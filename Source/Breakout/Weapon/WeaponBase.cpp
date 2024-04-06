@@ -208,7 +208,7 @@ void AWeaponBase::Fire(const FVector& HitTarget)
 
 			}
 		}
-		Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_AttackPacket(Cast<ACharacterBase>(GetOwner())->_SessionId);
+		//Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_AttackPacket(Cast<ACharacterBase>(GetOwner())->_SessionId);
 	}
 }
 
