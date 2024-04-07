@@ -25,6 +25,9 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	int32 MaxAmmo = 10;
+
+	FVector StartBeam;
+	FVector EndBeam;
 private:
 	UPROPERTY(EditAnywhere, Category = "Weapon Properties")
 	TObjectPtr<class USkeletalMeshComponent> WeaponMesh;
@@ -55,6 +58,7 @@ protected:
 
 	UPROPERTY(EditAnywhere)
 	class UNiagaraSystem* ImpactNiagara;
+public:
 	UPROPERTY(EditAnywhere)
 	class UNiagaraSystem* BeamNiagara;
 

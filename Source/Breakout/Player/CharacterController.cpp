@@ -16,6 +16,7 @@
 #include "Weapon/WeaponBase.h"
 #include "Components/Image.h"
 #include "Game/BOGameInstance.h"
+#include "Weapon/RocketLauncher.h"
 //#include "Network/PacketData.h"
 #include "../../Server/Server/ServerCore/protocol.h"
 #include <string>
@@ -346,11 +347,8 @@ bool ACharacterController::UpdateWorld()
 
 			if (!info->IsAlive) continue;
 
-			if (info->canfire) {
-				UE_LOG(LogTemp, Warning, TEXT("for"));
-				OtherPlayer->GetCurWeapon()->Fire(OtherPlayer->GetHitTarget());
-				info->canfire = false;
-			}
+		
+		
 
 			if (!OtherPlayer || OtherPlayer->_SessionId == -1 || OtherPlayer->_SessionId == id)
 			{
@@ -394,6 +392,13 @@ bool ACharacterController::UpdateWorld()
 			OtherPlayer->SetActorRotation(PlayerRotation);
 			OtherPlayer->SetActorLocation(PlayerLocation);
 			OtherPlayer->GetCharacterMovement()->MaxWalkSpeed = info->Max_Speed;
+			if (OtherPlayer->GetCurWeapon() && info->canfire==true)
+			{
+				UE_LOG(LogTemp, Warning, TEXT("kkkkk"));
+				OtherPlayer->SpawnBeam(info->Sshot, info->Eshot);
+				info->canfire = false;
+			}
+			
 
 		}
 	}

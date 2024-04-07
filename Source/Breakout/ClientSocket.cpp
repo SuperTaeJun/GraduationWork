@@ -164,9 +164,15 @@ bool ClientSocket::PacketProcess(char* ptr)
 	case SC_DAMAGED: {
 		UE_LOG(LogTemp, Warning, TEXT("chong"));
 		SC_ATTACK_PLAYER* packet = reinterpret_cast<SC_ATTACK_PLAYER*>(ptr);
-		int attackid = packet->clientid;
-		MyCharacterController->SetAttack(attackid);
-		// = packet->hp;
+		
+		PlayerInfo.players[packet->clientid].Sshot.X = packet->sx;
+		PlayerInfo.players[packet->clientid].Sshot.Y = packet->sy;
+		PlayerInfo.players[packet->clientid].Sshot.Z = packet->sz;
+		PlayerInfo.players[packet->clientid].Eshot.X = packet->ex;
+		PlayerInfo.players[packet->clientid].Eshot.Y = packet->ey;
+		PlayerInfo.players[packet->clientid].Eshot.Z = packet->ez;
+		MyCharacterController->SetAttack(packet->clientid);
+		// = packet->hp;1
 		//PlayerInfo.players[packet].w_type = packet->weapon_type;	}
 		break;
 	}
@@ -246,13 +252,19 @@ void ClientSocket::Send_Ready_Packet(bool ready)
 	packet.type = CS_READY;
 	SendPacket(&packet);
 }
-void ClientSocket::Send_AttackPacket(int attack_id)
+void ClientSocket::Send_AttackPacket(int attack_id, FVector SLoc, FVector ELoc)
 {
 	UE_LOG(LogClass, Warning, TEXT("Send_AttackPacket"));
 	CS_ATTACK_PLAYER packet;
 	packet.size = sizeof(packet);
 	packet.type = CS_ATTACK;
 	packet.attack_id = attack_id;
+	packet.sx = SLoc.X;
+	packet.sy = SLoc.Y;
+	packet.sz = SLoc.Z;
+	packet.ex = ELoc.X;
+	packet.ey = ELoc.Y;
+	packet.ez = ELoc.Z;
 	SendPacket(&packet);
 }
 bool ClientSocket::Init()

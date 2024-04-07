@@ -51,6 +51,8 @@ public:
     float Max_Speed = 400;
     bool  IsAlive = true;
     bool  canfire = false;
+    FVector Sshot;
+    FVector Eshot;
     FVector FMyLocation;
     FVector FMyDirection;
     PlayerType p_type;
@@ -177,7 +179,7 @@ public:
     void Send_Weapon_Type(WeaponType type, int id);
     void Send_Ready_Packet(bool ready);
 
-    void Send_AttackPacket(int attack_id);
+    void Send_AttackPacket(int attack_id, FVector SLoc, FVector ELoc);
     virtual bool Init() override;
     virtual uint32 Run() override;
     virtual void Stop() override;

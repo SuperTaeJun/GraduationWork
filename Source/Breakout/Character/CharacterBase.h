@@ -75,6 +75,8 @@ public:
 	void SetbShowSelect(bool _bShowSelect) {bShowSelectUi = _bShowSelect;}
 	void SetbCanObtainEscapeTool(bool _bCanObtain);
 	void SetHealth(float DamagedHp);
+	void SpawnBeam(FVector StartBeam, FVector EndBeam);
+
 
 	class AWeaponBase* GetWeapon() { return CurWeapon; }
 	FORCEINLINE float GetHealth() const { return Health; }

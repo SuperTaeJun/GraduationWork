@@ -303,7 +303,7 @@ void process_packet(int s_id, char* p)
 		cl.VY = packet->vy;
 		cl.VZ = packet->vz;
 		cl.Max_Speed = packet->Max_speed;
-		cout << "플레이어[" << packet->id << "]" << "  x:" << packet->x << endl;
+		//cout << "플레이어[" << packet->id << "]" << "  x:" << packet->x << endl;
 		//cout <<"플레이어["<< packet->id<<"]" << "  x:" << packet->vx << " y:" << packet->y << " z:" << packet->z << "speed : " << packet->speed << endl;
 		//클라 recv 확인용
 
@@ -313,7 +313,7 @@ void process_packet(int s_id, char* p)
 			if (ST_INGAME != other._state)
 				continue;
 			send_move_packet(other._s_id, cl._s_id);
-			cout << "움직인 플레이어" << cl._s_id << "보낼 플레이어" << other._s_id << endl;
+			//cout << "움직인 플레이어" << cl._s_id << "보낼 플레이어" << other._s_id << endl;
 
 		}
 		break;
@@ -382,6 +382,13 @@ void process_packet(int s_id, char* p)
 	case CS_ATTACK: {
 		CS_ATTACK_PLAYER* packet = reinterpret_cast<CS_ATTACK_PLAYER*>(p);
 		CLIENT& cl = clients[packet->attack_id];
+		cl.s_x = packet->sx;
+		cl.s_y = packet->sy;
+		cl.s_z = packet->sz;
+		cl.e_x = packet->ex;
+		cl.e_y = packet->ey;
+		cl.e_z = packet->ez;
+		cout << "cl.s_x" << cl.s_x << "cl.e_x" << cl.e_x << endl;
 		send_damage_packet(packet->attack_id);
 		break;
 	}
@@ -530,5 +537,11 @@ void send_damage_packet(int _s_id)
 	packet.size = sizeof(packet);
 	packet.type = SC_DAMAGED;
 	packet.clientid = _s_id;
+	packet.sx = clients[_s_id].s_x;
+	packet.sy = clients[_s_id].s_y;
+	packet.sz = clients[_s_id].s_z;
+	packet.ex = clients[_s_id].e_x;
+	packet.ey = clients[_s_id].e_y;
+	packet.ez = clients[_s_id].e_z;
 	clients[_s_id].do_send(sizeof(packet), &packet);
 }

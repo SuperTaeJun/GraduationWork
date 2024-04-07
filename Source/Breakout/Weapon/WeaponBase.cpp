@@ -24,7 +24,7 @@ AWeaponBase::AWeaponBase()
 	WeaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("WeaponMesh"));
 	SetRootComponent(WeaponMesh);
 
-
+	BeamNiagara = ConstructorHelpers::FObjectFinder<UNiagaraSystem>(TEXT("/Script/Niagara.NiagaraSystem'/Game/Niagara/Weapon/RifleAndShotgun/NS_Beam.NS_Beam'")).Object;
 }
 
 // Called when the game starts or when spawned
@@ -88,6 +88,8 @@ void AWeaponBase::WeaponTraceHit(const FVector& TraceStart, const FVector& HitTa
 		}
 		if (BeamNiagara)
 		{
+			StartBeam = TraceStart;
+			EndBeam = BeamEnd;
 			UNiagaraComponent* Beam = UNiagaraFunctionLibrary::SpawnSystemAtLocation(
 				World,
 				BeamNiagara,
@@ -101,7 +103,7 @@ void AWeaponBase::WeaponTraceHit(const FVector& TraceStart, const FVector& HitTa
 			{
 				Beam->SetVectorParameter(FName("End"), BeamEnd);
 			}
-
+			Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_AttackPacket(Cast<ACharacterBase>(GetOwner())->_SessionId, StartBeam, EndBeam);
 		}
 	}
 }
@@ -208,7 +210,7 @@ void AWeaponBase::Fire(const FVector& HitTarget)
 
 			}
 		}
-		//Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_AttackPacket(Cast<ACharacterBase>(GetOwner())->_SessionId);
+	
 	}
 }
 

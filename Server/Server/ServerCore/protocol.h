@@ -137,12 +137,15 @@ struct CS_ATTACK_PLAYER {
 	unsigned char size;
 	unsigned char type;
 	int attack_id;
+	float sx, sy, sz;
+	float ex, ey, ez;
 };
 struct SC_ATTACK_PLAYER {
 	unsigned char size;
 	unsigned char type;
 	int clientid;
-	
+	float sx, sy, sz;
+	float ex, ey, ez;
 };
 #pragma pack(pop)
 

@@ -292,6 +292,17 @@ void ACharacterBase::SetHealth(float DamagedHp)
 	//UpdateHpHUD();
 }
 
+void ACharacterBase::SpawnBeam(FVector StartBeam, FVector EndBeam)
+{
+
+	UE_LOG(LogClass, Warning, TEXT("SB %f, EB : %f"), StartBeam.X, EndBeam.X);
+	UNiagaraComponent* Beam=UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), CurWeapon->BeamNiagara, StartBeam);
+	if (Beam)
+	{
+		Beam->SetVectorParameter(FName("End"), EndBeam);
+	}
+}
+
 
 
 void ACharacterBase::PlayFireActionMontage()
