@@ -184,6 +184,7 @@ public:
     void Send_Ready_Packet(bool ready);
     void Send_Fire_Effect(int attack_id, FVector ImLoc, FRotator ImRot);
     void Send_AttackPacket(int attack_id, FVector SLoc, FVector ELoc);
+    void Send_Damage_Packet(int damaged_id, float damage);
     virtual bool Init() override;
     virtual uint32 Run() override;
     virtual void Stop() override;

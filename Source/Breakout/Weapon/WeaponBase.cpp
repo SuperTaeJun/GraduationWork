@@ -214,6 +214,7 @@ void AWeaponBase::Fire(const FVector& HitTarget)
 				ABulletHoleWall* DamagedWall = Cast<ABulletHoleWall>(FireHit.GetActor());
 				if (DamagedCharacter)
 				{
+					Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Damage_Packet(DamagedCharacter->_SessionId, Damage);
 					//if (HasAuthority())
 					//{
 					//	//UE_LOG(LogTemp, Log, TEXT("HIt"));

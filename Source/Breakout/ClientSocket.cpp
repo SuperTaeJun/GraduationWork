@@ -87,19 +87,6 @@ bool ClientSocket::PacketProcess(char* ptr)
 		SC_LOGIN_BACK* packet = reinterpret_cast<SC_LOGIN_BACK*>(ptr);
 		//to_do
 		UE_LOG(LogClass, Warning, TEXT("aaaaa"));
-		//UE_LOG(LogClass, Warning, TEXT("RECV ROGIN?"));
-		//login_cond = true;
-		//CPlayer player;
-		//player.Id = packet->clientid;
-		///*player.X = packet->x;
-		//player.Y = packet->y;
-		//player.Z = packet->z;
-		//player.p_type = packet->p_type;*/
-		//PlayerInfo.players[player.Id] = player;
-		//MyCharacterController->SetPlayerID(player.Id);
-		//MyCharacterController->SetPlayerInfo(&PlayerInfo);
-		//MyCharacterController->SetInitPlayerInfo(player);
-		//UE_LOG(LogClass, Warning, TEXT("recv - id: %d, x: %d"), player.Id, player.X);
 		break;
 	}
 	case SC_OTHER_PLAYER:
@@ -187,6 +174,15 @@ bool ClientSocket::PacketProcess(char* ptr)
 		PlayerInfo.players[packet->attack_id].FEffect.Roll = packet->r_roll;
 		//UE_LOG(LogTemp, Warning, TEXT("%f, %f"), packet->sx, packet->ex);
 		MyCharacterController->SetHitEffect(packet->attack_id);
+		break;
+	}
+	case SC_PLAYER_DAMAGE: {
+		SC_DAMAGE_CHANGE* packet = reinterpret_cast<SC_DAMAGE_CHANGE*>(ptr);
+		CPlayer player;
+		player.Id = packet->damaged_id;
+		player.hp = packet->hp;
+		
+		MyCharacterController->SetHp(player.hp);
 		break;
 	}
 	default:
@@ -292,6 +288,15 @@ void ClientSocket::Send_AttackPacket(int attack_id, FVector SLoc, FVector ELoc)
 	packet.ex = ELoc.X;
 	packet.ey = ELoc.Y;
 	packet.ez = ELoc.Z;
+	SendPacket(&packet);
+}
+void ClientSocket::Send_Damage_Packet(int damaged_id, float damage)
+{
+	CS_DAMAGE_PACKET packet;
+	packet.size = sizeof(packet);
+	packet.type = CS_DAMAGE;
+	packet.damaged_id = damaged_id;
+	packet.damage = damage;
 	SendPacket(&packet);
 }
 bool ClientSocket::Init()

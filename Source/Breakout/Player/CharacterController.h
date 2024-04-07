@@ -100,6 +100,8 @@ public:
 	//동기화 용
 	void UpdateSyncPlayer();
 	bool UpdateWorld();
+	void SetHp(float DamagedHp);
+	float DamgeHp=100;
 	//초기 컨트롤러 세팅
 	
 	void InitPlayer();

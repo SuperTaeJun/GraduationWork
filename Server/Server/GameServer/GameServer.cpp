@@ -28,6 +28,7 @@ void send_select_character_type_packet(int _s_id);
 void send_login_ok_packet(int _s_id);
 //void send_login_fail_packet(int _s_id);
 void send_move_packet(int _id, int target);
+void send_change_hp(int _s_id);
 //void send_remove_object(int _s_id, int victim);
 void send_put_object(int _s_id, int target);
 void Disconnect(int _s_id);
@@ -449,6 +450,15 @@ void process_packet(int s_id, char* p)
 
 		}
 		break;
+	
+	}
+	case CS_DAMAGE: {
+		CS_DAMAGE_PACKET* packet = reinterpret_cast<CS_DAMAGE_PACKET*>(p);
+		CLIENT& cl = clients[packet->damaged_id];
+		//데미지 저장
+		cl._hp -= packet->damage;
+		send_change_hp(cl._s_id);
+		break;
 	}
 	default:
 		cout << " 오류패킷타입 : " << p << endl;
@@ -578,6 +588,16 @@ void send_move_packet(int _id, int target)
 
 	//printf_s("[Send move] id : %d, location : (%f,%f,%f), yaw : %f,  v : (%f,%f,%f)\n", packet.sessionID, packet.x, packet.y, packet.z, packet.yaw, packet.vx, packet.vy, packet.vz);
 	clients[_id].do_send(sizeof(packet), &packet);
+}
+
+void send_change_hp(int _s_id)
+{
+	SC_DAMAGE_CHANGE packet;
+	packet.size = sizeof(packet);
+	packet.type = SC_PLAYER_DAMAGE;
+	packet.damaged_id = _s_id;
+	packet.hp = clients[_s_id]._hp;
+	clients[_s_id].do_send(sizeof(packet), &packet);
 }
 
 void send_ready_packet(int _s_id)

@@ -44,7 +44,7 @@ public:
     PlayerType p_type;
     float s_x, s_y, s_z;
     float e_x, e_y, e_z;
-
+    
     unordered_set   <int>  viewlist; // 시야 안 오브젝트
     mutex vl;
     mutex hp_lock;

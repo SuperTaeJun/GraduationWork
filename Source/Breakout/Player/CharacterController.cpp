@@ -275,6 +275,13 @@ void ACharacterController::Tick(float DeltaTime)
 	//UE_LOG(LogTemp, Warning, TEXT("HHHHHH : %s"), *GetOwner()->GetVelocity().ToString());
 	UpdatePlayer();
 	//SleepEx(0, true);
+	ACharacterBase* BaseCharacter = Cast<ACharacterBase>(GetPawn());
+	if (BaseCharacter)
+	{
+		//UE_LOG(LogClass, Warning, TEXT("hp : %f"), DamagedHp);
+		BaseCharacter->SetHealth(DamgeHp);
+		SetHUDHealth(BaseCharacter->GetHealth(), BaseCharacter->MaxGetHealth());
+	}
 }
 
 void ACharacterController::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -651,4 +658,17 @@ void ACharacterController::OnPossess(APawn* InPawn)
 		bEnableMouseOverEvents = true;
 		showWeaponSelect();
 	}
+}
+
+void ACharacterController::SetHp(float DamagedHp)
+{
+	DamgeHp = DamagedHp;
+	//UE_LOG(LogClass, Warning, TEXT("hp : %f"), DamagedHp);
+	//ACharacterBase* BaseCharacter = Cast<ACharacterBase>(GetPawn());
+	//if (BaseCharacter)
+	//{
+	//	UE_LOG(LogClass, Warning, TEXT("hp : %f"), DamagedHp);
+	//	BaseCharacter->SetHealth(DamagedHp);
+	//	SetHUDHealth(BaseCharacter->GetHealth(), BaseCharacter->MaxGetHealth());
+	//}
 }
