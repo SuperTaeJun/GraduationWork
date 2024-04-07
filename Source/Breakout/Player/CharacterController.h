@@ -95,12 +95,13 @@ public:
 	void SetNewCharacterInfo(std::shared_ptr<CPlayer> InitPlayer);
 	void SetNewWeaponMesh(std::shared_ptr<CPlayer> InitPlayer);
 	void SetAttack(int _id);
+	void SetHitEffect(int _id);
 	void UpdatePlayer();
 	//동기화 용
 	void UpdateSyncPlayer();
 	bool UpdateWorld();
 	//초기 컨트롤러 세팅
-	void RecvPacket();
+	
 	void InitPlayer();
 	//Tick함수
 	virtual void Tick(float DeltaTime);

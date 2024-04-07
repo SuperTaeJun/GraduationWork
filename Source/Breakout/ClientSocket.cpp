@@ -171,10 +171,22 @@ bool ClientSocket::PacketProcess(char* ptr)
 		PlayerInfo.players[packet->clientid].Eshot.X = packet->ex;
 		PlayerInfo.players[packet->clientid].Eshot.Y = packet->ey;
 		PlayerInfo.players[packet->clientid].Eshot.Z = packet->ez;
-		UE_LOG(LogTemp, Warning, TEXT("%f, %f"), packet->sx, packet->ex);
+		//UE_LOG(LogTemp, Warning, TEXT("%f, %f"), packet->sx, packet->ex);
 		MyCharacterController->SetAttack(packet->clientid);
 		// = packet->hp;1
 		//PlayerInfo.players[packet].w_type = packet->weapon_type;	}
+		break;
+	}
+	case SC_EFFECT: {
+		CS_EFFECT_PACKET* packet = reinterpret_cast<CS_EFFECT_PACKET*>(ptr);
+		PlayerInfo.players[packet->attack_id].Sshot.X = packet->lx;
+		PlayerInfo.players[packet->attack_id].Sshot.Y = packet->ly;
+		PlayerInfo.players[packet->attack_id].Sshot.Z = packet->lz;
+		PlayerInfo.players[packet->attack_id].FEffect.Pitch = packet->r_pitch;
+		PlayerInfo.players[packet->attack_id].FEffect.Yaw = packet->r_yaw;
+		PlayerInfo.players[packet->attack_id].FEffect.Roll = packet->r_roll;
+		//UE_LOG(LogTemp, Warning, TEXT("%f, %f"), packet->sx, packet->ex);
+		MyCharacterController->SetHitEffect(packet->attack_id);
 		break;
 	}
 	default:
@@ -251,6 +263,20 @@ void ClientSocket::Send_Ready_Packet(bool ready)
 	CS_READY_PACKET packet;
 	packet.size = sizeof(packet);
 	packet.type = CS_READY;
+	SendPacket(&packet);
+}
+void ClientSocket::Send_Fire_Effect(int attack_id, FVector ImLoc, FRotator ImRot)
+{
+	CS_EFFECT_PACKET packet;
+	packet.size = sizeof(packet);
+	packet.type = CS_HIT_EFFECT;
+	packet.attack_id = attack_id;
+	packet.lx = ImLoc.X;
+	packet.ly = ImLoc.Y;
+	packet.lz = ImLoc.Z;
+	packet.r_pitch = ImRot.Pitch;
+	packet.r_yaw = ImRot.Yaw;
+	packet.r_roll = ImRot.Roll;
 	SendPacket(&packet);
 }
 void ClientSocket::Send_AttackPacket(int attack_id, FVector SLoc, FVector ELoc)

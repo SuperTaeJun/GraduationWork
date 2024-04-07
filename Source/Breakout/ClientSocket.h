@@ -50,11 +50,13 @@ public:
     float VeloZ = 0;
     float Max_Speed = 400;
     bool  IsAlive = true;
-    bool  canfire = false;
+    bool  fired = false;
+    bool  hiteffect = false;
     FVector Sshot;
     FVector Eshot;
     FVector FMyLocation;
     FVector FMyDirection;
+    FRotator FEffect;
     PlayerType p_type;
     WeaponType w_type;
     friend ostream& operator<<(ostream& stream, CPlayer& info)
@@ -178,7 +180,7 @@ public:
     void Send_Character_Type(PlayerType type);
     void Send_Weapon_Type(WeaponType type, int id);
     void Send_Ready_Packet(bool ready);
-
+    void Send_Fire_Effect(int attack_id, FVector ImLoc, FRotator ImRot);
     void Send_AttackPacket(int attack_id, FVector SLoc, FVector ELoc);
     virtual bool Init() override;
     virtual uint32 Run() override;

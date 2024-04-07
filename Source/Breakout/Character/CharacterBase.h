@@ -75,8 +75,6 @@ public:
 	void SetbShowSelect(bool _bShowSelect) {bShowSelectUi = _bShowSelect;}
 	void SetbCanObtainEscapeTool(bool _bCanObtain);
 	void SetHealth(float DamagedHp);
-	void SpawnBeam(FVector StartBeam, FVector EndBeam);
-
 
 	class AWeaponBase* GetWeapon() { return CurWeapon; }
 	FORCEINLINE float GetHealth() const { return Health; }
@@ -242,6 +240,11 @@ protected:
 	virtual void Skill_E(const FInputActionValue& Value);
 	void Detect_S(const FInputActionValue& Value);
 	void Detect_E(const FInputActionValue& Value);
+
+public:
+	//서버랑 연동하는 함수들
+	void SpawnBeam(FVector StartBeam, FVector EndBeam);
+	void SpawnHitImpact(FVector HitLoc, FRotator HitRot);
 };
 
 UENUM(BlueprintType)

@@ -56,14 +56,13 @@ protected:
 	void WeaponTraceHit(const FVector& TraceStart, const FVector& HitTarget, FHitResult& OutHit);
 
 
+public:
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<class UNiagaraSystem> BeamNiagara;
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<class UNiagaraSystem> ImpactNiagara;
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<class UNiagaraComponent>DetectNiagara;
-public:
-	UPROPERTY(EditAnywhere)
-	TObjectPtr<class UNiagaraSystem> BeamNiagara;
-
 public:
 	FORCEINLINE USkeletalMeshComponent* GetWeaponMesh() const { return WeaponMesh; }
 	void SetDetectNiagara(bool bUse);

@@ -239,6 +239,7 @@ void AWeaponBase::Fire(const FVector& HitTarget)
 						FireHit.ImpactPoint,
 						FireHit.ImpactNormal.Rotation()
 					);
+					Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Fire_Effect(Cast<ACharacterBase>(GetOwner())->_SessionId, FireHit.ImpactPoint, FireHit.ImpactNormal.Rotation());
 				}
 
 			}

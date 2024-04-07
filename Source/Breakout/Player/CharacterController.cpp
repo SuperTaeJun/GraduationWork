@@ -310,11 +310,16 @@ void ACharacterController::SetNewWeaponMesh(std::shared_ptr<CPlayer> InitPlayer)
 
 void ACharacterController::SetAttack(int _id)
 {
-	UE_LOG(LogTemp, Warning, TEXT("setattack"));
 	UWorld* World = GetWorld();
-	PlayerInfo->players[_id].canfire = true;
-	UE_LOG(LogTemp, Warning, TEXT("canfire : %d"), PlayerInfo->players[_id].canfire);
-	UE_LOG(LogTemp, Warning, TEXT("_id : %d"), _id);
+	PlayerInfo->players[_id].fired = true;
+	
+}
+void ACharacterController::SetHitEffect(int _id)
+{
+
+	UWorld* World = GetWorld();
+	PlayerInfo->players[_id].hiteffect = true;
+
 }
 
 bool ACharacterController::UpdateWorld()
@@ -378,7 +383,10 @@ bool ACharacterController::UpdateWorld()
 			EFiregun.X = info->Eshot.X;
 			EFiregun.Y = info->Eshot.Y;
 			EFiregun.Z = info->Eshot.Z;
-
+			FRotator EffectRot;
+			EffectRot.Pitch = info->FEffect.Pitch;
+			EffectRot.Yaw = info->FEffect.Yaw;
+			EffectRot.Roll = info->FEffect.Roll;
 			if (!OtherPlayer->GetCurWeapon())
 			{
 				if (info->w_type == WeaponType::RIFLE)
@@ -406,13 +414,19 @@ bool ACharacterController::UpdateWorld()
 			OtherPlayer->SetActorLocation(PlayerLocation);
 			OtherPlayer->GetCharacterMovement()->MaxWalkSpeed = info->Max_Speed;
 			
-			if (OtherPlayer->GetCurWeapon() && info->canfire==true)
+			if (OtherPlayer->GetCurWeapon() && info->fired==true)
 			{
-				UE_LOG(LogTemp, Warning, TEXT("kkkkk"));
+				
 				OtherPlayer->SpawnBeam(Firegun, EFiregun);
-				info->canfire = false;
+				info->fired = false;
 			}
-			
+			if (OtherPlayer->GetCurWeapon() && info->hiteffect == true)
+			{
+				
+				OtherPlayer->SpawnHitImpact(Firegun, EffectRot);
+				info->hiteffect = false;
+			}
+
 
 		}
 	}
