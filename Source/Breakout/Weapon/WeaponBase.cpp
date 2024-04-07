@@ -29,10 +29,12 @@ AWeaponBase::AWeaponBase()
 
 	DetectNiagara  =CreateDefaultSubobject<UNiagaraComponent>(TEXT("DetectNiagara"));
 	DetectNiagara->SetupAttachment(RootComponent);
-	DetectNiagara->SetAsset
-	(
-		ConstructorHelpers::FObjectFinder<UNiagaraSystem>(TEXT("/Script/Niagara.NiagaraSystem'/Game/Niagara/Weapon/Detect/NewNiagaraSystem.NewNiagaraSystem'")).Object
-	);
+	DetectNiagara->SetAsset(ConstructorHelpers::FObjectFinder<UNiagaraSystem>(TEXT("/Script/Niagara.NiagaraSystem'/Game/Niagara/Weapon/Detect/NewNiagaraSystem.NewNiagaraSystem'")).Object);
+	DetectNiagara->SetAutoActivate(false);
+
+	DetectNiagara->SetWorldRotation(FRotator(90.f, 90.f, 0).Quaternion());
+	DetectNiagara->SetWorldLocation(FVector(0.f, 580.f, 0.f));
+
 }
 
 // Called when the game starts or when spawned
@@ -116,6 +118,18 @@ void AWeaponBase::WeaponTraceHit(const FVector& TraceStart, const FVector& HitTa
 	}
 }
 
+void AWeaponBase::SetDetectNiagara(bool bUse)
+{
+	if (bUse)
+	{
+		DetectNiagara->Activate();
+	}
+	else
+	{
+		DetectNiagara->Deactivate();
+	}
+}
+
 void AWeaponBase::DetectTool(FVector& HitRes)
 {
 	APawn* OwnerPawn = Cast<APawn>(GetOwner());
@@ -134,22 +148,33 @@ void AWeaponBase::DetectTool(FVector& HitRes)
 		(
 			GetWorld(),
 			Start,
-			Start+(HitRes- Start) * 0.8,
+			Start + (HitRes - Start) * 0.5f,
 			30.f,
 			ETraceTypeQuery::TraceTypeQuery1,
 			true,
 			DetectOutput,
-			EDrawDebugTrace::ForOneFrame,
+			EDrawDebugTrace::None,
 			DetectHit,
 			true
 		);
-
+		UKismetSystemLibrary::DrawDebugSphere(GetWorld(), Start);
+		UKismetSystemLibrary::DrawDebugSphere(GetWorld(), Start+(HitRes - Start)*0.5f);
 		if (DetectHit.bBlockingHit)
 		{
 			if (Cast<AEscapeTool>(DetectHit.GetActor()))
 			{
 				UE_LOG(LogTemp, Warning, TEXT("DETECT"));
 				Cast<AEscapeTool>(DetectHit.GetActor())->SetbDetected(true);
+
+				if (ImpactNiagara)
+				{
+					UNiagaraFunctionLibrary::SpawnSystemAtLocation
+					(
+						GetWorld(),
+						ImpactNiagara,
+						DetectHit.ImpactPoint
+					);
+				}
 			}
 		}
 	}

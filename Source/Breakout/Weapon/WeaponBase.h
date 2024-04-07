@@ -66,6 +66,6 @@ public:
 
 public:
 	FORCEINLINE USkeletalMeshComponent* GetWeaponMesh() const { return WeaponMesh; }
-
+	void SetDetectNiagara(bool bUse);
 
 };

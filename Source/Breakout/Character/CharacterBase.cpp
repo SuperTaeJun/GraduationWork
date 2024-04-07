@@ -771,11 +771,20 @@ void ACharacterBase::Skill_E(const FInputActionValue& Value)
 {
 }
 
-void ACharacterBase::Detect(const FInputActionValue& Value)
+void ACharacterBase::Detect_E(const FInputActionValue& Value)
+{
+	if (CurWeapon)
+	{
+		CurWeapon->SetDetectNiagara(false);
+	}
+}
+
+void ACharacterBase::Detect_S(const FInputActionValue& Value)
 {
 	if (CurWeapon)
 	{
 		CurWeapon->DetectTool(HitTarget);
+		CurWeapon->SetDetectNiagara(true);
 	}
 }
 
@@ -850,7 +859,8 @@ void ACharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 		EnhancedInputComponent->BindAction(SelectGrandeAction, ETriggerEvent::Triggered, this, &ACharacterBase::SelectGrande);
 		EnhancedInputComponent->BindAction(SelectWallAction, ETriggerEvent::Triggered, this, &ACharacterBase::SelectWall);
 		EnhancedInputComponent->BindAction(SelectTrapAction, ETriggerEvent::Triggered, this, &ACharacterBase::SelectTrap);
-		EnhancedInputComponent->BindAction(DetectAction, ETriggerEvent::Triggered, this, &ACharacterBase::Detect);
+		EnhancedInputComponent->BindAction(DetectAction, ETriggerEvent::Triggered, this, &ACharacterBase::Detect_S);
+		EnhancedInputComponent->BindAction(DetectAction, ETriggerEvent::Completed, this, &ACharacterBase::Detect_E);
 	}
 }
 
