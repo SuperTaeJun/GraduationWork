@@ -494,7 +494,8 @@ void ACharacterBase::Fire()
 	if (bCanFire == true)
 	{
 		bCanFire = false;
-		if (CurWeapon) {
+		if (CurWeapon) 
+		{
 			CurWeapon->Fire(HitTarget);
 		}
 		PlayFireActionMontage();

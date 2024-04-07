@@ -377,12 +377,16 @@ bool ACharacterController::UpdateWorld()
 			PlayerVelocity.Z = info->VeloZ;
 			FVector Firegun;
 			FVector EFiregun;
+			FVector HEloc;
 			Firegun.X = info->Sshot.X;
 			Firegun.Y = info->Sshot.Y;
 			Firegun.Z = info->Sshot.Z;
 			EFiregun.X = info->Eshot.X;
 			EFiregun.Y = info->Eshot.Y;
 			EFiregun.Z = info->Eshot.Z;
+			HEloc.X = info->Hshot.X;
+			HEloc.Y = info->Hshot.Y;
+			HEloc.Z = info->Hshot.Z;
 			FRotator EffectRot;
 			EffectRot.Pitch = info->FEffect.Pitch;
 			EffectRot.Yaw = info->FEffect.Yaw;
@@ -423,7 +427,7 @@ bool ACharacterController::UpdateWorld()
 			if (OtherPlayer->GetCurWeapon() && info->hiteffect == true)
 			{
 				
-				OtherPlayer->SpawnHitImpact(Firegun, EffectRot);
+				OtherPlayer->SpawnHitImpact(HEloc, EffectRot);
 				info->hiteffect = false;
 			}
 

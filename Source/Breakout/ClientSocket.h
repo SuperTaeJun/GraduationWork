@@ -54,6 +54,8 @@ public:
     bool  hiteffect = false;
     FVector Sshot;
     FVector Eshot;
+    FVector Hshot;
+
     FVector FMyLocation;
     FVector FMyDirection;
     FRotator FEffect;

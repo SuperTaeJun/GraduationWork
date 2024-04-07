@@ -179,9 +179,9 @@ bool ClientSocket::PacketProcess(char* ptr)
 	}
 	case SC_EFFECT: {
 		CS_EFFECT_PACKET* packet = reinterpret_cast<CS_EFFECT_PACKET*>(ptr);
-		PlayerInfo.players[packet->attack_id].Sshot.X = packet->lx;
-		PlayerInfo.players[packet->attack_id].Sshot.Y = packet->ly;
-		PlayerInfo.players[packet->attack_id].Sshot.Z = packet->lz;
+		PlayerInfo.players[packet->attack_id].Hshot.X = packet->lx;
+		PlayerInfo.players[packet->attack_id].Hshot.Y = packet->ly;
+		PlayerInfo.players[packet->attack_id].Hshot.Z = packet->lz;
 		PlayerInfo.players[packet->attack_id].FEffect.Pitch = packet->r_pitch;
 		PlayerInfo.players[packet->attack_id].FEffect.Yaw = packet->r_yaw;
 		PlayerInfo.players[packet->attack_id].FEffect.Roll = packet->r_roll;
