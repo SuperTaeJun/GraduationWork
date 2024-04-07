@@ -32,6 +32,7 @@ public:
 
     // 세션 아이디
     int Id = -1;
+    int hp;
     // 아이디 비번
     char    userId[20] = {};
     char    userPw[20] = {};
@@ -49,8 +50,15 @@ public:
     float VeloZ = 0;
     float Max_Speed = 400;
     bool  IsAlive = true;
+    bool  fired = false;
+    bool  hiteffect = false;
+    FVector Sshot;
+    FVector Eshot;
+    FVector Hshot;
+
     FVector FMyLocation;
     FVector FMyDirection;
+    FRotator FEffect;
     PlayerType p_type;
     WeaponType w_type;
     friend ostream& operator<<(ostream& stream, CPlayer& info)
@@ -174,6 +182,9 @@ public:
     void Send_Character_Type(PlayerType type);
     void Send_Weapon_Type(WeaponType type, int id);
     void Send_Ready_Packet(bool ready);
+    void Send_Fire_Effect(int attack_id, FVector ImLoc, FRotator ImRot);
+    void Send_AttackPacket(int attack_id, FVector SLoc, FVector ELoc);
+    void Send_Damage_Packet(int damaged_id, float damage);
     virtual bool Init() override;
     virtual uint32 Run() override;
     virtual void Stop() override;
@@ -184,8 +195,7 @@ public:
     void SendPacket(void* packet);
     bool StartListen();
     //void StopListen();
-    bool Send(const int SendSize, void* SendData);
-
+    
     static ClientSocket* GetSingleton() {
         static ClientSocket ins;
         return &ins;

@@ -285,6 +285,12 @@ void ACharacterBase::SetbCanObtainEscapeTool(bool _bCanObtain)
 	bCanObtainEscapeTool = _bCanObtain;
 }
 
+void ACharacterBase::SetHealth(float DamagedHp)
+{
+	Health = DamagedHp;
+	UE_LOG(LogTemp, Warning, TEXT(" MY NEW HP %d"), Health);
+	//UpdateHpHUD();
+}
 
 
 void ACharacterBase::PlayFireActionMontage()
@@ -488,7 +494,8 @@ void ACharacterBase::Fire()
 	if (bCanFire == true)
 	{
 		bCanFire = false;
-		if (CurWeapon) {
+		if (CurWeapon) 
+		{
 			CurWeapon->Fire(HitTarget);
 		}
 		PlayFireActionMontage();
@@ -753,11 +760,20 @@ void ACharacterBase::Skill_E(const FInputActionValue& Value)
 {
 }
 
-void ACharacterBase::Detect(const FInputActionValue& Value)
+void ACharacterBase::Detect_E(const FInputActionValue& Value)
+{
+	if (CurWeapon)
+	{
+		CurWeapon->SetDetectNiagara(false);
+	}
+}
+
+void ACharacterBase::Detect_S(const FInputActionValue& Value)
 {
 	if (CurWeapon)
 	{
 		CurWeapon->DetectTool(HitTarget);
+		CurWeapon->SetDetectNiagara(true);
 	}
 }
 
@@ -832,7 +848,29 @@ void ACharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 		EnhancedInputComponent->BindAction(SelectGrandeAction, ETriggerEvent::Triggered, this, &ACharacterBase::SelectGrande);
 		EnhancedInputComponent->BindAction(SelectWallAction, ETriggerEvent::Triggered, this, &ACharacterBase::SelectWall);
 		EnhancedInputComponent->BindAction(SelectTrapAction, ETriggerEvent::Triggered, this, &ACharacterBase::SelectTrap);
-		EnhancedInputComponent->BindAction(DetectAction, ETriggerEvent::Triggered, this, &ACharacterBase::Detect);
+		EnhancedInputComponent->BindAction(DetectAction, ETriggerEvent::Triggered, this, &ACharacterBase::Detect_S);
+		EnhancedInputComponent->BindAction(DetectAction, ETriggerEvent::Completed, this, &ACharacterBase::Detect_E);
 	}
 }
 
+void ACharacterBase::SpawnBeam(FVector StartBeam, FVector EndBeam)
+{
+
+	UE_LOG(LogClass, Warning, TEXT("SB %f, EB : %f"), StartBeam.X, EndBeam.X);
+	UNiagaraComponent* Beam = UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), CurWeapon->BeamNiagara, StartBeam);
+	if (Beam)
+	{
+		Beam->SetVectorParameter(FName("End"), EndBeam);
+	}
+}
+
+void ACharacterBase::SpawnHitImpact(FVector HitLoc, FRotator HitRot)
+{
+	UNiagaraFunctionLibrary::SpawnSystemAtLocation
+	(
+		GetWorld(),
+		CurWeapon->ImpactNiagara,
+		HitLoc,
+		HitRot
+	);
+}

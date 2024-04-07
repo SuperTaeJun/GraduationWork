@@ -4,7 +4,7 @@
 #include "Game/BOGameInstance.h"
 #include "Kismet/GameplayStatics.h"
 #include "Player/CharacterController.h"
-
+#include "ClientSocket.h"
 
 void UBOGameInstance::Init()
 {

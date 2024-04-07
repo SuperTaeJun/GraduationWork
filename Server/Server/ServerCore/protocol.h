@@ -1,7 +1,7 @@
 #pragma once
 #define SERVER_PORT		8001
 
-#define SERVER_IP		"192.168.87.28"
+#define SERVER_IP		"192.168.100.149"
 #define MAX_INFO_SIZE   20
 //const char CS_PACKET_ATTACK = 3;
 enum PlayerType
@@ -31,7 +31,9 @@ const char CS_MOVE_Packet = 0;
 const char CS_SELECT_CHAR = 3;
 const char CS_SELECT_WEP = 4;
 const char CS_READY = 5;
-
+const char CS_ATTACK = 6;
+const char CS_HIT_EFFECT = 7;
+const char CS_DAMAGE = 8;
 
 const char SC_LOGIN_OK = 1;
 const char SC_OTHER_PLAYER = 2;
@@ -39,6 +41,9 @@ const char SC_MOVE_PLAYER = 3;
 const char SC_CHAR_BACK = 4;
 const char SC_OTHER_WEAPO = 5;
 const char SC_ALL_READY = 6;
+const char SC_DAMAGED = 7;
+const char SC_EFFECT = 8;
+const char SC_PLAYER_DAMAGE = 9;
 
 //const char CS_PACKET_DAMAGE = 7;
 //const char CS_PACKET_GET_ITEM = 8;
@@ -131,6 +136,40 @@ struct SC_ACCEPT_READY {
 	unsigned char size;
 	unsigned type;
 	bool ingame;
+};
+struct CS_ATTACK_PLAYER {
+	unsigned char size;
+	unsigned char type;
+	int attack_id;
+	float sx, sy, sz;
+	float ex, ey, ez;
+};
+struct SC_ATTACK_PLAYER {
+	unsigned char size;
+	unsigned char type;
+	int clientid;
+	float sx, sy, sz;
+	float ex, ey, ez;
+};
+struct CS_EFFECT_PACKET {
+	unsigned char size;
+	unsigned char type;
+	int attack_id;
+	float lx, ly, lz;
+	float r_pitch, r_yaw, r_roll;
+};
+struct CS_DAMAGE_PACKET {
+	unsigned char size;
+	unsigned char type;
+	int damaged_id;
+	float damage;
+};
+struct SC_DAMAGE_CHANGE
+{
+	unsigned char size;
+	unsigned char type;
+	int damaged_id;
+	int hp;
 };
 #pragma pack(pop)
 

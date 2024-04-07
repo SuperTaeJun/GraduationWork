@@ -26,12 +26,14 @@ void show_err();
 int get_id();
 void send_select_character_type_packet(int _s_id);
 void send_login_ok_packet(int _s_id);
-void send_login_fail_packet(int _s_id);
+//void send_login_fail_packet(int _s_id);
 void send_move_packet(int _id, int target);
-void send_remove_object(int _s_id, int victim);
+void send_change_hp(int _s_id);
+//void send_remove_object(int _s_id, int victim);
 void send_put_object(int _s_id, int target);
 void Disconnect(int _s_id);
 void send_ready_packet(int _s_id);
+void send_damage_packet(int _s_id);
 void worker_thread();
 
 int main()
@@ -77,7 +79,7 @@ int main()
 	//int nThreadCnt = 5;
 
 
-	for (int i = 0; i < 32; ++i)
+	for (int i = 0; i < 10; ++i)
 		worker_threads.emplace_back(worker_thread);
 
 	for (auto& th : worker_threads)
@@ -209,7 +211,7 @@ void process_packet(int s_id, char* p)
 		CLIENT& cl = clients[s_id];
 		cout << "[Recv login] ID :" << packet->id << ", PASSWORD : " << packet->pw << endl;
 		cl.state_lock.lock();
-		cl._state = ST_LOBBY;
+		cl._state = ST_INGAME;
 		cl.state_lock.unlock();
 		/*cl.x = packet->x;
 		cl.y = packet->y;
@@ -302,7 +304,7 @@ void process_packet(int s_id, char* p)
 		cl.VY = packet->vy;
 		cl.VZ = packet->vz;
 		cl.Max_Speed = packet->Max_speed;
-		cout << "플레이어[" << packet->id << "]" << "  x:" << packet->x << endl;
+		//cout << "플레이어[" << packet->id << "]" << "  x:" << packet->x << endl;
 		//cout <<"플레이어["<< packet->id<<"]" << "  x:" << packet->vx << " y:" << packet->y << " z:" << packet->z << "speed : " << packet->speed << endl;
 		//클라 recv 확인용
 
@@ -312,7 +314,7 @@ void process_packet(int s_id, char* p)
 			if (ST_INGAME != other._state)
 				continue;
 			send_move_packet(other._s_id, cl._s_id);
-			cout << "움직인 플레이어" << cl._s_id << "보낼 플레이어" << other._s_id << endl;
+			//cout << "움직인 플레이어" << cl._s_id << "보낼 플레이어" << other._s_id << endl;
 
 		}
 		break;
@@ -367,7 +369,7 @@ void process_packet(int s_id, char* p)
 		if (ready_count >= 2)
 		{
 			for (auto& player : clients) {
-				if (ST_LOBBY != player._state)
+				if (ST_INGAME != player._state)
 					continue;
 				m.lock();
 				send_ready_packet(player._s_id);
@@ -376,6 +378,86 @@ void process_packet(int s_id, char* p)
 			}
 			cl._state = ST_INGAME;
 		}
+		break;
+	}
+	case CS_ATTACK: {
+		CS_ATTACK_PLAYER* packet = reinterpret_cast<CS_ATTACK_PLAYER*>(p);
+		CLIENT& cl = clients[packet->attack_id];
+		cl.s_x = packet->sx;
+		cl.s_y = packet->sy;
+		cl.s_z = packet->sz;
+		cl.e_x = packet->ex;
+		cl.e_y = packet->ey;
+		cl.e_z = packet->ez;
+		cout << "cl.s_x" << cl.s_x << "cl.e_x" << cl.e_x << endl;
+		/*	send_damage_packet(packet->attack_id);*/
+		for (auto& other : clients) {
+			if (other._s_id == cl._s_id) continue;
+			other.state_lock.lock();
+			if (ST_INGAME != other._state) {
+				other.state_lock.unlock();
+				continue;
+			}
+			else other.state_lock.unlock();
+			SC_ATTACK_PLAYER packet;
+			packet.clientid = cl._s_id;
+			packet.size = sizeof(packet);
+			packet.type = SC_DAMAGED;
+			packet.sx = cl.s_x;
+			packet.sy = cl.s_y;
+			packet.sz = cl.s_z;
+			packet.ex = cl.e_x;
+			packet.ey = cl.e_y;
+			packet.ez = cl.e_z;
+			//packet.weapon_type = cl.w_type;
+		//printf_s("[Send put object] id : %d, location : (%f,%f,%f), yaw : %f\n", packet.id, packet.x, packet.y, packet.z, packet.yaw);
+			cout << "이거 누구한테 감 :  ?" << other._s_id << endl;
+			other.do_send(sizeof(packet), &packet);
+		}
+		break;
+	}
+	case CS_HIT_EFFECT: {
+		CS_EFFECT_PACKET* packet = reinterpret_cast<CS_EFFECT_PACKET*>(p);
+		CLIENT& cl = clients[packet->attack_id];
+		cl.s_x = packet->lx;
+		cl.s_y = packet->ly;
+		cl.s_z = packet->lz;
+		cl.Pitch = packet->r_pitch;
+		cl.Yaw = packet->r_yaw;
+		cl.Roll = packet->r_roll;
+		for (auto& other : clients) {
+			if (other._s_id == cl._s_id) continue;
+			other.state_lock.lock();
+			if (ST_INGAME != other._state) {
+				other.state_lock.unlock();
+				continue;
+			}
+			else other.state_lock.unlock();
+			CS_EFFECT_PACKET packet;
+			packet.attack_id = cl._s_id;
+			packet.size = sizeof(packet);
+			packet.type = SC_EFFECT;
+			packet.lx = cl.s_x;
+			packet.ly = cl.s_y;
+			packet.lz = cl.s_z;
+			packet.r_pitch = cl.Pitch;
+			packet.r_yaw = cl.Yaw;
+			packet.r_roll = cl.Roll;
+			//packet.weapon_type = cl.w_type;
+		//printf_s("[Send put object] id : %d, location : (%f,%f,%f), yaw : %f\n", packet.id, packet.x, packet.y, packet.z, packet.yaw);
+			cout << "이거 누구한테 감 :  ?" << other._s_id << endl;
+			other.do_send(sizeof(packet), &packet);
+
+		}
+		break;
+	
+	}
+	case CS_DAMAGE: {
+		CS_DAMAGE_PACKET* packet = reinterpret_cast<CS_DAMAGE_PACKET*>(p);
+		CLIENT& cl = clients[packet->damaged_id];
+		//데미지 저장
+		cl._hp -= packet->damage;
+		send_change_hp(cl._s_id);
 		break;
 	}
 	default:
@@ -508,11 +590,36 @@ void send_move_packet(int _id, int target)
 	clients[_id].do_send(sizeof(packet), &packet);
 }
 
+void send_change_hp(int _s_id)
+{
+	SC_DAMAGE_CHANGE packet;
+	packet.size = sizeof(packet);
+	packet.type = SC_PLAYER_DAMAGE;
+	packet.damaged_id = _s_id;
+	packet.hp = clients[_s_id]._hp;
+	clients[_s_id].do_send(sizeof(packet), &packet);
+}
+
 void send_ready_packet(int _s_id)
 {
 	SC_ACCEPT_READY packet;
 	packet.size = sizeof(packet);
 	packet.type = SC_ALL_READY;
 	packet.ingame = true;
+	clients[_s_id].do_send(sizeof(packet), &packet);
+}
+
+void send_damage_packet(int _s_id)
+{
+	SC_ATTACK_PLAYER packet;
+	packet.size = sizeof(packet);
+	packet.type = SC_DAMAGED;
+	packet.clientid = _s_id;
+	packet.sx = clients[_s_id].s_x;
+	packet.sy = clients[_s_id].s_y;
+	packet.sz = clients[_s_id].s_z;
+	packet.ex = clients[_s_id].e_x;
+	packet.ey = clients[_s_id].e_y;
+	packet.ez = clients[_s_id].e_z;
 	clients[_s_id].do_send(sizeof(packet), &packet);
 }

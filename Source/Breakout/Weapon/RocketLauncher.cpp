@@ -15,11 +15,14 @@ void ARocketLauncher::Fire(const FVector& HitTarget)
 		FTransform SocketTransform = MuzzleFlashSocket->GetSocketTransform(GetWeaponMesh());
 		FVector ToTarget = HitTarget - SocketTransform.GetLocation();
 		FRotator TargetRotation = ToTarget.Rotation();
+		StartPos = SocketTransform.GetLocation();
+		CurWeaponRot = TargetRotation;
 		if (ProjectileClass && InstigatorPawn)
 		{
 			FActorSpawnParameters SpawnParameters;
 			SpawnParameters.Owner = GetOwner();
 			SpawnParameters.Instigator = InstigatorPawn;
+			SpawnParm = SpawnParameters;
 			UWorld* World = GetWorld();
 			if (World)
 			{
@@ -37,4 +40,10 @@ void ARocketLauncher::Fire(const FVector& HitTarget)
 		}
 
 	}
+}
+
+void ARocketLauncher::SpawnProjectile()
+{
+	GetWorld()->SpawnActor<AProjectileBase>(ProjectileClass, FVector(-2000,100,100), FRotator::ZeroRotator, SpawnParm);
+
 }

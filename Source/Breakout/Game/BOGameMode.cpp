@@ -24,7 +24,6 @@ ABOGameMode::ABOGameMode()
 	{
 		UE_LOG(LogClass, Warning, TEXT("IOCP Server connect FAIL!"));
 	}*/
-
 	ConstructorHelpers::FClassFinder<ACharacterBase>Character1Ref(TEXT("/Game/BP/Character/BP_Character1.BP_Character1_C"));
 	Character1 = Character1Ref.Class;
 	ConstructorHelpers::FClassFinder<ACharacterBase>Character2Ref(TEXT("/Game/BP/Character/BP_Character2.BP_Character2_C"));
@@ -83,4 +82,33 @@ UClass* ABOGameMode::GetDefaultPawnClassForController_Implementation(AController
 	}
 	else
 		return nullptr;
+}
+
+AActor* ABOGameMode::ChoosePlayerStart_Implementation(AController* Player)
+{
+	//Super::ChoosePlayerStart(Player);
+
+	AActor* PlayerStarts1 = FindPlayerStart(Player, FString(TEXT("PlayerStart1")));
+	AActor* PlayerStarts2 = FindPlayerStart(Player, FString(TEXT("PlayerStart2")));
+	AActor* PlayerStarts3 = FindPlayerStart(Player, FString(TEXT("PlayerStart3")));
+	AActor* PlayerStarts4 = FindPlayerStart(Player, FString(TEXT("PlayerStart4")));
+	switch (Cast<UBOGameInstance>(GetGameInstance())->CharacterType)
+	{
+	case ECharacterType::ECharacter1:
+		if(PlayerStarts1) return PlayerStarts1;
+		break;
+	case ECharacterType::ECharacter2:
+		if (PlayerStarts2) return PlayerStarts2;
+		break;
+	case ECharacterType::ECharacter3:
+		if (PlayerStarts3) return PlayerStarts2;
+		break;
+	case ECharacterType::ECharacter4:
+		if (PlayerStarts4) return PlayerStarts3;
+		break;
+	default:
+		if (PlayerStarts1) return PlayerStarts1;
+		break;
+	}
+	return 	Super::ChoosePlayerStart(Player);
 }

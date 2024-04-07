@@ -14,6 +14,8 @@
 #include "NiagaraFunctionLibrary.h"
 #include "NiagaraComponent.h"
 #include"GameProp/EscapeTool.h"
+#include "Game/BOGameInstance.h"
+#include "ClientSocket.h"
 //#define TRACE_LENGTH 1000.f
 
 AWeaponBase::AWeaponBase()
@@ -23,6 +25,15 @@ AWeaponBase::AWeaponBase()
 	WeaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("WeaponMesh"));
 	SetRootComponent(WeaponMesh);
 
+	BeamNiagara = ConstructorHelpers::FObjectFinder<UNiagaraSystem>(TEXT("/Script/Niagara.NiagaraSystem'/Game/Niagara/Weapon/RifleAndShotgun/NS_Beam.NS_Beam'")).Object;
+
+	DetectNiagara  =CreateDefaultSubobject<UNiagaraComponent>(TEXT("DetectNiagara"));
+	DetectNiagara->SetupAttachment(RootComponent);
+	DetectNiagara->SetAsset(ConstructorHelpers::FObjectFinder<UNiagaraSystem>(TEXT("/Script/Niagara.NiagaraSystem'/Game/Niagara/Weapon/Detect/NewNiagaraSystem.NewNiagaraSystem'")).Object);
+	DetectNiagara->SetAutoActivate(false);
+
+	DetectNiagara->SetWorldRotation(FRotator(90.f, 90.f, 0).Quaternion());
+	DetectNiagara->SetWorldLocation(FVector(0.f, 580.f, 0.f));
 
 }
 
@@ -87,6 +98,8 @@ void AWeaponBase::WeaponTraceHit(const FVector& TraceStart, const FVector& HitTa
 		}
 		if (BeamNiagara)
 		{
+			StartBeam = TraceStart;
+			EndBeam = BeamEnd;
 			UNiagaraComponent* Beam = UNiagaraFunctionLibrary::SpawnSystemAtLocation(
 				World,
 				BeamNiagara,
@@ -100,8 +113,20 @@ void AWeaponBase::WeaponTraceHit(const FVector& TraceStart, const FVector& HitTa
 			{
 				Beam->SetVectorParameter(FName("End"), BeamEnd);
 			}
-
+			Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_AttackPacket(Cast<ACharacterBase>(GetOwner())->_SessionId, StartBeam, EndBeam);
 		}
+	}
+}
+
+void AWeaponBase::SetDetectNiagara(bool bUse)
+{
+	if (bUse)
+	{
+		DetectNiagara->Activate();
+	}
+	else
+	{
+		DetectNiagara->Deactivate();
 	}
 }
 
@@ -123,22 +148,33 @@ void AWeaponBase::DetectTool(FVector& HitRes)
 		(
 			GetWorld(),
 			Start,
-			Start+(HitRes- Start) * 0.8,
+			Start + (HitRes - Start) * 0.5f,
 			30.f,
 			ETraceTypeQuery::TraceTypeQuery1,
 			true,
 			DetectOutput,
-			EDrawDebugTrace::ForOneFrame,
+			EDrawDebugTrace::None,
 			DetectHit,
 			true
 		);
-
+		UKismetSystemLibrary::DrawDebugSphere(GetWorld(), Start);
+		UKismetSystemLibrary::DrawDebugSphere(GetWorld(), Start+(HitRes - Start)*0.5f);
 		if (DetectHit.bBlockingHit)
 		{
 			if (Cast<AEscapeTool>(DetectHit.GetActor()))
 			{
 				UE_LOG(LogTemp, Warning, TEXT("DETECT"));
 				Cast<AEscapeTool>(DetectHit.GetActor())->SetbDetected(true);
+
+				if (ImpactNiagara)
+				{
+					UNiagaraFunctionLibrary::SpawnSystemAtLocation
+					(
+						GetWorld(),
+						ImpactNiagara,
+						DetectHit.ImpactPoint
+					);
+				}
 			}
 		}
 	}
@@ -158,9 +194,10 @@ void AWeaponBase::Fire(const FVector& HitTarget)
 	AController* InstigatorController = OwnerPawn->GetController();
 
 	const USkeletalMeshSocket* MuzzleSocket = GetWeaponMesh()->GetSocketByName("MuzzleFlash");
-	if (MuzzleSocket && InstigatorController)
+	if (MuzzleSocket /*&& InstigatorController*/)
 	{
-		//UE_LOG(LogTemp, Log, TEXT("TTEST"));
+
+		UE_LOG(LogTemp, Log, TEXT("TTEST"));
 		FTransform SocketTransform = MuzzleSocket->GetSocketTransform(GetWeaponMesh());
 		FVector Start = SocketTransform.GetLocation();
 
@@ -177,17 +214,18 @@ void AWeaponBase::Fire(const FVector& HitTarget)
 				ABulletHoleWall* DamagedWall = Cast<ABulletHoleWall>(FireHit.GetActor());
 				if (DamagedCharacter)
 				{
-					if (HasAuthority())
-					{
-						//UE_LOG(LogTemp, Log, TEXT("HIt"));
-						UGameplayStatics::ApplyDamage(
-							DamagedCharacter,
-							Damage,
-							InstigatorController,
-							this,
-							UDamageType::StaticClass()
-						);
-					}
+					Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Damage_Packet(DamagedCharacter->_SessionId, Damage);
+					//if (HasAuthority())
+					//{
+					//	//UE_LOG(LogTemp, Log, TEXT("HIt"));
+					//	UGameplayStatics::ApplyDamage(
+					//		DamagedCharacter,
+					//		Damage,
+					//		InstigatorController,
+					//		this,
+					//		UDamageType::StaticClass()
+					//	);
+					//}
 				}
 				else if (DamagedWall)
 				{
@@ -202,10 +240,12 @@ void AWeaponBase::Fire(const FVector& HitTarget)
 						FireHit.ImpactPoint,
 						FireHit.ImpactNormal.Rotation()
 					);
+					Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Fire_Effect(Cast<ACharacterBase>(GetOwner())->_SessionId, FireHit.ImpactPoint, FireHit.ImpactNormal.Rotation());
 				}
 
 			}
 		}
+	
 	}
 }
 

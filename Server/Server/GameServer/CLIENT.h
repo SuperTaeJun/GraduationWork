@@ -42,8 +42,9 @@ public:
     bool bIsSnowman;	// 현재 캐릭터가 눈사람인지
     WeaponType w_type;
     PlayerType p_type;
-
-
+    float s_x, s_y, s_z;
+    float e_x, e_y, e_z;
+    
     unordered_set   <int>  viewlist; // 시야 안 오브젝트
     mutex vl;
     mutex hp_lock;
@@ -65,8 +66,10 @@ public:
 public:
     CLIENT() : _state(ST_FREE), _prev_size(0)
     {
-        x = 0;
-        y = 0;
+        //x = 0;
+        //y = 0;
+        _max_exp = 100;
+        _hp = 100;
     }
 
 

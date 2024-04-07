@@ -74,8 +74,11 @@ public:
 	bool GetbInRespon() { return bInRespon; }
 	void SetbShowSelect(bool _bShowSelect) {bShowSelectUi = _bShowSelect;}
 	void SetbCanObtainEscapeTool(bool _bCanObtain);
+	void SetHealth(float DamagedHp);
+
 	class AWeaponBase* GetWeapon() { return CurWeapon; }
 	FORCEINLINE float GetHealth() const { return Health; }
+	FORCEINLINE bool GetbFfirePressed() const { return bFirePressed; }
 	FORCEINLINE float MaxGetHealth() const { return MaxHealth; }
 	FORCEINLINE float GetStamina() const { return Stamina; }
 	FORCEINLINE float MaxGetStamina() const { return MaxStamina; }
@@ -162,7 +165,7 @@ protected:
 	void TraceUnderCrossHiar(FHitResult& TraceHitResult);
 
 
-
+	
 	bool bInRespon;
 	bool bShowSelectUi;
 	bool bCanObtainEscapeTool;
@@ -235,7 +238,13 @@ protected:
 	void StopJump(const FInputActionValue& Value);
 	virtual void Skill_S(const FInputActionValue& Value);
 	virtual void Skill_E(const FInputActionValue& Value);
-	void Detect(const FInputActionValue& Value);
+	void Detect_S(const FInputActionValue& Value);
+	void Detect_E(const FInputActionValue& Value);
+
+public:
+	//서버랑 연동하는 함수들
+	void SpawnBeam(FVector StartBeam, FVector EndBeam);
+	void SpawnHitImpact(FVector HitLoc, FRotator HitRot);
 };
 
 UENUM(BlueprintType)

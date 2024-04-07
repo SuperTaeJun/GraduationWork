@@ -13,9 +13,10 @@
 #include "Character/Character2.h"
 #include "Character/Character3.h"
 #include "Character/Character4.h"
-
+#include "Weapon/WeaponBase.h"
 #include "Components/Image.h"
 #include "Game/BOGameInstance.h"
+#include "Weapon/RocketLauncher.h"
 //#include "Network/PacketData.h"
 #include "../../Server/Server/ServerCore/protocol.h"
 #include <string>
@@ -274,6 +275,13 @@ void ACharacterController::Tick(float DeltaTime)
 	//UE_LOG(LogTemp, Warning, TEXT("HHHHHH : %s"), *GetOwner()->GetVelocity().ToString());
 	UpdatePlayer();
 	//SleepEx(0, true);
+	ACharacterBase* BaseCharacter = Cast<ACharacterBase>(GetPawn());
+	if (BaseCharacter)
+	{
+		//UE_LOG(LogClass, Warning, TEXT("hp : %f"), DamagedHp);
+		BaseCharacter->SetHealth(DamgeHp);
+		SetHUDHealth(BaseCharacter->GetHealth(), BaseCharacter->MaxGetHealth());
+	}
 }
 
 void ACharacterController::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -307,6 +315,20 @@ void ACharacterController::SetNewWeaponMesh(std::shared_ptr<CPlayer> InitPlayer)
 	}
 }
 
+void ACharacterController::SetAttack(int _id)
+{
+	UWorld* World = GetWorld();
+	PlayerInfo->players[_id].fired = true;
+	
+}
+void ACharacterController::SetHitEffect(int _id)
+{
+
+	UWorld* World = GetWorld();
+	PlayerInfo->players[_id].hiteffect = true;
+
+}
+
 bool ACharacterController::UpdateWorld()
 {
 	UWorld* const world = GetWorld();
@@ -333,58 +355,89 @@ bool ACharacterController::UpdateWorld()
 		{
 			ACharacterBase* OtherPlayer = Cast<ACharacterBase>(player);
 			//UE_LOG(LogTemp, Warning, TEXT("Updating player info for ID %d"), OtherPlayer->p_id);
+
+			CPlayer* info = &PlayerInfo->players[OtherPlayer->_SessionId];
+
+			if (!info->IsAlive) continue;
+
+		
+		
+
 			if (!OtherPlayer || OtherPlayer->_SessionId == -1 || OtherPlayer->_SessionId == id)
 			{
 				continue;
 			}
-			CPlayer* info = &PlayerInfo->players[OtherPlayer->_SessionId];
+			FVector PlayerLocation;
+			PlayerLocation.X = info->X;
+			PlayerLocation.Y = info->Y;
+			PlayerLocation.Z = info->Z;
 
+			FRotator PlayerRotation;
+			PlayerRotation.Yaw = info->Yaw;
+			PlayerRotation.Pitch = 0.0f;
+			PlayerRotation.Roll = 0.0f;
 
-			if (info->IsAlive)
+			//속도
+			FVector PlayerVelocity;
+			PlayerVelocity.X = info->VeloX;
+			PlayerVelocity.Y = info->VeloY;
+			PlayerVelocity.Z = info->VeloZ;
+			FVector Firegun;
+			FVector EFiregun;
+			FVector HEloc;
+			Firegun.X = info->Sshot.X;
+			Firegun.Y = info->Sshot.Y;
+			Firegun.Z = info->Sshot.Z;
+			EFiregun.X = info->Eshot.X;
+			EFiregun.Y = info->Eshot.Y;
+			EFiregun.Z = info->Eshot.Z;
+			HEloc.X = info->Hshot.X;
+			HEloc.Y = info->Hshot.Y;
+			HEloc.Z = info->Hshot.Z;
+			FRotator EffectRot;
+			EffectRot.Pitch = info->FEffect.Pitch;
+			EffectRot.Yaw = info->FEffect.Yaw;
+			EffectRot.Roll = info->FEffect.Roll;
+			if (!OtherPlayer->GetCurWeapon())
 			{
-				FVector PlayerLocation;
-				PlayerLocation.X = info->X;
-				PlayerLocation.Y = info->Y;
-				PlayerLocation.Z = info->Z;
-
-				FRotator PlayerRotation;
-				PlayerRotation.Yaw = info->Yaw;
-				PlayerRotation.Pitch = 0.0f;
-				PlayerRotation.Roll = 0.0f;
-
-				//속도
-				FVector PlayerVelocity;
-				PlayerVelocity.X = info->VeloX;
-				PlayerVelocity.Y = info->VeloY;
-				PlayerVelocity.Z = info->VeloZ;
-				if (!OtherPlayer->GetCurWeapon())
+				if (info->w_type == WeaponType::RIFLE)
 				{
-					if (info->w_type == WeaponType::RIFLE)
-					{
-						FName RifleSocketName = FName("RifleSocket");
-						OtherPlayer->SetWeapon(Rifle, RifleSocketName);
-					}
-					else if (info->w_type == WeaponType::SHOTGUN)
-					{
-						FName ShotgunSocketName = FName("ShotgunSocket");
-						OtherPlayer->SetWeapon(ShotGun, ShotgunSocketName);
-					}
-					else if (info->w_type == WeaponType::LAUNCHER)
-					{
-						FName LancherSocketName = FName("LancherSocket");
-						OtherPlayer->SetWeapon(Lancher, LancherSocketName);
-					}
+					FName RifleSocketName = FName("RifleSocket");
+					OtherPlayer->SetWeapon(Rifle, RifleSocketName);
+				
 				}
-
-				OtherPlayer->AddMovementInput(PlayerVelocity);
-				OtherPlayer->SetActorRotation(PlayerRotation);
-				OtherPlayer->SetActorLocation(PlayerLocation);
-				OtherPlayer->GetCharacterMovement()->MaxWalkSpeed = info->Max_Speed;
-
+				else if (info->w_type == WeaponType::SHOTGUN)
+				{
+					FName ShotgunSocketName = FName("ShotgunSocket");
+					OtherPlayer->SetWeapon(ShotGun, ShotgunSocketName);
+					
+				}
+				else if (info->w_type == WeaponType::LAUNCHER)
+				{
+					FName LancherSocketName = FName("LancherSocket");
+					OtherPlayer->SetWeapon(Lancher, LancherSocketName);
+					
+				}
 			}
-			else {
 
+			OtherPlayer->AddMovementInput(PlayerVelocity);
+			OtherPlayer->SetActorRotation(PlayerRotation);
+			OtherPlayer->SetActorLocation(PlayerLocation);
+			OtherPlayer->GetCharacterMovement()->MaxWalkSpeed = info->Max_Speed;
+			
+			if (OtherPlayer->GetCurWeapon() && info->fired==true)
+			{
+				
+				OtherPlayer->SpawnBeam(Firegun, EFiregun);
+				info->fired = false;
 			}
+			if (OtherPlayer->GetCurWeapon() && info->hiteffect == true)
+			{
+				
+				OtherPlayer->SpawnHitImpact(HEloc, EffectRot);
+				info->hiteffect = false;
+			}
+
 
 		}
 	}
@@ -605,4 +658,17 @@ void ACharacterController::OnPossess(APawn* InPawn)
 		bEnableMouseOverEvents = true;
 		showWeaponSelect();
 	}
+}
+
+void ACharacterController::SetHp(float DamagedHp)
+{
+	DamgeHp = DamagedHp;
+	//UE_LOG(LogClass, Warning, TEXT("hp : %f"), DamagedHp);
+	//ACharacterBase* BaseCharacter = Cast<ACharacterBase>(GetPawn());
+	//if (BaseCharacter)
+	//{
+	//	UE_LOG(LogClass, Warning, TEXT("hp : %f"), DamagedHp);
+	//	BaseCharacter->SetHealth(DamagedHp);
+	//	SetHUDHealth(BaseCharacter->GetHealth(), BaseCharacter->MaxGetHealth());
+	//}
 }

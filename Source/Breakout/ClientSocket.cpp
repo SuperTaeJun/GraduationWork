@@ -87,19 +87,6 @@ bool ClientSocket::PacketProcess(char* ptr)
 		SC_LOGIN_BACK* packet = reinterpret_cast<SC_LOGIN_BACK*>(ptr);
 		//to_do
 		UE_LOG(LogClass, Warning, TEXT("aaaaa"));
-		//UE_LOG(LogClass, Warning, TEXT("RECV ROGIN?"));
-		//login_cond = true;
-		//CPlayer player;
-		//player.Id = packet->clientid;
-		///*player.X = packet->x;
-		//player.Y = packet->y;
-		//player.Z = packet->z;
-		//player.p_type = packet->p_type;*/
-		//PlayerInfo.players[player.Id] = player;
-		//MyCharacterController->SetPlayerID(player.Id);
-		//MyCharacterController->SetPlayerInfo(&PlayerInfo);
-		//MyCharacterController->SetInitPlayerInfo(player);
-		//UE_LOG(LogClass, Warning, TEXT("recv - id: %d, x: %d"), player.Id, player.X);
 		break;
 	}
 	case SC_OTHER_PLAYER:
@@ -130,6 +117,7 @@ bool ClientSocket::PacketProcess(char* ptr)
 		PlayerInfo.players[packet->id].VeloY = packet->vy;
 		PlayerInfo.players[packet->id].VeloZ = packet->vz;
 		PlayerInfo.players[packet->id].Max_Speed = packet->Max_speed;
+
 		UE_LOG(LogClass, Warning, TEXT("recv - move player id : %d,"), packet->id);
 		break;
 	}
@@ -159,6 +147,42 @@ bool ClientSocket::PacketProcess(char* ptr)
 		SC_ACCEPT_READY* packet = reinterpret_cast<SC_ACCEPT_READY*>(ptr);
 		UE_LOG(LogTemp, Warning, TEXT("recv - all ready packet"));
 		bAllReady = true;
+		break;
+	}
+	case SC_DAMAGED: {
+		UE_LOG(LogTemp, Warning, TEXT("chong"));
+		SC_ATTACK_PLAYER* packet = reinterpret_cast<SC_ATTACK_PLAYER*>(ptr);
+		PlayerInfo.players[packet->clientid].Sshot.X = packet->sx;
+		PlayerInfo.players[packet->clientid].Sshot.Y = packet->sy;
+		PlayerInfo.players[packet->clientid].Sshot.Z = packet->sz;
+		PlayerInfo.players[packet->clientid].Eshot.X = packet->ex;
+		PlayerInfo.players[packet->clientid].Eshot.Y = packet->ey;
+		PlayerInfo.players[packet->clientid].Eshot.Z = packet->ez;
+		//UE_LOG(LogTemp, Warning, TEXT("%f, %f"), packet->sx, packet->ex);
+		MyCharacterController->SetAttack(packet->clientid);
+		// = packet->hp;1
+		//PlayerInfo.players[packet].w_type = packet->weapon_type;	}
+		break;
+	}
+	case SC_EFFECT: {
+		CS_EFFECT_PACKET* packet = reinterpret_cast<CS_EFFECT_PACKET*>(ptr);
+		PlayerInfo.players[packet->attack_id].Hshot.X = packet->lx;
+		PlayerInfo.players[packet->attack_id].Hshot.Y = packet->ly;
+		PlayerInfo.players[packet->attack_id].Hshot.Z = packet->lz;
+		PlayerInfo.players[packet->attack_id].FEffect.Pitch = packet->r_pitch;
+		PlayerInfo.players[packet->attack_id].FEffect.Yaw = packet->r_yaw;
+		PlayerInfo.players[packet->attack_id].FEffect.Roll = packet->r_roll;
+		//UE_LOG(LogTemp, Warning, TEXT("%f, %f"), packet->sx, packet->ex);
+		MyCharacterController->SetHitEffect(packet->attack_id);
+		break;
+	}
+	case SC_PLAYER_DAMAGE: {
+		SC_DAMAGE_CHANGE* packet = reinterpret_cast<SC_DAMAGE_CHANGE*>(ptr);
+		CPlayer player;
+		player.Id = packet->damaged_id;
+		player.hp = packet->hp;
+		
+		MyCharacterController->SetHp(player.hp);
 		break;
 	}
 	default:
@@ -235,6 +259,44 @@ void ClientSocket::Send_Ready_Packet(bool ready)
 	CS_READY_PACKET packet;
 	packet.size = sizeof(packet);
 	packet.type = CS_READY;
+	SendPacket(&packet);
+}
+void ClientSocket::Send_Fire_Effect(int attack_id, FVector ImLoc, FRotator ImRot)
+{
+	CS_EFFECT_PACKET packet;
+	packet.size = sizeof(packet);
+	packet.type = CS_HIT_EFFECT;
+	packet.attack_id = attack_id;
+	packet.lx = ImLoc.X;
+	packet.ly = ImLoc.Y;
+	packet.lz = ImLoc.Z;
+	packet.r_pitch = ImRot.Pitch;
+	packet.r_yaw = ImRot.Yaw;
+	packet.r_roll = ImRot.Roll;
+	SendPacket(&packet);
+}
+void ClientSocket::Send_AttackPacket(int attack_id, FVector SLoc, FVector ELoc)
+{
+	UE_LOG(LogClass, Warning, TEXT("Send_AttackPacket"));
+	CS_ATTACK_PLAYER packet;
+	packet.size = sizeof(packet);
+	packet.type = CS_ATTACK;
+	packet.attack_id = attack_id;
+	packet.sx = SLoc.X;
+	packet.sy = SLoc.Y;
+	packet.sz = SLoc.Z;
+	packet.ex = ELoc.X;
+	packet.ey = ELoc.Y;
+	packet.ez = ELoc.Z;
+	SendPacket(&packet);
+}
+void ClientSocket::Send_Damage_Packet(int damaged_id, float damage)
+{
+	CS_DAMAGE_PACKET packet;
+	packet.size = sizeof(packet);
+	packet.type = CS_DAMAGE;
+	packet.damaged_id = damaged_id;
+	packet.damage = damage;
 	SendPacket(&packet);
 }
 bool ClientSocket::Init()
@@ -358,16 +420,7 @@ void ClientSocket::SetPlayerController(ACharacterController* CharacterController
 	}
 }
 
-//bool ClientSocket::Send(const int SendSize, void* SendData)
-//{
-//	char buff[BUFSIZE];
-//	memcpy(buff, SendData, SendSize);
-//
-//	int nSendLen = send(ServerSocket, buff, buff[0], 0);
-//	UE_LOG(LogNet, Display, TEXT("Send Packet SIZE %d"), nSendLen);
-//
-//	return true;
-//}
+
 void ClientSocket::RecvPacket()
 {
 	//UE_LOG(LogClass, Warning, TEXT("recv data"));

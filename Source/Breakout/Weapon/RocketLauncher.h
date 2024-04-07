@@ -16,8 +16,12 @@ class BREAKOUT_API ARocketLauncher : public AWeaponBase
 	
 public:
 	virtual void Fire(const FVector& HitTarget) override;
-
+	void SpawnProjectile();
 private:
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class AProjectileBase> ProjectileClass;
+
+	FVector StartPos;
+	FRotator CurWeaponRot;
+	FActorSpawnParameters SpawnParm;
 };

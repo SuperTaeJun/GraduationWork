@@ -25,6 +25,9 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	int32 MaxAmmo = 10;
+
+	FVector StartBeam;
+	FVector EndBeam;
 private:
 	UPROPERTY(EditAnywhere, Category = "Weapon Properties")
 	TObjectPtr<class USkeletalMeshComponent> WeaponMesh;
@@ -53,13 +56,15 @@ protected:
 	void WeaponTraceHit(const FVector& TraceStart, const FVector& HitTarget, FHitResult& OutHit);
 
 
+public:
 	UPROPERTY(EditAnywhere)
-	class UNiagaraSystem* ImpactNiagara;
+	TObjectPtr<class UNiagaraSystem> BeamNiagara;
 	UPROPERTY(EditAnywhere)
-	class UNiagaraSystem* BeamNiagara;
-
+	TObjectPtr<class UNiagaraSystem> ImpactNiagara;
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<class UNiagaraComponent>DetectNiagara;
 public:
 	FORCEINLINE USkeletalMeshComponent* GetWeaponMesh() const { return WeaponMesh; }
-
+	void SetDetectNiagara(bool bUse);
 
 };

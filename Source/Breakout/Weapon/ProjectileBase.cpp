@@ -24,12 +24,13 @@ AProjectileBase::AProjectileBase()
 	ProjectileMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ProjectileMesh"));
 	ProjectileMesh->SetupAttachment(RootComponent);
 	ProjectileMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-
-
+	ProjectileMesh->SetStaticMesh(
+		ConstructorHelpers::FObjectFinder<UStaticMesh>(TEXT("/Script/Engine.StaticMesh'/DatasmithContent/Meshes/sphere.sphere'")).Object);
+	ProjectileMesh->SetWorldScale3D(FVector(30.f, 30.f, 30.f));
 	ProjectileMovementComponent = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileMovementComponent"));
 	ProjectileMovementComponent->bRotationFollowsVelocity = true;
 
-	ImpactNiagara = ConstructorHelpers::FObjectFinder<UNiagaraSystem>(TEXT("Niagara")).Object;
+	ImpactNiagara = ConstructorHelpers::FObjectFinder<UNiagaraSystem>(TEXT("/Script/Niagara.NiagaraSystem'/Game/Niagara/Weapon/Lancher/NS_Explosion.NS_Explosion'")).Object;
 }
 
 void AProjectileBase::BeginPlay()
