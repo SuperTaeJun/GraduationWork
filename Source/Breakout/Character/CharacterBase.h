@@ -240,7 +240,8 @@ protected:
 	void StopJump(const FInputActionValue& Value);
 	virtual void Skill_S(const FInputActionValue& Value);
 	virtual void Skill_E(const FInputActionValue& Value);
-	void Detect(const FInputActionValue& Value);
+	void Detect_S(const FInputActionValue& Value);
+	void Detect_E(const FInputActionValue& Value);
 };
 
 UENUM(BlueprintType)
