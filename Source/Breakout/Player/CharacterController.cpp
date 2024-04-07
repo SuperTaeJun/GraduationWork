@@ -314,6 +314,7 @@ void ACharacterController::SetAttack(int _id)
 	UWorld* World = GetWorld();
 	PlayerInfo->players[_id].canfire = true;
 	UE_LOG(LogTemp, Warning, TEXT("canfire : %d"), PlayerInfo->players[_id].canfire);
+	UE_LOG(LogTemp, Warning, TEXT("_id : %d"), _id);
 }
 
 bool ACharacterController::UpdateWorld()
@@ -369,22 +370,34 @@ bool ACharacterController::UpdateWorld()
 			PlayerVelocity.X = info->VeloX;
 			PlayerVelocity.Y = info->VeloY;
 			PlayerVelocity.Z = info->VeloZ;
+			FVector Firegun;
+			FVector EFiregun;
+			Firegun.X = info->Sshot.X;
+			Firegun.Y = info->Sshot.Y;
+			Firegun.Z = info->Sshot.Z;
+			EFiregun.X = info->Eshot.X;
+			EFiregun.Y = info->Eshot.Y;
+			EFiregun.Z = info->Eshot.Z;
+
 			if (!OtherPlayer->GetCurWeapon())
 			{
 				if (info->w_type == WeaponType::RIFLE)
 				{
 					FName RifleSocketName = FName("RifleSocket");
 					OtherPlayer->SetWeapon(Rifle, RifleSocketName);
+				
 				}
 				else if (info->w_type == WeaponType::SHOTGUN)
 				{
 					FName ShotgunSocketName = FName("ShotgunSocket");
 					OtherPlayer->SetWeapon(ShotGun, ShotgunSocketName);
+					
 				}
 				else if (info->w_type == WeaponType::LAUNCHER)
 				{
 					FName LancherSocketName = FName("LancherSocket");
 					OtherPlayer->SetWeapon(Lancher, LancherSocketName);
+					
 				}
 			}
 
@@ -392,10 +405,11 @@ bool ACharacterController::UpdateWorld()
 			OtherPlayer->SetActorRotation(PlayerRotation);
 			OtherPlayer->SetActorLocation(PlayerLocation);
 			OtherPlayer->GetCharacterMovement()->MaxWalkSpeed = info->Max_Speed;
+			
 			if (OtherPlayer->GetCurWeapon() && info->canfire==true)
 			{
 				UE_LOG(LogTemp, Warning, TEXT("kkkkk"));
-				OtherPlayer->SpawnBeam(info->Sshot, info->Eshot);
+				OtherPlayer->SpawnBeam(Firegun, EFiregun);
 				info->canfire = false;
 			}
 			

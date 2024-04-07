@@ -167,7 +167,7 @@ protected:
 	void TraceUnderCrossHiar(FHitResult& TraceHitResult);
 
 
-
+	
 	bool bInRespon;
 	bool bShowSelectUi;
 	bool bCanObtainEscapeTool;

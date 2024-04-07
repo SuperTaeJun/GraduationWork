@@ -130,6 +130,7 @@ bool ClientSocket::PacketProcess(char* ptr)
 		PlayerInfo.players[packet->id].VeloY = packet->vy;
 		PlayerInfo.players[packet->id].VeloZ = packet->vz;
 		PlayerInfo.players[packet->id].Max_Speed = packet->Max_speed;
+
 		UE_LOG(LogClass, Warning, TEXT("recv - move player id : %d,"), packet->id);
 		break;
 	}
@@ -164,13 +165,13 @@ bool ClientSocket::PacketProcess(char* ptr)
 	case SC_DAMAGED: {
 		UE_LOG(LogTemp, Warning, TEXT("chong"));
 		SC_ATTACK_PLAYER* packet = reinterpret_cast<SC_ATTACK_PLAYER*>(ptr);
-		
 		PlayerInfo.players[packet->clientid].Sshot.X = packet->sx;
 		PlayerInfo.players[packet->clientid].Sshot.Y = packet->sy;
 		PlayerInfo.players[packet->clientid].Sshot.Z = packet->sz;
 		PlayerInfo.players[packet->clientid].Eshot.X = packet->ex;
 		PlayerInfo.players[packet->clientid].Eshot.Y = packet->ey;
 		PlayerInfo.players[packet->clientid].Eshot.Z = packet->ez;
+		UE_LOG(LogTemp, Warning, TEXT("%f, %f"), packet->sx, packet->ex);
 		MyCharacterController->SetAttack(packet->clientid);
 		// = packet->hp;1
 		//PlayerInfo.players[packet].w_type = packet->weapon_type;	}
