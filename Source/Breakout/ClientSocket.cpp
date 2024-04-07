@@ -376,16 +376,7 @@ void ClientSocket::SetPlayerController(ACharacterController* CharacterController
 	}
 }
 
-//bool ClientSocket::Send(const int SendSize, void* SendData)
-//{
-//	char buff[BUFSIZE];
-//	memcpy(buff, SendData, SendSize);
-//
-//	int nSendLen = send(ServerSocket, buff, buff[0], 0);
-//	UE_LOG(LogNet, Display, TEXT("Send Packet SIZE %d"), nSendLen);
-//
-//	return true;
-//}
+
 void ClientSocket::RecvPacket()
 {
 	//UE_LOG(LogClass, Warning, TEXT("recv data"));
