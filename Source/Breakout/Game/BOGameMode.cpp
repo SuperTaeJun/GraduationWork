@@ -8,7 +8,6 @@
 #include "GameFramework/PlayerStart.h"
 #include "Kismet/GameplayStatics.h"
 
-
 ABOGameMode::ABOGameMode()
 {
 	bUseSeamlessTravel = true;

@@ -15,6 +15,7 @@
 #include "NiagaraComponent.h"
 #include"GameProp/EscapeTool.h"
 #include "Game/BOGameInstance.h"
+#include "ClientSocket.h"
 //#define TRACE_LENGTH 1000.f
 
 AWeaponBase::AWeaponBase()
@@ -25,6 +26,13 @@ AWeaponBase::AWeaponBase()
 	SetRootComponent(WeaponMesh);
 
 	BeamNiagara = ConstructorHelpers::FObjectFinder<UNiagaraSystem>(TEXT("/Script/Niagara.NiagaraSystem'/Game/Niagara/Weapon/RifleAndShotgun/NS_Beam.NS_Beam'")).Object;
+
+	DetectNiagara  =CreateDefaultSubobject<UNiagaraComponent>(TEXT("DetectNiagara"));
+	DetectNiagara->SetupAttachment(RootComponent);
+	DetectNiagara->SetAsset
+	(
+		ConstructorHelpers::FObjectFinder<UNiagaraSystem>(TEXT("/Script/Niagara.NiagaraSystem'/Game/Niagara/Weapon/Detect/NewNiagaraSystem.NewNiagaraSystem'")).Object
+	);
 }
 
 // Called when the game starts or when spawned

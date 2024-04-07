@@ -57,10 +57,12 @@ protected:
 
 
 	UPROPERTY(EditAnywhere)
-	class UNiagaraSystem* ImpactNiagara;
+	TObjectPtr<class UNiagaraSystem> ImpactNiagara;
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<class UNiagaraComponent>DetectNiagara;
 public:
 	UPROPERTY(EditAnywhere)
-	class UNiagaraSystem* BeamNiagara;
+	TObjectPtr<class UNiagaraSystem> BeamNiagara;
 
 public:
 	FORCEINLINE USkeletalMeshComponent* GetWeaponMesh() const { return WeaponMesh; }
