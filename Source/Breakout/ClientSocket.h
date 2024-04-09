@@ -181,7 +181,7 @@ public:
     bool PacketProcess(char* ptr);
     void Send_Login_Info(char* id, char* pw);
     void Send_Move_Packet(int sessionID, FVector Location, FRotator Rotation, FVector Velocity, float Max_speed);
-    void Send_Character_Type(PlayerType type);
+    void Send_Character_Type(PlayerType type, int id);
     void Send_Weapon_Type(WeaponType type, int id);
     void Send_Ready_Packet(bool ready);
     void Send_Fire_Effect(int attack_id, FVector ImLoc, FRotator ImRot);

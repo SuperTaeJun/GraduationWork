@@ -86,6 +86,7 @@ bool ClientSocket::PacketProcess(char* ptr)
 	case SC_LOGIN_OK: {
 		SC_LOGIN_BACK* packet = reinterpret_cast<SC_LOGIN_BACK*>(ptr);
 		//to_do
+		gameinst->SetPlayerID(packet->id);
 		UE_LOG(LogClass, Warning, TEXT("aaaaa"));
 		break;
 	}
@@ -130,7 +131,7 @@ bool ClientSocket::PacketProcess(char* ptr)
 		player.Z = packet->z;
 		player.p_type = packet->p_type;
 		PlayerInfo.players[player.Id] = player;
-		MyCharacterController->SetPlayerID(player.Id);
+		//MyCharacterController->SetPlayerID(player.Id);
 		MyCharacterController->SetPlayerInfo(&PlayerInfo);
 		MyCharacterController->SetInitPlayerInfo(player);
 		break;
@@ -231,12 +232,13 @@ void ClientSocket::Send_Move_Packet(int sessionID, FVector Location, FRotator Ro
 	//}
 }
 
-void ClientSocket::Send_Character_Type(PlayerType type)
+void ClientSocket::Send_Character_Type(PlayerType type, int id)
 {
 	auto player = Cast<ACharacterBase>(UGameplayStatics::GetPlayerCharacter(MyCharacterController, 0));
 	CS_SELECT_CHARACTER packet;
 	packet.size = sizeof(packet);
 	packet.type = CS_SELECT_CHAR;
+	packet.id = id;
 	//Send(packet.size, &packet);
 	auto location = player->GetActorLocation();
 	packet.x = location.X;

@@ -33,7 +33,7 @@ void send_change_hp(int _s_id);
 void send_put_object(int _s_id, int target);
 void Disconnect(int _s_id);
 void send_ready_packet(int _s_id);
-void send_damage_packet(int _s_id);
+//void send_damage_packet(int _s_id);
 void worker_thread();
 
 int main()
@@ -79,7 +79,7 @@ int main()
 	//int nThreadCnt = 5;
 
 
-	for (int i = 0; i < 10; ++i)
+	for (int i = 0; i < 16; ++i)
 		worker_threads.emplace_back(worker_thread);
 
 	for (auto& th : worker_threads)
@@ -123,6 +123,8 @@ void send_login_ok_packet(int _s_id)
 	SC_LOGIN_BACK packet;
 	packet.size = sizeof(packet);
 	packet.type = SC_LOGIN_OK;
+	packet.id = _s_id;
+	cout << "_s_id" << _s_id << endl;
 	//packet.clientid = _s_id;
 	/*packet.x = clients[_s_id].x;
 	packet.y = clients[_s_id].y;
@@ -228,7 +230,7 @@ void process_packet(int s_id, char* p)
 
 	}
 	case CS_SELECT_CHAR: {
-		//m.lock();
+		
 		CS_SELECT_CHARACTER* packet = reinterpret_cast<CS_SELECT_CHARACTER*>(p);
 		CLIENT& cl = clients[s_id];
 		cl.x = packet->x;
@@ -236,8 +238,10 @@ void process_packet(int s_id, char* p)
 		cl.z = packet->z;
 		cl.p_type = packet->p_type;
 		send_select_character_type_packet(cl._s_id);
-		//m.unlock();
+
+
 		cout << "cl._s_id : " << cl._s_id << ",  " << cl.p_type << endl;
+		//m.lock();
 		for (auto& other : clients) {
 			if (other._s_id == cl._s_id) continue;
 			other.state_lock.lock();
@@ -263,7 +267,8 @@ void process_packet(int s_id, char* p)
 			cout << "이거 누구한테 감 :  ?" << other._s_id << endl;
 			other.do_send(sizeof(packet), &packet);
 		}
-
+		//m.unlock();
+		//m.lock();
 		// 새로 접속한 플레이어에게 주위 객체 정보를 보낸다
 		for (auto& other : clients) {
 			if (other._s_id == cl._s_id) continue;
@@ -290,8 +295,10 @@ void process_packet(int s_id, char* p)
 			printf_s("[어떤 클라의 Send put object] id : %d, location : (%f,%f,%f), yaw : %f\n", packet.id, packet.x, packet.y, packet.z, packet.yaw);
 
 			cl.do_send(sizeof(packet), &packet);
+		
 		}
-		this_thread::sleep_for(0.5ms);
+		//m.unlock();
+	
 		break;
 	}
 	case CS_MOVE_Packet: {
@@ -378,7 +385,7 @@ void process_packet(int s_id, char* p)
 				cout << "보낼 플레이어" << player._s_id << endl;
 				m.unlock();
 			}
-			cl._state = ST_INGAME;
+			//cl._state = ST_INGAME;
 		}
 		break;
 	}

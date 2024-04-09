@@ -73,6 +73,7 @@ struct CS_LOGIN_PACKET
 struct SC_LOGIN_BACK {
 	unsigned char size;
 	unsigned type;
+	int id;
 };
 #pragma pack(pop)
 
