@@ -213,7 +213,7 @@ void process_packet(int s_id, char* p)
 		CLIENT& cl = clients[s_id];
 		cout << "[Recv login] ID :" << packet->id << ", PASSWORD : " << packet->pw << endl;
 		cl.state_lock.lock();
-		cl._state = ST_INGAME;
+		cl._state = ST_LOBBY;
 		cl.state_lock.unlock();
 		/*cl.x = packet->x;
 		cl.y = packet->y;
@@ -314,7 +314,7 @@ void process_packet(int s_id, char* p)
 		cl.VZ = packet->vz;
 		cl.Max_Speed = packet->Max_speed;
 		//cout << "플레이어[" << packet->id << "]" << "  x:" << packet->x << endl;
-		//cout <<"플레이어["<< packet->id<<"]" << "  x:" << packet->vx << " y:" << packet->y << " z:" << packet->z << "speed : " << packet->speed << endl;
+		cout <<"플레이어["<< packet->id<<"]" << "  x:" << packet->vx << " y:" << packet->y << " z:" << packet->z << "speed : " << endl;
 		//클라 recv 확인용
 
 		for (auto& other : clients) {
@@ -378,15 +378,17 @@ void process_packet(int s_id, char* p)
 		if (ready_count >= 2)
 		{
 			for (auto& player : clients) {
-				if (ST_INGAME != player._state)
+				if (ST_LOBBY != player._state)
 					continue;
 				m.lock();
 				send_ready_packet(player._s_id);
 				cout << "보낼 플레이어" << player._s_id << endl;
 				m.unlock();
+				player._state = ST_INGAME;
 			}
-			//cl._state = ST_INGAME;
+			
 		}
+		
 		break;
 	}
 	case CS_ATTACK: {
