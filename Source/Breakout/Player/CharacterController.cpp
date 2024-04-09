@@ -306,14 +306,6 @@ void ACharacterController::SetNewCharacterInfo(std::shared_ptr<CPlayer> InitPlay
 		UE_LOG(LogTemp, Warning, TEXT("The value of size_: %d"), NewPlayer.size());
 	}
 }
-void ACharacterController::SetNewWeaponMesh(std::shared_ptr<CPlayer> InitPlayer)
-{
-	if (InitPlayer != nullptr) {
-		bNewWeaponEntered = true;
-		NewPlayer.push(InitPlayer);
-
-	}
-}
 
 void ACharacterController::SetAttack(int _id)
 {

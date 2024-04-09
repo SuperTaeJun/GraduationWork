@@ -203,7 +203,7 @@ void process_packet(int s_id, char* p)
 {
 	unsigned char packet_type = p[1];
 	CLIENT& cl = clients[s_id];
-	cout << "packet type :" << to_string(packet_type) << endl;
+	//cout << "packet type :" << to_string(packet_type) << endl;
 	switch (packet_type) {
 	case CS_LOGIN: {
 		CS_LOGIN_PACKET* packet = reinterpret_cast<CS_LOGIN_PACKET*>(p);
@@ -228,6 +228,7 @@ void process_packet(int s_id, char* p)
 
 	}
 	case CS_SELECT_CHAR: {
+		//m.lock();
 		CS_SELECT_CHARACTER* packet = reinterpret_cast<CS_SELECT_CHARACTER*>(p);
 		CLIENT& cl = clients[s_id];
 		cl.x = packet->x;
@@ -235,6 +236,7 @@ void process_packet(int s_id, char* p)
 		cl.z = packet->z;
 		cl.p_type = packet->p_type;
 		send_select_character_type_packet(cl._s_id);
+		//m.unlock();
 		cout << "cl._s_id : " << cl._s_id << ",  " << cl.p_type << endl;
 		for (auto& other : clients) {
 			if (other._s_id == cl._s_id) continue;
