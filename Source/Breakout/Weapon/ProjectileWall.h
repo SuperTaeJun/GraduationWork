@@ -13,7 +13,8 @@ UCLASS()
 class BREAKOUT_API AProjectileWall : public AProjectileBase
 {
 	GENERATED_BODY()
-	
+public:
+	AProjectileWall();
 	
 protected:
 	virtual void BeginPlay() override;

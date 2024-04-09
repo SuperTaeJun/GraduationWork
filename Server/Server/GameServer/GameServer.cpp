@@ -33,7 +33,7 @@ void send_change_hp(int _s_id);
 void send_put_object(int _s_id, int target);
 void Disconnect(int _s_id);
 void send_ready_packet(int _s_id);
-void send_damage_packet(int _s_id);
+//void send_damage_packet(int _s_id);
 void worker_thread();
 
 int main()
@@ -79,7 +79,7 @@ int main()
 	//int nThreadCnt = 5;
 
 
-	for (int i = 0; i < 10; ++i)
+	for (int i = 0; i < 16; ++i)
 		worker_threads.emplace_back(worker_thread);
 
 	for (auto& th : worker_threads)
@@ -123,6 +123,8 @@ void send_login_ok_packet(int _s_id)
 	SC_LOGIN_BACK packet;
 	packet.size = sizeof(packet);
 	packet.type = SC_LOGIN_OK;
+	packet.id = _s_id;
+	cout << "_s_id" << _s_id << endl;
 	//packet.clientid = _s_id;
 	/*packet.x = clients[_s_id].x;
 	packet.y = clients[_s_id].y;
@@ -203,7 +205,7 @@ void process_packet(int s_id, char* p)
 {
 	unsigned char packet_type = p[1];
 	CLIENT& cl = clients[s_id];
-	cout << "packet type :" << to_string(packet_type) << endl;
+	//cout << "packet type :" << to_string(packet_type) << endl;
 	switch (packet_type) {
 	case CS_LOGIN: {
 		CS_LOGIN_PACKET* packet = reinterpret_cast<CS_LOGIN_PACKET*>(p);
@@ -228,6 +230,7 @@ void process_packet(int s_id, char* p)
 
 	}
 	case CS_SELECT_CHAR: {
+		
 		CS_SELECT_CHARACTER* packet = reinterpret_cast<CS_SELECT_CHARACTER*>(p);
 		CLIENT& cl = clients[s_id];
 		cl.x = packet->x;
@@ -235,7 +238,10 @@ void process_packet(int s_id, char* p)
 		cl.z = packet->z;
 		cl.p_type = packet->p_type;
 		send_select_character_type_packet(cl._s_id);
+
+
 		cout << "cl._s_id : " << cl._s_id << ",  " << cl.p_type << endl;
+		//m.lock();
 		for (auto& other : clients) {
 			if (other._s_id == cl._s_id) continue;
 			other.state_lock.lock();
@@ -261,7 +267,8 @@ void process_packet(int s_id, char* p)
 			cout << "이거 누구한테 감 :  ?" << other._s_id << endl;
 			other.do_send(sizeof(packet), &packet);
 		}
-
+		//m.unlock();
+		//m.lock();
 		// 새로 접속한 플레이어에게 주위 객체 정보를 보낸다
 		for (auto& other : clients) {
 			if (other._s_id == cl._s_id) continue;
@@ -288,8 +295,10 @@ void process_packet(int s_id, char* p)
 			printf_s("[어떤 클라의 Send put object] id : %d, location : (%f,%f,%f), yaw : %f\n", packet.id, packet.x, packet.y, packet.z, packet.yaw);
 
 			cl.do_send(sizeof(packet), &packet);
+		
 		}
-		this_thread::sleep_for(0.5ms);
+		//m.unlock();
+	
 		break;
 	}
 	case CS_MOVE_Packet: {
@@ -376,7 +385,7 @@ void process_packet(int s_id, char* p)
 				cout << "보낼 플레이어" << player._s_id << endl;
 				m.unlock();
 			}
-			cl._state = ST_INGAME;
+			//cl._state = ST_INGAME;
 		}
 		break;
 	}
@@ -402,7 +411,7 @@ void process_packet(int s_id, char* p)
 			SC_ATTACK_PLAYER packet;
 			packet.clientid = cl._s_id;
 			packet.size = sizeof(packet);
-			packet.type = SC_DAMAGED;
+			packet.type = SC_ATTACK;
 			packet.sx = cl.s_x;
 			packet.sy = cl.s_y;
 			packet.sz = cl.s_z;
@@ -590,6 +599,7 @@ void send_move_packet(int _id, int target)
 	clients[_id].do_send(sizeof(packet), &packet);
 }
 
+//데미지 깍는 곳
 void send_change_hp(int _s_id)
 {
 	SC_DAMAGE_CHANGE packet;
@@ -609,17 +619,18 @@ void send_ready_packet(int _s_id)
 	clients[_s_id].do_send(sizeof(packet), &packet);
 }
 
-void send_damage_packet(int _s_id)
-{
-	SC_ATTACK_PLAYER packet;
-	packet.size = sizeof(packet);
-	packet.type = SC_DAMAGED;
-	packet.clientid = _s_id;
-	packet.sx = clients[_s_id].s_x;
-	packet.sy = clients[_s_id].s_y;
-	packet.sz = clients[_s_id].s_z;
-	packet.ex = clients[_s_id].e_x;
-	packet.ey = clients[_s_id].e_y;
-	packet.ez = clients[_s_id].e_z;
-	clients[_s_id].do_send(sizeof(packet), &packet);
-}
+
+//void send_damage_packet(int _s_id)
+//{
+//	SC_ATTACK_PLAYER packet;
+//	packet.size = sizeof(packet);
+//	packet.type = SC_DAMAGED;
+//	packet.clientid = _s_id;
+//	packet.sx = clients[_s_id].s_x;
+//	packet.sy = clients[_s_id].s_y;
+//	packet.sz = clients[_s_id].s_z;
+//	packet.ex = clients[_s_id].e_x;
+//	packet.ey = clients[_s_id].e_y;
+//	packet.ez = clients[_s_id].e_z;
+//	clients[_s_id].do_send(sizeof(packet), &packet);
+//}

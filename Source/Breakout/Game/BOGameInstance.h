@@ -28,9 +28,11 @@ public:
 
 	void SetCharacterType(ECharacterType _CharacterType) { CharacterType = _CharacterType; }
 	ECharacterType GetCharacterType() { return CharacterType; }
-
+	inline void SetPlayerID(int id) { playerID = id; }
+	inline int GetPlayerID() { return playerID; }
 
 public:
 	class ClientSocket* m_Socket;
 	bool connect;
+	int playerID;
 };

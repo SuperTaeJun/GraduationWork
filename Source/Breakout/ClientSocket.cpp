@@ -86,6 +86,7 @@ bool ClientSocket::PacketProcess(char* ptr)
 	case SC_LOGIN_OK: {
 		SC_LOGIN_BACK* packet = reinterpret_cast<SC_LOGIN_BACK*>(ptr);
 		//to_do
+		gameinst->SetPlayerID(packet->id);
 		UE_LOG(LogClass, Warning, TEXT("aaaaa"));
 		break;
 	}
@@ -130,7 +131,7 @@ bool ClientSocket::PacketProcess(char* ptr)
 		player.Z = packet->z;
 		player.p_type = packet->p_type;
 		PlayerInfo.players[player.Id] = player;
-		MyCharacterController->SetPlayerID(player.Id);
+		//MyCharacterController->SetPlayerID(player.Id);
 		MyCharacterController->SetPlayerInfo(&PlayerInfo);
 		MyCharacterController->SetInitPlayerInfo(player);
 		break;
@@ -149,7 +150,8 @@ bool ClientSocket::PacketProcess(char* ptr)
 		bAllReady = true;
 		break;
 	}
-	case SC_DAMAGED: {
+	// 공격 나이아가라 이팩트 효과
+	case SC_ATTACK: {
 		UE_LOG(LogTemp, Warning, TEXT("chong"));
 		SC_ATTACK_PLAYER* packet = reinterpret_cast<SC_ATTACK_PLAYER*>(ptr);
 		PlayerInfo.players[packet->clientid].Sshot.X = packet->sx;
@@ -164,6 +166,7 @@ bool ClientSocket::PacketProcess(char* ptr)
 		//PlayerInfo.players[packet].w_type = packet->weapon_type;	}
 		break;
 	}
+	//이팩트 처리
 	case SC_EFFECT: {
 		CS_EFFECT_PACKET* packet = reinterpret_cast<CS_EFFECT_PACKET*>(ptr);
 		PlayerInfo.players[packet->attack_id].Hshot.X = packet->lx;
@@ -176,6 +179,7 @@ bool ClientSocket::PacketProcess(char* ptr)
 		MyCharacterController->SetHitEffect(packet->attack_id);
 		break;
 	}
+	//HP동기화 처리
 	case SC_PLAYER_DAMAGE: {
 		SC_DAMAGE_CHANGE* packet = reinterpret_cast<SC_DAMAGE_CHANGE*>(ptr);
 		CPlayer player;
@@ -228,12 +232,13 @@ void ClientSocket::Send_Move_Packet(int sessionID, FVector Location, FRotator Ro
 	//}
 }
 
-void ClientSocket::Send_Character_Type(PlayerType type)
+void ClientSocket::Send_Character_Type(PlayerType type, int id)
 {
 	auto player = Cast<ACharacterBase>(UGameplayStatics::GetPlayerCharacter(MyCharacterController, 0));
 	CS_SELECT_CHARACTER packet;
 	packet.size = sizeof(packet);
 	packet.type = CS_SELECT_CHAR;
+	packet.id = id;
 	//Send(packet.size, &packet);
 	auto location = player->GetActorLocation();
 	packet.x = location.X;

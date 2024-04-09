@@ -41,7 +41,7 @@ const char SC_MOVE_PLAYER = 3;
 const char SC_CHAR_BACK = 4;
 const char SC_OTHER_WEAPO = 5;
 const char SC_ALL_READY = 6;
-const char SC_DAMAGED = 7;
+const char SC_ATTACK = 7;
 const char SC_EFFECT = 8;
 const char SC_PLAYER_DAMAGE = 9;
 
@@ -73,6 +73,7 @@ struct CS_LOGIN_PACKET
 struct SC_LOGIN_BACK {
 	unsigned char size;
 	unsigned type;
+	int id;
 };
 #pragma pack(pop)
 

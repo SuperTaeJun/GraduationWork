@@ -3,6 +3,11 @@
 
 #include "Weapon/ProjectileWall.h"
 #include "GameProp/Wall.h"
+AProjectileWall::AProjectileWall()
+{
+	ImpactNiagara = nullptr;
+
+}
 void AProjectileWall::BeginPlay()
 {
 	Super::BeginPlay();

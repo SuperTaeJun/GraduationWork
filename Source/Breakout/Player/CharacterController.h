@@ -82,10 +82,9 @@ public:
 	void showWeaponSelect();
 	void ShowRespawnSelect();
 	// 초기 플레이어 저장
-	void SetPlayerID(const int playerid) {
-		UE_LOG(LogTemp, Warning, TEXT("%d -> my_id"), playerid);
-		id = playerid; }
-	int GetPlayerID() { return id; }
+	//void SetPlayerID(const int playerid) {
+	//	UE_LOG(LogTemp, Warning, TEXT("%d -> my_id"), playerid);
+	//	id = playerid; }
 	void SetPlayerInfo(CPlayerInfo* p_info) {
 		if (p_info != nullptr)
 			PlayerInfo = p_info;
@@ -93,7 +92,6 @@ public:
 	void SetInitPlayerInfo(const CPlayer& owner_player);
 	//-----------------------------------------------------
 	void SetNewCharacterInfo(std::shared_ptr<CPlayer> InitPlayer);
-	void SetNewWeaponMesh(std::shared_ptr<CPlayer> InitPlayer);
 	void SetAttack(int _id);
 	void SetHitEffect(int _id);
 	void UpdatePlayer();
