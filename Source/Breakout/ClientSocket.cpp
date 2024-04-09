@@ -136,10 +136,10 @@ bool ClientSocket::PacketProcess(char* ptr)
 		MyCharacterController->SetPlayerInfo(&PlayerInfo);
 		MyCharacterController->SetInitPlayerInfo(player);
 
-		CS_SIGNAL_PACKET repacket;
-		repacket.size = sizeof(repacket);
-		repacket.type = CS_SIGNAl;
-		SendPacket(&repacket);
+		//CS_SIGNAL_PACKET repacket;
+		//repacket.size = sizeof(repacket);
+		//repacket.type = CS_SIGNAl;
+		//SendPacket(&repacket);
 		break;
 	}
 	case SC_OTHER_WEAPO: {
