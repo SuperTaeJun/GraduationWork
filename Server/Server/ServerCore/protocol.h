@@ -34,6 +34,7 @@ const char CS_READY = 5;
 const char CS_ATTACK = 6;
 const char CS_HIT_EFFECT = 7;
 const char CS_DAMAGE = 8;
+const char CS_SIGNAl = 9;
 
 const char SC_LOGIN_OK = 1;
 const char SC_OTHER_PLAYER = 2;
@@ -171,6 +172,11 @@ struct SC_DAMAGE_CHANGE
 	unsigned char type;
 	int damaged_id;
 	int hp;
+};
+struct CS_SIGNAL_PACKET
+{
+	unsigned char size;
+	unsigned char type;
 };
 #pragma pack(pop)
 

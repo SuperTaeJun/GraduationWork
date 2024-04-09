@@ -229,23 +229,12 @@ void process_packet(int s_id, char* p)
 		break;
 
 	}
-	case CS_SELECT_CHAR: {
-		
-		CS_SELECT_CHARACTER* packet = reinterpret_cast<CS_SELECT_CHARACTER*>(p);
-		CLIENT& cl = clients[s_id];
-		cl.x = packet->x;
-		cl.y = packet->y;
-		cl.z = packet->z;
-		cl.p_type = packet->p_type;
-		send_select_character_type_packet(cl._s_id);
+	case CS_SIGNAl: {
 
-
-		cout << "cl._s_id : " << cl._s_id << ",  " << cl.p_type << endl;
-		//m.lock();
 		for (auto& other : clients) {
 			if (other._s_id == cl._s_id) continue;
 			other.state_lock.lock();
-			if (ST_INGAME != other._state) {
+			if (ST_LOBBY != other._state) {
 				other.state_lock.unlock();
 				continue;
 			}
@@ -295,8 +284,24 @@ void process_packet(int s_id, char* p)
 			printf_s("[어떤 클라의 Send put object] id : %d, location : (%f,%f,%f), yaw : %f\n", packet.id, packet.x, packet.y, packet.z, packet.yaw);
 
 			cl.do_send(sizeof(packet), &packet);
-		
+
 		}
+		break;
+	}
+	case CS_SELECT_CHAR: {
+		
+		CS_SELECT_CHARACTER* packet = reinterpret_cast<CS_SELECT_CHARACTER*>(p);
+		CLIENT& cl = clients[s_id];
+		cl.x = packet->x;
+		cl.y = packet->y;
+		cl.z = packet->z;
+		cl.p_type = packet->p_type;
+		send_select_character_type_packet(cl._s_id);
+
+
+		cout << "cl._s_id : " << cl._s_id << ",  " << cl.p_type << endl;
+		//m.lock();
+		
 		//m.unlock();
 	
 		break;
@@ -380,10 +385,10 @@ void process_packet(int s_id, char* p)
 			for (auto& player : clients) {
 				if (ST_LOBBY != player._state)
 					continue;
-				m.lock();
+				//m.lock();
 				send_ready_packet(player._s_id);
 				cout << "보낼 플레이어" << player._s_id << endl;
-				m.unlock();
+				//m.unlock();
 				player._state = ST_INGAME;
 			}
 			

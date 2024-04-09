@@ -88,6 +88,7 @@ bool ClientSocket::PacketProcess(char* ptr)
 		//to_do
 		gameinst->SetPlayerID(packet->id);
 		UE_LOG(LogClass, Warning, TEXT("aaaaa"));
+	
 		break;
 	}
 	case SC_OTHER_PLAYER:
@@ -134,6 +135,11 @@ bool ClientSocket::PacketProcess(char* ptr)
 		//MyCharacterController->SetPlayerID(player.Id);
 		MyCharacterController->SetPlayerInfo(&PlayerInfo);
 		MyCharacterController->SetInitPlayerInfo(player);
+
+		CS_SIGNAL_PACKET repacket;
+		repacket.size = sizeof(repacket);
+		repacket.type = CS_SIGNAl;
+		SendPacket(&repacket);
 		break;
 	}
 	case SC_OTHER_WEAPO: {
