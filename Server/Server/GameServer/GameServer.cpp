@@ -402,7 +402,7 @@ void process_packet(int s_id, char* p)
 			SC_ATTACK_PLAYER packet;
 			packet.clientid = cl._s_id;
 			packet.size = sizeof(packet);
-			packet.type = SC_DAMAGED;
+			packet.type = SC_ATTACK;
 			packet.sx = cl.s_x;
 			packet.sy = cl.s_y;
 			packet.sz = cl.s_z;
@@ -590,6 +590,7 @@ void send_move_packet(int _id, int target)
 	clients[_id].do_send(sizeof(packet), &packet);
 }
 
+//데미지 깍는 곳
 void send_change_hp(int _s_id)
 {
 	SC_DAMAGE_CHANGE packet;
@@ -609,17 +610,18 @@ void send_ready_packet(int _s_id)
 	clients[_s_id].do_send(sizeof(packet), &packet);
 }
 
-void send_damage_packet(int _s_id)
-{
-	SC_ATTACK_PLAYER packet;
-	packet.size = sizeof(packet);
-	packet.type = SC_DAMAGED;
-	packet.clientid = _s_id;
-	packet.sx = clients[_s_id].s_x;
-	packet.sy = clients[_s_id].s_y;
-	packet.sz = clients[_s_id].s_z;
-	packet.ex = clients[_s_id].e_x;
-	packet.ey = clients[_s_id].e_y;
-	packet.ez = clients[_s_id].e_z;
-	clients[_s_id].do_send(sizeof(packet), &packet);
-}
+
+//void send_damage_packet(int _s_id)
+//{
+//	SC_ATTACK_PLAYER packet;
+//	packet.size = sizeof(packet);
+//	packet.type = SC_DAMAGED;
+//	packet.clientid = _s_id;
+//	packet.sx = clients[_s_id].s_x;
+//	packet.sy = clients[_s_id].s_y;
+//	packet.sz = clients[_s_id].s_z;
+//	packet.ex = clients[_s_id].e_x;
+//	packet.ey = clients[_s_id].e_y;
+//	packet.ez = clients[_s_id].e_z;
+//	clients[_s_id].do_send(sizeof(packet), &packet);
+//}

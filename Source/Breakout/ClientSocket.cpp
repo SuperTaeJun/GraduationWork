@@ -149,7 +149,8 @@ bool ClientSocket::PacketProcess(char* ptr)
 		bAllReady = true;
 		break;
 	}
-	case SC_DAMAGED: {
+	// 공격 나이아가라 이팩트 효과
+	case SC_ATTACK: {
 		UE_LOG(LogTemp, Warning, TEXT("chong"));
 		SC_ATTACK_PLAYER* packet = reinterpret_cast<SC_ATTACK_PLAYER*>(ptr);
 		PlayerInfo.players[packet->clientid].Sshot.X = packet->sx;
@@ -164,6 +165,7 @@ bool ClientSocket::PacketProcess(char* ptr)
 		//PlayerInfo.players[packet].w_type = packet->weapon_type;	}
 		break;
 	}
+	//이팩트 처리
 	case SC_EFFECT: {
 		CS_EFFECT_PACKET* packet = reinterpret_cast<CS_EFFECT_PACKET*>(ptr);
 		PlayerInfo.players[packet->attack_id].Hshot.X = packet->lx;
@@ -176,6 +178,7 @@ bool ClientSocket::PacketProcess(char* ptr)
 		MyCharacterController->SetHitEffect(packet->attack_id);
 		break;
 	}
+	//HP동기화 처리
 	case SC_PLAYER_DAMAGE: {
 		SC_DAMAGE_CHANGE* packet = reinterpret_cast<SC_DAMAGE_CHANGE*>(ptr);
 		CPlayer player;

@@ -382,22 +382,27 @@ bool ACharacterController::UpdateWorld()
 			PlayerVelocity.X = info->VeloX;
 			PlayerVelocity.Y = info->VeloY;
 			PlayerVelocity.Z = info->VeloZ;
+			// 나이아가라 레이저
 			FVector Firegun;
 			FVector EFiregun;
-			FVector HEloc;
 			Firegun.X = info->Sshot.X;
 			Firegun.Y = info->Sshot.Y;
 			Firegun.Z = info->Sshot.Z;
 			EFiregun.X = info->Eshot.X;
 			EFiregun.Y = info->Eshot.Y;
 			EFiregun.Z = info->Eshot.Z;
+			//------------------------
+			//히팅 이팩트
+			FVector HEloc;
 			HEloc.X = info->Hshot.X;
 			HEloc.Y = info->Hshot.Y;
 			HEloc.Z = info->Hshot.Z;
+			
 			FRotator EffectRot;
 			EffectRot.Pitch = info->FEffect.Pitch;
 			EffectRot.Yaw = info->FEffect.Yaw;
 			EffectRot.Roll = info->FEffect.Roll;
+			//------------------------
 			if (!OtherPlayer->GetCurWeapon())
 			{
 				if (info->w_type == WeaponType::RIFLE)
@@ -424,13 +429,14 @@ bool ACharacterController::UpdateWorld()
 			OtherPlayer->SetActorRotation(PlayerRotation);
 			OtherPlayer->SetActorLocation(PlayerLocation);
 			OtherPlayer->GetCharacterMovement()->MaxWalkSpeed = info->Max_Speed;
-			
+			//공격 나이아가라
 			if (OtherPlayer->GetCurWeapon() && info->fired==true)
 			{
 				
 				OtherPlayer->SpawnBeam(Firegun, EFiregun);
 				info->fired = false;
 			}
+			//히팅
 			if (OtherPlayer->GetCurWeapon() && info->hiteffect == true)
 			{
 				

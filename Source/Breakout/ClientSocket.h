@@ -52,8 +52,10 @@ public:
     bool  IsAlive = true;
     bool  fired = false;
     bool  hiteffect = false;
+    // 나이아가라 슛 이팩트
     FVector Sshot;
     FVector Eshot;
+    // 나이아가라 히팅 이팩트
     FVector Hshot;
 
     FVector FMyLocation;
