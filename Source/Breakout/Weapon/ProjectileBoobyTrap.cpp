@@ -41,8 +41,8 @@ void AProjectileBoobyTrap::OnHit(UPrimitiveComponent* HitComponent, AActor* Othe
 				);
 			}
 		}
-		DrawDebugSphere(GetWorld(), GetActorLocation(), 200.f, 20, FColor::Black, false, 10, 0, 1);
-		DrawDebugSphere(GetWorld(), GetActorLocation(), 500.f, 20, FColor::Purple, false, 10, 0, 1);
+		//DrawDebugSphere(GetWorld(), GetActorLocation(), 200.f, 20, FColor::Black, false, 10, 0, 1);
+		//DrawDebugSphere(GetWorld(), GetActorLocation(), 500.f, 20, FColor::Purple, false, 10, 0, 1);
 		Destroy();
 	}
 }

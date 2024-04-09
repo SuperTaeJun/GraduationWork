@@ -101,10 +101,10 @@ AActor* ABOGameMode::ChoosePlayerStart_Implementation(AController* Player)
 		if (PlayerStarts2) return PlayerStarts2;
 		break;
 	case ECharacterType::ECharacter3:
-		if (PlayerStarts3) return PlayerStarts2;
+		if (PlayerStarts3) return PlayerStarts3;
 		break;
 	case ECharacterType::ECharacter4:
-		if (PlayerStarts4) return PlayerStarts3;
+		if (PlayerStarts4) return PlayerStarts4;
 		break;
 	default:
 		if (PlayerStarts1) return PlayerStarts1;

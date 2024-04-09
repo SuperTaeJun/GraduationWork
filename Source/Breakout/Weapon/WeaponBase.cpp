@@ -157,8 +157,8 @@ void AWeaponBase::DetectTool(FVector& HitRes)
 			DetectHit,
 			true
 		);
-		UKismetSystemLibrary::DrawDebugSphere(GetWorld(), Start);
-		UKismetSystemLibrary::DrawDebugSphere(GetWorld(), Start+(HitRes - Start)*0.5f);
+		//UKismetSystemLibrary::DrawDebugSphere(GetWorld(), Start);
+		//UKismetSystemLibrary::DrawDebugSphere(GetWorld(), Start+(HitRes - Start)*0.5f);
 		if (DetectHit.bBlockingHit)
 		{
 			if (Cast<AEscapeTool>(DetectHit.GetActor()))
@@ -168,12 +168,7 @@ void AWeaponBase::DetectTool(FVector& HitRes)
 
 				if (ImpactNiagara)
 				{
-					UNiagaraFunctionLibrary::SpawnSystemAtLocation
-					(
-						GetWorld(),
-						ImpactNiagara,
-						DetectHit.ImpactPoint
-					);
+					UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), ImpactNiagara, DetectHit.ImpactPoint);
 				}
 			}
 		}
