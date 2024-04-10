@@ -115,7 +115,7 @@ public:
 	void Set_Weapon_Type(EWeaponType Type);
 	//void UpdateWeaponMesh();
 	virtual void OnPossess(APawn* InPawn) override;
-private:
+public:
 	TObjectPtr<class AMainHUD> MainHUD;
 	int id;
 	bool bNewPlayerEntered = false;
@@ -129,5 +129,6 @@ private:
 	char data[BUFSIZE] = { 0 };
 	int remainData = 0;
 	bool login_cond;
+	
 	UBOGameInstance* inst;
 };

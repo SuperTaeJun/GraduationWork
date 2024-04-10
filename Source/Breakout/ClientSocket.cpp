@@ -241,18 +241,21 @@ void ClientSocket::Send_Move_Packet(int sessionID, FVector Location, FRotator Ro
 void ClientSocket::Send_Character_Type(PlayerType type, int id)
 {
 	auto player = Cast<ACharacterBase>(UGameplayStatics::GetPlayerCharacter(MyCharacterController, 0));
-	CS_SELECT_CHARACTER packet;
-	packet.size = sizeof(packet);
-	packet.type = CS_SELECT_CHAR;
-	packet.id = id;
-	//Send(packet.size, &packet);
-	auto location = player->GetActorLocation();
-	packet.x = location.X;
-	packet.y = location.Y;
-	packet.z = location.Z;
-	//packet.p_type = character_type;
-	packet.p_type = type;
-	SendPacket(&packet);
+	if (player)
+	{
+		CS_SELECT_CHARACTER packet;
+		packet.size = sizeof(packet);
+		packet.type = CS_SELECT_CHAR;
+		packet.id = id;
+		//Send(packet.size, &packet);
+		auto location = player->GetActorLocation();
+		packet.x = location.X;
+		packet.y = location.Y;
+		packet.z = location.Z;
+		//packet.p_type = character_type;
+		packet.p_type = type;
+		SendPacket(&packet);
+	}
 }
 
 void ClientSocket::Send_Weapon_Type(WeaponType type, int sessionID)

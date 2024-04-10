@@ -7,6 +7,7 @@
 #include "Character/CharacterBase.h"
 #include "GameFramework/PlayerStart.h"
 #include "Kismet/GameplayStatics.h"
+#include "Player/CharacterController.h"
 
 ABOGameMode::ABOGameMode()
 {
@@ -111,4 +112,42 @@ AActor* ABOGameMode::ChoosePlayerStart_Implementation(AController* Player)
 		break;
 	}
 	return 	Super::ChoosePlayerStart(Player);
+}
+
+void ABOGameMode::HandleMatchHasStarted()
+{
+	Super::HandleMatchHasStarted();
+
+	ACharacterController* ChController = Cast<ACharacterController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+	if (ChController)
+	{
+		ChController->inst = Cast<UBOGameInstance>(GetGameInstance());
+		//c_socket = ClientSocket::GetSingleton();
+		ChController->inst = Cast<UBOGameInstance>(GetGameInstance());
+		ChController->inst->m_Socket->SetPlayerController(ChController);
+		if (ChController->inst)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("MATCHHAS"));
+			ChController->id = ChController->inst->GetPlayerID();
+			switch (Cast<UBOGameInstance>(GetGameInstance())->GetCharacterType())
+			{
+			case ECharacterType::ECharacter1:
+				ChController->inst->m_Socket->Send_Character_Type(PlayerType::Character1, ChController->id);
+				break;
+			case ECharacterType::ECharacter2:
+				ChController->inst->m_Socket->Send_Character_Type(PlayerType::Character2, ChController->id);
+				break;
+			case ECharacterType::ECharacter3:
+				ChController->inst->m_Socket->Send_Character_Type(PlayerType::Character3, ChController->id);
+				break;
+			case ECharacterType::ECharacter4:
+				ChController->inst->m_Socket->Send_Character_Type(PlayerType::Character4, ChController->id);
+				break;
+			default:
+				ChController->inst->m_Socket->Send_Character_Type(PlayerType::Character1, ChController->id);
+				break;
+			}
+
+		}
+	}
 }

@@ -32,47 +32,41 @@ ACharacterController::ACharacterController()
 	bInitPlayerSetting = false;
 	PrimaryActorTick.bCanEverTick = true;
 	Set_Weapon = false;
+
 }
 
 void ACharacterController::BeginPlay()
 {
-
-
 	FInputModeGameOnly GameOnlyInput;
 	SetInputMode(GameOnlyInput);
 	MainHUD = Cast<AMainHUD>(GetHUD());
-	//c_socket = ClientSocket::GetSingleton();
-	inst = Cast<UBOGameInstance>(GetGameInstance());
-	inst->m_Socket->SetPlayerController(this);
-	////아아 여기
-	/*c_socket = new ClientSocket();
-	c_socket->SetPlayerController(this);*/
-	//c_socket->StartListen();
-	//connect = c_socket->Connect("192.168.101.241", 7777);
+	//inst = Cast<UBOGameInstance>(GetGameInstance());
+	//inst = Cast<UBOGameInstance>(GetGameInstance());
+	//inst->m_Socket->SetPlayerController(this);
+	//UE_LOG(LogTemp, Warning, TEXT("BEGIN"));
+	//if (inst)
+	//{
+	//	id = inst->GetPlayerID();
+	//	switch (Cast<UBOGameInstance>(GetGameInstance())->GetCharacterType())
+	//	{
+	//	case ECharacterType::ECharacter1:
 
-	if (inst)
-	{
-		id = inst->GetPlayerID();
-		switch (Cast<UBOGameInstance>(GetGameInstance())->GetCharacterType())
-		{
-		case ECharacterType::ECharacter1:
-
-			inst->m_Socket->Send_Character_Type(PlayerType::Character1, id);
-			break;
-		case ECharacterType::ECharacter2:
-			inst->m_Socket->Send_Character_Type(PlayerType::Character2, id);
-			break;
-		case ECharacterType::ECharacter3:
-			inst->m_Socket->Send_Character_Type(PlayerType::Character3, id);
-			break;
-		case ECharacterType::ECharacter4:
-			inst->m_Socket->Send_Character_Type(PlayerType::Character4, id);
-			break;
-		default:
-			inst->m_Socket->Send_Character_Type(PlayerType::Character1, id);
-			break;
-		}
-	}
+	//		inst->m_Socket->Send_Character_Type(PlayerType::Character1, id);
+	//		break;
+	//	case ECharacterType::ECharacter2:
+	//		inst->m_Socket->Send_Character_Type(PlayerType::Character2, id);
+	//		break;
+	//	case ECharacterType::ECharacter3:
+	//		inst->m_Socket->Send_Character_Type(PlayerType::Character3, id);
+	//		break;
+	//	case ECharacterType::ECharacter4:
+	//		inst->m_Socket->Send_Character_Type(PlayerType::Character4, id);
+	//		break;
+	//	default:
+	//		inst->m_Socket->Send_Character_Type(PlayerType::Character1, id);
+	//		break;
+	//	}
+	//}
 
 }
 
