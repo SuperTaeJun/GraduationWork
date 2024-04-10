@@ -213,7 +213,7 @@ void process_packet(int s_id, char* p)
 		CLIENT& cl = clients[s_id];
 		cout << "[Recv login] ID :" << packet->id << ", PASSWORD : " << packet->pw << endl;
 		cl.state_lock.lock();
-		cl._state = ST_LOBBY;
+		cl._state = ST_INGAME;
 		cl.state_lock.unlock();
 		/*cl.x = packet->x;
 		cl.y = packet->y;
@@ -231,6 +231,23 @@ void process_packet(int s_id, char* p)
 	}
 	case CS_SIGNAl: {
 
+		
+		break;
+	}
+	case CS_SELECT_CHAR: {
+		
+		CS_SELECT_CHARACTER* packet = reinterpret_cast<CS_SELECT_CHARACTER*>(p);
+		CLIENT& cl = clients[s_id];
+		cl.x = packet->x;
+		cl.y = packet->y;
+		cl.z = packet->z;
+		cl.p_type = packet->p_type;
+		
+		send_select_character_type_packet(cl._s_id);
+
+
+		cout << "cl._s_id : " << cl._s_id << ",  " << cl.p_type << endl;
+		//m.lock();
 		for (auto& other : clients) {
 			if (other._s_id == cl._s_id) continue;
 			other.state_lock.lock();
@@ -286,23 +303,6 @@ void process_packet(int s_id, char* p)
 			cl.do_send(sizeof(packet), &packet);
 
 		}
-		break;
-	}
-	case CS_SELECT_CHAR: {
-		
-		CS_SELECT_CHARACTER* packet = reinterpret_cast<CS_SELECT_CHARACTER*>(p);
-		CLIENT& cl = clients[s_id];
-		cl.x = packet->x;
-		cl.y = packet->y;
-		cl.z = packet->z;
-		cl.p_type = packet->p_type;
-		
-		send_select_character_type_packet(cl._s_id);
-
-
-		cout << "cl._s_id : " << cl._s_id << ",  " << cl.p_type << endl;
-		//m.lock();
-		
 		//m.unlock();
 	
 		break;
