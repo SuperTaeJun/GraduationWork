@@ -41,32 +41,32 @@ void ACharacterController::BeginPlay()
 	SetInputMode(GameOnlyInput);
 	MainHUD = Cast<AMainHUD>(GetHUD());
 	//inst = Cast<UBOGameInstance>(GetGameInstance());
-	//inst = Cast<UBOGameInstance>(GetGameInstance());
-	//inst->m_Socket->SetPlayerController(this);
-	//UE_LOG(LogTemp, Warning, TEXT("BEGIN"));
-	//if (inst)
-	//{
-	//	id = inst->GetPlayerID();
-	//	switch (Cast<UBOGameInstance>(GetGameInstance())->GetCharacterType())
-	//	{
-	//	case ECharacterType::ECharacter1:
+	inst = Cast<UBOGameInstance>(GetGameInstance());
+	inst->m_Socket->SetPlayerController(this);
+	UE_LOG(LogTemp, Warning, TEXT("BEGIN"));
+	if (inst)
+	{
+		id = inst->GetPlayerID();
+		switch (Cast<UBOGameInstance>(GetGameInstance())->GetCharacterType())
+		{
+		case ECharacterType::ECharacter1:
 
-	//		inst->m_Socket->Send_Character_Type(PlayerType::Character1, id);
-	//		break;
-	//	case ECharacterType::ECharacter2:
-	//		inst->m_Socket->Send_Character_Type(PlayerType::Character2, id);
-	//		break;
-	//	case ECharacterType::ECharacter3:
-	//		inst->m_Socket->Send_Character_Type(PlayerType::Character3, id);
-	//		break;
-	//	case ECharacterType::ECharacter4:
-	//		inst->m_Socket->Send_Character_Type(PlayerType::Character4, id);
-	//		break;
-	//	default:
-	//		inst->m_Socket->Send_Character_Type(PlayerType::Character1, id);
-	//		break;
-	//	}
-	//}
+			inst->m_Socket->Send_Character_Type(PlayerType::Character1, id);
+			break;
+		case ECharacterType::ECharacter2:
+			inst->m_Socket->Send_Character_Type(PlayerType::Character2, id);
+			break;
+		case ECharacterType::ECharacter3:
+			inst->m_Socket->Send_Character_Type(PlayerType::Character3, id);
+			break;
+		case ECharacterType::ECharacter4:
+			inst->m_Socket->Send_Character_Type(PlayerType::Character4, id);
+			break;
+		default:
+			inst->m_Socket->Send_Character_Type(PlayerType::Character1, id);
+			break;
+		}
+	}
 
 }
 

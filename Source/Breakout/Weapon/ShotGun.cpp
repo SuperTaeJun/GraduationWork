@@ -20,6 +20,14 @@ void AShotGun::Fire(const FVector& HitTarget)
 	if (OwnerPawn == nullptr) return;
 	AController* InstigatorController = OwnerPawn->GetController();
 
+	//서버 전송용 변수들--------------------------------
+	TArray<FVector> ServerImpactLoc;
+	TArray<FRotator> ServerImpactRot;
+	TArray<FVector> ServerBeamStart;
+	TArray<FVector> ServerBeamEnd;
+	int32 j = 0;
+	//---------------------------------------------------
+
 	const USkeletalMeshSocket* MuzzleFlashSocket = GetWeaponMesh()->GetSocketByName("MuzzleFlash");
 	if (MuzzleFlashSocket)
 	{
@@ -32,8 +40,10 @@ void AShotGun::Fire(const FVector& HitTarget)
 		{
 			/*	FVector End = TraceEndWithScatter(Start, HitTarget);*/
 			FHitResult FireHit;
-			WeaponTraceHit(Start, HitTarget, FireHit);
-
+			FVector EndBeamLoc;
+			ShotGunTraceHit(Start, HitTarget, FireHit, EndBeamLoc);
+			ServerBeamStart.Add(Start);
+			ServerBeamEnd.Add(EndBeamLoc);
 			ACharacterBase* CharacterBase = Cast<ACharacterBase>(FireHit.GetActor());
 			ABulletHoleWall* DamagedWall = Cast<ABulletHoleWall>(FireHit.GetActor());
 			if (CharacterBase && HasAuthority() && InstigatorController)
@@ -54,6 +64,7 @@ void AShotGun::Fire(const FVector& HitTarget)
 
 			if (ImpactNiagara && FireHit.bBlockingHit)
 			{
+				++j;
 				UNiagaraFunctionLibrary::SpawnSystemAtLocation
 				(
 					GetWorld(),
@@ -61,7 +72,16 @@ void AShotGun::Fire(const FVector& HitTarget)
 					FireHit.ImpactPoint,
 					FireHit.ImpactNormal.Rotation()
 				);
+				ServerImpactLoc.Add(FireHit.ImpactPoint);
+				ServerImpactRot.Add(FireHit.ImpactNormal.Rotation());
 			}
+
+		}
+		// 빔나이아가라
+		
+		if (ServerImpactRot.Num() > 0)
+		{
+			// 임펙트 나이아가라 -> 배열의 크기는 항상5가아님 총알이 맞는횟수만큼
 
 		}
 		for (auto HitPair : HitMap)
@@ -77,5 +97,59 @@ void AShotGun::Fire(const FVector& HitTarget)
 				);
 			}
 		}
+		// 여기 데미지
 	}
+}
+
+void AShotGun::ShotGunTraceHit(const FVector& TraceStart, const FVector& HitTarget, FHitResult& OutHit, FVector& EndBeamLoc)
+{
+	UWorld* World = GetWorld();
+	if (World)
+	{
+		FVector End = bUseScatter ? TraceEndWithScatter(TraceStart, HitTarget) : TraceStart + (HitTarget - TraceStart) * 1.25f;
+
+		World->LineTraceSingleByChannel
+		(
+			OutHit,
+			TraceStart,
+			End,
+			ECollisionChannel::ECC_Visibility
+		);
+		//DrawDebugLine
+		//(
+		//	World,
+		//	TraceStart,
+		//	End,
+		//	FColor::Cyan,
+		//	false,
+		//	0.5f
+		//);
+
+		FVector BeamEnd = End;
+		if (OutHit.bBlockingHit)
+		{
+			BeamEnd = OutHit.ImpactPoint;
+		}
+		if (BeamNiagara)
+		{
+			StartBeam = TraceStart;
+			EndBeam = BeamEnd;
+			UNiagaraComponent* Beam = UNiagaraFunctionLibrary::SpawnSystemAtLocation(
+				World,
+				BeamNiagara,
+				TraceStart,
+				WeaponMesh->GetComponentRotation(),
+				FVector(1.f),
+				true
+			);
+
+			if (Beam)
+			{
+				Beam->SetVectorParameter(FName("End"), BeamEnd);
+			}
+			EndBeam = BeamEnd;
+		}
+	}
+
+
 }

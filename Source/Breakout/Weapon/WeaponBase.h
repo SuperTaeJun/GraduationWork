@@ -28,7 +28,7 @@ public:
 
 	FVector StartBeam;
 	FVector EndBeam;
-private:
+protected:
 	UPROPERTY(EditAnywhere, Category = "Weapon Properties")
 	TObjectPtr<class USkeletalMeshComponent> WeaponMesh;
 
@@ -53,7 +53,7 @@ protected:
 	virtual void BeginPlay() override;
 
 	FVector TraceEndWithScatter(const FVector& TraceStart, const FVector& HitTarget);
-	void WeaponTraceHit(const FVector& TraceStart, const FVector& HitTarget, FHitResult& OutHit);
+	virtual void WeaponTraceHit(const FVector& TraceStart, const FVector& HitTarget, FHitResult& OutHit);
 
 
 public:

@@ -22,7 +22,7 @@ public:
 	virtual UClass* GetDefaultPawnClassForController_Implementation(AController* InController) override;
 	//맨처음 캐릭터 시작위치 지정
 	virtual AActor* ChoosePlayerStart_Implementation(AController* Player) override;
-	virtual void HandleMatchIsWaitingToStart() override;
+	
 	TSubclassOf<class ACharacterBase>Character1;
 	TSubclassOf<class ACharacterBase>Character2;
 	TSubclassOf<class ACharacterBase>Character3;
