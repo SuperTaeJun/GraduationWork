@@ -114,9 +114,9 @@ AActor* ABOGameMode::ChoosePlayerStart_Implementation(AController* Player)
 	return 	Super::ChoosePlayerStart(Player);
 }
 
-void ABOGameMode::HandleMatchHasStarted()
+void ABOGameMode::HandleMatchIsWaitingToStart()
 {
-	Super::HandleMatchHasStarted();
+	Super::HandleMatchIsWaitingToStart();
 
 	ACharacterController* ChController = Cast<ACharacterController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 	if (ChController)

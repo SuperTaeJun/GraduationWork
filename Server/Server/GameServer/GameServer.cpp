@@ -234,7 +234,7 @@ void process_packet(int s_id, char* p)
 		for (auto& other : clients) {
 			if (other._s_id == cl._s_id) continue;
 			other.state_lock.lock();
-			if (ST_LOBBY != other._state) {
+			if (ST_INGAME != other._state) {
 				other.state_lock.unlock();
 				continue;
 			}
@@ -296,6 +296,7 @@ void process_packet(int s_id, char* p)
 		cl.y = packet->y;
 		cl.z = packet->z;
 		cl.p_type = packet->p_type;
+		
 		send_select_character_type_packet(cl._s_id);
 
 
@@ -386,10 +387,11 @@ void process_packet(int s_id, char* p)
 				if (ST_LOBBY != player._state)
 					continue;
 				//m.lock();
+				player._state = ST_INGAME;
 				send_ready_packet(player._s_id);
 				cout << "보낼 플레이어" << player._s_id << endl;
 				//m.unlock();
-				player._state = ST_INGAME;
+				
 			}
 			
 		}
