@@ -48,5 +48,6 @@ private:
 	UFUNCTION(BlueprintCallable)
 	void SetColorData(UPARAM(ref) FMeshData& Data, FLinearColor Color);
 	FMeshData SetRandomVertex(FMeshData& MeshData, float Min, float Max, float Tolerance);
-	FMeshData TransformMeshData(FMeshData& Data, FTransform Transform, bool InPlace, FVector Pivot);
+	UFUNCTION(BlueprintCallable)
+	FMeshData TransformMeshData(UPARAM(ref) FMeshData& Data, FTransform Transform, bool InPlace, FVector Pivot);
 };

@@ -14,11 +14,11 @@
 ACharacter1::ACharacter1()
 {
 	NiagaraComp = CreateDefaultSubobject<UNiagaraComponent>(TEXT("NiagaraComp"));
-	ConstructorHelpers::FObjectFinder<UNiagaraSystem> DashFxRef(TEXT("/Game/Niagara/SKill/Skill1/NS_Skill1.NS_Skill1"));
-	NiagaraComp->bAutoActivate = false;
-	NiagaraComp->SetAsset(DashFxRef.Object);
+	ConstructorHelpers::FObjectFinder<UNiagaraSystem> TimeReplay(TEXT("/Game/Niagara/SKill/Skill1/NS_Skill1.NS_Skill1"));
+	//NiagaraComp->bAutoActivate = false;
+	//NiagaraComp->SetAsset(DashFxRef.Object);
 	bCoolTimeFinish = true;
-
+	TimeReplayNiagara = TimeReplay.Object;
 
 }
 
@@ -56,6 +56,10 @@ void ACharacter1::Tick(float DeltaTime)
 		Replay(DeltaTime);
 	}
 
+	if (bTimeReplay && TimeReplayNiagara)
+	{
+		UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), TimeReplayNiagara, GetMesh()->GetRelativeLocation(), GetMesh()->GetComponentRotation());
+	}
 }
 void ACharacter1::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
@@ -79,7 +83,7 @@ void ACharacter1::Skill_S(const FInputActionValue& Value)
 	{*/
 		bTimeReplay = true;
 		GetMesh()->SetHiddenInGame(true, true);
-		NiagaraComp->Activate();
+		//NiagaraComp->Activate();
 		//NiagaraComp->Activate();
 	//	}
 }
@@ -87,7 +91,7 @@ void ACharacter1::Skill_S(const FInputActionValue& Value)
 void ACharacter1::Skill_E(const FInputActionValue& Value)
 {
 	bTimeReplay = false;
-	NiagaraComp->Deactivate();
+	//NiagaraComp->Deactivate();
 	GetMesh()->SetHiddenInGame(false, true);
 	bCoolTimeFinish = false;
 
