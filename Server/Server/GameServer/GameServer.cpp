@@ -434,34 +434,37 @@ void process_packet(int s_id, char* p)
 		//--------------------
 		cl.ex0 = packet->ex0;
 		cl.ey0 = packet->ey0;
-		cl.ez0 = packet->ey0;
+		cl.ez0 = packet->ez0;
+		cout << cl.ex0 << "a" << cl.ey0 << cl.ez0 << endl;
 		cl.ex1 = packet->ex1;
 		cl.ey1 = packet->ey1;
-		cl.ez1 = packet->ey1;
+		cl.ez1 = packet->ez1;
+		cout << cl.ex1 << "a" << cl.ey1 << cl.ez1 << endl;
 		cl.ex2 = packet->ex2;
 		cl.ey2 = packet->ey2;
-		cl.ez2 = packet->ey2;
+		cl.ez2 = packet->ez2;
 		cl.ex3 = packet->ex3;
 		cl.ey3 = packet->ey3;
-		cl.ez3 = packet->ey3;
+		cl.ez3 = packet->ez3;
 		cl.ex4 = packet->ex4;
 		cl.ey4 = packet->ey4;
-		cl.ez4 = packet->ey4;
+		cl.ez4 = packet->ez4;
 		cl.ex5 = packet->ex5;
 		cl.ey5 = packet->ey5;
-		cl.ez5 = packet->ey5;
+		cl.ez5 = packet->ez5;
+		cout << cl.ex5 << "a" << cl.ey5 << cl.ez5 << endl;
 		cl.ex6 = packet->ex6;
 		cl.ey6 = packet->ey6;
-		cl.ez6 = packet->ey6;
+		cl.ez6 = packet->ez6;
 		cl.ex7 = packet->ex7;
 		cl.ey7 = packet->ey7;
-		cl.ez7 = packet->ey7;
+		cl.ez7 = packet->ez7;
 		cl.ex8 = packet->ex8;
 		cl.ey8 = packet->ey8;
-		cl.ez8 = packet->ey8;
-		cl.ex9 = packet->ex9;
+		cl.ez8 = packet->ez8;
+		/*cl.ex9 = packet->ex9;
 		cl.ey9 = packet->ey9;
-		cl.ez9 = packet->ey9;
+		cl.ez9 = packet->ey9;*/
 		//--------------------
 		for (auto& other : clients) {
 			if (other._s_id == cl._s_id) continue;
@@ -505,15 +508,16 @@ void process_packet(int s_id, char* p)
 			packet.ex8 = cl.ex8;
 			packet.ey8 = cl.ey8;
 			packet.ez8 = cl.ez8;
-			packet.ex9 = cl.ex9;
+			/*packet.ex9 = cl.ex9;
 			packet.ey9 = cl.ey9;
-			packet.ez9 = cl.ez9;
+			packet.ez9 = cl.ez9;*/
 
 			cout << cl.ex0 << "a" << cl.ey0 << cl.ez0;
 			cout << "이거 누구한테 감 :  ?" << other._s_id << endl;
 			other.do_send(sizeof(packet), &packet);
-			break;
+		
 		}
+		break;
 	}
 	case CS_HIT_EFFECT: {
 		CS_EFFECT_PACKET* packet = reinterpret_cast<CS_EFFECT_PACKET*>(p);

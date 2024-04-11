@@ -51,13 +51,26 @@ public:
     float Max_Speed = 400;
     bool  IsAlive = true;
     bool  fired = false;
+    bool  sfired = false;
     bool  hiteffect = false;
     // ³ªÀÌ¾Æ°¡¶ó ½¸ ÀÌÆÑÆ®
     FVector Sshot;
     FVector Eshot;
     // ³ªÀÌ¾Æ°¡¶ó È÷ÆÃ ÀÌÆÑÆ®
     FVector Hshot;
-
+    //¼¦°Ç ½¸ ÀÌÆÑÆ®
+    FVector sSshot;
+    FVector sEshot;
+    FVector sEshot1;
+    FVector sEshot2;
+    FVector sEshot3;
+    FVector sEshot4;
+    FVector sEshot5;
+    FVector sEshot6;
+    FVector sEshot7;
+    FVector sEshot8;
+    
+    /////////////////
     FVector FMyLocation;
     FVector FMyDirection;
     FRotator FEffect;

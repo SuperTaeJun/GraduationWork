@@ -186,11 +186,14 @@ struct CS_SIGNAL_PACKET
 	unsigned char size;
 	unsigned char type;
 };
+#pragma pack(pop)
+#pragma pack (push, 1)
 struct CS_SHOTGUN_BEAM_PACKET {
 	unsigned char size;
 	unsigned char type;
 	int attackid;
 	float sx, sy, sz;
+	float ex0, ey0, ez0;
 	float ex1, ey1, ez1;
 	float ex2, ey2, ez2;
 	float ex3, ey3, ez3;
@@ -199,8 +202,7 @@ struct CS_SHOTGUN_BEAM_PACKET {
 	float ex6, ey6, ez6;
 	float ex7, ey7, ez7;
 	float ex8, ey8, ez8;
-	float ex9, ey9, ez9;
-	float ex0, ey0, ez0;
+	//float ex9, ey9, ez9;
 };
 #pragma pack(pop)
 

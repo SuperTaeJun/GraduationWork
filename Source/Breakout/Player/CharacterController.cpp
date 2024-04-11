@@ -378,6 +378,48 @@ bool ACharacterController::UpdateWorld()
 			EFiregun.X = info->Eshot.X;
 			EFiregun.Y = info->Eshot.Y;
 			EFiregun.Z = info->Eshot.Z;
+			//----나이아가라 이팩트 샷건
+			FVector SShotgun;
+			FVector EShotgun;
+			FVector EShotgun1;
+			FVector EShotgun2;
+			FVector EShotgun3;
+			FVector EShotgun4;
+			FVector EShotgun5;
+			FVector EShotgun6;
+			FVector EShotgun7;
+			FVector EShotgun8;
+			SShotgun.X = info->sSshot.X;
+			SShotgun.Y = info->sSshot.Y;
+			SShotgun.Z = info->sSshot.Z;
+			EShotgun.X = info->sEshot.X;
+			EShotgun.Y = info->sEshot.Y;
+			EShotgun.Z = info->sEshot.Z;
+			EShotgun1.X = info->sEshot1.X;
+			EShotgun1.Y = info->sEshot1.Y;
+			EShotgun1.Z = info->sEshot1.Z;
+			EShotgun2.X = info->sEshot2.X;
+			EShotgun2.Y = info->sEshot2.Y;
+			EShotgun2.Z = info->sEshot2.Z;
+			EShotgun3.X = info->sEshot3.X;
+			EShotgun3.Y = info->sEshot3.Y;
+			EShotgun3.Z = info->sEshot3.Z;
+			EShotgun4.X = info->sEshot4.X;
+			EShotgun4.Y = info->sEshot4.Y;
+			EShotgun4.Z = info->sEshot4.Z;
+			EShotgun5.X = info->sEshot5.X;
+			EShotgun5.Y = info->sEshot5.Y;
+			EShotgun5.Z = info->sEshot5.Z;
+			EShotgun6.X = info->sEshot6.X;
+			EShotgun6.Y = info->sEshot6.Y;
+			EShotgun6.Z = info->sEshot6.Z;
+			EShotgun7.X = info->sEshot7.X;
+			EShotgun7.Y = info->sEshot7.Y;
+			EShotgun7.Z = info->sEshot7.Z;
+			EShotgun8.X = info->sEshot8.X;
+			EShotgun8.Y = info->sEshot8.Y;
+			EShotgun8.Z = info->sEshot8.Z;
+			// -----------------------
 			//------------------------
 			//히팅 이팩트
 			FVector HEloc;
@@ -422,6 +464,20 @@ bool ACharacterController::UpdateWorld()
 				
 				OtherPlayer->SpawnBeam(Firegun, EFiregun);
 				info->fired = false;
+			}
+			if (OtherPlayer->GetCurWeapon() && info->sfired == true)
+			{
+
+				OtherPlayer->SpawnBeam(SShotgun, EShotgun);
+				OtherPlayer->SpawnBeam(SShotgun, EShotgun1);
+				OtherPlayer->SpawnBeam(SShotgun, EShotgun2);
+				OtherPlayer->SpawnBeam(SShotgun, EShotgun3);
+				OtherPlayer->SpawnBeam(SShotgun, EShotgun4);
+				OtherPlayer->SpawnBeam(SShotgun, EShotgun5);
+				OtherPlayer->SpawnBeam(SShotgun, EShotgun6);
+				OtherPlayer->SpawnBeam(SShotgun, EShotgun7);
+				OtherPlayer->SpawnBeam(SShotgun, EShotgun8);
+				info->sfired = false;
 			}
 			//히팅
 			if (OtherPlayer->GetCurWeapon() && info->hiteffect == true)
