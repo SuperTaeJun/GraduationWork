@@ -14,11 +14,10 @@
 ACharacter1::ACharacter1()
 {
 	NiagaraComp = CreateDefaultSubobject<UNiagaraComponent>(TEXT("NiagaraComp"));
-	ConstructorHelpers::FObjectFinder<UNiagaraSystem> TimeReplay(TEXT("/Game/Niagara/SKill/Skill1/NS_Skill1.NS_Skill1"));
 	//NiagaraComp->bAutoActivate = false;
 	//NiagaraComp->SetAsset(DashFxRef.Object);
 	bCoolTimeFinish = true;
-	TimeReplayNiagara = TimeReplay.Object;
+	TimeReplayNiagara = ConstructorHelpers::FObjectFinder<UNiagaraSystem>(TEXT("/Script/Niagara.NiagaraSystem'/Game/Niagara/SKill/Skill1/NS_Skill1.NS_Skill1'")).Object;
 
 }
 
@@ -58,7 +57,9 @@ void ACharacter1::Tick(float DeltaTime)
 
 	if (bTimeReplay && TimeReplayNiagara)
 	{
-		UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), TimeReplayNiagara, GetMesh()->GetRelativeLocation(), GetMesh()->GetComponentRotation());
+		FVector CurLoc = GetActorLocation();
+		UE_LOG(LogTemp, Warning, TEXT("CurLoc = %s"), *CurLoc.ToString());
+		UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), TimeReplayNiagara, CurLoc);
 	}
 }
 void ACharacter1::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)

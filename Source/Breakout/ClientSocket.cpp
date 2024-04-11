@@ -310,8 +310,8 @@ void ClientSocket::Send_ShotGun_packet(int attack_id, TArray<FVector> ServerBeam
 	packet.size = sizeof(packet);
 	packet.type = CS_SHOTGUN_BEAM;
 	packet.attackid = attack_id;
-	ServerBeamStart.SetNum(size);
-	ServerBeamEnd.SetNum(size);
+	//ServerBeamStart.SetNum(size);
+	//ServerBeamEnd.SetNum(size);
 	packet.sx = ServerBeamStart[0].X;
 	packet.sy = ServerBeamStart[0].Y;
 	packet.sz = ServerBeamStart[0].Z;

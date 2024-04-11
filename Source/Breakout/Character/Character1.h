@@ -28,7 +28,7 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TObjectPtr<class UNiagaraComponent> NiagaraComp;
-
+	UPROPERTY(EditAnywhere)
 	TObjectPtr<class UNiagaraSystem> TimeReplayNiagara;
 private:
 	/*UPROPERTY(EditAnywhere)

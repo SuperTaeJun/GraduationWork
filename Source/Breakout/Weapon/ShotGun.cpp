@@ -80,7 +80,12 @@ void AShotGun::Fire(const FVector& HitTarget)
 			}
 
 		}
-		//Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_ShotGun_packet(Cast<ACharacterBase>(GetOwner())->_SessionId, ServerBeamStart, ServerBeamEnd, ServerBeamStart.Num());
+		for (int i = 0; i < 10; ++i)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("ServerBeamEnd : %s"), *ServerBeamEnd[i].ToString());
+		}
+		Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_ShotGun_packet(Cast<ACharacterBase>(GetOwner())->_SessionId, ServerBeamStart, ServerBeamEnd, ServerBeamStart.Num());
+
 		if (ServerImpactRot.Num() > 0)
 		{
 			// 임펙트 나이아가라 -> 배열의 크기는 항상5가아님 총알이 맞는횟수만큼
@@ -90,7 +95,8 @@ void AShotGun::Fire(const FVector& HitTarget)
 		{
 			if (HitPair.Key && HasAuthority() && InstigatorController)
 			{
-				UGameplayStatics::ApplyDamage(
+				UGameplayStatics::ApplyDamage
+				(
 					HitPair.Key,
 					Damage * HitPair.Value,
 					InstigatorController,
@@ -100,6 +106,7 @@ void AShotGun::Fire(const FVector& HitTarget)
 			}
 		}
 		// 여기 데미지
+	
 	}
 }
 
@@ -149,8 +156,8 @@ void AShotGun::ShotGunTraceHit(const FVector& TraceStart, const FVector& HitTarg
 			{
 				Beam->SetVectorParameter(FName("End"), BeamEnd);
 			}
-			EndBeam = BeamEnd;
 		}
+		EndBeamLoc = EndBeam;
 	}
 
 
