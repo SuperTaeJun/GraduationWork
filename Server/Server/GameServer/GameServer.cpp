@@ -225,24 +225,24 @@ void process_packet(int s_id, char* p)
 		cout << "플레이어[" << s_id << "]" << " 로그인 성공" << endl;
 
 		//새로 접속한 플레이어의 정보를 주위 플레이어에게 보낸다
-		
+
 		break;
 
 	}
 	case CS_SIGNAl: {
 
-		
+
 		break;
 	}
 	case CS_SELECT_CHAR: {
-		
+
 		CS_SELECT_CHARACTER* packet = reinterpret_cast<CS_SELECT_CHARACTER*>(p);
 		CLIENT& cl = clients[s_id];
 		cl.x = packet->x;
 		cl.y = packet->y;
 		cl.z = packet->z;
 		cl.p_type = packet->p_type;
-		
+
 		send_select_character_type_packet(cl._s_id);
 
 
@@ -304,7 +304,7 @@ void process_packet(int s_id, char* p)
 
 		}
 		//m.unlock();
-	
+
 		break;
 	}
 	case CS_MOVE_Packet: {
@@ -320,7 +320,7 @@ void process_packet(int s_id, char* p)
 		cl.VZ = packet->vz;
 		cl.Max_Speed = packet->Max_speed;
 		//cout << "플레이어[" << packet->id << "]" << "  x:" << packet->x << endl;
-		cout <<"플레이어["<< packet->id<<"]" << "  x:" << packet->vx << " y:" << packet->y << " z:" << packet->z << "speed : " << endl;
+		//cout <<"플레이어["<< packet->id<<"]" << "  x:" << packet->vx << " y:" << packet->y << " z:" << packet->z << "speed : " << endl;
 		//클라 recv 확인용
 
 		for (auto& other : clients) {
@@ -391,11 +391,11 @@ void process_packet(int s_id, char* p)
 				send_ready_packet(player._s_id);
 				cout << "보낼 플레이어" << player._s_id << endl;
 				//m.unlock();
-				
+
 			}
-			
+
 		}
-		
+
 		break;
 	}
 	case CS_ATTACK: {
@@ -468,7 +468,7 @@ void process_packet(int s_id, char* p)
 
 		}
 		break;
-	
+
 	}
 	case CS_DAMAGE: {
 		CS_DAMAGE_PACKET* packet = reinterpret_cast<CS_DAMAGE_PACKET*>(p);
@@ -476,6 +476,85 @@ void process_packet(int s_id, char* p)
 		//데미지 저장
 		cl._hp -= packet->damage;
 		send_change_hp(cl._s_id);
+		break;
+	}
+	case CS_SHOTGUN_BEAM: {
+		cout << "init" << endl;
+		CS_SHOTGUN_BEAM_PACKET* packet = reinterpret_cast<CS_SHOTGUN_BEAM_PACKET*>(p);
+		CLIENT& cl = clients[packet->clientid];
+		//cout << packet->size << sizeof(packet) << endl;
+
+		cl.x1 = packet->x1;
+		cl.x2 = packet->x2;
+		cl.x3 = packet->x3;
+		cl.x4 = packet->x4;
+		cl.x5 = packet->x5;
+		cl.x6 = packet->x6;
+		cl.x7 = packet->x7;
+		cl.x8 = packet->x8;
+		cl.x9 = packet->x9;
+		cl.x0 = packet->x0;
+
+		cl.y1 = packet->y1;
+		cl.y2 = packet->y2;
+		cl.y3 = packet->y3;
+		cl.y4 = packet->y4;
+		cl.y5 = packet->y5;
+		cl.y6 = packet->y6;
+		cl.y7 = packet->y7;
+		cl.y8 = packet->y8;
+		cl.y9 = packet->y9;
+		cl.y0 = packet->y0;
+
+		cl.z1 = packet->z1;
+		cl.z2 = packet->z2;
+		cl.z3 = packet->z3;
+		cl.z4 = packet->z4;
+		cl.z5 = packet->z5;
+		cl.z6 = packet->z6;
+		cl.z7 = packet->z7;
+		cl.z8 = packet->z8;
+		cl.z9 = packet->z9;
+		cl.z0 = packet->z0;
+		;
+		cl.z1 = packet->ex1;
+		cl.z2 = packet->ex2;
+		cl.z3 = packet->ex3;
+		cl.z4 = packet->ex4;
+		cl.z5 = packet->ex5;
+		cl.z6 = packet->ex6;
+		cl.z7 = packet->ex7;
+		cl.z8 = packet->ex8;
+		cl.z9 = packet->ex9;
+		cl.z0 = packet->ex0;
+
+		cout << cl.x1 << cl.x2 << cl.x3 << endl;
+
+
+		//--------------------------------------------------
+		//for (auto& other : clients) {
+		//	if (other._s_id == cl._s_id) continue;
+		//	other.state_lock.lock();
+		//	if (ST_INGAME != other._state) {
+		//		other.state_lock.unlock();
+		//		continue;
+		//	}
+		//	else other.state_lock.unlock();
+		//	CS_SHOTGUN_BEAM_PACKET packet;
+		//	packet.clientid = cl._s_id;
+		//	packet.size = sizeof(packet);
+		//	packet.type = SC_SHOTGUN_BEAM;
+		//	
+		//	for (int i = 0; i < cl.startloc.size(); ++i)
+		//	{
+		//		packet.startloc[i] = cl.startloc[i];
+		//		packet.endloc[i] = cl.endloc[i];
+		//	}
+		//	//packet.weapon_type = cl.w_type;
+		////printf_s("[Send put object] id : %d, location : (%f,%f,%f), yaw : %f\n", packet.id, packet.x, packet.y, packet.z, packet.yaw);
+		//	cout << "이거 누구한테 감 :  ?" << other._s_id << endl;
+		//	other.do_send(sizeof(packet), &packet);
+
 		break;
 	}
 	default:
@@ -580,7 +659,7 @@ void worker_thread()
 			*(reinterpret_cast<SOCKET*>(exp_over->_net_buf)) = c_socket;
 			AcceptEx(sever_socket, c_socket, exp_over->_net_buf + 8, 0, sizeof(SOCKADDR_IN) + 16,
 				sizeof(SOCKADDR_IN) + 16, NULL, &exp_over->_wsa_over);
-		
+
 		}
 					  break;
 		}

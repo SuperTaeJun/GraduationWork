@@ -313,6 +313,14 @@ void ClientSocket::Send_Damage_Packet(int damaged_id, float damage)
 	packet.damage = damage;
 	SendPacket(&packet);
 }
+//void ClientSocket::Send_ShotGun_pcket(int attack_id, FVector ServerBeamStart, FVector ServerBeamEnd)
+//{
+//	CS_SHOTGUN_BEAM_PACKET packet;
+//	packet.type = CS_SHOTGUN_BEAM;
+//	packet.size = sizeof(packet);
+//	//packet.x0 = ServerBeamStart[0].X;
+//	SendPacket(&packet);
+//}
 bool ClientSocket::Init()
 {
 	//UE_LOG(LogTemp, Warning, TEXT("Thread has been initialized"));

@@ -7,7 +7,9 @@
 #include "particles/ParticleSystemComponent.h"
 #include "Sound/SoundCue.h"
 #include "Character/CharacterBase.h"
+#include "ClientSocket.h"
 #include "DrawDebugHelpers.h"
+#include "Game/BOGameInstance.h"
 #include "GameProp/BulletHoleWall.h"
 #include "NiagaraFunctionLibrary.h"
 #include "NiagaraComponent.h"
@@ -41,7 +43,8 @@ void AShotGun::Fire(const FVector& HitTarget)
 			/*	FVector End = TraceEndWithScatter(Start, HitTarget);*/
 			FHitResult FireHit;
 			FVector EndBeamLoc;
-			ShotGunTraceHit(Start, HitTarget, FireHit, EndBeamLoc);
+			//ShotGunTraceHit(Start, HitTarget, FireHit, EndBeamLoc);
+			WeaponTraceHit(Start, HitTarget, FireHit);
 			ServerBeamStart.Add(Start);
 			ServerBeamEnd.Add(EndBeamLoc);
 			ACharacterBase* CharacterBase = Cast<ACharacterBase>(FireHit.GetActor());
@@ -78,7 +81,6 @@ void AShotGun::Fire(const FVector& HitTarget)
 
 		}
 		// 빔나이아가라
-		
 		if (ServerImpactRot.Num() > 0)
 		{
 			// 임펙트 나이아가라 -> 배열의 크기는 항상5가아님 총알이 맞는횟수만큼

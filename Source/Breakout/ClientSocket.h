@@ -187,6 +187,7 @@ public:
     void Send_Fire_Effect(int attack_id, FVector ImLoc, FRotator ImRot);
     void Send_AttackPacket(int attack_id, FVector SLoc, FVector ELoc);
     void Send_Damage_Packet(int damaged_id, float damage);
+   // void Send_ShotGun_pcket(int attack_id, TArray<FVector> ServerBeamStart, TArray<FVector> ServerBeamEnd, int size);
     virtual bool Init() override;
     virtual uint32 Run() override;
     virtual void Stop() override;

@@ -288,8 +288,6 @@ void ACharacterBase::SetbCanObtainEscapeTool(bool _bCanObtain)
 void ACharacterBase::SetHealth(float DamagedHp)
 {
 	Health = DamagedHp;
-	UE_LOG(LogTemp, Warning, TEXT(" MY NEW HP %d"), Health);
-	//UpdateHpHUD();
 }
 
 
