@@ -166,6 +166,40 @@ bool ClientSocket::PacketProcess(char* ptr)
 		//PlayerInfo.players[packet].w_type = packet->weapon_type;	}
 		break;
 	}
+	case SC_SHOTGUN_BEAM: {
+		CS_SHOTGUN_BEAM_PACKET* packet = reinterpret_cast<CS_SHOTGUN_BEAM_PACKET*>(ptr);
+		PlayerInfo.players[packet->attackid].sSshot.X = packet->sx;
+		PlayerInfo.players[packet->attackid].sSshot.Y = packet->sy;
+		PlayerInfo.players[packet->attackid].sSshot.Z = packet->sz;
+		PlayerInfo.players[packet->attackid].sEshot.X = packet->ex0;
+		PlayerInfo.players[packet->attackid].sEshot.Y = packet->ey0;
+		PlayerInfo.players[packet->attackid].sEshot.Z = packet->ez0;
+		PlayerInfo.players[packet->attackid].sEshot1.X = packet->ex1;
+		PlayerInfo.players[packet->attackid].sEshot1.Y = packet->ey1;
+		PlayerInfo.players[packet->attackid].sEshot1.Z = packet->ez1;
+		PlayerInfo.players[packet->attackid].sEshot2.X = packet->ex2;
+		PlayerInfo.players[packet->attackid].sEshot2.Y = packet->ey2;
+		PlayerInfo.players[packet->attackid].sEshot2.Z = packet->ez2;
+		PlayerInfo.players[packet->attackid].sEshot3.X = packet->ex3;
+		PlayerInfo.players[packet->attackid].sEshot3.Y = packet->ey3;
+		PlayerInfo.players[packet->attackid].sEshot3.Z = packet->ez3;
+		PlayerInfo.players[packet->attackid].sEshot4.X = packet->ex4;
+		PlayerInfo.players[packet->attackid].sEshot4.Y = packet->ey4;
+		PlayerInfo.players[packet->attackid].sEshot4.Z = packet->ez4;
+		PlayerInfo.players[packet->attackid].sEshot5.X = packet->ex5;
+		PlayerInfo.players[packet->attackid].sEshot5.Y = packet->ey5;
+		PlayerInfo.players[packet->attackid].sEshot5.Z = packet->ez5;
+		PlayerInfo.players[packet->attackid].sEshot6.X = packet->ex6;
+		PlayerInfo.players[packet->attackid].sEshot6.Y = packet->ey6;
+		PlayerInfo.players[packet->attackid].sEshot6.Z = packet->ez6;
+		PlayerInfo.players[packet->attackid].sEshot7.X = packet->ex7;
+		PlayerInfo.players[packet->attackid].sEshot7.Y = packet->ey7;
+		PlayerInfo.players[packet->attackid].sEshot7.Z = packet->ez7;
+		PlayerInfo.players[packet->attackid].sEshot8.X = packet->ex8;
+		PlayerInfo.players[packet->attackid].sEshot8.Y = packet->ey8;
+		PlayerInfo.players[packet->attackid].sEshot8.Z = packet->ez8;
+		PlayerInfo.players[packet->attackid].sfired = true;
+	}
 	//¿Ã∆—∆Æ √≥∏Æ
 	case SC_EFFECT: {
 		CS_EFFECT_PACKET* packet = reinterpret_cast<CS_EFFECT_PACKET*>(ptr);
@@ -344,9 +378,9 @@ void ClientSocket::Send_ShotGun_packet(int attack_id, TArray<FVector> ServerBeam
 	packet.ex8 = ServerBeamEnd[8].X;
 	packet.ey8 = ServerBeamEnd[8].Y;
 	packet.ez8 = ServerBeamEnd[8].Z;
-	packet.ex9 = ServerBeamEnd[9].X;
+	/*packet.ex9 = ServerBeamEnd[9].X;
 	packet.ey9 = ServerBeamEnd[9].Y;
-	packet.ez9 = ServerBeamEnd[9].Z;
+	packet.ez9 = ServerBeamEnd[9].Z;*/
 	SendPacket(&packet);
 }
 bool ClientSocket::Init()
