@@ -28,6 +28,8 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TObjectPtr<class UNiagaraComponent> NiagaraComp;
+
+	TObjectPtr<class UNiagaraSystem> TimeReplayNiagara;
 private:
 	/*UPROPERTY(EditAnywhere)
 	TObjectPtr<USkeletalMesh> SkMeshAsset;*/

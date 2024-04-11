@@ -46,7 +46,8 @@ void ABulletHoleWall::SetBulletHole(const FVector SweepResult)
 
 	MeshDataA =MeshBoolean(MeshDataA, ATransform, SetRandomVertex(MeshDataB, -20.f, 20.f, 0.001), BTransform);
 	FTransform Temp;
-	Temp.SetLocation(FVector(0.f, 0.f, 0.f) - ProceduralMesh->GetRelativeLocation());
+	ProceduralMesh->GetRelativeLocation();
+	Temp.SetLocation(FVector(0.f, 0.f, 0.f) - ProceduralMesh->GetComponentLocation());
 	Temp.SetRotation(ProceduralMesh->GetComponentQuat());
 	Temp.SetScale3D(FVector(1.f, 1.f, 1.f) / ProceduralMesh->GetRelativeScale3D());
 	TransformMeshData(MeshDataA, Temp, true, FVector(0.f, 0.f, 0.f));
@@ -248,7 +249,7 @@ FTransform3d ABulletHoleWall::ConvertToFTransform3d(FTransform Input)
 									);
 }
 
-FMeshData ABulletHoleWall::TransformMeshData(FMeshData& Data, FTransform Transform, bool InPlace, FVector Pivot)
+FMeshData ABulletHoleWall::TransformMeshData(UPARAM(ref) FMeshData& Data, FTransform Transform, bool InPlace, FVector Pivot)
 {
 	FMeshData newdata;
 	FMeshData* pres = &newdata;

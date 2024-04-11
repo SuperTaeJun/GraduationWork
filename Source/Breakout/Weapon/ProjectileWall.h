@@ -26,5 +26,5 @@ protected:
 
 private:
 	UPROPERTY(EditAnywhere)
-	TSubclassOf<class AWall> WallClass;
+	TSubclassOf<class ABulletHoleWall> WallClass;
 };

@@ -3,6 +3,7 @@
 
 #include "Weapon/ProjectileWall.h"
 #include "GameProp/Wall.h"
+#include "GameProp/BulletHoleWall.h"
 AProjectileWall::AProjectileWall()
 {
 	ImpactNiagara = nullptr;
@@ -28,7 +29,7 @@ void AProjectileWall::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActo
 		UWorld* World = GetWorld();
 		if (World)
 		{
-			World->SpawnActor<AWall>(WallClass, Hit.Location, Rotation, SpawnParameters);
+			World->SpawnActor<ABulletHoleWall>(WallClass, Hit.Location, Rotation, SpawnParameters);
 		}
 	}
 	
