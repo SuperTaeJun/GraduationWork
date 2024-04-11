@@ -3,7 +3,6 @@
 
 #include "Character/Character1.h"
 #include "NiagaraFunctionLibrary.h"
-#include "NiagaraComponent.h"
 
 #include "InputMappingContext.h"
 #include "EnhancedInputComponent.h"
@@ -13,9 +12,6 @@
 
 ACharacter1::ACharacter1()
 {
-	NiagaraComp = CreateDefaultSubobject<UNiagaraComponent>(TEXT("NiagaraComp"));
-	//NiagaraComp->bAutoActivate = false;
-	//NiagaraComp->SetAsset(DashFxRef.Object);
 	bCoolTimeFinish = true;
 	TimeReplayNiagara = ConstructorHelpers::FObjectFinder<UNiagaraSystem>(TEXT("/Script/Niagara.NiagaraSystem'/Game/Niagara/SKill/Skill1/NS_Skill1.NS_Skill1'")).Object;
 
@@ -80,19 +76,14 @@ void ACharacter1::Destroyed()
 }
 void ACharacter1::Skill_S(const FInputActionValue& Value)
 {
-	/*if (bCoolTimeFinish)
-	{*/
 		bTimeReplay = true;
 		GetMesh()->SetHiddenInGame(true, true);
-		//NiagaraComp->Activate();
-		//NiagaraComp->Activate();
-	//	}
+
 }
 
 void ACharacter1::Skill_E(const FInputActionValue& Value)
 {
 	bTimeReplay = false;
-	//NiagaraComp->Deactivate();
 	GetMesh()->SetHiddenInGame(false, true);
 	bCoolTimeFinish = false;
 

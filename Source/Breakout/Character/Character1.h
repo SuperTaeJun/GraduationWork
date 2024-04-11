@@ -26,8 +26,6 @@ protected:
 	virtual void Skill_E(const FInputActionValue& Value) override;
 	void Skill_T(const FInputActionValue& Value);
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TObjectPtr<class UNiagaraComponent> NiagaraComp;
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<class UNiagaraSystem> TimeReplayNiagara;
 private:
