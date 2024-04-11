@@ -15,9 +15,9 @@
 ClientSocket::ClientSocket() :StopTaskCounter(0)
 {
 	/*gameinst = inst;*/
-	
-	
-	
+
+
+
 }
 
 ClientSocket::~ClientSocket() {
@@ -88,7 +88,6 @@ bool ClientSocket::PacketProcess(char* ptr)
 		//to_do
 		gameinst->SetPlayerID(packet->id);
 		UE_LOG(LogClass, Warning, TEXT("aaaaa"));
-	
 		break;
 	}
 	case SC_OTHER_PLAYER:
@@ -135,11 +134,6 @@ bool ClientSocket::PacketProcess(char* ptr)
 		//MyCharacterController->SetPlayerID(player.Id);
 		MyCharacterController->SetPlayerInfo(&PlayerInfo);
 		MyCharacterController->SetInitPlayerInfo(player);
-
-	/*	CS_SIGNAL_PACKET repacket;
-		repacket.size = sizeof(repacket);
-		repacket.type = CS_SIGNAl;
-		SendPacket(&repacket);*/
 		break;
 	}
 	case SC_OTHER_WEAPO: {
@@ -156,7 +150,7 @@ bool ClientSocket::PacketProcess(char* ptr)
 		bAllReady = true;
 		break;
 	}
-	// 공격 나이아가라 이팩트 효과
+  // 공격 나이아가라 이팩트 효과
 	case SC_ATTACK: {
 		UE_LOG(LogTemp, Warning, TEXT("chong"));
 		SC_ATTACK_PLAYER* packet = reinterpret_cast<SC_ATTACK_PLAYER*>(ptr);
@@ -191,7 +185,7 @@ bool ClientSocket::PacketProcess(char* ptr)
 		CPlayer player;
 		player.Id = packet->damaged_id;
 		player.hp = packet->hp;
-		
+
 		MyCharacterController->SetHp(player.hp);
 		break;
 	}
@@ -210,52 +204,49 @@ void ClientSocket::Send_Login_Info(char* id, char* pw)
 	strcpy_s(packet.id, id);
 	strcpy_s(packet.pw, pw);
 	//cs_login_packet
-	
+
 	SendPacket(&packet);
 	//Send(packet.size, &packet);
 	UE_LOG(LogClass, Warning, TEXT("Sending login info - id: %s, pw: %s"), ANSI_TO_TCHAR(id), ANSI_TO_TCHAR(pw));
-	
+
 }
 
 void ClientSocket::Send_Move_Packet(int sessionID, FVector Location, FRotator Rotation, FVector Velocity, float Max_speed)
 {
 	//if (login_cond == true) {
-		CS_MOVE_PACKET packet;
-		packet.size = sizeof(packet);
-		packet.type = CS_MOVE_Packet;
-		packet.id = sessionID;
-		packet.x = Location.X;
-		packet.y = Location.Y;
-		packet.z = Location.Z;
-		packet.yaw = Rotation.Yaw;
-		packet.vx = Velocity.X;
-		packet.vy = Velocity.Y;
-		packet.vz = Velocity.Z;
-		packet.Max_speed = Max_speed;
-		//Send(packet.size, &packet);
-		SendPacket(&packet);
-		//UE_LOG(LogClass, Warning, TEXT("send move"));
-	//}
+	CS_MOVE_PACKET packet;
+	packet.size = sizeof(packet);
+	packet.type = CS_MOVE_Packet;
+	packet.id = sessionID;
+	packet.x = Location.X;
+	packet.y = Location.Y;
+	packet.z = Location.Z;
+	packet.yaw = Rotation.Yaw;
+	packet.vx = Velocity.X;
+	packet.vy = Velocity.Y;
+	packet.vz = Velocity.Z;
+	packet.Max_speed = Max_speed;
+	//Send(packet.size, &packet);
+	SendPacket(&packet);
+	//UE_LOG(LogClass, Warning, TEXT("send move"));
+//}
 }
 
 void ClientSocket::Send_Character_Type(PlayerType type, int id)
 {
 	auto player = Cast<ACharacterBase>(UGameplayStatics::GetPlayerCharacter(MyCharacterController, 0));
-	if (player)
-	{
-		CS_SELECT_CHARACTER packet;
-		packet.size = sizeof(packet);
-		packet.type = CS_SELECT_CHAR;
-		packet.id = id;
-		//Send(packet.size, &packet);
-		auto location = player->GetActorLocation();
-		packet.x = location.X;
-		packet.y = location.Y;
-		packet.z = location.Z;
-		//packet.p_type = character_type;
-		packet.p_type = type;
-		SendPacket(&packet);
-	}
+	CS_SELECT_CHARACTER packet;
+	packet.size = sizeof(packet);
+	packet.type = CS_SELECT_CHAR;
+	packet.id = id;
+	//Send(packet.size, &packet);
+	auto location = player->GetActorLocation();
+	packet.x = location.X;
+	packet.y = location.Y;
+	packet.z = location.Z;
+	//packet.p_type = character_type;
+	packet.p_type = type;
+	SendPacket(&packet);
 }
 
 void ClientSocket::Send_Weapon_Type(WeaponType type, int sessionID)
@@ -313,14 +304,51 @@ void ClientSocket::Send_Damage_Packet(int damaged_id, float damage)
 	packet.damage = damage;
 	SendPacket(&packet);
 }
-//void ClientSocket::Send_ShotGun_pcket(int attack_id, FVector ServerBeamStart, FVector ServerBeamEnd)
-//{
-//	CS_SHOTGUN_BEAM_PACKET packet;
-//	packet.type = CS_SHOTGUN_BEAM;
-//	packet.size = sizeof(packet);
-//	//packet.x0 = ServerBeamStart[0].X;
-//	SendPacket(&packet);
-//}
+void ClientSocket::Send_ShotGun_packet(int attack_id, TArray<FVector> ServerBeamStart, TArray<FVector> ServerBeamEnd, int size)
+{
+	CS_SHOTGUN_BEAM_PACKET packet;
+	packet.size = sizeof(packet);
+	packet.type = CS_SHOTGUN_BEAM;
+	packet.attackid = attack_id;
+	ServerBeamStart.SetNum(size);
+	ServerBeamEnd.SetNum(size);
+	packet.sx = ServerBeamStart[0].X;
+	packet.sy = ServerBeamStart[0].Y;
+	packet.sz = ServerBeamStart[0].Z;
+
+	packet.ex0 = ServerBeamEnd[0].X;
+	packet.ey0 = ServerBeamEnd[0].Y;
+	packet.ez0 = ServerBeamEnd[0].Z;
+	packet.ex1 = ServerBeamEnd[1].X;
+	packet.ey1 = ServerBeamEnd[1].Y;
+	packet.ez1 = ServerBeamEnd[1].Z;
+	packet.ex2 = ServerBeamEnd[2].X;
+	packet.ey2 = ServerBeamEnd[2].Y;
+	packet.ez2 = ServerBeamEnd[2].Z;
+	packet.ex3 = ServerBeamEnd[3].X;
+	packet.ey3 = ServerBeamEnd[3].Y;
+	packet.ez3 = ServerBeamEnd[3].Z;
+	packet.ex4 = ServerBeamEnd[4].X;
+	packet.ey4 = ServerBeamEnd[4].Y;
+	packet.ez4 = ServerBeamEnd[4].Z;
+	packet.ex5 = ServerBeamEnd[5].X;
+	packet.ey5 = ServerBeamEnd[5].Y;
+	packet.ez5 = ServerBeamEnd[5].Z;
+	packet.ex6 = ServerBeamEnd[6].X;
+	packet.ey6 = ServerBeamEnd[6].Y;
+	packet.ez6 = ServerBeamEnd[6].Z;
+	packet.ex7 = ServerBeamEnd[7].X;
+	packet.ey7 = ServerBeamEnd[7].Y;
+	packet.ez7 = ServerBeamEnd[7].Z;
+
+	packet.ex8 = ServerBeamEnd[8].X;
+	packet.ey8 = ServerBeamEnd[8].Y;
+	packet.ez8 = ServerBeamEnd[8].Z;
+	packet.ex9 = ServerBeamEnd[9].X;
+	packet.ey9 = ServerBeamEnd[9].Y;
+	packet.ez9 = ServerBeamEnd[9].Z;
+	SendPacket(&packet);
+}
 bool ClientSocket::Init()
 {
 	//UE_LOG(LogTemp, Warning, TEXT("Thread has been initialized"));

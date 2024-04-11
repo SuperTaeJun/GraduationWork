@@ -43,8 +43,8 @@ void AShotGun::Fire(const FVector& HitTarget)
 			/*	FVector End = TraceEndWithScatter(Start, HitTarget);*/
 			FHitResult FireHit;
 			FVector EndBeamLoc;
-			//ShotGunTraceHit(Start, HitTarget, FireHit, EndBeamLoc);
-			WeaponTraceHit(Start, HitTarget, FireHit);
+			ShotGunTraceHit(Start, HitTarget, FireHit, EndBeamLoc);
+			//WeaponTraceHit(Start, HitTarget, FireHit);
 			ServerBeamStart.Add(Start);
 			ServerBeamEnd.Add(EndBeamLoc);
 			ACharacterBase* CharacterBase = Cast<ACharacterBase>(FireHit.GetActor());
@@ -80,7 +80,7 @@ void AShotGun::Fire(const FVector& HitTarget)
 			}
 
 		}
-		// 빔나이아가라
+		//Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_ShotGun_packet(Cast<ACharacterBase>(GetOwner())->_SessionId, ServerBeamStart, ServerBeamEnd, ServerBeamStart.Num());
 		if (ServerImpactRot.Num() > 0)
 		{
 			// 임펙트 나이아가라 -> 배열의 크기는 항상5가아님 총알이 맞는횟수만큼

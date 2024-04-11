@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------------------------------
+﻿﻿//----------------------------------------------------------------------------------------------------------------------------------------------
 // GameServer.cpp 파일
 //----------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -229,11 +229,6 @@ void process_packet(int s_id, char* p)
 		break;
 
 	}
-	case CS_SIGNAl: {
-
-
-		break;
-	}
 	case CS_SELECT_CHAR: {
 
 		CS_SELECT_CHARACTER* packet = reinterpret_cast<CS_SELECT_CHARACTER*>(p);
@@ -242,7 +237,6 @@ void process_packet(int s_id, char* p)
 		cl.y = packet->y;
 		cl.z = packet->z;
 		cl.p_type = packet->p_type;
-
 		send_select_character_type_packet(cl._s_id);
 
 
@@ -320,7 +314,7 @@ void process_packet(int s_id, char* p)
 		cl.VZ = packet->vz;
 		cl.Max_Speed = packet->Max_speed;
 		//cout << "플레이어[" << packet->id << "]" << "  x:" << packet->x << endl;
-		//cout <<"플레이어["<< packet->id<<"]" << "  x:" << packet->vx << " y:" << packet->y << " z:" << packet->z << "speed : " << endl;
+		//cout <<"플레이어["<< packet->id<<"]" << "  x:" << packet->vx << " y:" << packet->y << " z:" << packet->z << "speed : " << packet->speed << endl;
 		//클라 recv 확인용
 
 		for (auto& other : clients) {
@@ -384,18 +378,15 @@ void process_packet(int s_id, char* p)
 		if (ready_count >= 2)
 		{
 			for (auto& player : clients) {
-				if (ST_LOBBY != player._state)
+				if (ST_INGAME != player._state)
 					continue;
-				//m.lock();
-				player._state = ST_INGAME;
+				m.lock();
 				send_ready_packet(player._s_id);
 				cout << "보낼 플레이어" << player._s_id << endl;
-				//m.unlock();
-
+				m.unlock();
 			}
-
+			//cl._state = ST_INGAME;
 		}
-
 		break;
 	}
 	case CS_ATTACK: {
@@ -427,12 +418,102 @@ void process_packet(int s_id, char* p)
 			packet.ex = cl.e_x;
 			packet.ey = cl.e_y;
 			packet.ez = cl.e_z;
-			//packet.weapon_type = cl.w_type;
-		//printf_s("[Send put object] id : %d, location : (%f,%f,%f), yaw : %f\n", packet.id, packet.x, packet.y, packet.z, packet.yaw);
-			cout << "이거 누구한테 감 :  ?" << other._s_id << endl;
+			//	//packet.weapon_type = cl.w_type;
+			////printf_s("[Send put object] id : %d, location : (%f,%f,%f), yaw : %f\n", packet.id, packet.x, packet.y, packet.z, packet.yaw);
+			//	cout << "이거 누구한테 감 :  ?" << other._s_id << endl;
 			other.do_send(sizeof(packet), &packet);
 		}
 		break;
+	}
+	case CS_SHOTGUN_BEAM: {
+		CS_SHOTGUN_BEAM_PACKET* packet = reinterpret_cast<CS_SHOTGUN_BEAM_PACKET*>(p);
+		CLIENT& cl = clients[packet->attackid];
+		cl.s_x = packet->sx;
+		cl.s_y = packet->sy;
+		cl.s_z = packet->sz;
+		//--------------------
+		cl.ex0 = packet->ex0;
+		cl.ey0 = packet->ey0;
+		cl.ez0 = packet->ey0;
+		cl.ex1 = packet->ex1;
+		cl.ey1 = packet->ey1;
+		cl.ez1 = packet->ey1;
+		cl.ex2 = packet->ex2;
+		cl.ey2 = packet->ey2;
+		cl.ez2 = packet->ey2;
+		cl.ex3 = packet->ex3;
+		cl.ey3 = packet->ey3;
+		cl.ez3 = packet->ey3;
+		cl.ex4 = packet->ex4;
+		cl.ey4 = packet->ey4;
+		cl.ez4 = packet->ey4;
+		cl.ex5 = packet->ex5;
+		cl.ey5 = packet->ey5;
+		cl.ez5 = packet->ey5;
+		cl.ex6 = packet->ex6;
+		cl.ey6 = packet->ey6;
+		cl.ez6 = packet->ey6;
+		cl.ex7 = packet->ex7;
+		cl.ey7 = packet->ey7;
+		cl.ez7 = packet->ey7;
+		cl.ex8 = packet->ex8;
+		cl.ey8 = packet->ey8;
+		cl.ez8 = packet->ey8;
+		cl.ex9 = packet->ex9;
+		cl.ey9 = packet->ey9;
+		cl.ez9 = packet->ey9;
+		//--------------------
+		for (auto& other : clients) {
+			if (other._s_id == cl._s_id) continue;
+			other.state_lock.lock();
+			if (ST_INGAME != other._state) {
+				other.state_lock.unlock();
+				continue;
+			}
+			else other.state_lock.unlock();
+			CS_SHOTGUN_BEAM_PACKET packet;
+			packet.attackid = cl._s_id;
+			packet.size = sizeof(packet);
+			packet.type = SC_SHOTGUN_BEAM;
+			packet.sx = cl.s_x;
+			packet.sy = cl.s_y;
+			packet.sz = cl.s_z;
+			packet.ex0 = cl.ex0;
+			packet.ey0 = cl.ey0;
+			packet.ey0 = cl.ez0;
+			packet.ex1 = cl.ex1;
+			packet.ey1 = cl.ey1;
+			packet.ez1 = cl.ez1;
+			packet.ex2 = cl.ex2;
+			packet.ey2 = cl.ey2;
+			packet.ez2 = cl.ez2;
+			packet.ex3 = cl.ex3;
+			packet.ey3 = cl.ey3;
+			packet.ez3 = cl.ez3;
+			packet.ex4 = cl.ex4;
+			packet.ey4 = cl.ey4;
+			packet.ez4 = cl.ez4;
+			packet.ex5 = cl.ex5;
+			packet.ey5 = cl.ey5;
+			packet.ez5 = cl.ez5;
+			packet.ex6 = cl.ex6;
+			packet.ey6 = cl.ey6;
+			packet.ez6 = cl.ez6;
+			packet.ex7 = cl.ex7;
+			packet.ey7 = cl.ey7;
+			packet.ez7 = cl.ez7;
+			packet.ex8 = cl.ex8;
+			packet.ey8 = cl.ey8;
+			packet.ez8 = cl.ez8;
+			packet.ex9 = cl.ex9;
+			packet.ey9 = cl.ey9;
+			packet.ez9 = cl.ez9;
+
+			cout << cl.ex0 << "a" << cl.ey0 << cl.ez0;
+			cout << "이거 누구한테 감 :  ?" << other._s_id << endl;
+			other.do_send(sizeof(packet), &packet);
+			break;
+		}
 	}
 	case CS_HIT_EFFECT: {
 		CS_EFFECT_PACKET* packet = reinterpret_cast<CS_EFFECT_PACKET*>(p);
@@ -478,91 +559,12 @@ void process_packet(int s_id, char* p)
 		send_change_hp(cl._s_id);
 		break;
 	}
-	case CS_SHOTGUN_BEAM: {
-		cout << "init" << endl;
-		CS_SHOTGUN_BEAM_PACKET* packet = reinterpret_cast<CS_SHOTGUN_BEAM_PACKET*>(p);
-		CLIENT& cl = clients[packet->clientid];
-		//cout << packet->size << sizeof(packet) << endl;
-
-		cl.x1 = packet->x1;
-		cl.x2 = packet->x2;
-		cl.x3 = packet->x3;
-		cl.x4 = packet->x4;
-		cl.x5 = packet->x5;
-		cl.x6 = packet->x6;
-		cl.x7 = packet->x7;
-		cl.x8 = packet->x8;
-		cl.x9 = packet->x9;
-		cl.x0 = packet->x0;
-
-		cl.y1 = packet->y1;
-		cl.y2 = packet->y2;
-		cl.y3 = packet->y3;
-		cl.y4 = packet->y4;
-		cl.y5 = packet->y5;
-		cl.y6 = packet->y6;
-		cl.y7 = packet->y7;
-		cl.y8 = packet->y8;
-		cl.y9 = packet->y9;
-		cl.y0 = packet->y0;
-
-		cl.z1 = packet->z1;
-		cl.z2 = packet->z2;
-		cl.z3 = packet->z3;
-		cl.z4 = packet->z4;
-		cl.z5 = packet->z5;
-		cl.z6 = packet->z6;
-		cl.z7 = packet->z7;
-		cl.z8 = packet->z8;
-		cl.z9 = packet->z9;
-		cl.z0 = packet->z0;
-		;
-		cl.z1 = packet->ex1;
-		cl.z2 = packet->ex2;
-		cl.z3 = packet->ex3;
-		cl.z4 = packet->ex4;
-		cl.z5 = packet->ex5;
-		cl.z6 = packet->ex6;
-		cl.z7 = packet->ex7;
-		cl.z8 = packet->ex8;
-		cl.z9 = packet->ex9;
-		cl.z0 = packet->ex0;
-
-		cout << cl.x1 << cl.x2 << cl.x3 << endl;
-
-
-		//--------------------------------------------------
-		//for (auto& other : clients) {
-		//	if (other._s_id == cl._s_id) continue;
-		//	other.state_lock.lock();
-		//	if (ST_INGAME != other._state) {
-		//		other.state_lock.unlock();
-		//		continue;
-		//	}
-		//	else other.state_lock.unlock();
-		//	CS_SHOTGUN_BEAM_PACKET packet;
-		//	packet.clientid = cl._s_id;
-		//	packet.size = sizeof(packet);
-		//	packet.type = SC_SHOTGUN_BEAM;
-		//	
-		//	for (int i = 0; i < cl.startloc.size(); ++i)
-		//	{
-		//		packet.startloc[i] = cl.startloc[i];
-		//		packet.endloc[i] = cl.endloc[i];
-		//	}
-		//	//packet.weapon_type = cl.w_type;
-		////printf_s("[Send put object] id : %d, location : (%f,%f,%f), yaw : %f\n", packet.id, packet.x, packet.y, packet.z, packet.yaw);
-		//	cout << "이거 누구한테 감 :  ?" << other._s_id << endl;
-		//	other.do_send(sizeof(packet), &packet);
-
-		break;
-	}
 	default:
 		cout << " 오류패킷타입 : " << p << endl;
 		break;
 	}
-
 }
+	
 
 //워크 쓰레드
 void worker_thread()
