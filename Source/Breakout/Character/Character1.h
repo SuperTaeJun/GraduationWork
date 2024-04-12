@@ -26,10 +26,13 @@ protected:
 	virtual void Skill_E(const FInputActionValue& Value) override;
 	void Skill_T(const FInputActionValue& Value);
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TObjectPtr<class UNiagaraComponent> NiagaraComp;
-
+	UPROPERTY(EditAnywhere)
 	TObjectPtr<class UNiagaraSystem> TimeReplayNiagara;
+	float NiagaraSpawnRate=0.15;
+	float NiagaraSpawnSavedTime;
+	//최대 저장시간
+	UPROPERTY(EditAnywhere)
+	float MaxSaveTime = 15.f;
 private:
 	/*UPROPERTY(EditAnywhere)
 	TObjectPtr<USkeletalMesh> SkMeshAsset;*/
@@ -47,7 +50,6 @@ private:
 	float RightRunningTime;
 	//저장된 각프레임마다에서 기록된 전체시간 
 	float RecordedTime;
-	float MaxSaveTime = 5.f;
 	float Temp = 0.2f;
 
 	bool bCoolTimeFinish = true;

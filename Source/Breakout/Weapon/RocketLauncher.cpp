@@ -6,6 +6,9 @@
 #include "Weapon/ProjectileBase.h"
 #include "NiagaraFunctionLibrary.h"
 #include "NiagaraComponent.h"
+#include "Game/BOGameInstance.h"
+#include "ClientSocket.h"
+#include "Character/CharacterBase.h"
 void ARocketLauncher::Fire(const FVector& HitTarget)
 {
 	APawn* InstigatorPawn = Cast<APawn>(GetOwner());
@@ -27,6 +30,8 @@ void ARocketLauncher::Fire(const FVector& HitTarget)
 			if (World)
 			{
 				World->SpawnActor<AProjectileBase>(ProjectileClass, SocketTransform.GetLocation(), TargetRotation, SpawnParameters);
+				if (Cast<UBOGameInstance>(GetGameInstance()))
+					Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Fire_Effect(Cast<ACharacterBase>(GetOwner())->_SessionId, SocketTransform.GetLocation(), TargetRotation, 1);
 			}
 			if (ImpactNiagara)
 			{

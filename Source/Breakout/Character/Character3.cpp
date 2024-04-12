@@ -27,6 +27,7 @@ ACharacter3::ACharacter3()
 
 	bCoolTimeFinish = true;
 
+	OldMaterial = ConstructorHelpers::FObjectFinder<UMaterialInstance>(TEXT("/Game/BreakoutAsset/Character/Ä³¸¯ÅÍ3/M_Character3_Inst.M_Character3_Inst")).Object;
 }
 void ACharacter3::BeginPlay()
 {

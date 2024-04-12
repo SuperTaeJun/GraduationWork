@@ -38,6 +38,14 @@ protected:
 	TObjectPtr<USkeletalMesh> SkMeshAsset4;
 
 	UPROPERTY(EditAnywhere)
+	TObjectPtr<class UMaterialInstance> OldMaterial;
+
+	TObjectPtr<class UMaterialInstanceDynamic> DynamicMaterial;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class AProjectileBase> ProjectileRef;
+
+	UPROPERTY(EditAnywhere)
 	TObjectPtr<UClass> Anim1;
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<UClass> Anim2;
@@ -99,7 +107,7 @@ public:
 	void UpdateSyncPlayer();
 	bool UpdateWorld();
 	void SetHp(float DamagedHp);
-	float DamgeHp=100;
+	float damaged = 0;
 	//초기 컨트롤러 세팅
 	
 	void InitPlayer();

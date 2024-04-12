@@ -191,8 +191,6 @@ void AWeaponBase::Fire(const FVector& HitTarget)
 	const USkeletalMeshSocket* MuzzleSocket = GetWeaponMesh()->GetSocketByName("MuzzleFlash");
 	if (MuzzleSocket /*&& InstigatorController*/)
 	{
-
-		UE_LOG(LogTemp, Log, TEXT("TTEST"));
 		FTransform SocketTransform = MuzzleSocket->GetSocketTransform(GetWeaponMesh());
 		FVector Start = SocketTransform.GetLocation();
 
@@ -210,17 +208,17 @@ void AWeaponBase::Fire(const FVector& HitTarget)
 				if (DamagedCharacter)
 				{
 					Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Damage_Packet(DamagedCharacter->_SessionId, Damage);
-					//if (HasAuthority())
-					//{
-					//	//UE_LOG(LogTemp, Log, TEXT("HIt"));
-					//	UGameplayStatics::ApplyDamage(
-					//		DamagedCharacter,
-					//		Damage,
-					//		InstigatorController,
-					//		this,
-					//		UDamageType::StaticClass()
-					//	);
-					//}
+					if (HasAuthority())
+					{
+						//UE_LOG(LogTemp, Log, TEXT("HIt"));
+						UGameplayStatics::ApplyDamage(
+							DamagedCharacter,
+							Damage,
+							InstigatorController,
+							this,
+							UDamageType::StaticClass()
+						);
+					}
 				}
 				else if (DamagedWall)
 				{
@@ -235,7 +233,7 @@ void AWeaponBase::Fire(const FVector& HitTarget)
 						FireHit.ImpactPoint,
 						FireHit.ImpactNormal.Rotation()
 					);
-					Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Fire_Effect(Cast<ACharacterBase>(GetOwner())->_SessionId, FireHit.ImpactPoint, FireHit.ImpactNormal.Rotation());
+					Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Fire_Effect(Cast<ACharacterBase>(GetOwner())->_SessionId, FireHit.ImpactPoint, FireHit.ImpactNormal.Rotation(), 0);
 				}
 
 			}

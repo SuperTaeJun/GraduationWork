@@ -26,6 +26,7 @@ public:
     float Max_Speed;
     int _max_hp; // 최대 체력
     int _hp; // 체력
+    int damage;
     int _level; // 레벨
     int _max_exp;
     int _exp;
@@ -37,6 +38,7 @@ public:
     int32 iMaxSnowballCount;
     int32 iCurrentSnowballCount;
     int32 iCurrentMatchCount;
+    bool recvdamage;
     bool bHasUmbrella;
     bool bHasBag;
     bool bIsSnowman;	// 현재 캐릭터가 눈사람인지
@@ -44,7 +46,7 @@ public:
     PlayerType p_type;
     float s_x, s_y, s_z;
     float e_x, e_y, e_z;
-    
+    int wtype;
     unordered_set   <int>  viewlist; // 시야 안 오브젝트
     mutex vl;
     mutex hp_lock;
@@ -55,10 +57,21 @@ public:
     atomic_bool   _is_active = false;
 
     //COMBAT _combat;
-
+ 
     atomic_int    _count;
     int      _type;   // 1.Player 2.고블린  3.오거 4.드래곤(Boss)   
-
+    //-------------
+    float ex1, ey1, ez1;
+    float ex2, ey2, ez2;
+    float ex3, ey3, ez3;
+    float ex4, ey4, ez4;
+    float ex5, ey5, ez5;
+    float ex6, ey6, ez6;
+    float ex7, ey7, ez7;
+    float ex8, ey8, ez8;
+    float ex9, ey9, ez9;
+    float ex0, ey0, ez0;
+    //-------------
     Overlap _recv_over;
     SOCKET  _socket;
     int      _prev_size;

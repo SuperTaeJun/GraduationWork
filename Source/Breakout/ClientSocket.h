@@ -32,7 +32,9 @@ public:
 
     // 세션 아이디
     int Id = -1;
-    int hp;
+    //int hp;
+    int weptype;
+    int damage;
     // 아이디 비번
     char    userId[20] = {};
     char    userPw[20] = {};
@@ -51,13 +53,27 @@ public:
     float Max_Speed = 400;
     bool  IsAlive = true;
     bool  fired = false;
+    bool  sfired = false;
     bool  hiteffect = false;
+    bool  brecvdamage = false;
     // 나이아가라 슛 이팩트
     FVector Sshot;
     FVector Eshot;
     // 나이아가라 히팅 이팩트
     FVector Hshot;
-
+    //샷건 슛 이팩트
+    FVector sSshot;
+    FVector sEshot;
+    FVector sEshot1;
+    FVector sEshot2;
+    FVector sEshot3;
+    FVector sEshot4;
+    FVector sEshot5;
+    FVector sEshot6;
+    FVector sEshot7;
+    FVector sEshot8;
+    
+    /////////////////
     FVector FMyLocation;
     FVector FMyDirection;
     FRotator FEffect;
@@ -184,9 +200,11 @@ public:
     void Send_Character_Type(PlayerType type, int id);
     void Send_Weapon_Type(WeaponType type, int id);
     void Send_Ready_Packet(bool ready);
-    void Send_Fire_Effect(int attack_id, FVector ImLoc, FRotator ImRot);
+    void Send_Fire_Effect(int attack_id, FVector ImLoc, FRotator ImRot, int wtype);
     void Send_AttackPacket(int attack_id, FVector SLoc, FVector ELoc);
     void Send_Damage_Packet(int damaged_id, float damage);
+    void Send_ShotGun_packet(int attack_id, TArray<FVector> ServerBeamStart, TArray<FVector> ServerBeamEnd, int size);
+    void Send_ShotGun_damaged_packet(int damaged_id1, int damaged_id2, int damaged_id3, float damaged1, float damaged2, float damaged3);
     virtual bool Init() override;
     virtual uint32 Run() override;
     virtual void Stop() override;

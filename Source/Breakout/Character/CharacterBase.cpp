@@ -285,11 +285,9 @@ void ACharacterBase::SetbCanObtainEscapeTool(bool _bCanObtain)
 	bCanObtainEscapeTool = _bCanObtain;
 }
 
-void ACharacterBase::SetHealth(float DamagedHp)
+void ACharacterBase::SetHealth(float Damaged)
 {
-	Health = DamagedHp;
-	UE_LOG(LogTemp, Warning, TEXT(" MY NEW HP %d"), Health);
-	//UpdateHpHUD();
+	Health -= Damaged;
 }
 
 
@@ -382,6 +380,7 @@ void ACharacterBase::ReciveDamage(AActor* DamagedActor, float Damage, const UDam
 {
 	Health = FMath::Clamp(Health - Damage, 0.f, MaxHealth);
 	UpdateHpHUD();
+
 
 	UE_LOG(LogTemp, Warning, TEXT("RECIVE DAMAGE"));
 	if (Health <= 0.0f)
@@ -780,6 +779,21 @@ void ACharacterBase::Detect_S(const FInputActionValue& Value)
 void ACharacterBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	//UE_LOG(LogTemp, Warning, TEXT("Tick HP : %f"), Health);
+	//if (Health <= 0.0f)
+	//{
+	//	//패킷보내야함
+	//	ABOGameMode* GameMode = GetWorld()->GetAuthGameMode<ABOGameMode>();
+	//	if (GameMode)
+	//	{
+	//		//MainController = MainController == nullptr ? Cast<ACharacterController>(Controller) : MainController;
+	//		//ACharacterController* AttackerController = Cast<ACharacterController>(InstigatorController);
+	//		GetWorld()->GetTimerManager().SetTimer(DeadTimer, this, &ACharacterBase::Dead, DeadTime, false);
+	//	}
+	//}
+
+
 	if (GetVelocity().Size() <= 0.f)
 		CharacterState = ECharacterState::ECS_IDLE;
 	switch (CharacterState)

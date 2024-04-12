@@ -17,6 +17,9 @@
 #include "Components/Image.h"
 #include "Game/BOGameInstance.h"
 #include "Weapon/RocketLauncher.h"
+#include "Materials/MaterialInstance.h"
+#include "Materials/MaterialInstanceDynamic.h"
+#include "Weapon/ProjectileBase.h"
 //#include "Network/PacketData.h"
 #include "../../Server/Server/ServerCore/protocol.h"
 #include <string>
@@ -274,7 +277,18 @@ void ACharacterController::Tick(float DeltaTime)
 	if (BaseCharacter)
 	{
 		//UE_LOG(LogClass, Warning, TEXT("hp : %f"), DamagedHp);
-		BaseCharacter->SetHealth(DamgeHp);
+		//BaseCharacter->SetHealth(DamgeHp);
+		//UE_LOG(LogTemp, Warning, TEXT("my health : %f"), BaseCharacter->GetHealth());
+		UGameplayStatics::ApplyDamage(
+			GetOwner(),
+			damaged,
+			this,
+			this,
+			UDamageType::StaticClass()
+		);
+		//BaseCharacter->SetHealth(damaged);
+		damaged = 0;
+		//BaseCharacter->SetHealth(BaseCharacter->GetHealth());
 		SetHUDHealth(BaseCharacter->GetHealth(), BaseCharacter->MaxGetHealth());
 	}
 }
@@ -313,7 +327,7 @@ void ACharacterController::SetHitEffect(int _id)
 
 	UWorld* World = GetWorld();
 	PlayerInfo->players[_id].hiteffect = true;
-
+	UE_LOG(LogTemp, Warning, TEXT("ADADADAZVV"));
 }
 
 bool ACharacterController::UpdateWorld()
@@ -378,6 +392,48 @@ bool ACharacterController::UpdateWorld()
 			EFiregun.X = info->Eshot.X;
 			EFiregun.Y = info->Eshot.Y;
 			EFiregun.Z = info->Eshot.Z;
+			//----나이아가라 이팩트 샷건
+			FVector SShotgun;
+			FVector EShotgun;
+			FVector EShotgun1;
+			FVector EShotgun2;
+			FVector EShotgun3;
+			FVector EShotgun4;
+			FVector EShotgun5;
+			FVector EShotgun6;
+			FVector EShotgun7;
+			FVector EShotgun8;
+			SShotgun.X = info->sSshot.X;
+			SShotgun.Y = info->sSshot.Y;
+			SShotgun.Z = info->sSshot.Z;
+			EShotgun.X = info->sEshot.X;
+			EShotgun.Y = info->sEshot.Y;
+			EShotgun.Z = info->sEshot.Z;
+			EShotgun1.X = info->sEshot1.X;
+			EShotgun1.Y = info->sEshot1.Y;
+			EShotgun1.Z = info->sEshot1.Z;
+			EShotgun2.X = info->sEshot2.X;
+			EShotgun2.Y = info->sEshot2.Y;
+			EShotgun2.Z = info->sEshot2.Z;
+			EShotgun3.X = info->sEshot3.X;
+			EShotgun3.Y = info->sEshot3.Y;
+			EShotgun3.Z = info->sEshot3.Z;
+			EShotgun4.X = info->sEshot4.X;
+			EShotgun4.Y = info->sEshot4.Y;
+			EShotgun4.Z = info->sEshot4.Z;
+			EShotgun5.X = info->sEshot5.X;
+			EShotgun5.Y = info->sEshot5.Y;
+			EShotgun5.Z = info->sEshot5.Z;
+			EShotgun6.X = info->sEshot6.X;
+			EShotgun6.Y = info->sEshot6.Y;
+			EShotgun6.Z = info->sEshot6.Z;
+			EShotgun7.X = info->sEshot7.X;
+			EShotgun7.Y = info->sEshot7.Y;
+			EShotgun7.Z = info->sEshot7.Z;
+			EShotgun8.X = info->sEshot8.X;
+			EShotgun8.Y = info->sEshot8.Y;
+			EShotgun8.Z = info->sEshot8.Z;
+			// -----------------------
 			//------------------------
 			//히팅 이팩트
 			FVector HEloc;
@@ -392,14 +448,18 @@ bool ACharacterController::UpdateWorld()
 			//------------------------
 			if (!OtherPlayer->GetCurWeapon())
 			{
+
+				UE_LOG(LogTemp, Warning, TEXT("WEAPON : %d"), info->w_type);
 				if (info->w_type == WeaponType::RIFLE)
 				{
 					FName RifleSocketName = FName("RifleSocket");
 					OtherPlayer->SetWeapon(Rifle, RifleSocketName);
+					//UE_LOG(LogTemp, Warning, TEXT("RifleSocket"));
 				
 				}
 				else if (info->w_type == WeaponType::SHOTGUN)
 				{
+					UE_LOG(LogTemp, Warning, TEXT("SHOTGUN"));
 					FName ShotgunSocketName = FName("ShotgunSocket");
 					OtherPlayer->SetWeapon(ShotGun, ShotgunSocketName);
 					
@@ -409,6 +469,12 @@ bool ACharacterController::UpdateWorld()
 					FName LancherSocketName = FName("LancherSocket");
 					OtherPlayer->SetWeapon(Lancher, LancherSocketName);
 					
+				}
+				else
+				{
+					FName LancherSocketName = FName("LancherSocket");
+					OtherPlayer->SetWeapon(Lancher, LancherSocketName);
+
 				}
 			}
 
@@ -423,13 +489,38 @@ bool ACharacterController::UpdateWorld()
 				OtherPlayer->SpawnBeam(Firegun, EFiregun);
 				info->fired = false;
 			}
-			//히팅
-			if (OtherPlayer->GetCurWeapon() && info->hiteffect == true)
+			if (OtherPlayer->GetCurWeapon() && info->sfired == true)
 			{
-				
-				OtherPlayer->SpawnHitImpact(HEloc, EffectRot);
-				info->hiteffect = false;
+
+				OtherPlayer->SpawnBeam(SShotgun, EShotgun);
+				OtherPlayer->SpawnBeam(SShotgun, EShotgun1);
+				OtherPlayer->SpawnBeam(SShotgun, EShotgun2);
+				OtherPlayer->SpawnBeam(SShotgun, EShotgun3);
+				OtherPlayer->SpawnBeam(SShotgun, EShotgun4);
+				OtherPlayer->SpawnBeam(SShotgun, EShotgun5);
+				OtherPlayer->SpawnBeam(SShotgun, EShotgun6);
+				OtherPlayer->SpawnBeam(SShotgun, EShotgun7);
+				OtherPlayer->SpawnBeam(SShotgun, EShotgun8);
+				info->sfired = false;
 			}
+			UE_LOG(LogTemp, Warning, TEXT("bool %d"), info->hiteffect);
+			//히팅
+		/*	if (OtherPlayer->GetCurWeapon() && info->hiteffect == true)
+			{
+				if (info->weptype == 0) {
+					OtherPlayer->SpawnHitImpact(HEloc, EffectRot);
+					info->hiteffect = false;
+				}
+				else if(info->weptype == 1)
+				{
+					FActorSpawnParameters SpawnParameters;
+					SpawnParameters.Owner = OtherPlayer;
+					SpawnParameters.Instigator = OtherPlayer;
+
+					GetWorld()->SpawnActor<AProjectileBase>(ProjectileRef, HEloc, EffectRot, SpawnParameters);
+					info->hiteffect = false;
+				}
+			}*/
 
 
 		}
@@ -523,6 +614,12 @@ void ACharacterController::UpdateSyncPlayer()
 				SpawnCharacter->SpawnDefaultController();
 				SpawnCharacter->_SessionId = NewPlayer.front()->Id;
 				SpawnCharacter->GetMesh()->SetSkeletalMesh(SkMeshAsset3);
+				DynamicMaterial = UMaterialInstanceDynamic::Create(OldMaterial, this);
+				if (DynamicMaterial)
+				{
+					SpawnCharacter->GetMesh()->SetMaterial(0, DynamicMaterial);
+					DynamicMaterial->SetScalarParameterValue(FName("Alpha"), 0.f);
+				}
 				if (Anim3)
 					SpawnCharacter->GetMesh()->SetAnimClass(Anim3);
 			}
@@ -653,9 +750,10 @@ void ACharacterController::OnPossess(APawn* InPawn)
 	}
 }
 
-void ACharacterController::SetHp(float DamagedHp)
+void ACharacterController::SetHp(float recvdamaged)
 {
-	DamgeHp = DamagedHp;
+	damaged = recvdamaged;
+	//Cast<ACharacterBase>(GetOwner())->SetHealth(recvdamaged);
 	//UE_LOG(LogClass, Warning, TEXT("hp : %f"), DamagedHp);
 	//ACharacterBase* BaseCharacter = Cast<ACharacterBase>(GetPawn());
 	//if (BaseCharacter)

@@ -1,7 +1,8 @@
 #pragma once
 #define SERVER_PORT		8001
-
-#define SERVER_IP		"127.0.0.1"
+#include <vector>
+#include <array>
+#define SERVER_IP		"192.168.102.114"
 #define MAX_INFO_SIZE   20
 //const char CS_PACKET_ATTACK = 3;
 enum PlayerType
@@ -17,6 +18,11 @@ enum WeaponType
 	RIFLE,
 	SHOTGUN,
 	LAUNCHER
+};
+struct SHOTGUNLOC {
+	float x;
+	float y;
+	float z;
 };
 constexpr int BUFSIZE = 1048;
 const int  ReZone_HEIGHT = 2000;
@@ -35,6 +41,9 @@ const char CS_ATTACK = 6;
 const char CS_HIT_EFFECT = 7;
 const char CS_DAMAGE = 8;
 const char CS_SIGNAl = 9;
+const char CS_SHOTGUN_BEAM = 10;
+const char CS_SHOTGUN_DAMAGED = 11;
+
 
 const char SC_LOGIN_OK = 1;
 const char SC_OTHER_PLAYER = 2;
@@ -45,6 +54,8 @@ const char SC_ALL_READY = 6;
 const char SC_ATTACK = 7;
 const char SC_EFFECT = 8;
 const char SC_PLAYER_DAMAGE = 9;
+const char SC_SHOTGUN_BEAM = 10;
+const char SC_SHOTGUN_DAMAGED = 11;
 
 //const char CS_PACKET_DAMAGE = 7;
 //const char CS_PACKET_GET_ITEM = 8;
@@ -159,6 +170,8 @@ struct CS_EFFECT_PACKET {
 	int attack_id;
 	float lx, ly, lz;
 	float r_pitch, r_yaw, r_roll;
+	// 0 = 라이플, 1, 런처
+	int wep_type;			
 };
 struct CS_DAMAGE_PACKET {
 	unsigned char size;
@@ -171,12 +184,50 @@ struct SC_DAMAGE_CHANGE
 	unsigned char size;
 	unsigned char type;
 	int damaged_id;
-	int hp;
+	int damage;
 };
 struct CS_SIGNAL_PACKET
 {
 	unsigned char size;
 	unsigned char type;
+};
+#pragma pack(pop)
+#pragma pack (push, 1)
+struct CS_SHOTGUN_BEAM_PACKET {
+	unsigned char size;
+	unsigned char type;
+	int attackid;
+	float sx, sy, sz;
+	float ex0, ey0, ez0;
+	float ex1, ey1, ez1;
+	float ex2, ey2, ez2;
+	float ex3, ey3, ez3;
+	float ex4, ey4, ez4;
+	float ex5, ey5, ez5;
+	float ex6, ey6, ez6;
+	float ex7, ey7, ez7;
+	float ex8, ey8, ez8;
+	//float ex9, ey9, ez9;
+};
+struct CS_SHOTGUN_DAMAGED_PACKET {
+	unsigned char size;
+	unsigned char type;
+	int damaged_id;
+	int damaged_id1;
+	int damaged_id2;
+	float damage;
+	float damage1;
+	float damage2;
+};
+struct SC_SHOTGUN_DAMAGED_CHANGE_PACKET {
+	unsigned char size;
+	unsigned char type;
+	int damaged_id1;
+	int damaged_id2;
+	int damaged_id3;
+	float newhp1;
+	float newhp2;
+	float newhp3;
 };
 #pragma pack(pop)
 

@@ -3,7 +3,6 @@
 
 #include "Character/Character1.h"
 #include "NiagaraFunctionLibrary.h"
-#include "NiagaraComponent.h"
 
 #include "InputMappingContext.h"
 #include "EnhancedInputComponent.h"
@@ -13,12 +12,8 @@
 
 ACharacter1::ACharacter1()
 {
-	NiagaraComp = CreateDefaultSubobject<UNiagaraComponent>(TEXT("NiagaraComp"));
-	ConstructorHelpers::FObjectFinder<UNiagaraSystem> TimeReplay(TEXT("/Game/Niagara/SKill/Skill1/NS_Skill1.NS_Skill1"));
-	//NiagaraComp->bAutoActivate = false;
-	//NiagaraComp->SetAsset(DashFxRef.Object);
 	bCoolTimeFinish = true;
-	TimeReplayNiagara = TimeReplay.Object;
+	TimeReplayNiagara = ConstructorHelpers::FObjectFinder<UNiagaraSystem>(TEXT("/Script/Niagara.NiagaraSystem'/Game/Niagara/SKill/Skill1/NS_Skill1.NS_Skill1'")).Object;
 
 }
 
@@ -27,7 +22,7 @@ void ACharacter1::BeginPlay()
 	Super::BeginPlay();
 	if(MainController)
 		MainController->SetHUDCoolVisibility(false);
-	MaxSaveTime = 5.f;
+	MaxSaveTime = 15.f;
 }
 void ACharacter1::Tick(float DeltaTime)
 {
@@ -55,10 +50,15 @@ void ACharacter1::Tick(float DeltaTime)
 	{
 		Replay(DeltaTime);
 	}
-
+	NiagaraSpawnSavedTime += DeltaTime;
 	if (bTimeReplay && TimeReplayNiagara)
 	{
-		UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), TimeReplayNiagara, GetMesh()->GetRelativeLocation(), GetMesh()->GetComponentRotation());
+		if (NiagaraSpawnSavedTime >= NiagaraSpawnRate)
+		{
+			FVector CurLoc = GetActorLocation();
+			UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), TimeReplayNiagara, CurLoc);
+			NiagaraSpawnSavedTime = 0.f;
+		}
 	}
 }
 void ACharacter1::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -79,21 +79,20 @@ void ACharacter1::Destroyed()
 }
 void ACharacter1::Skill_S(const FInputActionValue& Value)
 {
-	/*if (bCoolTimeFinish)
-	{*/
+	if (bCoolTimeFinish)
+	{
 		bTimeReplay = true;
 		GetMesh()->SetHiddenInGame(true, true);
-		//NiagaraComp->Activate();
-		//NiagaraComp->Activate();
-	//	}
+
+	}
+
 }
 
 void ACharacter1::Skill_E(const FInputActionValue& Value)
 {
 	bTimeReplay = false;
-	//NiagaraComp->Deactivate();
-	GetMesh()->SetHiddenInGame(false, true);
 	bCoolTimeFinish = false;
+	GetMesh()->SetHiddenInGame(false, true);
 
 	MainController->SetHUDCoolVisibility(true);
 	MainController->SetHUDSkillOpacity(0.3);
