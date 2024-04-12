@@ -279,7 +279,14 @@ void ACharacterController::Tick(float DeltaTime)
 		//UE_LOG(LogClass, Warning, TEXT("hp : %f"), DamagedHp);
 		//BaseCharacter->SetHealth(DamgeHp);
 		UE_LOG(LogTemp, Warning, TEXT("my health : %f"), BaseCharacter->GetHealth());
-		BaseCharacter->SetHealth(damaged);
+		UGameplayStatics::ApplyDamage(
+			GetOwner(),
+			damaged,
+			this,
+			this,
+			UDamageType::StaticClass()
+		);
+		//BaseCharacter->SetHealth(damaged);
 		damaged = 0;
 		//BaseCharacter->SetHealth(BaseCharacter->GetHealth());
 		SetHUDHealth(BaseCharacter->GetHealth(), BaseCharacter->MaxGetHealth());

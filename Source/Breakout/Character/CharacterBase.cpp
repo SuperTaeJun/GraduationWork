@@ -382,17 +382,17 @@ void ACharacterBase::ReciveDamage(AActor* DamagedActor, float Damage, const UDam
 	UpdateHpHUD();
 
 
-	//UE_LOG(LogTemp, Warning, TEXT("RECIVE DAMAGE"));
-	//if (Health <= 0.0f)
-	//{
-	//	ABOGameMode* GameMode = GetWorld()->GetAuthGameMode<ABOGameMode>();
-	//	if (GameMode)
-	//	{
-	//		//MainController = MainController == nullptr ? Cast<ACharacterController>(Controller) : MainController;
-	//		//ACharacterController* AttackerController = Cast<ACharacterController>(InstigatorController);
-	//		GetWorld()->GetTimerManager().SetTimer(DeadTimer, this, &ACharacterBase::Dead, DeadTime, false);
-	//	}
-	//}
+	UE_LOG(LogTemp, Warning, TEXT("RECIVE DAMAGE"));
+	if (Health <= 0.0f)
+	{
+		ABOGameMode* GameMode = GetWorld()->GetAuthGameMode<ABOGameMode>();
+		if (GameMode)
+		{
+			//MainController = MainController == nullptr ? Cast<ACharacterController>(Controller) : MainController;
+			//ACharacterController* AttackerController = Cast<ACharacterController>(InstigatorController);
+			GetWorld()->GetTimerManager().SetTimer(DeadTimer, this, &ACharacterBase::Dead, DeadTime, false);
+		}
+	}
 }
 
 void ACharacterBase::Dead()
@@ -780,17 +780,18 @@ void ACharacterBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if (Health <= 0.0f)
-	{
-		//패킷보내야함
-		ABOGameMode* GameMode = GetWorld()->GetAuthGameMode<ABOGameMode>();
-		if (GameMode)
-		{
-			//MainController = MainController == nullptr ? Cast<ACharacterController>(Controller) : MainController;
-			//ACharacterController* AttackerController = Cast<ACharacterController>(InstigatorController);
-			GetWorld()->GetTimerManager().SetTimer(DeadTimer, this, &ACharacterBase::Dead, DeadTime, false);
-		}
-	}
+	//UE_LOG(LogTemp, Warning, TEXT("Tick HP : %f"), Health);
+	//if (Health <= 0.0f)
+	//{
+	//	//패킷보내야함
+	//	ABOGameMode* GameMode = GetWorld()->GetAuthGameMode<ABOGameMode>();
+	//	if (GameMode)
+	//	{
+	//		//MainController = MainController == nullptr ? Cast<ACharacterController>(Controller) : MainController;
+	//		//ACharacterController* AttackerController = Cast<ACharacterController>(InstigatorController);
+	//		GetWorld()->GetTimerManager().SetTimer(DeadTimer, this, &ACharacterBase::Dead, DeadTime, false);
+	//	}
+	//}
 
 
 	if (GetVelocity().Size() <= 0.f)

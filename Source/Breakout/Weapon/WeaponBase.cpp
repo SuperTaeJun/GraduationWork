@@ -208,17 +208,17 @@ void AWeaponBase::Fire(const FVector& HitTarget)
 				if (DamagedCharacter)
 				{
 					Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Damage_Packet(DamagedCharacter->_SessionId, Damage);
-					//if (HasAuthority())
-					//{
-					//	//UE_LOG(LogTemp, Log, TEXT("HIt"));
-					//	UGameplayStatics::ApplyDamage(
-					//		DamagedCharacter,
-					//		Damage,
-					//		InstigatorController,
-					//		this,
-					//		UDamageType::StaticClass()
-					//	);
-					//}
+					if (HasAuthority())
+					{
+						//UE_LOG(LogTemp, Log, TEXT("HIt"));
+						UGameplayStatics::ApplyDamage(
+							DamagedCharacter,
+							Damage,
+							InstigatorController,
+							this,
+							UDamageType::StaticClass()
+						);
+					}
 				}
 				else if (DamagedWall)
 				{
