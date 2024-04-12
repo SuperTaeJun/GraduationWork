@@ -201,6 +201,7 @@ public:
     void Send_AttackPacket(int attack_id, FVector SLoc, FVector ELoc);
     void Send_Damage_Packet(int damaged_id, float damage);
     void Send_ShotGun_packet(int attack_id, TArray<FVector> ServerBeamStart, TArray<FVector> ServerBeamEnd, int size);
+    void Send_ShotGun_damaged_packet(int damaged_id1, int damaged_id2, int damaged_id3, float damaged1, float damaged2, float damaged3);
     virtual bool Init() override;
     virtual uint32 Run() override;
     virtual void Stop() override;

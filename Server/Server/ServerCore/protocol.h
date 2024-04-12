@@ -42,6 +42,8 @@ const char CS_HIT_EFFECT = 7;
 const char CS_DAMAGE = 8;
 const char CS_SIGNAl = 9;
 const char CS_SHOTGUN_BEAM = 10;
+const char CS_SHOTGUN_DAMAGED = 11;
+
 
 const char SC_LOGIN_OK = 1;
 const char SC_OTHER_PLAYER = 2;
@@ -53,6 +55,7 @@ const char SC_ATTACK = 7;
 const char SC_EFFECT = 8;
 const char SC_PLAYER_DAMAGE = 9;
 const char SC_SHOTGUN_BEAM = 10;
+const char SC_SHOTGUN_DAMAGED = 11;
 
 //const char CS_PACKET_DAMAGE = 7;
 //const char CS_PACKET_GET_ITEM = 8;
@@ -204,7 +207,26 @@ struct CS_SHOTGUN_BEAM_PACKET {
 	float ex8, ey8, ez8;
 	//float ex9, ey9, ez9;
 };
-//struct 
+struct CS_SHOTGUN_DAMAGED_PACKET {
+	unsigned char size;
+	unsigned char type;
+	int damaged_id;
+	int damaged_id1;
+	int damaged_id2;
+	float damage;
+	float damage1;
+	float damage2;
+};
+struct SC_SHOTGUN_DAMAGED_CHANGE_PACKET {
+	unsigned char size;
+	unsigned char type;
+	int damaged_id1;
+	int damaged_id2;
+	int damaged_id3;
+	float newhp1;
+	float newhp2;
+	float newhp3;
+};
 #pragma pack(pop)
 
 

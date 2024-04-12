@@ -383,6 +383,14 @@ void ClientSocket::Send_ShotGun_packet(int attack_id, TArray<FVector> ServerBeam
 	packet.ez9 = ServerBeamEnd[9].Z;*/
 	SendPacket(&packet);
 }
+void ClientSocket::Send_ShotGun_damaged_packet(int damaged_id1, int damaged_id2, int damaged_id3, float damaged1, float damaged2, float damaged3)
+{
+	CS_SHOTGUN_DAMAGED_PACKET packet;
+	packet.size = sizeof(packet);
+	packet.type = CS_SHOTGUN_DAMAGED;
+
+	SendPacket(&packet);
+}
 bool ClientSocket::Init()
 {
 	//UE_LOG(LogTemp, Warning, TEXT("Thread has been initialized"));
