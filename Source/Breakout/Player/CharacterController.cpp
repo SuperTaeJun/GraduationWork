@@ -17,6 +17,8 @@
 #include "Components/Image.h"
 #include "Game/BOGameInstance.h"
 #include "Weapon/RocketLauncher.h"
+#include "Materials/MaterialInstance.h"
+#include "Materials/MaterialInstanceDynamic.h"
 //#include "Network/PacketData.h"
 #include "../../Server/Server/ServerCore/protocol.h"
 #include <string>
@@ -579,6 +581,12 @@ void ACharacterController::UpdateSyncPlayer()
 				SpawnCharacter->SpawnDefaultController();
 				SpawnCharacter->_SessionId = NewPlayer.front()->Id;
 				SpawnCharacter->GetMesh()->SetSkeletalMesh(SkMeshAsset3);
+				DynamicMaterial = UMaterialInstanceDynamic::Create(OldMaterial, this);
+				if (DynamicMaterial)
+				{
+					SpawnCharacter->GetMesh()->SetMaterial(0, DynamicMaterial);
+					DynamicMaterial->SetScalarParameterValue(FName("Alpha"), 0.f);
+				}
 				if (Anim3)
 					SpawnCharacter->GetMesh()->SetAnimClass(Anim3);
 			}

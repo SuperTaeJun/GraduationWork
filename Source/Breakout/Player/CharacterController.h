@@ -38,6 +38,11 @@ protected:
 	TObjectPtr<USkeletalMesh> SkMeshAsset4;
 
 	UPROPERTY(EditAnywhere)
+	TObjectPtr<class UMaterialInstance> OldMaterial;
+
+	TObjectPtr<class UMaterialInstanceDynamic> DynamicMaterial;
+
+	UPROPERTY(EditAnywhere)
 	TObjectPtr<UClass> Anim1;
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<UClass> Anim2;
