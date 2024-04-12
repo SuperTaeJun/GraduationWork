@@ -519,6 +519,29 @@ void process_packet(int s_id, char* p)
 		}
 		break;
 	}
+	case CS_SHOTGUN_DAMAGED: {
+		CS_SHOTGUN_DAMAGED_PACKET* packet = reinterpret_cast<CS_SHOTGUN_DAMAGED_PACKET*>(p);
+		clients[packet->damaged_id]._hp -= packet->damage;
+		send_change_hp(packet->damaged_id);
+		clients[packet->damaged_id1]._hp -= packet->damage1;
+		send_change_hp(packet->damaged_id1);
+		clients[packet->damaged_id2]._hp -= packet->damage2;
+		send_change_hp(packet->damaged_id2);
+
+		//SC_SHOTGUN_DAMAGED_CHANGE_PACKET repacket;
+		//repacket.size = sizeof(repacket);
+		//repacket.type = SC_SHOTGUN_DAMAGED;
+		//repacket.damaged_id1 = clients[packet->damaged_id]._s_id;
+		//repacket.damaged_id2 = clients[packet->damaged_id1]._s_id;
+		//repacket.damaged_id3 = clients[packet->damaged_id2]._s_id;
+		//repacket.newhp1 = clients[packet->damaged_id]._hp;
+		//repacket.newhp2 = clients[packet->damaged_id1]._hp;
+		//repacket.newhp3 = clients[packet->damaged_id2]._hp;
+		//clients[packet->damaged_id].do_send(sizeof(repacket), &repacket);
+		//clients[packet->damaged_id1].do_send(sizeof(repacket), &repacket);
+		//clients[packet->damaged_id2].do_send(sizeof(repacket), &repacket);
+		break;
+	}
 	case CS_HIT_EFFECT: {
 		CS_EFFECT_PACKET* packet = reinterpret_cast<CS_EFFECT_PACKET*>(p);
 		CLIENT& cl = clients[packet->attack_id];

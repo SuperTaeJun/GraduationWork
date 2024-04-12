@@ -1,7 +1,10 @@
 ﻿  pch.cpp
   CLIENT.cpp
   GameServer.cpp
-C:\Users\sejin\Downloads\GraduationWork\Server\Server\GameServer\GameServer.cpp(562,19): warning C4244: '-=': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\sejin\Downloads\GraduationWork\Server\Server\GameServer\GameServer.cpp(524,44): warning C4244: '-=': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\sejin\Downloads\GraduationWork\Server\Server\GameServer\GameServer.cpp(526,45): warning C4244: '-=': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\sejin\Downloads\GraduationWork\Server\Server\GameServer\GameServer.cpp(528,45): warning C4244: '-=': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\sejin\Downloads\GraduationWork\Server\Server\GameServer\GameServer.cpp(585,19): warning C4244: '-=': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
   Overlap.cpp
   코드를 생성하고 있습니다.
   0 of 300 functions ( 0.0%) were compiled, the rest were copied from previous compilation.

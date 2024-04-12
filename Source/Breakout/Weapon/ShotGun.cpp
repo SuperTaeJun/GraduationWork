@@ -110,7 +110,43 @@ void AShotGun::Fire(const FVector& HitTarget)
 			}
 		}
 		// 여기 데미지
-	
+		// 모두 데미지받았을때
+		if (DamagedCh[0] && DamagedCh[1] && DamagedCh[2])
+		{
+			Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_ShotGun_damaged_packet(DamagedCh[0]->_SessionId, DamagedCh[1]->_SessionId, DamagedCh[2]->_SessionId
+				, DamageNum[0]*Damage, DamageNum[1] * Damage, DamageNum[2] * Damage);
+		}
+		else if(DamagedCh[0] && DamagedCh[1] && !DamagedCh[2])
+		{
+			Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_ShotGun_damaged_packet(DamagedCh[0]->_SessionId, DamagedCh[1]->_SessionId, -1
+				, DamageNum[0] * Damage, DamageNum[1] * Damage, 0);
+		}
+		else if (DamagedCh[0] && !DamagedCh[1] && DamagedCh[2])
+		{
+			Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_ShotGun_damaged_packet(DamagedCh[0]->_SessionId, -1, DamagedCh[2]->_SessionId
+				, DamageNum[0] * Damage, 0, DamageNum[2] * Damage);
+		}
+		else if (!DamagedCh[0] && DamagedCh[1] && DamagedCh[2])
+		{
+			Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_ShotGun_damaged_packet(-1, DamagedCh[1]->_SessionId, DamagedCh[2]->_SessionId
+				,0, DamageNum[1] * Damage, DamageNum[2] * Damage);
+		}
+		else if (!DamagedCh[0] && !DamagedCh[1] && DamagedCh[2])
+		{
+			Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_ShotGun_damaged_packet(-1, -1, DamagedCh[2]->_SessionId
+				, 0, 0, DamageNum[2] * Damage);
+		}
+		else if (!DamagedCh[0] && DamagedCh[1] && !DamagedCh[2])
+		{
+			Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_ShotGun_damaged_packet(-1, DamagedCh[1]->_SessionId, -1
+				, 0, DamageNum[1] * Damage, 0);
+		}
+		else if (DamagedCh[0] && !DamagedCh[1] && !DamagedCh[2])
+		{
+			Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_ShotGun_damaged_packet(DamagedCh[0]->_SessionId, -1, -1
+				, DamageNum[0] * Damage, 0, 0);
+		}
+		/*Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_ShotGun_damaged_packet(DamagedCh[0]->_SessionId);*/
 	}
 }
 

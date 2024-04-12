@@ -223,6 +223,7 @@ bool ClientSocket::PacketProcess(char* ptr)
 		MyCharacterController->SetHp(player.hp);
 		break;
 	}
+
 	default:
 		break;
 	}
@@ -388,6 +389,12 @@ void ClientSocket::Send_ShotGun_damaged_packet(int damaged_id1, int damaged_id2,
 	CS_SHOTGUN_DAMAGED_PACKET packet;
 	packet.size = sizeof(packet);
 	packet.type = CS_SHOTGUN_DAMAGED;
+	packet.damaged_id = damaged_id1;
+	packet.damaged_id1 = damaged_id2;
+	packet.damaged_id2 = damaged_id3;
+	packet.damage = damaged1;
+	packet.damage1 = damaged2;
+	packet.damage2 = damaged3;
 
 	SendPacket(&packet);
 }
