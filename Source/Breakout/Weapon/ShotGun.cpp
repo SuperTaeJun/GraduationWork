@@ -90,10 +90,15 @@ void AShotGun::Fire(const FVector& HitTarget)
 			// 임펙트 나이아가라 -> 배열의 크기는 항상5가아님 총알이 맞는횟수만큼
 
 		}
+		//서버 데미지 적용 변수
+		TArray<ACharacterBase*> DamagedCh;
+		TArray<int32> DamageNum;
 		for (auto HitPair : HitMap)
 		{
 			if (HitPair.Key && HasAuthority() && InstigatorController)
 			{
+				DamagedCh.Add(HitPair.Key);
+				DamageNum.Add(HitPair.Value);
 				UGameplayStatics::ApplyDamage
 				(
 					HitPair.Key,

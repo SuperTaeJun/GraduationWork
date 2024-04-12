@@ -191,8 +191,6 @@ void AWeaponBase::Fire(const FVector& HitTarget)
 	const USkeletalMeshSocket* MuzzleSocket = GetWeaponMesh()->GetSocketByName("MuzzleFlash");
 	if (MuzzleSocket /*&& InstigatorController*/)
 	{
-
-		UE_LOG(LogTemp, Log, TEXT("TTEST"));
 		FTransform SocketTransform = MuzzleSocket->GetSocketTransform(GetWeaponMesh());
 		FVector Start = SocketTransform.GetLocation();
 
