@@ -448,14 +448,17 @@ bool ACharacterController::UpdateWorld()
 			//------------------------
 			if (!OtherPlayer->GetCurWeapon())
 			{
+				//UE_LOG(LogTemp, Warning, TEXT("RifleSocket"));
 				if (info->w_type == WeaponType::RIFLE)
 				{
 					FName RifleSocketName = FName("RifleSocket");
 					OtherPlayer->SetWeapon(Rifle, RifleSocketName);
+					//UE_LOG(LogTemp, Warning, TEXT("RifleSocket"));
 				
 				}
 				else if (info->w_type == WeaponType::SHOTGUN)
 				{
+					UE_LOG(LogTemp, Warning, TEXT("SHOTGUN"));
 					FName ShotgunSocketName = FName("ShotgunSocket");
 					OtherPlayer->SetWeapon(ShotGun, ShotgunSocketName);
 					
@@ -465,6 +468,12 @@ bool ACharacterController::UpdateWorld()
 					FName LancherSocketName = FName("LancherSocket");
 					OtherPlayer->SetWeapon(Lancher, LancherSocketName);
 					
+				}
+				else
+				{
+					FName LancherSocketName = FName("LancherSocket");
+					OtherPlayer->SetWeapon(Lancher, LancherSocketName);
+
 				}
 			}
 
