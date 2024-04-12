@@ -67,7 +67,6 @@ void AShotGun::Fire(const FVector& HitTarget)
 
 			if (ImpactNiagara && FireHit.bBlockingHit)
 			{
-				++j;
 				UNiagaraFunctionLibrary::SpawnSystemAtLocation
 				(
 					GetWorld(),

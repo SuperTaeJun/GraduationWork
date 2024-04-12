@@ -22,7 +22,7 @@ void ACharacter1::BeginPlay()
 	Super::BeginPlay();
 	if(MainController)
 		MainController->SetHUDCoolVisibility(false);
-	MaxSaveTime = 5.f;
+	MaxSaveTime = 15.f;
 }
 void ACharacter1::Tick(float DeltaTime)
 {
@@ -50,12 +50,15 @@ void ACharacter1::Tick(float DeltaTime)
 	{
 		Replay(DeltaTime);
 	}
-
+	NiagaraSpawnSavedTime += DeltaTime;
 	if (bTimeReplay && TimeReplayNiagara)
 	{
-		FVector CurLoc = GetActorLocation();
-		UE_LOG(LogTemp, Warning, TEXT("CurLoc = %s"), *CurLoc.ToString());
-		UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), TimeReplayNiagara, CurLoc);
+		if (NiagaraSpawnSavedTime >= NiagaraSpawnRate)
+		{
+			FVector CurLoc = GetActorLocation();
+			UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), TimeReplayNiagara, CurLoc);
+			NiagaraSpawnSavedTime = 0.f;
+		}
 	}
 }
 void ACharacter1::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -76,16 +79,20 @@ void ACharacter1::Destroyed()
 }
 void ACharacter1::Skill_S(const FInputActionValue& Value)
 {
+	if (bCoolTimeFinish)
+	{
 		bTimeReplay = true;
 		GetMesh()->SetHiddenInGame(true, true);
+
+	}
 
 }
 
 void ACharacter1::Skill_E(const FInputActionValue& Value)
 {
 	bTimeReplay = false;
-	GetMesh()->SetHiddenInGame(false, true);
 	bCoolTimeFinish = false;
+	GetMesh()->SetHiddenInGame(false, true);
 
 	MainController->SetHUDCoolVisibility(true);
 	MainController->SetHUDSkillOpacity(0.3);
