@@ -278,7 +278,7 @@ void ACharacterController::Tick(float DeltaTime)
 	{
 		//UE_LOG(LogClass, Warning, TEXT("hp : %f"), DamagedHp);
 		//BaseCharacter->SetHealth(DamgeHp);
-		UE_LOG(LogTemp, Warning, TEXT("my health : %f"), BaseCharacter->GetHealth());
+		//UE_LOG(LogTemp, Warning, TEXT("my health : %f"), BaseCharacter->GetHealth());
 		UGameplayStatics::ApplyDamage(
 			GetOwner(),
 			damaged,
@@ -327,7 +327,7 @@ void ACharacterController::SetHitEffect(int _id)
 
 	UWorld* World = GetWorld();
 	PlayerInfo->players[_id].hiteffect = true;
-
+	UE_LOG(LogTemp, Warning, TEXT("ADADADAZVV"));
 }
 
 bool ACharacterController::UpdateWorld()
@@ -493,6 +493,7 @@ bool ACharacterController::UpdateWorld()
 				OtherPlayer->SpawnBeam(SShotgun, EShotgun8);
 				info->sfired = false;
 			}
+			UE_LOG(LogTemp, Warning, TEXT("bool %d"), info->hiteffect);
 			//È÷ÆÃ
 			if (OtherPlayer->GetCurWeapon() && info->hiteffect == true)
 			{
@@ -500,7 +501,7 @@ bool ACharacterController::UpdateWorld()
 					OtherPlayer->SpawnHitImpact(HEloc, EffectRot);
 					info->hiteffect = false;
 				}
-				else
+				else if(info->weptype == 1)
 				{
 					FActorSpawnParameters SpawnParameters;
 					SpawnParameters.Owner = OtherPlayer;

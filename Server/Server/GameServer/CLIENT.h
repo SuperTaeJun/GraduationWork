@@ -61,9 +61,6 @@ public:
     atomic_int    _count;
     int      _type;   // 1.Player 2.고블린  3.오거 4.드래곤(Boss)   
     //-------------
-
-   
-
     float ex1, ey1, ez1;
     float ex2, ey2, ez2;
     float ex3, ey3, ez3;
