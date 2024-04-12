@@ -9,6 +9,7 @@
 #include "Components/WidgetComponent.h"
 #include "HUD/ETPercentBar.h"
 #include "Components/SphereComponent.h"
+#include "Materials/MaterialInstanceDynamic.h"
 
 AEscapeTool::AEscapeTool()
 {
@@ -22,7 +23,12 @@ AEscapeTool::AEscapeTool()
 void AEscapeTool::BeginPlay()
 {
 	Super::BeginPlay();
-
+	DynamicMaterial = UMaterialInstanceDynamic::Create(OldMaterial, this);
+	if (DynamicMaterial)
+	{
+		ProceduralMesh->SetMaterial(0, DynamicMaterial);
+		DynamicMaterial->SetScalarParameterValue(FName("Alpha"), 0.f);
+	}
 	if (AreaSphere)
 	{
 		AreaSphere->OnComponentBeginOverlap.AddDynamic(this, &AEscapeTool::OnSphereOverlap);
@@ -77,9 +83,16 @@ void AEscapeTool::TransformMesh(float DeltaTime, bool Clamp, bool TransformRever
 	ProceduralMesh->UpdateMeshSection_LinearColor(0, InterpData.Verts, InterpData.Normals, InterpData.UVs, InterpData.Colors, TArray<FProcMeshTangent>());
 
 	if (TransformReverse)
+	{
 		Time = Time - (DeltaTime * MorphingSpeed);
+		DynamicMaterial->SetScalarParameterValue(FName("Alpha"), Time);
+	}
 	else
+	{
 		Time = Time + (DeltaTime * MorphingSpeed);
+		DynamicMaterial->SetScalarParameterValue(FName("Alpha"), Time);
+	}
+
 	UpdatePercent(Cur);
 }
 

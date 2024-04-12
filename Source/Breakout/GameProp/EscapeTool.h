@@ -26,7 +26,9 @@ public:
 	void SetbDetected(bool _bDetected) { bDetected = _bDetected; }
 private:
 	bool bDetected;
-
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<class UMaterialInstance> OldMaterial;
+	TObjectPtr<class UMaterialInstanceDynamic> DynamicMaterial;
 	UFUNCTION()
 	virtual void OnSphereOverlap
 	(
