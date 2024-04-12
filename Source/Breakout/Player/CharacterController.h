@@ -43,6 +43,9 @@ protected:
 	TObjectPtr<class UMaterialInstanceDynamic> DynamicMaterial;
 
 	UPROPERTY(EditAnywhere)
+	TSubclassOf<class AProjectileBase> ProjectileRef;
+
+	UPROPERTY(EditAnywhere)
 	TObjectPtr<UClass> Anim1;
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<UClass> Anim2;

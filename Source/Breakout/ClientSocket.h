@@ -33,6 +33,7 @@ public:
     // 세션 아이디
     int Id = -1;
     int hp;
+    int weptype;
     // 아이디 비번
     char    userId[20] = {};
     char    userPw[20] = {};
@@ -197,7 +198,7 @@ public:
     void Send_Character_Type(PlayerType type, int id);
     void Send_Weapon_Type(WeaponType type, int id);
     void Send_Ready_Packet(bool ready);
-    void Send_Fire_Effect(int attack_id, FVector ImLoc, FRotator ImRot);
+    void Send_Fire_Effect(int attack_id, FVector ImLoc, FRotator ImRot, int wtype);
     void Send_AttackPacket(int attack_id, FVector SLoc, FVector ELoc);
     void Send_Damage_Packet(int damaged_id, float damage);
     void Send_ShotGun_packet(int attack_id, TArray<FVector> ServerBeamStart, TArray<FVector> ServerBeamEnd, int size);

@@ -551,6 +551,7 @@ void process_packet(int s_id, char* p)
 		cl.Pitch = packet->r_pitch;
 		cl.Yaw = packet->r_yaw;
 		cl.Roll = packet->r_roll;
+		cl.wtype = packet->wep_type;
 		for (auto& other : clients) {
 			if (other._s_id == cl._s_id) continue;
 			other.state_lock.lock();
@@ -569,6 +570,7 @@ void process_packet(int s_id, char* p)
 			packet.r_pitch = cl.Pitch;
 			packet.r_yaw = cl.Yaw;
 			packet.r_roll = cl.Roll;
+			packet.wep_type = cl.wtype;
 			//packet.weapon_type = cl.w_type;
 		//printf_s("[Send put object] id : %d, location : (%f,%f,%f), yaw : %f\n", packet.id, packet.x, packet.y, packet.z, packet.yaw);
 			cout << "이거 누구한테 감 :  ?" << other._s_id << endl;

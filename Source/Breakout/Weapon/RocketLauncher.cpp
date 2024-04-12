@@ -31,7 +31,7 @@ void ARocketLauncher::Fire(const FVector& HitTarget)
 			{
 				World->SpawnActor<AProjectileBase>(ProjectileClass, SocketTransform.GetLocation(), TargetRotation, SpawnParameters);
 				if (Cast<UBOGameInstance>(GetGameInstance()))
-					Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Fire_Effect(Cast<ACharacterBase>(GetOwner())->_SessionId, SocketTransform.GetLocation(), TargetRotation);
+					Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Fire_Effect(Cast<ACharacterBase>(GetOwner())->_SessionId, SocketTransform.GetLocation(), TargetRotation, 1);
 			}
 			if (ImpactNiagara)
 			{

@@ -19,6 +19,7 @@
 #include "Weapon/RocketLauncher.h"
 #include "Materials/MaterialInstance.h"
 #include "Materials/MaterialInstanceDynamic.h"
+#include "Weapon/ProjectileBase.h"
 //#include "Network/PacketData.h"
 #include "../../Server/Server/ServerCore/protocol.h"
 #include <string>
@@ -484,9 +485,19 @@ bool ACharacterController::UpdateWorld()
 			//È÷ÆÃ
 			if (OtherPlayer->GetCurWeapon() && info->hiteffect == true)
 			{
-				
-				OtherPlayer->SpawnHitImpact(HEloc, EffectRot);
-				info->hiteffect = false;
+				if (info->weptype == 0) {
+					OtherPlayer->SpawnHitImpact(HEloc, EffectRot);
+					info->hiteffect = false;
+				}
+				else
+				{
+					FActorSpawnParameters SpawnParameters;
+					SpawnParameters.Owner = OtherPlayer;
+					SpawnParameters.Instigator = OtherPlayer;
+
+					GetWorld()->SpawnActor<AProjectileBase>(ProjectileRef, HEloc, EffectRot, SpawnParameters);
+					info->hiteffect = false;
+				}
 			}
 
 

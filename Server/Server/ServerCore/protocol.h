@@ -170,6 +170,8 @@ struct CS_EFFECT_PACKET {
 	int attack_id;
 	float lx, ly, lz;
 	float r_pitch, r_yaw, r_roll;
+	// 0 = 라이플, 1, 런처
+	int wep_type;			
 };
 struct CS_DAMAGE_PACKET {
 	unsigned char size;

@@ -209,8 +209,12 @@ bool ClientSocket::PacketProcess(char* ptr)
 		PlayerInfo.players[packet->attack_id].FEffect.Pitch = packet->r_pitch;
 		PlayerInfo.players[packet->attack_id].FEffect.Yaw = packet->r_yaw;
 		PlayerInfo.players[packet->attack_id].FEffect.Roll = packet->r_roll;
+		PlayerInfo.players[packet->attack_id].weptype = packet->wep_type;
+
 		//UE_LOG(LogTemp, Warning, TEXT("%f, %f"), packet->sx, packet->ex);
+	
 		MyCharacterController->SetHitEffect(packet->attack_id);
+	
 		break;
 	}
 	//HP동기화 처리
@@ -301,7 +305,7 @@ void ClientSocket::Send_Ready_Packet(bool ready)
 	packet.type = CS_READY;
 	SendPacket(&packet);
 }
-void ClientSocket::Send_Fire_Effect(int attack_id, FVector ImLoc, FRotator ImRot)
+void ClientSocket::Send_Fire_Effect(int attack_id, FVector ImLoc, FRotator ImRot, int wtype)
 {
 	CS_EFFECT_PACKET packet;
 	packet.size = sizeof(packet);
@@ -313,6 +317,7 @@ void ClientSocket::Send_Fire_Effect(int attack_id, FVector ImLoc, FRotator ImRot
 	packet.r_pitch = ImRot.Pitch;
 	packet.r_yaw = ImRot.Yaw;
 	packet.r_roll = ImRot.Roll;
+	packet.wep_type = wtype;
 	SendPacket(&packet);
 }
 void ClientSocket::Send_AttackPacket(int attack_id, FVector SLoc, FVector ELoc)
