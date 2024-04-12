@@ -278,6 +278,7 @@ void ACharacterController::Tick(float DeltaTime)
 	{
 		//UE_LOG(LogClass, Warning, TEXT("hp : %f"), DamagedHp);
 		BaseCharacter->SetHealth(DamgeHp);
+		BaseCharacter->SetHealth(BaseCharacter->GetHealth());
 		SetHUDHealth(BaseCharacter->GetHealth(), BaseCharacter->MaxGetHealth());
 	}
 }
