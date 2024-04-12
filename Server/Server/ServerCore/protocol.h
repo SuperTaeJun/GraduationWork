@@ -204,6 +204,7 @@ struct CS_SHOTGUN_BEAM_PACKET {
 	float ex8, ey8, ez8;
 	//float ex9, ey9, ez9;
 };
+//struct 
 #pragma pack(pop)
 
 
