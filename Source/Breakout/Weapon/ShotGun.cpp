@@ -92,13 +92,23 @@ void AShotGun::Fire(const FVector& HitTarget)
 		}
 		//서버 데미지 적용 변수
 		TArray<ACharacterBase*> DamagedCh;
+		DamagedCh.SetNum(3);
+		DamagedCh[0] = nullptr;
+		DamagedCh[1] = nullptr;
+		DamagedCh[2] = nullptr;
 		TArray<int32> DamageNum;
+		DamageNum.SetNum(3);
+		DamageNum[0] = 0;
+		DamageNum[1] = 0;
+		DamageNum[2] = 0;
+		int i = 0;
 		for (auto HitPair : HitMap)
 		{
+			++i;
 			if (HitPair.Key && HasAuthority() && InstigatorController)
 			{
-				DamagedCh.Add(HitPair.Key);
-				DamageNum.Add(HitPair.Value);
+				DamagedCh[i] = HitPair.Key;
+				DamageNum[i] = HitPair.Value;
 				UGameplayStatics::ApplyDamage
 				(
 					HitPair.Key,
