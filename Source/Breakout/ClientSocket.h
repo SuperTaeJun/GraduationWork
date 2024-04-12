@@ -32,8 +32,9 @@ public:
 
     // 세션 아이디
     int Id = -1;
-    int hp;
+    //int hp;
     int weptype;
+    int damage;
     // 아이디 비번
     char    userId[20] = {};
     char    userPw[20] = {};
@@ -54,6 +55,7 @@ public:
     bool  fired = false;
     bool  sfired = false;
     bool  hiteffect = false;
+    bool  brecvdamage = false;
     // 나이아가라 슛 이팩트
     FVector Sshot;
     FVector Eshot;

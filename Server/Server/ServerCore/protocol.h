@@ -184,7 +184,7 @@ struct SC_DAMAGE_CHANGE
 	unsigned char size;
 	unsigned char type;
 	int damaged_id;
-	int hp;
+	int damage;
 };
 struct CS_SIGNAL_PACKET
 {

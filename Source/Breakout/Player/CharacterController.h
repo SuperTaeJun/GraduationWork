@@ -107,7 +107,7 @@ public:
 	void UpdateSyncPlayer();
 	bool UpdateWorld();
 	void SetHp(float DamagedHp);
-	float DamgeHp=100;
+	float damaged = 0;
 	//초기 컨트롤러 세팅
 	
 	void InitPlayer();

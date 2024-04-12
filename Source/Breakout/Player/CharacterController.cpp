@@ -277,8 +277,11 @@ void ACharacterController::Tick(float DeltaTime)
 	if (BaseCharacter)
 	{
 		//UE_LOG(LogClass, Warning, TEXT("hp : %f"), DamagedHp);
-		BaseCharacter->SetHealth(DamgeHp);
-		BaseCharacter->SetHealth(BaseCharacter->GetHealth());
+		//BaseCharacter->SetHealth(DamgeHp);
+		UE_LOG(LogTemp, Warning, TEXT("my health : %f"), BaseCharacter->GetHealth());
+		BaseCharacter->SetHealth(damaged);
+		damaged = 0;
+		//BaseCharacter->SetHealth(BaseCharacter->GetHealth());
 		SetHUDHealth(BaseCharacter->GetHealth(), BaseCharacter->MaxGetHealth());
 	}
 }
@@ -729,9 +732,10 @@ void ACharacterController::OnPossess(APawn* InPawn)
 	}
 }
 
-void ACharacterController::SetHp(float DamagedHp)
+void ACharacterController::SetHp(float recvdamaged)
 {
-	DamgeHp = DamagedHp;
+	damaged = recvdamaged;
+	//Cast<ACharacterBase>(GetOwner())->SetHealth(recvdamaged);
 	//UE_LOG(LogClass, Warning, TEXT("hp : %f"), DamagedHp);
 	//ACharacterBase* BaseCharacter = Cast<ACharacterBase>(GetPawn());
 	//if (BaseCharacter)

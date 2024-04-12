@@ -521,11 +521,11 @@ void process_packet(int s_id, char* p)
 	}
 	case CS_SHOTGUN_DAMAGED: {
 		CS_SHOTGUN_DAMAGED_PACKET* packet = reinterpret_cast<CS_SHOTGUN_DAMAGED_PACKET*>(p);
-		clients[packet->damaged_id]._hp -= packet->damage;
+		clients[packet->damaged_id].damage = packet->damage;
 		send_change_hp(packet->damaged_id);
-		clients[packet->damaged_id1]._hp -= packet->damage1;
+		clients[packet->damaged_id1].damage = packet->damage1;
 		send_change_hp(packet->damaged_id1);
-		clients[packet->damaged_id2]._hp -= packet->damage2;
+		clients[packet->damaged_id2].damage = packet->damage2;
 		send_change_hp(packet->damaged_id2);
 
 		//SC_SHOTGUN_DAMAGED_CHANGE_PACKET repacket;
@@ -584,8 +584,9 @@ void process_packet(int s_id, char* p)
 		CS_DAMAGE_PACKET* packet = reinterpret_cast<CS_DAMAGE_PACKET*>(p);
 		CLIENT& cl = clients[packet->damaged_id];
 		//데미지 저장
-		cl._hp -= packet->damage;
+		cl.damage = packet->damage;
 		send_change_hp(cl._s_id);
+
 		break;
 	}
 	default:
@@ -725,7 +726,7 @@ void send_change_hp(int _s_id)
 	packet.size = sizeof(packet);
 	packet.type = SC_PLAYER_DAMAGE;
 	packet.damaged_id = _s_id;
-	packet.hp = clients[_s_id]._hp;
+	packet.damage = clients[_s_id].damage;
 	clients[_s_id].do_send(sizeof(packet), &packet);
 }
 

@@ -222,9 +222,9 @@ bool ClientSocket::PacketProcess(char* ptr)
 		SC_DAMAGE_CHANGE* packet = reinterpret_cast<SC_DAMAGE_CHANGE*>(ptr);
 		CPlayer player;
 		player.Id = packet->damaged_id;
-		player.hp = packet->hp;
+		player.damage = packet->damage;
 
-		MyCharacterController->SetHp(player.hp);
+		MyCharacterController->SetHp(player.damage);
 		break;
 	}
 

@@ -26,6 +26,7 @@ public:
     float Max_Speed;
     int _max_hp; // 최대 체력
     int _hp; // 체력
+    int damage;
     int _level; // 레벨
     int _max_exp;
     int _exp;
@@ -37,6 +38,7 @@ public:
     int32 iMaxSnowballCount;
     int32 iCurrentSnowballCount;
     int32 iCurrentMatchCount;
+    bool recvdamage;
     bool bHasUmbrella;
     bool bHasBag;
     bool bIsSnowman;	// 현재 캐릭터가 눈사람인지
