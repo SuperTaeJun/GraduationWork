@@ -448,7 +448,8 @@ bool ACharacterController::UpdateWorld()
 			//------------------------
 			if (!OtherPlayer->GetCurWeapon())
 			{
-				//UE_LOG(LogTemp, Warning, TEXT("RifleSocket"));
+
+				UE_LOG(LogTemp, Warning, TEXT("WEAPON : %d"), info->w_type);
 				if (info->w_type == WeaponType::RIFLE)
 				{
 					FName RifleSocketName = FName("RifleSocket");
@@ -504,7 +505,7 @@ bool ACharacterController::UpdateWorld()
 			}
 			UE_LOG(LogTemp, Warning, TEXT("bool %d"), info->hiteffect);
 			//È÷ÆÃ
-			if (OtherPlayer->GetCurWeapon() && info->hiteffect == true)
+		/*	if (OtherPlayer->GetCurWeapon() && info->hiteffect == true)
 			{
 				if (info->weptype == 0) {
 					OtherPlayer->SpawnHitImpact(HEloc, EffectRot);
@@ -519,7 +520,7 @@ bool ACharacterController::UpdateWorld()
 					GetWorld()->SpawnActor<AProjectileBase>(ProjectileRef, HEloc, EffectRot, SpawnParameters);
 					info->hiteffect = false;
 				}
-			}
+			}*/
 
 
 		}
