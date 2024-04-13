@@ -503,9 +503,8 @@ bool ACharacterController::UpdateWorld()
 				OtherPlayer->SpawnBeam(SShotgun, EShotgun8);
 				info->sfired = false;
 			}
-			UE_LOG(LogTemp, Warning, TEXT("bool %d"), info->hiteffect);
 			//È÷ÆÃ
-		/*	if (OtherPlayer->GetCurWeapon() && info->hiteffect == true)
+			if (OtherPlayer->GetCurWeapon() && info->hiteffect == true)
 			{
 				if (info->weptype == 0) {
 					OtherPlayer->SpawnHitImpact(HEloc, EffectRot);
@@ -520,7 +519,7 @@ bool ACharacterController::UpdateWorld()
 					GetWorld()->SpawnActor<AProjectileBase>(ProjectileRef, HEloc, EffectRot, SpawnParameters);
 					info->hiteffect = false;
 				}
-			}*/
+			}
 
 
 		}
