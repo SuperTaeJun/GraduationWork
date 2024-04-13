@@ -15,6 +15,10 @@
 #include "NiagaraComponent.h"
 #include "Weapon/ProjectileBullet.h"
 
+AShotGun::AShotGun()
+{
+}
+
 void AShotGun::Fire(const FVector& HitTarget)
 {
 	const USkeletalMeshSocket* MuzzleFlashSocket = GetWeaponMesh()->GetSocketByName("MuzzleFlash");
