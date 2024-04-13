@@ -16,6 +16,7 @@
 #include"GameProp/EscapeTool.h"
 #include "Game/BOGameInstance.h"
 #include "ClientSocket.h"
+#include "Weapon/ProjectileBullet.h"
 //#define TRACE_LENGTH 1000.f
 
 AWeaponBase::AWeaponBase()
@@ -189,55 +190,78 @@ void AWeaponBase::Fire(const FVector& HitTarget)
 	AController* InstigatorController = OwnerPawn->GetController();
 
 	const USkeletalMeshSocket* MuzzleSocket = GetWeaponMesh()->GetSocketByName("MuzzleFlash");
-	if (MuzzleSocket /*&& InstigatorController*/)
+	if (MuzzleSocket && InstigatorController)
 	{
 		FTransform SocketTransform = MuzzleSocket->GetSocketTransform(GetWeaponMesh());
 		FVector Start = SocketTransform.GetLocation();
 
-		FHitResult FireHit;
-		WeaponTraceHit(Start, HitTarget, FireHit);
+		//WeaponTraceHit(Start, HitTarget, FireHit);
+		FVector ToTarget = bUseScatter ? TraceEndWithScatter(Start, HitTarget) : Start + (HitTarget - Start) * 1.25f;
+		ToTarget = ToTarget - SocketTransform.GetLocation();
 
-
-		UWorld* World = GetWorld();
-		if (World)
+		FRotator ToTargetRot = ToTarget.Rotation();
+		if (ProjectileBulletClass && OwnerPawn)
 		{
-			if (FireHit.bBlockingHit)
+			FActorSpawnParameters SpawnParameters;
+			SpawnParameters.Owner = GetOwner();
+			SpawnParameters.Instigator = OwnerPawn;
+			UWorld* World = GetWorld();
+			if (World)
 			{
-				ACharacterBase* DamagedCharacter = Cast<ACharacterBase>(FireHit.GetActor());
-				ABulletHoleWall* DamagedWall = Cast<ABulletHoleWall>(FireHit.GetActor());
-				if (DamagedCharacter)
-				{
-					Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Damage_Packet(DamagedCharacter->_SessionId, Damage);
-					if (HasAuthority())
-					{
-						//UE_LOG(LogTemp, Log, TEXT("HIt"));
-						UGameplayStatics::ApplyDamage(
-							DamagedCharacter,
-							Damage,
-							InstigatorController,
-							this,
-							UDamageType::StaticClass()
-						);
-					}
-				}
-				else if (DamagedWall)
-				{
-					DamagedWall->SetBulletHole(FireHit.ImpactPoint);
-				}
-				if (ImpactNiagara)
-				{
-					UNiagaraFunctionLibrary::SpawnSystemAtLocation
-					(
-						World,
-						ImpactNiagara,
-						FireHit.ImpactPoint,
-						FireHit.ImpactNormal.Rotation()
-					);
-					Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Fire_Effect(Cast<ACharacterBase>(GetOwner())->_SessionId, FireHit.ImpactPoint, FireHit.ImpactNormal.Rotation(), 0);
-				}
+				World->SpawnActor<AProjectileBullet>(ProjectileBulletClass, SocketTransform.GetLocation(), ToTargetRot, SpawnParameters);
+				//서버 총알생성
+			}
+			if (ImpactNiagara)
+			{
+				UNiagaraFunctionLibrary::SpawnSystemAtLocation(
+					World,
+					ImpactNiagara,
+					SocketTransform.GetLocation()
+				);
 
 			}
 		}
+
+		//UWorld* World = GetWorld();
+		//if (World)
+		//{
+		//	if (FireHit.bBlockingHit)
+		//	{
+		//		ACharacterBase* DamagedCharacter = Cast<ACharacterBase>(FireHit.GetActor());
+		//		ABulletHoleWall* DamagedWall = Cast<ABulletHoleWall>(FireHit.GetActor());
+		//		if (DamagedCharacter)
+		//		{
+		//			Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Damage_Packet(DamagedCharacter->_SessionId, Damage);
+		//			if (HasAuthority())
+		//			{
+		//				//UE_LOG(LogTemp, Log, TEXT("HIt"));
+		//				UGameplayStatics::ApplyDamage(
+		//					DamagedCharacter,
+		//					Damage,
+		//					InstigatorController,
+		//					this,
+		//					UDamageType::StaticClass()
+		//				);
+		//			}
+		//		}
+		//		else if (DamagedWall)
+		//		{
+		//			DamagedWall->SetBulletHole(FireHit.ImpactPoint);
+		//		}
+		//		if (ImpactNiagara)
+		//		{
+		//			UNiagaraFunctionLibrary::SpawnSystemAtLocation
+		//			(
+		//				World,
+		//				ImpactNiagara,
+		//				FireHit.ImpactPoint,
+		//				FireHit.ImpactNormal.Rotation()
+		//			);
+		//			Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Fire_Effect(Cast<ACharacterBase>(GetOwner())->_SessionId, FireHit.ImpactPoint, FireHit.ImpactNormal.Rotation(), 0);
+		//		}
+
+		//	}
+		//}
 	
 	}
 }

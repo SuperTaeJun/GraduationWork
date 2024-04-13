@@ -19,7 +19,7 @@ public:
 	void SpawnProjectile();
 private:
 	UPROPERTY(EditAnywhere)
-	TSubclassOf<class AProjectileBase> ProjectileClass;
+	TSubclassOf<class AProjectileBase> ProjectileLancherClass;
 
 	FVector StartPos;
 	FRotator CurWeaponRot;
