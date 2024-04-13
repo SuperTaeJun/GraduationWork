@@ -141,7 +141,7 @@ bool ClientSocket::PacketProcess(char* ptr)
 		PlayerInfo.players[packet->id].w_type = packet->weapon_type;
 		//float z = packet->z;
 		UE_LOG(LogClass, Warning, TEXT("weapondata"));
-		
+		UE_LOG(LogClass, Warning, TEXT("weapondata : %d"), PlayerInfo.players[packet->id].w_type);
 		break;
 	}
 	case SC_ALL_READY: {
@@ -199,6 +199,7 @@ bool ClientSocket::PacketProcess(char* ptr)
 		PlayerInfo.players[packet->attackid].sEshot8.Y = packet->ey8;
 		PlayerInfo.players[packet->attackid].sEshot8.Z = packet->ez8;
 		PlayerInfo.players[packet->attackid].sfired = true;
+		break;
 	}
 	//이팩트 처리
 	case SC_EFFECT: {
