@@ -140,6 +140,7 @@ bool ClientSocket::PacketProcess(char* ptr)
 		SC_SYNC_WEAPO* packet = reinterpret_cast<SC_SYNC_WEAPO*>(ptr);
 		PlayerInfo.players[packet->id].w_type = packet->weapon_type;
 		//float z = packet->z;
+		PlayerInfo.players[packet->id].bselectweapon = true;
 		UE_LOG(LogClass, Warning, TEXT("weapondata"));
 		UE_LOG(LogClass, Warning, TEXT("weapondata : %d"), PlayerInfo.players[packet->id].w_type);
 		break;
@@ -299,6 +300,7 @@ void ClientSocket::Send_Weapon_Type(WeaponType type, int sessionID)
 	packet.id = sessionID;
 	packet.weapon_type = type;
 	//Send(packet.size, &packet);
+	packet.bselectwep = true;
 	SendPacket(&packet);
 }
 void ClientSocket::Send_Ready_Packet(bool ready)

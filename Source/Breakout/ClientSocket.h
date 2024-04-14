@@ -56,6 +56,7 @@ public:
     bool  sfired = false;
     bool  hiteffect = false;
     bool  brecvdamage = false;
+    bool  bselectweapon = false;
     // ³ªÀÌ¾Æ°¡¶ó ½¸ ÀÌÆÑÆ®
     FVector Sshot;
     FVector Eshot;

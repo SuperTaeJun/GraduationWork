@@ -132,6 +132,7 @@ struct CS_SELECT_WEAPO
 	unsigned char size;
 	unsigned type;
 	int id;
+	bool bselectwep;
 	WeaponType weapon_type;
 };
 struct SC_SYNC_WEAPO
@@ -139,6 +140,7 @@ struct SC_SYNC_WEAPO
 	unsigned char size;
 	unsigned type;
 	int id;
+	bool bselectwep;
 	WeaponType weapon_type;
 };
 struct CS_READY_PACKET {

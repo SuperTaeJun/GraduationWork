@@ -347,6 +347,7 @@ void process_packet(int s_id, char* p)
 		CS_SELECT_WEAPO* packet = reinterpret_cast<CS_SELECT_WEAPO*>(p);
 		CLIENT& cl = clients[packet->id];
 		cl.w_type = packet->weapon_type;
+		cl.selectweapon = packet->bselectwep;
 		cout << "무기 타입" << cl.w_type << endl;
 		for (auto& other : clients) {
 			if (other._s_id == cl._s_id) continue;
@@ -361,6 +362,7 @@ void process_packet(int s_id, char* p)
 			packet.size = sizeof(packet);
 			packet.type = SC_OTHER_WEAPO;
 			packet.weapon_type = cl.w_type;
+			packet.bselectwep = cl.selectweapon;
 			//printf_s("[Send put object] id : %d, location : (%f,%f,%f), yaw : %f\n", packet.id, packet.x, packet.y, packet.z, packet.yaw);
 			cout << "이거 누구한테 감 :  ?" << other._s_id << endl; 
 			other.do_send(sizeof(packet), &packet);
@@ -378,6 +380,7 @@ void process_packet(int s_id, char* p)
 			packet.size = sizeof(packet);
 			packet.type = SC_OTHER_WEAPO;
 			packet.weapon_type = other.w_type;
+			packet.bselectwep = other.selectweapon;
 			//printf_s("[어떤 클라의 Send put object] id : %d, location : (%f,%f,%f), yaw : %f\n", packet.id, packet.x, packet.y, packet.z, packet.yaw);
 			cl.do_send(sizeof(packet), &packet);
 		}

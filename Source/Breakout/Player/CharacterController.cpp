@@ -421,7 +421,7 @@ bool ACharacterController::UpdateWorld()
 			EffectRot.Yaw = info->FEffect.Yaw;
 			EffectRot.Roll = info->FEffect.Roll;
 			//------------------------
-			if (!OtherPlayer->GetCurWeapon())
+			if (!OtherPlayer->GetCurWeapon() && info->bselectweapon)
 			{
 
 				UE_LOG(LogTemp, Warning, TEXT("WEAPON : %d"), info->w_type);
@@ -451,6 +451,7 @@ bool ACharacterController::UpdateWorld()
 					OtherPlayer->SetWeapon(Lancher, LancherSocketName);
 
 				}
+				info->bselectweapon = false;
 			}
 
 			OtherPlayer->AddMovementInput(PlayerVelocity);

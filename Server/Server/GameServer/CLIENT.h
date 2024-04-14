@@ -17,6 +17,7 @@ public:
     // È¸Àü°ª
   
     bool connected = false;
+    bool selectweapon = false;
     float	Yaw;
     float	Pitch;
     float	Roll;
