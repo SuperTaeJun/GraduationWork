@@ -8,7 +8,7 @@
 #include "GameFramework/PlayerStart.h"
 #include "Kismet/GameplayStatics.h"
 #include "Player/CharacterController.h"
-
+#include "Kismet/GameplayStatics.h"
 ABOGameMode::ABOGameMode()
 {
 	bUseSeamlessTravel = true;
@@ -33,6 +33,31 @@ ABOGameMode::ABOGameMode()
 	Character3 = Character3Ref.Class;
 	ConstructorHelpers::FClassFinder<ACharacterBase>Character4Ref(TEXT("/Game/BP/Character/BP_Character4.BP_Character4_C"));
 	Character4 = Character4Ref.Class;
+}
+
+void ABOGameMode::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+
+	if (MatchState == MatchState::EnteringMap)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("CountdownTime : %f"), CountdownTime);
+		CountdownTime -= StartTime - GetWorld()->GetTimeSeconds();
+		DisableInput(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+		if (CountdownTime <= 0.f)
+		{
+			StartMatch();
+		}
+	}
+	else if (MatchState == MatchState::InProgress)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("InProgress : %f"), CountdownTime);
+		if (CountdownTime <= 0.f)
+		{		
+			EnableInput(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+		}
+	}
+
 }
 
 

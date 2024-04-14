@@ -221,47 +221,6 @@ void AWeaponBase::Fire(const FVector& HitTarget)
 
 			}
 		}
-
-		//UWorld* World = GetWorld();
-		//if (World)
-		//{
-		//	if (FireHit.bBlockingHit)
-		//	{
-		//		ACharacterBase* DamagedCharacter = Cast<ACharacterBase>(FireHit.GetActor());
-		//		ABulletHoleWall* DamagedWall = Cast<ABulletHoleWall>(FireHit.GetActor());
-		//		if (DamagedCharacter)
-		//		{
-		//			Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Damage_Packet(DamagedCharacter->_SessionId, Damage);
-		//			if (HasAuthority())
-		//			{
-		//				//UE_LOG(LogTemp, Log, TEXT("HIt"));
-		//				UGameplayStatics::ApplyDamage(
-		//					DamagedCharacter,
-		//					Damage,
-		//					InstigatorController,
-		//					this,
-		//					UDamageType::StaticClass()
-		//				);
-		//			}
-		//		}
-		//		else if (DamagedWall)
-		//		{
-		//			DamagedWall->SetBulletHole(FireHit.ImpactPoint);
-		//		}
-		//		if (ImpactNiagara)
-		//		{
-		//			UNiagaraFunctionLibrary::SpawnSystemAtLocation
-		//			(
-		//				World,
-		//				ImpactNiagara,
-		//				FireHit.ImpactPoint,
-		//				FireHit.ImpactNormal.Rotation()
-		//			);
-		//			Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Fire_Effect(Cast<ACharacterBase>(GetOwner())->_SessionId, FireHit.ImpactPoint, FireHit.ImpactNormal.Rotation(), 0);
-		//		}
-
-		//	}
-		//}
 	
 	}
 }
