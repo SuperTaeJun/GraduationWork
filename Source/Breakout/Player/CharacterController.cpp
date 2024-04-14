@@ -20,6 +20,8 @@
 #include "Materials/MaterialInstance.h"
 #include "Materials/MaterialInstanceDynamic.h"
 #include "Weapon/ProjectileBase.h"
+#include "Weapon/ProjectileBullet.h"
+
 //#include "Network/PacketData.h"
 #include "../../Server/Server/ServerCore/protocol.h"
 #include <string>
@@ -385,13 +387,10 @@ bool ACharacterController::UpdateWorld()
 			PlayerVelocity.Z = info->VeloZ;
 			// 나이아가라 레이저
 			FVector Firegun;
-			FVector EFiregun;
+			FRotator EFiregun;
 			Firegun.X = info->Sshot.X;
 			Firegun.Y = info->Sshot.Y;
 			Firegun.Z = info->Sshot.Z;
-			EFiregun.X = info->Eshot.X;
-			EFiregun.Y = info->Eshot.Y;
-			EFiregun.Z = info->Eshot.Z;
 
 			//------------------------
 			//히팅 이팩트
@@ -448,11 +447,72 @@ bool ACharacterController::UpdateWorld()
 				FActorSpawnParameters SpawnParameters;
 				SpawnParameters.Owner = OtherPlayer;
 				SpawnParameters.Instigator = OtherPlayer;
-
-				GetWorld()->SpawnActor<AProjectileBase>(ProjectileRef, HEloc, EffectRot, SpawnParameters);
-				info->hiteffect = false;
+				if (info->weptype == 0) {
+					GetWorld()->SpawnActor<AProjectileBullet>(BulletRef, HEloc, EffectRot, SpawnParameters);
+					info->hiteffect = false;
+				}
+				else if (info->weptype == 1) {
+					GetWorld()->SpawnActor<AProjectileBase>(LauncherRef, HEloc, EffectRot, SpawnParameters);
+					info->hiteffect = false;
+				}
 			}
-
+			FVector Vshotgun;
+			FRotator Rshotgun;
+			FRotator Rshotgun1;
+			FRotator Rshotgun2;
+			FRotator Rshotgun3;
+			FRotator Rshotgun4;
+			FRotator Rshotgun5;
+			FRotator Rshotgun6;
+			FRotator Rshotgun7;
+			FRotator Rshotgun8;
+			Vshotgun.X = info->sSshot.X;
+			Vshotgun.Y = info->sSshot.Y;
+			Vshotgun.Z = info->sSshot.Z;
+			//--------------------------
+			Rshotgun.Pitch = info->sEshot.Pitch;
+			Rshotgun.Yaw = info->sEshot.Yaw;
+			Rshotgun.Roll = info->sEshot.Roll;
+			Rshotgun1.Pitch = info->sEshot1.Pitch;
+			Rshotgun1.Yaw = info->sEshot1.Yaw;
+			Rshotgun1.Roll = info->sEshot1.Roll;			
+			Rshotgun2.Pitch = info->sEshot2.Pitch;
+			Rshotgun2.Yaw = info->sEshot2.Yaw;
+			Rshotgun2.Roll = info->sEshot2.Roll;
+			Rshotgun3.Pitch = info->sEshot3.Pitch;
+			Rshotgun3.Yaw = info->sEshot3.Yaw;
+			Rshotgun3.Roll = info->sEshot3.Roll;
+			Rshotgun4.Pitch = info->sEshot4.Pitch;
+			Rshotgun4.Yaw = info->sEshot4.Yaw;
+			Rshotgun4.Roll = info->sEshot4.Roll;
+			Rshotgun5.Pitch = info->sEshot5.Pitch;
+			Rshotgun5.Yaw = info->sEshot5.Yaw;
+			Rshotgun5.Roll = info->sEshot5.Roll;
+			Rshotgun6.Pitch = info->sEshot6.Pitch;
+			Rshotgun6.Yaw = info->sEshot6.Yaw;
+			Rshotgun6.Roll = info->sEshot6.Roll;
+			Rshotgun7.Pitch = info->sEshot7.Pitch;
+			Rshotgun7.Yaw = info->sEshot7.Yaw;
+			Rshotgun7.Roll = info->sEshot7.Roll;
+			Rshotgun8.Pitch = info->sEshot8.Pitch;
+			Rshotgun8.Yaw = info->sEshot8.Yaw;
+			Rshotgun8.Roll = info->sEshot8.Roll;
+			if (OtherPlayer->GetCurWeapon() && info->sfired == true)
+			{
+				FActorSpawnParameters SpawnParameters;
+				SpawnParameters.Owner = OtherPlayer;
+				SpawnParameters.Instigator = OtherPlayer;
+				GetWorld()->SpawnActor<AProjectileBullet>(ShotgunRef, Vshotgun, Rshotgun, SpawnParameters);
+				GetWorld()->SpawnActor<AProjectileBullet>(ShotgunRef, Vshotgun, Rshotgun1, SpawnParameters);
+				GetWorld()->SpawnActor<AProjectileBullet>(ShotgunRef, Vshotgun, Rshotgun2, SpawnParameters);
+				GetWorld()->SpawnActor<AProjectileBullet>(ShotgunRef, Vshotgun, Rshotgun3, SpawnParameters);
+				GetWorld()->SpawnActor<AProjectileBullet>(ShotgunRef, Vshotgun, Rshotgun4, SpawnParameters);
+				GetWorld()->SpawnActor<AProjectileBullet>(ShotgunRef, Vshotgun, Rshotgun5, SpawnParameters);
+				GetWorld()->SpawnActor<AProjectileBullet>(ShotgunRef, Vshotgun, Rshotgun6, SpawnParameters);
+				GetWorld()->SpawnActor<AProjectileBullet>(ShotgunRef, Vshotgun, Rshotgun7, SpawnParameters);
+				GetWorld()->SpawnActor<AProjectileBullet>(ShotgunRef, Vshotgun, Rshotgun8, SpawnParameters);
+				info->sfired = false;
+			}
 
 		}
 	}

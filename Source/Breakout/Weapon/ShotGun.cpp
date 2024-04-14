@@ -29,12 +29,13 @@ void AShotGun::Fire(const FVector& HitTarget)
 	{
 		FTransform SocketTransform = MuzzleFlashSocket->GetSocketTransform(GetWeaponMesh());
 		FVector Start = SocketTransform.GetLocation();
+		TArray<FRotator> SeverRots;
 		for (uint32 i = 0; i < NumberOfPellets; i++)
 		{
 			FVector ToTarget = bUseScatter ? TraceEndWithScatter(Start, HitTarget) : Start + (HitTarget - Start) * 1.25f;
 			ToTarget = ToTarget - SocketTransform.GetLocation();
 			FRotator ToTargetRot = ToTarget.Rotation();
-
+			SeverRots.Add(ToTargetRot);
 			if (ProjectileBulletClass && OwnerPawn)
 			{
 				FActorSpawnParameters SpawnParameters;
@@ -49,6 +50,7 @@ void AShotGun::Fire(const FVector& HitTarget)
 			}
 
 		}
+		Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_ShotGun_packet(Cast<ACharacterBase>(GetOwner())->_SessionId, SocketTransform.GetLocation(), SeverRots, SeverRots.Num());
 	}
 	
 }

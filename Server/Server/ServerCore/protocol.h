@@ -2,7 +2,7 @@
 #define SERVER_PORT		8001
 #include <vector>
 #include <array>
-#define SERVER_IP		"192.168.102.114"
+#define SERVER_IP		"192.168.100.117"
 #define MAX_INFO_SIZE   20
 //const char CS_PACKET_ATTACK = 3;
 enum PlayerType
@@ -198,15 +198,16 @@ struct CS_SHOTGUN_BEAM_PACKET {
 	unsigned char type;
 	int attackid;
 	float sx, sy, sz;
-	float ex0, ey0, ez0;
-	float ex1, ey1, ez1;
-	float ex2, ey2, ez2;
-	float ex3, ey3, ez3;
-	float ex4, ey4, ez4;
-	float ex5, ey5, ez5;
-	float ex6, ey6, ez6;
-	float ex7, ey7, ez7;
-	float ex8, ey8, ez8;
+	float pitch0, yaw0, roll0;
+	float pitch1, yaw1, roll1;
+	float pitch2, yaw2, roll2;
+	float pitch3, yaw3, roll3;
+	float pitch4, yaw4, roll4;
+	float pitch5, yaw5, roll5;
+	float pitch6, yaw6, roll6;
+	float pitch7, yaw7, roll7;
+	float pitch8, yaw8, roll8;
+	
 	//float ex9, ey9, ez9;
 };
 struct CS_SHOTGUN_DAMAGED_PACKET {
