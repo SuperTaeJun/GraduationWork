@@ -16,7 +16,9 @@ class BREAKOUT_API ABOGameMode : public AGameMode
 	
 public:
 	ABOGameMode();
-	//virtual void PlayerRemove(class ACharacterBase* RemovedCharacter, class ACharacterController* RemovedCharacterController, class ACharacterController* AttackerController);
+	virtual void Tick(float DeltaTime) override;
+	float StartTime = 10.f;
+	float CountdownTime = 10.f;
 	void Respawn(class ACharacter* RespawnedCh, class AController* RespawnedController, FName TagName);
 	//캐릭터 선택한거 적용
 	virtual UClass* GetDefaultPawnClassForController_Implementation(AController* InController) override;

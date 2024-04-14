@@ -15,8 +15,8 @@ class BREAKOUT_API AShotGun : public AWeaponBase
 	GENERATED_BODY()
 	
 public:
+	AShotGun();
 	virtual void Fire(const FVector& HitTarget) override;
-	void ShotGunTraceHit(const FVector& TraceStart, const FVector& HitTarget, FHitResult& OutHit ,FVector& EndBeamLoc);
 private:
 	UPROPERTY(EditAnywhere, Category = "Weapon Scatter")
 	uint32 NumberOfPellets = 10;

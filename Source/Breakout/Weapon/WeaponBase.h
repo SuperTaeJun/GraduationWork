@@ -32,6 +32,9 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Weapon Properties")
 	TObjectPtr<class USkeletalMeshComponent> WeaponMesh;
 
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class AProjectileBullet> ProjectileBulletClass;
+
 	//√—æÀ »Â≈Õ¡¸ ø‰º“µÈ
 	UPROPERTY(EditAnywhere, Category = "Weapon Scatter")
 	float DistanceToSphere = 800.f;
