@@ -9,22 +9,11 @@
 #include "Kismet/GameplayStatics.h"
 #include "Player/CharacterController.h"
 #include "Kismet/GameplayStatics.h"
+#include "TimerManager.h"
 ABOGameMode::ABOGameMode()
 {
 	bUseSeamlessTravel = true;
-	/*m_Socket = ClientSocket::GetSingleton();
-	m_Socket->InitSocket();
 
-	connect = m_Socket->Connect("127.0.0.1", 12345);
-	if (connect)
-	{
-		m_Socket->StartListen();
-		UE_LOG(LogClass, Log, TEXT("IOCP Server connect success!"));
-	}
-	else
-	{
-		UE_LOG(LogClass, Warning, TEXT("IOCP Server connect FAIL!"));
-	}*/
 	ConstructorHelpers::FClassFinder<ACharacterBase>Character1Ref(TEXT("/Game/BP/Character/BP_Character1.BP_Character1_C"));
 	Character1 = Character1Ref.Class;
 	ConstructorHelpers::FClassFinder<ACharacterBase>Character2Ref(TEXT("/Game/BP/Character/BP_Character2.BP_Character2_C"));
@@ -35,28 +24,16 @@ ABOGameMode::ABOGameMode()
 	Character4 = Character4Ref.Class;
 }
 
+void ABOGameMode::BeginPlay()
+{
+	Super::BeginPlay();
+	//DisableInput(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+	//GetWorldTimerManager().SetTimer(StartTimeHandle, this, &ABOGameMode::StartGame, 5.f);
+}
+
 void ABOGameMode::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
-	if (MatchState == MatchState::EnteringMap)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("CountdownTime : %f"), CountdownTime);
-		CountdownTime -= StartTime - GetWorld()->GetTimeSeconds();
-		DisableInput(UGameplayStatics::GetPlayerController(GetWorld(), 0));
-		if (CountdownTime <= 0.f)
-		{
-			StartMatch();
-		}
-	}
-	else if (MatchState == MatchState::InProgress)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("InProgress : %f"), CountdownTime);
-		if (CountdownTime <= 0.f)
-		{		
-			EnableInput(UGameplayStatics::GetPlayerController(GetWorld(), 0));
-		}
-	}
 
 }
 
@@ -139,3 +116,7 @@ AActor* ABOGameMode::ChoosePlayerStart_Implementation(AController* Player)
 	return 	Super::ChoosePlayerStart(Player);
 }
 
+void ABOGameMode::StartGame()
+{
+	EnableInput(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+}

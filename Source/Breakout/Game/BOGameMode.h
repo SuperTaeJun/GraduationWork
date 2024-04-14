@@ -16,7 +16,9 @@ class BREAKOUT_API ABOGameMode : public AGameMode
 	
 public:
 	ABOGameMode();
+	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
+
 	float StartTime = 10.f;
 	float CountdownTime = 10.f;
 	void Respawn(class ACharacter* RespawnedCh, class AController* RespawnedController, FName TagName);
@@ -30,7 +32,6 @@ public:
 	TSubclassOf<class ACharacterBase>Character3;
 	TSubclassOf<class ACharacterBase>Character4;
 
-//private:
-//	ClientSocket* m_Socket;
-//	bool connect;
+	FTimerHandle StartTimeHandle;
+	void StartGame();
 };
