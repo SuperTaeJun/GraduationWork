@@ -5,6 +5,7 @@
 #include "Components/Button.h"
 #include "Components/EditableText.h"
 #include "Game/BOGameInstance.h"
+#include "ClientSocket.h"
 
 void ULogin::NativeConstruct()
 {

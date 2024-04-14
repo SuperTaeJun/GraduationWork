@@ -81,6 +81,7 @@ public:
 	void SetHUDEscapeTool(int32 EscapeTool);
 	void SetHUDBojoImage(EBojoMugiType Type);
 	void SetHUDCrosshair(const struct FCrosshairPackage& Package);
+	void SetHUDMatchingCnt(float Time);
 	//skill
 	void SetHUDSkill();
 	//스킬 아이콘 투명도

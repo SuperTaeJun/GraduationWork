@@ -6,6 +6,7 @@
 #include "HUD/SelectWeaponUi.h"
 #include "HUD/RespawnSelect.h"
 #include "HUD/CharacterUi.h"
+#include "HUD/MatchingUi.h"
 
 void AMainHUD::BeginPlay()
 {
@@ -98,6 +99,17 @@ void AMainHUD::AddSelectRespawn()
 
 }
 
+void AMainHUD::AddMatchingUi()
+{
+	APlayerController* PlayerController = GetOwningPlayerController();
+	if (PlayerController)
+	{
+		MatchingUi = CreateWidget<UMatchingUi>(PlayerController, SelectWeaponClass);
+		if (SelectWeapon)
+			MatchingUi->AddToViewport();
+	}
+}
+
 void AMainHUD::RemoveSelectWeapon()
 {
 	SelectWeapon->RemoveFromParent();
@@ -106,4 +118,9 @@ void AMainHUD::RemoveSelectWeapon()
 void AMainHUD::RemoveRespawnSelect()
 {
 	RespawnSelectUi->RemoveFromParent();
+}
+
+void AMainHUD::RemoveMatchingUi()
+{
+	MatchingUi->RemoveFromParent();
 }

@@ -5,6 +5,7 @@
 #include "Player/CharacterController.h"
 #include "HUD/MainHUD.h"
 #include "HUD/CharacterUi.h"
+#include "HUD/MatchingUi.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/ProgressBar.h"
 #include "Components/TextBlock.h"
@@ -155,6 +156,15 @@ void ACharacterController::SetHUDCrosshair(const FCrosshairPackage& Package)
 	if (MainHUD)
 	{
 		MainHUD->SetHUDPackage(Package);
+	}
+}
+
+void ACharacterController::SetHUDMatchingCnt(float Time)
+{
+	if (MainHUD)
+	{
+		FString CountText = FString::Printf(TEXT("%d"), Time);
+		MainHUD->MatchingUi->WaitingText->SetText(FText::FromString("CountText"));
 	}
 }
 

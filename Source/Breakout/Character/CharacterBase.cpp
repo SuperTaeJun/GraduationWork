@@ -111,20 +111,16 @@ void ACharacterBase::BeginPlay()
 		}
 	}
 
-	//公扁急琶 ui积己
-	MainController = MainController == nullptr ? Cast<ACharacterController>(Controller) : MainController;
-	if (MainController)
+	if (MainHUD)
 	{
-		SetWeaponUi();
-		//FInputModeUIOnly UiGameInput;
-		//MainController->SetInputMode(UiGameInput);
-		//MainController->DisableInput(MainController);
-		////bShowSelectUi = true;
-		//MainController->bShowMouseCursor = true;
-		//MainController->bEnableMouseOverEvents = true;
-
-		//MainController->showWeaponSelect();
+		MainHUD->AddMatchingUi();
 	}
+	////公扁急琶 ui积己
+	//MainController = MainController == nullptr ? Cast<ACharacterController>(Controller) : MainController;
+	//if (MainController)
+	//{
+	//	SetWeaponUi();
+	//}
 
 	BojoMugiType = EBojoMugiType::ECS_DEFAULT;
 
@@ -828,13 +824,12 @@ void ACharacterBase::Tick(float DeltaTime)
 	}
 
 
-	if (Cast<UBOGameInstance>(GetWorld()->GetGameInstance())->m_Socket->bAllReady == true && !bStarted)
+	if (/*Cast<UBOGameInstance>(GetWorld()->GetGameInstance())->m_Socket->bAllReady == true &&*/ !bStarted)
 	{
+		Cast<UBOGameInstance>(GetWorld()->GetGameInstance())->m_Socket->bAllReady = false;
 		bStarted = true;
-		UE_LOG(LogTemp, Warning, TEXT("ballready!!!!!!!!!!!!!!!!!"));
 		DisableInput(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 		GetWorldTimerManager().SetTimer(StartHandle, this, &ACharacterBase::StartGame, 7.f);
-
 	}
 }
 
@@ -888,7 +883,12 @@ void ACharacterBase::SpawnHitImpact(FVector HitLoc, FRotator HitRot)
 
 void ACharacterBase::StartGame()
 {
-	bStarted = true;
+
 	EnableInput(UGameplayStatics::GetPlayerController(GetWorld(), 0));
-	Cast<UBOGameInstance>(GetWorld()->GetGameInstance())->m_Socket->bAllReady = false;
+
+	MainController = MainController == nullptr ? Cast<ACharacterController>(Controller) : MainController;
+	if (MainController)
+	{
+		SetWeaponUi();
+	}
 }
