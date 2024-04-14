@@ -72,7 +72,6 @@ void ACharacterController::BeginPlay()
 			break;
 		}
 	}
-
 }
 
 
@@ -293,6 +292,14 @@ void ACharacterController::Tick(float DeltaTime)
 		//BaseCharacter->SetHealth(BaseCharacter->GetHealth());
 		SetHUDHealth(BaseCharacter->GetHealth(), BaseCharacter->MaxGetHealth());
 	}
+
+	//if (inst->m_Socket->bAllReady == true)
+	//{
+	//	UE_LOG(LogTemp, Warning, TEXT("ballready!!!!!!!!!!!!!!!!!"));
+	//	DisableInput(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+	//	//GetWorldTimerManager().SetTimer(StartTimeHandle, this, &ABOGameMode::StartGame, 5.f);
+
+	//}
 }
 
 void ACharacterController::EndPlay(const EEndPlayReason::Type EndPlayReason)

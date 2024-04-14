@@ -9,7 +9,9 @@
 #include "Kismet/GameplayStatics.h"
 #include "Player/CharacterController.h"
 #include "Kismet/GameplayStatics.h"
+#include "ClientSocket.h"
 #include "TimerManager.h"
+#include "Player/CharacterController.h"
 ABOGameMode::ABOGameMode()
 {
 	bUseSeamlessTravel = true;
@@ -29,6 +31,7 @@ ABOGameMode::ABOGameMode()
 void ABOGameMode::BeginPlay()
 {
 	Super::BeginPlay();
+	inst = Cast<UBOGameInstance>(GetGameInstance());
 	//DisableInput(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 	//GetWorldTimerManager().SetTimer(StartTimeHandle, this, &ABOGameMode::StartGame, 5.f);
 }
@@ -36,12 +39,14 @@ void ABOGameMode::BeginPlay()
 void ABOGameMode::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	bool bAllConnect;
-	if (bAllConnect && !bStarted)
-	{
-		DisableInput(UGameplayStatics::GetPlayerController(GetWorld(), 0));
-		GetWorldTimerManager().SetTimer(StartTimeHandle, this, &ABOGameMode::StartGame, 5.f);
-	}
+	//bool bAllConnect = false;
+	//if (inst->m_Socket->bAllReady==true && !bStarted)
+	//{
+	//	UE_LOG(LogTemp, Warning, TEXT("ballready!!!!!!!!!!!!!!!!!"));
+	//	DisableInput(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+	//	GetWorldTimerManager().SetTimer(StartTimeHandle, this, &ABOGameMode::StartGame, 5.f);
+
+	//}
 }
 
 
@@ -127,4 +132,5 @@ void ABOGameMode::StartGame()
 {
 	EnableInput(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 	bStarted = true;
+	inst->m_Socket->bAllReady = false;
 }

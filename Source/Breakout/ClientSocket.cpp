@@ -147,7 +147,9 @@ bool ClientSocket::PacketProcess(char* ptr)
 	case SC_ALL_READY: {
 		SC_ACCEPT_READY* packet = reinterpret_cast<SC_ACCEPT_READY*>(ptr);
 		UE_LOG(LogTemp, Warning, TEXT("recv - all ready packet"));
-		bAllReady = true;
+		bAllReady = packet->ingame;
+		UE_LOG(LogClass, Warning, TEXT("ingmae %d"), bAllReady);
+		UE_LOG(LogClass, Warning, TEXT("ingmae"));
 		break;
 	}
   // 공격 나이아가라 이팩트 효과

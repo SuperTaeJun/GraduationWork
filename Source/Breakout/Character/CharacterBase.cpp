@@ -82,6 +82,7 @@ ACharacterBase::ACharacterBase()
 	//bShowSelectUi = false;
 	ObtainedEscapeToolNum = 0;
 	CurWeaponType = EWeaponType::ECS_DEFAULT;
+	bStarted = false;
 }
 
 //float ACharacterBase::GetAO_Yaw()
@@ -140,6 +141,7 @@ void ACharacterBase::BeginPlay()
 	}
 	if(Aim)
 		Aim->SetAutoActivate(false);
+
 }
 
 
@@ -780,20 +782,6 @@ void ACharacterBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	//UE_LOG(LogTemp, Warning, TEXT("Tick HP : %f"), Health);
-	//if (Health <= 0.0f)
-	//{
-	//	//패킷보내야함
-	//	ABOGameMode* GameMode = GetWorld()->GetAuthGameMode<ABOGameMode>();
-	//	if (GameMode)
-	//	{
-	//		//MainController = MainController == nullptr ? Cast<ACharacterController>(Controller) : MainController;
-	//		//ACharacterController* AttackerController = Cast<ACharacterController>(InstigatorController);
-	//		GetWorld()->GetTimerManager().SetTimer(DeadTimer, this, &ACharacterBase::Dead, DeadTime, false);
-	//	}
-	//}
-
-
 	if (GetVelocity().Size() <= 0.f)
 		CharacterState = ECharacterState::ECS_IDLE;
 	switch (CharacterState)
@@ -838,7 +826,16 @@ void ACharacterBase::Tick(float DeltaTime)
 	{
 		PathSorce->SetHiddenInGame(true);
 	}
-	
+
+
+	if (Cast<UBOGameInstance>(GetWorld()->GetGameInstance())->m_Socket->bAllReady == true && !bStarted)
+	{
+		bStarted = true;
+		UE_LOG(LogTemp, Warning, TEXT("ballready!!!!!!!!!!!!!!!!!"));
+		DisableInput(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+		GetWorldTimerManager().SetTimer(StartHandle, this, &ACharacterBase::StartGame, 7.f);
+
+	}
 }
 
 void ACharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -887,4 +884,11 @@ void ACharacterBase::SpawnHitImpact(FVector HitLoc, FRotator HitRot)
 		HitLoc,
 		HitRot
 	);
+}
+
+void ACharacterBase::StartGame()
+{
+	bStarted = true;
+	EnableInput(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+	Cast<UBOGameInstance>(GetWorld()->GetGameInstance())->m_Socket->bAllReady = false;
 }

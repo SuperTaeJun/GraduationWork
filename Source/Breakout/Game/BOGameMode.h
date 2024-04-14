@@ -35,4 +35,5 @@ public:
 	FTimerHandle StartTimeHandle;
 	void StartGame();
 	bool bStarted;
+	class UBOGameInstance* inst;
 };

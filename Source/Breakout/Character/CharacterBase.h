@@ -245,6 +245,9 @@ public:
 	//서버랑 연동하는 함수들
 	void SpawnBeam(FVector StartBeam, FVector EndBeam);
 	void SpawnHitImpact(FVector HitLoc, FRotator HitRot);
+	bool bStarted;
+	FTimerHandle StartHandle;
+	void StartGame();
 };
 
 UENUM(BlueprintType)

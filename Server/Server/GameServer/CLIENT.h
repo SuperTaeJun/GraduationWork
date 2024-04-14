@@ -15,6 +15,8 @@ public:
     float	y;
     float	z;
     // È¸Àü°ª
+  
+    bool connected = false;
     float	Yaw;
     float	Pitch;
     float	Roll;

@@ -17,6 +17,7 @@ SOCKET sever_socket;
 concurrency::concurrent_priority_queue <timer_ev> timer_q;
 array <CLIENT, MAX_USER> clients;
 atomic<int> ready_count = 0;
+atomic<int> ingamecount = 0;
 using std::chrono::duration_cast;
 using std::chrono::milliseconds;
 using std::chrono::seconds;
@@ -237,6 +238,8 @@ void process_packet(int s_id, char* p)
 		cl.y = packet->y;
 		cl.z = packet->z;
 		cl.p_type = packet->p_type;
+		cl.connected = true;
+		ingamecount++;
 		send_select_character_type_packet(cl._s_id);
 
 
@@ -297,8 +300,19 @@ void process_packet(int s_id, char* p)
 			cl.do_send(sizeof(packet), &packet);
 
 		}
+		cout << "몇명 들어옴 : " << ingamecount << endl;
 		//m.unlock();
-
+		if (ingamecount >= 2)
+		{
+			for (auto& player : clients) {
+				if (ST_INGAME != player._state)
+					continue;
+				m.lock();
+				send_ready_packet(player._s_id);
+				cout << "보낼 플레이어" << player._s_id << endl;
+				m.unlock();
+			}
+		}
 		break;
 	}
 	case CS_MOVE_Packet: {
