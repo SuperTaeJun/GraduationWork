@@ -43,8 +43,8 @@ ACharacterController::ACharacterController()
 
 void ACharacterController::BeginPlay()
 {
-	FInputModeGameOnly GameOnlyInput;
-	SetInputMode(GameOnlyInput);
+	//FInputModeGameOnly GameOnlyInput;
+	//SetInputMode(GameOnlyInput);
 	MainHUD = Cast<AMainHUD>(GetHUD());
 	//inst = Cast<UBOGameInstance>(GetGameInstance());
 	inst = Cast<UBOGameInstance>(GetGameInstance());
@@ -159,15 +159,6 @@ void ACharacterController::SetHUDCrosshair(const FCrosshairPackage& Package)
 	}
 }
 
-void ACharacterController::SetHUDMatchingCnt(float Time)
-{
-	if (MainHUD)
-	{
-		FString CountText = FString::Printf(TEXT("%d"), Time);
-		MainHUD->MatchingUi->WaitingText->SetText(FText::FromString("CountText"));
-	}
-}
-
 void ACharacterController::SetHUDSkill()
 {
 	if (Cast<UBOGameInstance>(GetWorld()->GetGameInstance())->GetCharacterType() == ECharacterType::ECharacter1)
@@ -220,6 +211,26 @@ void ACharacterController::SetHUDCoolVisibility(bool bVisibility)
 	}
 }
 
+void ACharacterController::SetHUDMatchingUi()
+{
+	if (MainHUD)
+	{
+		MainHUD->MatchingUi->ContingText->SetVisibility(ESlateVisibility::Hidden);
+		MainHUD->MatchingUi->WaitingText->SetText(FText::FromString("Waiting for OtherPlayer"));
+	}
+}
+
+void ACharacterController::SetHUDMatchingUi(float Time)
+{
+	if (MainHUD)
+	{
+		MainHUD->MatchingUi->WaitingText->SetVisibility(ESlateVisibility::Hidden);
+		MainHUD->MatchingUi->ContingText->SetVisibility(ESlateVisibility::Visible);
+		FString CountText = FString::Printf(TEXT("%d"), FMath::FloorToInt(Time)+1);
+		MainHUD->MatchingUi->ContingText->SetText(FText::FromString(CountText));
+	}
+}
+
 void ACharacterController::showWeaponSelect()
 {
 	if (MainHUD)
@@ -233,6 +244,14 @@ void ACharacterController::ShowRespawnSelect()
 	if (MainHUD)
 	{
 		MainHUD->AddSelectRespawn();
+	}
+}
+
+void ACharacterController::ShowMatchingUi()
+{
+	if (MainHUD)
+	{
+		MainHUD->AddMatchingUi();
 	}
 }
 

@@ -104,8 +104,8 @@ void AMainHUD::AddMatchingUi()
 	APlayerController* PlayerController = GetOwningPlayerController();
 	if (PlayerController)
 	{
-		MatchingUi = CreateWidget<UMatchingUi>(PlayerController, SelectWeaponClass);
-		if (SelectWeapon)
+		MatchingUi = CreateWidget<UMatchingUi>(PlayerController, MatchingUiClass);
+		if (MatchingUi)
 			MatchingUi->AddToViewport();
 	}
 }

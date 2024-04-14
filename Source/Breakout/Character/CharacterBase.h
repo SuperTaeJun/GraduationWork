@@ -66,6 +66,7 @@ protected:
 	int32 ObtainedEscapeToolNum;
 
 	FVector SWAimLastLoc;
+	FTransform StartTransform;
 public:
 	void SetWeapon(TSubclassOf<class AWeaponBase> Weapon, FName SocketName);
 	void SetWeaponUi();
@@ -248,7 +249,9 @@ public:
 	bool bStarted;
 	FTimerHandle StartHandle;
 	void StartGame();
-	
+	float StartedCnt;
+
+
 };
 
 UENUM(BlueprintType)

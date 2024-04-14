@@ -104,7 +104,6 @@ public:
 	void SetHUDEscapeTool(int32 EscapeTool);
 	void SetHUDBojoImage(EBojoMugiType Type);
 	void SetHUDCrosshair(const struct FCrosshairPackage& Package);
-	void SetHUDMatchingCnt(float Time);
 	//skill
 	void SetHUDSkill();
 	//스킬 아이콘 투명도
@@ -114,8 +113,12 @@ public:
 	//skill2 대쉬포인트
 	void SetHUDCool(int32 Cool);
 	void SetHUDCoolVisibility(bool bVisibility);
+	void SetHUDMatchingUi();
+	float StartCnt = 5.f;
+	void SetHUDMatchingUi(float Time);
 	void showWeaponSelect();
 	void ShowRespawnSelect();
+	void ShowMatchingUi();
 	// 초기 플레이어 저장
 	//void SetPlayerID(const int playerid) {
 	//	UE_LOG(LogTemp, Warning, TEXT("%d -> my_id"), playerid);

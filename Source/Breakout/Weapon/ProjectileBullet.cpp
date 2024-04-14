@@ -62,7 +62,7 @@ void AProjectileBullet::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherAc
 	{
 		ACharacterBase* DamagedCharacter=Cast<ACharacterBase>(OtherActor);
 		ABulletHoleWall* DamagedWall = Cast<ABulletHoleWall>(OtherActor);
-		if(DamagedCharacter !=GetOwner())
+		if(DamagedCharacter)
 		UGameplayStatics::ApplyDamage
 		(
 			DamagedCharacter,
@@ -73,6 +73,7 @@ void AProjectileBullet::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherAc
 		);
 		else if (DamagedWall)
 		{
+			UE_LOG(LogTemp, Warning, TEXT("DamagedWall"));
 			DamagedWall->SetBulletHole(Hit.ImpactPoint);
 		}
 	}

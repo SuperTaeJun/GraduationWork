@@ -130,6 +130,7 @@ AActor* ABOGameMode::ChoosePlayerStart_Implementation(AController* Player)
 
 void ABOGameMode::StartGame()
 {
+
 	EnableInput(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 	bStarted = true;
 	inst->m_Socket->bAllReady = false;
