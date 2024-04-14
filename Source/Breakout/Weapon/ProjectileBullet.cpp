@@ -36,9 +36,10 @@ AProjectileBullet::AProjectileBullet()
 	ProjectileMovementComponent->bRotationFollowsVelocity = true;
 
 	ImpactNiagara = ConstructorHelpers::FObjectFinder<UNiagaraSystem>(TEXT("/Script/Niagara.NiagaraSystem'/Game/Niagara/Weapon/RifleAndShotgun/NS_Impact.NS_Impact'")).Object;
+
+	bHit = false;
 }
 
-// Called when the game starts or when spawned
 void AProjectileBullet::BeginPlay()
 {
 	Super::BeginPlay();
@@ -61,7 +62,7 @@ void AProjectileBullet::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherAc
 	{
 		ACharacterBase* DamagedCharacter=Cast<ACharacterBase>(OtherActor);
 		ABulletHoleWall* DamagedWall = Cast<ABulletHoleWall>(OtherActor);
-		if(DamagedCharacter)
+		if(DamagedCharacter !=GetOwner())
 		UGameplayStatics::ApplyDamage
 		(
 			DamagedCharacter,
