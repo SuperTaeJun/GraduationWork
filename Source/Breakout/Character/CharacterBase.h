@@ -248,6 +248,7 @@ public:
 	bool bStarted;
 	FTimerHandle StartHandle;
 	void StartGame();
+	
 };
 
 UENUM(BlueprintType)

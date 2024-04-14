@@ -370,6 +370,20 @@ void ACharacterBase::SetSpawnGrenade(TSubclassOf<AProjectileBase> Projectile)
 		if (World)
 		{
 			World->SpawnActor<AProjectileBase>(Projectile, StartLocation, ToHitTarget.Rotation(), SpawnParms);
+			if (Cast<UBOGameInstance>(GetGameInstance()))
+			{
+				switch (BojoMugiType)
+				{
+				case EBojoMugiType::E_Grenade:
+					Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Fire_Effect(_SessionId, StartLocation, ToHitTarget.Rotation(), 2);
+					break;
+				case EBojoMugiType::E_Wall:
+					Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Fire_Effect(_SessionId, StartLocation, ToHitTarget.Rotation(), 3);
+					break;
+
+				}
+					
+			}
 		}
 	}
 }
@@ -709,6 +723,11 @@ void ACharacterBase::GrandeFire(const FInputActionValue& Value)
 				SpawnParms.Owner = this;
 
 				World->SpawnActor<AProjectileBase>(BoobyTrapClass, SWAimLastLoc, FRotator::ZeroRotator,SpawnParms);
+				//여기 부비트랩
+				if (Cast<UBOGameInstance>(GetGameInstance()))
+				{
+					Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Fire_Effect(_SessionId, SWAimLastLoc, FRotator::ZeroRotator, 4);
+				}
 			}
 		}
 		else
@@ -829,7 +848,7 @@ void ACharacterBase::Tick(float DeltaTime)
 		Cast<UBOGameInstance>(GetWorld()->GetGameInstance())->m_Socket->bAllReady = false;
 		bStarted = true;
 		DisableInput(UGameplayStatics::GetPlayerController(GetWorld(), 0));
-		GetWorldTimerManager().SetTimer(StartHandle, this, &ACharacterBase::StartGame, 7.f);
+		GetWorldTimerManager().SetTimer(StartHandle, this, &ACharacterBase::StartGame, 5.f);
 	}
 }
 

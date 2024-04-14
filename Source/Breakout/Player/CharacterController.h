@@ -42,12 +42,21 @@ protected:
 
 	TObjectPtr<class UMaterialInstanceDynamic> DynamicMaterial;
 
+	// 무기 동기화용 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class AProjectileBase> LauncherRef;
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class AProjectileBase> GrenadeRef;
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class AProjectileBase> WallRef;
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class AProjectileBase> BoobyTrapRef;
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class AProjectileBullet> BulletRef;
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class AProjectileBullet> ShotgunRef;
+
+	// 플레이어 동기화 용
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<UClass> Anim1;
 	UPROPERTY(EditAnywhere)
@@ -56,6 +65,20 @@ protected:
 	TObjectPtr<UClass> Anim3;
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<UClass> Anim4;
+
+	// 보조무기 생산 시 애니메이션 동기화 용
+	UPROPERTY(EditAnywhere, Category = Animation)
+	TObjectPtr<class UAnimMontage> GrenadeMontage;
+
+	/*UPROPERTY(EditAnywhere, Category = Animation)
+	TObjectPtr<class UAnimMontage> GrenadeMontage;
+
+	UPROPERTY(EditAnywhere, Category = Animation)
+	TObjectPtr<class UAnimMontage> GrenadeMontage;
+
+	UPROPERTY(EditAnywhere, Category = Animation)
+	TObjectPtr<class UAnimMontage> GrenadeMontage;*/
+	//-------------------------------------------
 
 	UPROPERTY(EditAnywhere, Category = "Combat System", meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<class AWeaponBase> Rifle;
