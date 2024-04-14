@@ -22,6 +22,8 @@ ABOGameMode::ABOGameMode()
 	Character3 = Character3Ref.Class;
 	ConstructorHelpers::FClassFinder<ACharacterBase>Character4Ref(TEXT("/Game/BP/Character/BP_Character4.BP_Character4_C"));
 	Character4 = Character4Ref.Class;
+
+	bStarted = false;
 }
 
 void ABOGameMode::BeginPlay()
@@ -34,7 +36,12 @@ void ABOGameMode::BeginPlay()
 void ABOGameMode::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
+	bool bAllConnect;
+	if (bAllConnect && !bStarted)
+	{
+		DisableInput(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+		GetWorldTimerManager().SetTimer(StartTimeHandle, this, &ABOGameMode::StartGame, 5.f);
+	}
 }
 
 
@@ -119,4 +126,5 @@ AActor* ABOGameMode::ChoosePlayerStart_Implementation(AController* Player)
 void ABOGameMode::StartGame()
 {
 	EnableInput(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+	bStarted = true;
 }

@@ -34,4 +34,5 @@ public:
 
 	FTimerHandle StartTimeHandle;
 	void StartGame();
+	bool bStarted;
 };
