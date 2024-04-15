@@ -52,6 +52,7 @@ private:
 	void FinishDashTimer();
 	void CoolTimeDashTimer();
 public:
+	void ServerDashSetup();
 	void ServerNiagaraSync();
 	void ServerDashFinish();
 };

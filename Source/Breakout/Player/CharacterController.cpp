@@ -22,7 +22,7 @@
 #include "Materials/MaterialInstanceDynamic.h"
 #include "Weapon/ProjectileBase.h"
 #include "Weapon/ProjectileBullet.h"
-
+#include "Camera/CameraComponent.h"
 //#include "Network/PacketData.h"
 #include "../../Server/Server/ServerCore/protocol.h"
 #include <string>

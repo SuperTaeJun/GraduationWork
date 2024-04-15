@@ -109,7 +109,8 @@ void ACharacter2::DashSetup(float _MaxWalk, float _MaxAcc, FRotator _Rotation ,b
 	MovementComp->MaxAcceleration = _MaxAcc;
 	MovementComp->MaxWalkSpeed = _MaxWalk;
 	MovementComp->RotationRate = _Rotation;
-	GetMesh()->SetHiddenInGame(_Visibillity, true);
+	GetMesh()->SetHiddenInGame(_Visibillity, false);
+
 	CanJump = false;
 	NiagaraComp->Deactivate();
 	//DisableInput(UGameplayStatics::GetPlayerController(GetWorld(),0));
@@ -155,6 +156,7 @@ void ACharacter2::CoolTimeDashTimer()
 	bCoolTimeFinish = true;
 }
 
+
 void ACharacter2::ServerNiagaraSync()
 {
 	if (DashPoint > 0 && !GetMovementComponent()->IsFalling())
@@ -163,6 +165,7 @@ void ACharacter2::ServerNiagaraSync()
 		NiagaraComp->Activate();
 		//bDash = true;
 		//DashStart();
+		GetCamera()->bCameraMeshHiddenInGame = true;
 		GetWorld()->GetTimerManager().SetTimer(DashTimer, this, &ACharacter2::ServerDashFinish, 0.2, false);
 
 		//스킬 패킷
@@ -172,13 +175,11 @@ void ACharacter2::ServerNiagaraSync()
 
 void ACharacter2::ServerDashFinish()
 {
-
+	UE_LOG(LogTemp, Warning, TEXT("HHHHHHHHHHH"));
 
 	MovementComp->MaxAcceleration = OldMaxAcceleration;
 	MovementComp->MaxWalkSpeed = OldMaxWalkSpeed;
 	MovementComp->RotationRate = OldRotationRate;
-	GetMesh()->SetHiddenInGame(false, true);
-	FollowCamera->bCameraMeshHiddenInGame = true;
-	CanJump = true;
-	//EnableInput(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+	GetMesh()->SetHiddenInGame(false, false);
+
 }

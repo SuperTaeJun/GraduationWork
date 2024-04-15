@@ -255,7 +255,7 @@ public:
 	void StartGame();
 	float StartedCnt;
 
-
+	class UCameraComponent* GetCamera() { return FollowCamera; }
 };
 
 UENUM(BlueprintType)
