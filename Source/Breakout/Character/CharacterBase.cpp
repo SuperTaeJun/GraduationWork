@@ -872,7 +872,7 @@ void ACharacterBase::Tick(float DeltaTime)
 	}
 
 
-	if (/*Cast<UBOGameInstance>(GetWorld()->GetGameInstance())->m_Socket->bAllReady == true &&*/ !bStarted)
+	if (Cast<UBOGameInstance>(GetWorld()->GetGameInstance())->m_Socket->bAllReady == true && !bStarted)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("StartGame"));
 		Cast<UBOGameInstance>(GetWorld()->GetGameInstance())->m_Socket->bAllReady = false;
@@ -939,6 +939,7 @@ void ACharacterBase::SpawnHitImpact(FVector HitLoc, FRotator HitRot)
 
 void ACharacterBase::StartGame()
 {
+
 	Movement->Velocity = FVector::ZeroVector;
 	UE_LOG(LogTemp, Warning, TEXT("StartGame"));
 	MainController = MainController == nullptr ? Cast<ACharacterController>(Controller) : MainController;
