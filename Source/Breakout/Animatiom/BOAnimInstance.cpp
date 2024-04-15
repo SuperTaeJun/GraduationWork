@@ -61,8 +61,15 @@ void UBOAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 			FTransform MuzzleTransform = EquipWeapon->GetWeaponMesh()->GetSocketTransform(FName("MuzzleFlash"), ERelativeTransformSpace::RTS_World);
 			FVector MuzzleX(FRotationMatrix(MuzzleTransform.GetRotation().Rotator()).GetUnitAxis(EAxis::X));
 
+		}
 
-
+		if (BaseCharacter->GetCurWeapon())
+		{
+			bCurWeapon = true;
+		}
+		else if(!BaseCharacter->GetCurWeapon())
+		{
+			bCurWeapon = false;
 		}
 	}
 }
