@@ -37,7 +37,7 @@ private:
 	TObjectPtr<class UCharacterMovementComponent> MovementComp;
 	float OldMaxWalkSpeed;
 	float OldMaxAcceleration;
-
+	bool bCancel = true;
 	bool bGhost = false;
 	bool bCoolTimeFinish = true;
 	float GhostCoolChargeTime = 0.f;

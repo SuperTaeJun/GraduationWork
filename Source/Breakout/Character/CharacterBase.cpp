@@ -951,5 +951,7 @@ void ACharacterBase::StartGame()
 		//bStarted = false;
 		EnableInput(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 		SetWeaponUi();
+		
 	}
+
 }

@@ -96,6 +96,9 @@ void ACharacter3::Skill_E(const FInputActionValue& Value)
 {
 	GhostEnd();
 	//패킷
+	if (inst)
+		Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Niagara_cancel(bCancel, _SessionId);
+	
 }
 
 void ACharacter3::GhostStart()
@@ -115,6 +118,7 @@ void ACharacter3::GhostStart()
 		// 1=스킬사용할때 머터리얼 0=기본머터리얼
 		DynamicMaterial->SetScalarParameterValue(FName("Alpha"), 1.f);
 		GetWorld()->GetTimerManager().SetTimer(GhostTimer, this, &ACharacter3::GhostEnd, 4.f, false);
+
 	}
 }
 
@@ -137,6 +141,8 @@ void ACharacter3::GhostEnd()
 		bGhost = false;
 		// 1=스킬사용할때 머터리얼 0=기본머터리얼
 		DynamicMaterial->SetScalarParameterValue(FName("Alpha"), 0.f);
+		if (inst)
+			Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Niagara_cancel(bCancel, _SessionId);
 	}
 }
 
@@ -173,6 +179,7 @@ void ACharacter3::ServerGhostEnd()
 		bGhost = false;
 		// 1=스킬사용할때 머터리얼 0=기본머터리얼
 		DynamicMaterial->SetScalarParameterValue(FName("Alpha"), 0.f);
+		
 	}
 }
 

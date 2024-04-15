@@ -45,6 +45,7 @@ public:
     bool bHasUmbrella;
     bool bHasBag;
     bool bIsSnowman;	// 현재 캐릭터가 눈사람인지
+    bool bCancel;
     WeaponType w_type;
     PlayerType p_type;
     float s_x, s_y, s_z;

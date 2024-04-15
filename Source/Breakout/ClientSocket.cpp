@@ -239,7 +239,10 @@ bool ClientSocket::PacketProcess(char* ptr)
 		UE_LOG(LogClass, Warning, TEXT("BNIAGAR : %d"), PlayerInfo.players[packet->id].bniagara);
 		break;
 	}
-
+	case SC_NiAGARA_CANCEL: {
+		CS_NIAGARA_CANCEL_PACKET* packet = reinterpret_cast<CS_NIAGARA_CANCEL_PACKET*>(ptr);
+		PlayerInfo.players[packet->id].bniagara = false;
+	}
 	default:
 		break;
 	}
@@ -425,6 +428,16 @@ void ClientSocket::Send_Niagara_packet(int clientid, PlayerType type)
 	packet.id = clientid;
 	packet.playertype = type;
 	SendPacket(&packet);
+}
+void ClientSocket::Send_Niagara_cancel(bool bcancel, int id)
+{
+	CS_NIAGARA_CANCEL_PACKET packet;
+	packet.size = sizeof(packet);
+	packet.type = CS_NiAGARA_CANCEL;
+	packet.cancel = bcancel;
+	packet.id = id;
+	SendPacket(&packet);
+
 }
 bool ClientSocket::Init()
 {

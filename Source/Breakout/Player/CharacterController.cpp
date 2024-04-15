@@ -579,16 +579,24 @@ bool ACharacterController::UpdateWorld()
 			{
 				if (Cast<ACharacter3>(OtherPlayer)) {
 					ACharacter3* Niagaraplayer = Cast<ACharacter3>(OtherPlayer);
+					Niagaraplayer->GetMesh()->SetMaterial(0, Niagaraplayer->DynamicMaterial);
+					Niagaraplayer->DynamicMaterial->SetScalarParameterValue(FName("Alpha"), 0.f);
 					Niagaraplayer->ServerGhostStart();
 					Niagaraplayer->DynamicMaterial->SetVectorParameterValue(FName("Loc"), Niagaraplayer->GetCapsuleComponent()->GetForwardVector() * -1.f);
 					Niagaraplayer->DynamicMaterial->SetScalarParameterValue(FName("Amount"), Niagaraplayer->GetCharacterMovement()->Velocity.Length() / 4);
-					info->bniagara = false;
+				}
+			}
+			else if (info->p_type == PlayerType::Character3 && info->bniagara == false) {
+				if (Cast<ACharacter3>(OtherPlayer)) {
+					ACharacter3* Niagaraplayer = Cast<ACharacter3>(OtherPlayer);
+					Niagaraplayer->ServerGhostEnd();
 				}
 			}
 		}
 	}
 	return true;
 }
+
 void ACharacterController::UpdateSyncPlayer()
 {
 	// 동기화 용

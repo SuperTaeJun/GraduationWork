@@ -44,6 +44,7 @@ const char CS_SIGNAl = 9;
 const char CS_SHOTGUN_BEAM = 10;
 const char CS_SHOTGUN_DAMAGED = 11;
 const char CS_NiAGARA = 12;
+const char CS_NiAGARA_CANCEL = 13;
 
 
 
@@ -59,6 +60,8 @@ const char SC_PLAYER_DAMAGE = 9;
 const char SC_SHOTGUN_BEAM = 10;
 const char SC_SHOTGUN_DAMAGED = 11;
 const char SC_NiAGARA = 12;
+const char SC_NiAGARA_CANCEL = 13;
+
 //const char CS_PACKET_DAMAGE = 7;
 //const char CS_PACKET_GET_ITEM = 8;
 //
@@ -239,6 +242,12 @@ struct CS_NIAGARA_SYNC_PACKET {
 	unsigned char type;
 	int id;
 	PlayerType playertype;
+};
+struct CS_NIAGARA_CANCEL_PACKET {
+	unsigned char size;
+	unsigned char type;
+	bool cancel;
+	int id;
 };
 #pragma pack(pop)
 
