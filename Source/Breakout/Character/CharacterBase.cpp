@@ -123,7 +123,7 @@ void ACharacterBase::BeginPlay()
 		MainController->bShowMouseCursor = false;
 		MainController->SetInputMode(GameInput);
 		MainController->ShowMatchingUi();
-		MainController->SetHUDMatchingUi(bStarted);
+		MainController->SetHUDMatchingUi();
 	}
 	////무기선택 ui생성
 	//MainController = MainController == nullptr ? Cast<ACharacterController>(Controller) : MainController;
@@ -880,13 +880,13 @@ void ACharacterBase::Tick(float DeltaTime)
 		//DisableInput(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 		GetWorldTimerManager().SetTimer(StartHandle, this, &ACharacterBase::StartGame, 5.f);
 	}
-	if (StartedCnt <= 0.2f&& StartedCnt >= 0.1f)
-		DisableInput(UGameplayStatics::GetPlayerController(GetWorld(), 0));
-	if (bStarted && StartedCnt > 0.f)
-	{
-		StartedCnt -= DeltaTime;
-		MainController->SetHUDMatchingUi(StartedCnt);
-	}
+	//if (StartedCnt <= 0.2f&& StartedCnt >= 0.1f)
+	//	DisableInput(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+	//if (bStarted && StartedCnt > 0.f)
+	//{
+	//	StartedCnt -= DeltaTime;
+	//	MainController->SetHUDMatchingUi(StartedCnt);
+	//}
 }
 
 void ACharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
