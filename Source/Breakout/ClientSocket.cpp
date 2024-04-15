@@ -232,9 +232,11 @@ bool ClientSocket::PacketProcess(char* ptr)
 		break;
 	}
 	case SC_NiAGARA: {
+	
 		CS_NIAGARA_SYNC_PACKET* packet = reinterpret_cast<CS_NIAGARA_SYNC_PACKET*>(ptr);
 		PlayerInfo.players[packet->id].p_type = packet->playertype;
 		PlayerInfo.players[packet->id].bniagara = true;
+		UE_LOG(LogClass, Warning, TEXT("BNIAGAR : %d"), PlayerInfo.players[packet->id].bniagara);
 		break;
 	}
 
@@ -416,11 +418,13 @@ void ClientSocket::Send_ShotGun_damaged_packet(int damaged_id1, int damaged_id2,
 }
 void ClientSocket::Send_Niagara_packet(int clientid, PlayerType type)
 {
+	UE_LOG(LogClass, Warning, TEXT("BNIAGAR "));
 	CS_NIAGARA_SYNC_PACKET packet;
 	packet.size = sizeof(packet);
 	packet.type = CS_NiAGARA;
 	packet.id = clientid;
 	packet.playertype = type;
+	SendPacket(&packet);
 }
 bool ClientSocket::Init()
 {

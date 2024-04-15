@@ -603,6 +603,7 @@ void process_packet(int s_id, char* p)
 		break;
 	}
 	case CS_NiAGARA: {
+		//cout << "나이아가라 들어옴?" << endl;
 		CS_NIAGARA_SYNC_PACKET* packet = reinterpret_cast<CS_NIAGARA_SYNC_PACKET*>(p);
 		CLIENT& cl = clients[packet->id];
 		cl.p_type = packet->playertype;
@@ -622,9 +623,12 @@ void process_packet(int s_id, char* p)
 			//packet.weapon_type = cl.w_type;
 		//printf_s("[Send put object] id : %d, location : (%f,%f,%f), yaw : %f\n", packet.id, packet.x, packet.y, packet.z, packet.yaw);
 			cout << "이거 누구한테 감 :  ?" << other._s_id << endl;
+		//	cout << "나이아가라" << endl;
+
 			other.do_send(sizeof(packet), &packet);
-			break;
+			
 		}
+		break;
 	}
 	default:
 		cout << " 오류패킷타입 : " << p << endl;
