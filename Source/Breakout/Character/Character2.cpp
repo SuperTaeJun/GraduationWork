@@ -178,7 +178,7 @@ void ACharacter2::ServerDashFinish()
 	MovementComp->MaxWalkSpeed = OldMaxWalkSpeed;
 	MovementComp->RotationRate = OldRotationRate;
 	GetMesh()->SetHiddenInGame(false, true);
-	FollowCamera->SetHiddenInGame(true);
+	FollowCamera->bCameraMeshHiddenInGame = true;
 	CanJump = true;
 	//EnableInput(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 }
