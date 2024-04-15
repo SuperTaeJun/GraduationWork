@@ -9,6 +9,7 @@
 #include "Materials/MaterialInstance.h"
 #include "Materials/MaterialInstanceDynamic.h"
 #include "Weapon/WeaponBase.h"
+#include "Game/BOGameInstance.h"
 #include "Player/CharacterController.h"
 #include "ClientSocket.h"
 #include "InputMappingContext.h"
