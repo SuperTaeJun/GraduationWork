@@ -109,7 +109,7 @@ void ACharacter2::DashSetup(float _MaxWalk, float _MaxAcc, FRotator _Rotation ,b
 	MovementComp->MaxAcceleration = _MaxAcc;
 	MovementComp->MaxWalkSpeed = _MaxWalk;
 	MovementComp->RotationRate = _Rotation;
-	GetMesh()->SetHiddenInGame(_Visibillity, false);
+	GetMesh()->SetHiddenInGame(_Visibillity, true);
 
 	CanJump = false;
 	NiagaraComp->Deactivate();
