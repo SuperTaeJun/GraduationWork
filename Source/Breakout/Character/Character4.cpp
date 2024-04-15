@@ -64,12 +64,14 @@ void ACharacter4::Skill_S(const FInputActionValue& Value)
 		SaveCurLocation();
 		FActorSpawnParameters SpawnParameters;
 		Temp = GetWorld()->SpawnActor<ANiagaraActor>(NiagaraActor, GetActorLocation(), GetActorRotation(), SpawnParameters);
+		//패킷
 	}
 	else if(bSaved)
 	{
 		NiagaraComp->Activate();
 		GetMesh()->SetVisibility(false, true);
 		GetWorld()->GetTimerManager().SetTimer(TelpoTimer, this, &ACharacter4::SetLocation, 0.5f, false);
+		//패킷
 	}
 }
 

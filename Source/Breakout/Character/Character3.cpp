@@ -84,11 +84,13 @@ void ACharacter3::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 void ACharacter3::Skill_S(const FInputActionValue& Value)
 {
 	GhostStart();
+	//패킷 
 }
 
 void ACharacter3::Skill_E(const FInputActionValue& Value)
 {
 	GhostEnd();
+	//패킷
 }
 
 void ACharacter3::GhostStart()
