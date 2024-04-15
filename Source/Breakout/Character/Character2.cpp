@@ -13,6 +13,7 @@
 #include "EnhancedInputComponent.h"
 #include "../../Server/Server/ServerCore/protocol.h"
 #include "EnhancedInputSubsystems.h"
+#include "Camera/CameraComponent.h"
 ACharacter2::ACharacter2()
 {
 	FXroc = CreateDefaultSubobject<UArrowComponent>(TEXT("FXroc"));
@@ -177,6 +178,7 @@ void ACharacter2::ServerDashFinish()
 	MovementComp->MaxWalkSpeed = OldMaxWalkSpeed;
 	MovementComp->RotationRate = OldRotationRate;
 	GetMesh()->SetHiddenInGame(false, true);
+	FollowCamera->SetHiddenInGame(true);
 	CanJump = true;
 	//EnableInput(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 }
