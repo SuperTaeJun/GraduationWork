@@ -565,7 +565,7 @@ bool ACharacterController::UpdateWorld()
 				GetWorld()->SpawnActor<AProjectileBullet>(ShotgunRef, Vshotgun, Rshotgun8, SpawnParameters);
 				info->sfired = false;
 			}
-			if (info->p_type == PlayerType::Character2) {
+			if (info->p_type == PlayerType::Character2 && info->bniagara == true) {
 
 				if (Cast<ACharacter2>(OtherPlayer)) {
 					ACharacter2* Niagaraplayer = Cast<ACharacter2>(OtherPlayer);
