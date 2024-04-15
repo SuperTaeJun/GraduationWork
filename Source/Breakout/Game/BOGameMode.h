@@ -21,6 +21,10 @@ public:
 
 	float StartTime = 10.f;
 	float CountdownTime = 10.f;
+
+	void SetDamageInsigator(class ACharacterBase* DamageInsigatorCh) { DamageInsigator = DamageInsigatorCh; }
+	class ACharacterBase* GetDamageInsigator() { return  DamageInsigator; }
+
 	void Respawn(class ACharacter* RespawnedCh, class AController* RespawnedController, FName TagName);
 	//캐릭터 선택한거 적용
 	virtual UClass* GetDefaultPawnClassForController_Implementation(AController* InController) override;
@@ -36,4 +40,7 @@ public:
 	void StartGame();
 	bool bStarted;
 	class UBOGameInstance* inst;
+
+private:
+	TObjectPtr<class ACharacterBase> DamageInsigator;
 };

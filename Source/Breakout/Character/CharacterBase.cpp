@@ -266,6 +266,16 @@ void ACharacterBase::SetRespawnUi()
 	}
 }
 
+void ACharacterBase::SetResetState()
+{
+	Health = 100.f;
+	Stamina = 100.f;
+	UpdateHpHUD();
+	UpdateStaminaHUD();
+	CurWeapon->Destroy();
+	CurWeapon = nullptr;
+}
+
 void ACharacterBase::SetWeapon(TSubclassOf<class AWeaponBase> Weapon, FName SocketName)
 {
 	if (!CurWeapon)
@@ -403,14 +413,22 @@ void ACharacterBase::ReciveDamage(AActor* DamagedActor, float Damage, const UDam
 {
 	Health = FMath::Clamp(Health - Damage, 0.f, MaxHealth);
 	UpdateHpHUD();
-
-
+	ACharacterBase* DamageInsigatorCh;
+	if (DamageCauser->Owner)
+	{
+		DamageInsigatorCh = Cast<ACharacterBase>(DamageCauser->Owner);
+	}
+	else
+	{
+		DamageInsigatorCh = Cast<ACharacterBase>(DamageCauser);
+	}
 	UE_LOG(LogTemp, Warning, TEXT("RECIVE DAMAGE"));
 	if (Health <= 0.0f)
 	{
 		ABOGameMode* GameMode = GetWorld()->GetAuthGameMode<ABOGameMode>();
 		if (GameMode)
 		{
+			GameMode->SetDamageInsigator(DamageInsigatorCh);
 			//MainController = MainController == nullptr ? Cast<ACharacterController>(Controller) : MainController;
 			//ACharacterController* AttackerController = Cast<ACharacterController>(InstigatorController);
 			GetWorld()->GetTimerManager().SetTimer(DeadTimer, this, &ACharacterBase::Dead, DeadTime, false);
@@ -862,6 +880,8 @@ void ACharacterBase::Tick(float DeltaTime)
 		//DisableInput(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 		GetWorldTimerManager().SetTimer(StartHandle, this, &ACharacterBase::StartGame, 5.f);
 	}
+	if (StartedCnt <= 0.2f&& StartedCnt >= 0.1f)
+		DisableInput(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 	if (bStarted && StartedCnt > 0.f)
 	{
 		StartedCnt -= DeltaTime;
@@ -919,6 +939,7 @@ void ACharacterBase::SpawnHitImpact(FVector HitLoc, FRotator HitRot)
 
 void ACharacterBase::StartGame()
 {
+	Movement->Velocity = FVector::ZeroVector;
 	UE_LOG(LogTemp, Warning, TEXT("StartGame"));
 	MainController = MainController == nullptr ? Cast<ACharacterController>(Controller) : MainController;
 	if (MainController)

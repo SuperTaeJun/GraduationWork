@@ -12,6 +12,7 @@
 #include "ClientSocket.h"
 #include "TimerManager.h"
 #include "Player/CharacterController.h"
+
 ABOGameMode::ABOGameMode()
 {
 	bUseSeamlessTravel = true;
@@ -52,25 +53,30 @@ void ABOGameMode::Tick(float DeltaTime)
 
 void ABOGameMode::Respawn(ACharacter* RespawnedCh, AController* RespawnedController, FName TagName)
 {
-	if (RespawnedCh)
+	ACharacterBase* MyCharacter=Cast<ACharacterBase>(RespawnedCh);
+	if (DamageInsigator)
 	{
-
-		RespawnedCh->Reset();
-		RespawnedCh->Destroy();
+		if (MyCharacter->GetEscapeToolNum() >= 10)
+		{
+			DamageInsigator->SetEscapeToolNum(DamageInsigator->GetEscapeToolNum() + 3);
+			MyCharacter->SetEscapeToolNum(MyCharacter->GetEscapeToolNum() - 3);
+		}
+		else if(MyCharacter->GetEscapeToolNum()>0)
+		{
+			DamageInsigator->SetEscapeToolNum(DamageInsigator->GetEscapeToolNum() + 1);
+			MyCharacter->SetEscapeToolNum(MyCharacter->GetEscapeToolNum() - 1);
+		}
 	}
-	if (RespawnedController)
+
+	if (MyCharacter && RespawnedController)
 	{
 		FName Tagname = TagName;
 		AActor* PlayerStarts;
-		//AActor* PlayerStarts;
-		//UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerStart::StaticClass(), PlayerStarts);
-		//UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerStart::StaticClass(), PlayerStarts);
-
-		PlayerStarts=FindPlayerStart(RespawnedCh->GetController(), *Tagname.ToString());
-
-		//int32 Selection = FMath::RandRange(0, PlayerStarts.Num() - 1);
-		RestartPlayerAtPlayerStart(RespawnedController, PlayerStarts);
-		//Cast<ACharacterBase>(RespawnedController->GetPawn())->SetWeaponUi(Cast<ACharacterController>(RespawnedController));
+		PlayerStarts=FindPlayerStart(MyCharacter->GetController(), *Tagname.ToString());
+		MyCharacter->SetResetState();
+		MyCharacter->SetActorTransform(PlayerStarts->GetActorTransform());
+		Cast<ACharacterController>(RespawnedController)->OnPossess(MyCharacter);
+		//RestartPlayerAtPlayerStart(RespawnedController, PlayerStarts);
 	}
 
 }

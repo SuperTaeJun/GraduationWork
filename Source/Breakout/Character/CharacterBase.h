@@ -68,6 +68,10 @@ protected:
 	FVector SWAimLastLoc;
 	FTransform StartTransform;
 public:
+	void SetResetState();
+
+	int32 GetEscapeToolNum(){ return ObtainedEscapeToolNum; }
+	void SetEscapeToolNum(int32 Num) { ObtainedEscapeToolNum = Num; }
 	void SetWeapon(TSubclassOf<class AWeaponBase> Weapon, FName SocketName);
 	void SetWeaponUi();
 	void SetRespawnUi();
