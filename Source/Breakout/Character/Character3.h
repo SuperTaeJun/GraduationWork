@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Character/CharacterBase.h"
+
 #include "Character3.generated.h"
 
 /**
@@ -22,7 +23,8 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TObjectPtr<class UNiagaraComponent> NiagaraComp;
-
+	class UBOGameInstance* inst;
+	TObjectPtr<class UMaterialInstanceDynamic> DynamicMaterial;
 protected:
 	virtual void Skill_S(const FInputActionValue& Value) override;
 	virtual void Skill_E(const FInputActionValue& Value) override;
@@ -30,7 +32,7 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TObjectPtr<class UMaterialInstance> OldMaterial;
 
-	TObjectPtr<class UMaterialInstanceDynamic> DynamicMaterial;
+	
 private:
 	TObjectPtr<class UCharacterMovementComponent> MovementComp;
 	float OldMaxWalkSpeed;
@@ -42,4 +44,7 @@ private:
 	FTimerHandle GhostTimer;
 	void GhostStart();
 	void GhostEnd();
+public:
+	void ServerGhostStart();
+	void ServerGhostEnd();
 };

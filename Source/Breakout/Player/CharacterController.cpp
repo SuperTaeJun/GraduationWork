@@ -22,6 +22,7 @@
 #include "Materials/MaterialInstanceDynamic.h"
 #include "Weapon/ProjectileBase.h"
 #include "Weapon/ProjectileBullet.h"
+#include "Components/CapsuleComponent.h"
 #include "Camera/CameraComponent.h"
 //#include "Network/PacketData.h"
 #include "../../Server/Server/ServerCore/protocol.h"
@@ -571,6 +572,16 @@ bool ACharacterController::UpdateWorld()
 				if (Cast<ACharacter2>(OtherPlayer)) {
 					ACharacter2* Niagaraplayer = Cast<ACharacter2>(OtherPlayer);
 					Niagaraplayer->ServerNiagaraSync();
+					info->bniagara = false;
+				}
+			}
+			else if (info->p_type == PlayerType::Character3 && info->bniagara == true)
+			{
+				if (Cast<ACharacter3>(OtherPlayer)) {
+					ACharacter3* Niagaraplayer = Cast<ACharacter3>(OtherPlayer);
+					Niagaraplayer->ServerGhostStart();
+					Niagaraplayer->DynamicMaterial->SetVectorParameterValue(FName("Loc"), Niagaraplayer->GetCapsuleComponent()->GetForwardVector() * -1.f);
+					Niagaraplayer->DynamicMaterial->SetScalarParameterValue(FName("Amount"), Niagaraplayer->GetCharacterMovement()->Velocity.Length() / 4);
 					info->bniagara = false;
 				}
 			}

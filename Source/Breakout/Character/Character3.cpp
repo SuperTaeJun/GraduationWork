@@ -10,7 +10,7 @@
 #include "Materials/MaterialInstanceDynamic.h"
 #include "Weapon/WeaponBase.h"
 #include "Player/CharacterController.h"
-
+#include "ClientSocket.h"
 #include "InputMappingContext.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
@@ -32,6 +32,8 @@ ACharacter3::ACharacter3()
 void ACharacter3::BeginPlay()
 {
 	Super::BeginPlay();
+
+	inst = Cast<UBOGameInstance>(GetGameInstance());
 	DynamicMaterial = UMaterialInstanceDynamic::Create(OldMaterial, this);
 	if (DynamicMaterial)
 	{
@@ -85,6 +87,8 @@ void ACharacter3::Skill_S(const FInputActionValue& Value)
 {
 	GhostStart();
 	//패킷 
+	if (inst)
+		Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Niagara_packet(_SessionId, PlayerType::Character3);
 }
 
 void ACharacter3::Skill_E(const FInputActionValue& Value)
@@ -120,6 +124,42 @@ void ACharacter3::GhostEnd()
 		MainController->SetHUDCoolVisibility(true);
 		MainController->SetHUDSkillOpacity(0.3);
 
+		GetCapsuleComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Visibility, ECollisionResponse::ECR_Block);
+		MovementComp->MaxWalkSpeed = OldMaxWalkSpeed;
+		MovementComp->MaxAcceleration = OldMaxAcceleration;
+		NiagaraComp->Deactivate();
+		//GetMesh()->SetVisibility(true, true);
+		CurWeapon->GetWeaponMesh()->SetVisibility(true);
+		bCoolTimeFinish = false;
+		//if (OldMaterial)
+		//	GetMesh()->SetMaterial(0, OldMaterial);
+		bGhost = false;
+		// 1=스킬사용할때 머터리얼 0=기본머터리얼
+		DynamicMaterial->SetScalarParameterValue(FName("Alpha"), 0.f);
+	}
+}
+
+void ACharacter3::ServerGhostStart()
+{
+	bGhost = true;
+	GetCapsuleComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Visibility, ECollisionResponse::ECR_Ignore);
+	MovementComp->MaxWalkSpeed = 1500;
+	MovementComp->MaxAcceleration = 10000000.f;
+	NiagaraComp->Activate();
+
+	GetMesh()->SetVisibility(true, true);
+	CurWeapon->GetWeaponMesh()->SetVisibility(false);
+	//if (DynamicMaterial)
+	//	GetMesh()->SetMaterial(0, DynamicMaterial);
+	// 1=스킬사용할때 머터리얼 0=기본머터리얼
+	DynamicMaterial->SetScalarParameterValue(FName("Alpha"), 1.f);
+	GetWorld()->GetTimerManager().SetTimer(GhostTimer, this, &ACharacter3::ServerGhostEnd, 4.f, false);
+}
+
+void ACharacter3::ServerGhostEnd()
+{
+	if (bGhost)
+	{
 		GetCapsuleComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Visibility, ECollisionResponse::ECR_Block);
 		MovementComp->MaxWalkSpeed = OldMaxWalkSpeed;
 		MovementComp->MaxAcceleration = OldMaxAcceleration;

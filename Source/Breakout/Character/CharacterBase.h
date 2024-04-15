@@ -4,6 +4,7 @@
 #include "GameFramework/Character.h"
 #include "InputActionValue.h"
 #include "Type/TurningType.h"
+
 #include "CharacterBase.generated.h"
 
 class UInputAction;
