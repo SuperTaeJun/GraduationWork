@@ -42,9 +42,21 @@ protected:
 
 	TObjectPtr<class UMaterialInstanceDynamic> DynamicMaterial;
 
+	// 무기 동기화용 
 	UPROPERTY(EditAnywhere)
-	TSubclassOf<class AProjectileBase> ProjectileRef;
+	TSubclassOf<class AProjectileBase> LauncherRef;
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class AProjectileBase> GrenadeRef;
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class AProjectileBase> WallRef;
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class AProjectileBase> BoobyTrapRef;
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class AProjectileBullet> BulletRef;
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class AProjectileBullet> ShotgunRef;
 
+	// 플레이어 동기화 용
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<UClass> Anim1;
 	UPROPERTY(EditAnywhere)
@@ -53,6 +65,20 @@ protected:
 	TObjectPtr<UClass> Anim3;
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<UClass> Anim4;
+
+	// 보조무기 생산 시 애니메이션 동기화 용
+	UPROPERTY(EditAnywhere, Category = Animation)
+	TObjectPtr<class UAnimMontage> GrenadeMontage;
+
+	/*UPROPERTY(EditAnywhere, Category = Animation)
+	TObjectPtr<class UAnimMontage> GrenadeMontage;
+
+	UPROPERTY(EditAnywhere, Category = Animation)
+	TObjectPtr<class UAnimMontage> GrenadeMontage;
+
+	UPROPERTY(EditAnywhere, Category = Animation)
+	TObjectPtr<class UAnimMontage> GrenadeMontage;*/
+	//-------------------------------------------
 
 	UPROPERTY(EditAnywhere, Category = "Combat System", meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<class AWeaponBase> Rifle;
@@ -87,8 +113,12 @@ public:
 	//skill2 대쉬포인트
 	void SetHUDCool(int32 Cool);
 	void SetHUDCoolVisibility(bool bVisibility);
+	void SetHUDMatchingUi();
+	float StartCnt = 5.f;
+	void SetHUDMatchingUi(float Time);
 	void showWeaponSelect();
 	void ShowRespawnSelect();
+	void ShowMatchingUi();
 	// 초기 플레이어 저장
 	//void SetPlayerID(const int playerid) {
 	//	UE_LOG(LogTemp, Warning, TEXT("%d -> my_id"), playerid);

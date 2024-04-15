@@ -9,22 +9,14 @@
 #include "Kismet/GameplayStatics.h"
 #include "Player/CharacterController.h"
 #include "Kismet/GameplayStatics.h"
+#include "ClientSocket.h"
+#include "TimerManager.h"
+#include "Player/CharacterController.h"
+
 ABOGameMode::ABOGameMode()
 {
 	bUseSeamlessTravel = true;
-	/*m_Socket = ClientSocket::GetSingleton();
-	m_Socket->InitSocket();
 
-	connect = m_Socket->Connect("127.0.0.1", 12345);
-	if (connect)
-	{
-		m_Socket->StartListen();
-		UE_LOG(LogClass, Log, TEXT("IOCP Server connect success!"));
-	}
-	else
-	{
-		UE_LOG(LogClass, Warning, TEXT("IOCP Server connect FAIL!"));
-	}*/
 	ConstructorHelpers::FClassFinder<ACharacterBase>Character1Ref(TEXT("/Game/BP/Character/BP_Character1.BP_Character1_C"));
 	Character1 = Character1Ref.Class;
 	ConstructorHelpers::FClassFinder<ACharacterBase>Character2Ref(TEXT("/Game/BP/Character/BP_Character2.BP_Character2_C"));
@@ -33,55 +25,58 @@ ABOGameMode::ABOGameMode()
 	Character3 = Character3Ref.Class;
 	ConstructorHelpers::FClassFinder<ACharacterBase>Character4Ref(TEXT("/Game/BP/Character/BP_Character4.BP_Character4_C"));
 	Character4 = Character4Ref.Class;
+
+	bStarted = false;
+}
+
+void ABOGameMode::BeginPlay()
+{
+	Super::BeginPlay();
+	inst = Cast<UBOGameInstance>(GetGameInstance());
+	//DisableInput(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+	//GetWorldTimerManager().SetTimer(StartTimeHandle, this, &ABOGameMode::StartGame, 5.f);
 }
 
 void ABOGameMode::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	//bool bAllConnect = false;
+	//if (inst->m_Socket->bAllReady==true && !bStarted)
+	//{
+	//	UE_LOG(LogTemp, Warning, TEXT("ballready!!!!!!!!!!!!!!!!!"));
+	//	DisableInput(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+	//	GetWorldTimerManager().SetTimer(StartTimeHandle, this, &ABOGameMode::StartGame, 5.f);
 
-	if (MatchState == MatchState::EnteringMap)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("CountdownTime : %f"), CountdownTime);
-		CountdownTime -= StartTime - GetWorld()->GetTimeSeconds();
-		DisableInput(UGameplayStatics::GetPlayerController(GetWorld(), 0));
-		if (CountdownTime <= 0.f)
-		{
-			StartMatch();
-		}
-	}
-	else if (MatchState == MatchState::InProgress)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("InProgress : %f"), CountdownTime);
-		if (CountdownTime <= 0.f)
-		{		
-			EnableInput(UGameplayStatics::GetPlayerController(GetWorld(), 0));
-		}
-	}
-
+	//}
 }
 
 
 void ABOGameMode::Respawn(ACharacter* RespawnedCh, AController* RespawnedController, FName TagName)
 {
-	if (RespawnedCh)
+	ACharacterBase* MyCharacter=Cast<ACharacterBase>(RespawnedCh);
+	if (DamageInsigator)
 	{
-
-		RespawnedCh->Reset();
-		RespawnedCh->Destroy();
+		if (MyCharacter->GetEscapeToolNum() >= 10)
+		{
+			DamageInsigator->SetEscapeToolNum(DamageInsigator->GetEscapeToolNum() + 3);
+			MyCharacter->SetEscapeToolNum(MyCharacter->GetEscapeToolNum() - 3);
+		}
+		else if(MyCharacter->GetEscapeToolNum()>0)
+		{
+			DamageInsigator->SetEscapeToolNum(DamageInsigator->GetEscapeToolNum() + 1);
+			MyCharacter->SetEscapeToolNum(MyCharacter->GetEscapeToolNum() - 1);
+		}
 	}
-	if (RespawnedController)
+
+	if (MyCharacter && RespawnedController)
 	{
 		FName Tagname = TagName;
 		AActor* PlayerStarts;
-		//AActor* PlayerStarts;
-		//UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerStart::StaticClass(), PlayerStarts);
-		//UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerStart::StaticClass(), PlayerStarts);
-
-		PlayerStarts=FindPlayerStart(RespawnedCh->GetController(), *Tagname.ToString());
-
-		//int32 Selection = FMath::RandRange(0, PlayerStarts.Num() - 1);
-		RestartPlayerAtPlayerStart(RespawnedController, PlayerStarts);
-		//Cast<ACharacterBase>(RespawnedController->GetPawn())->SetWeaponUi(Cast<ACharacterController>(RespawnedController));
+		PlayerStarts=FindPlayerStart(MyCharacter->GetController(), *Tagname.ToString());
+		MyCharacter->SetResetState();
+		MyCharacter->SetActorTransform(PlayerStarts->GetActorTransform());
+		Cast<ACharacterController>(RespawnedController)->OnPossess(MyCharacter);
+		//RestartPlayerAtPlayerStart(RespawnedController, PlayerStarts);
 	}
 
 }
@@ -139,3 +134,10 @@ AActor* ABOGameMode::ChoosePlayerStart_Implementation(AController* Player)
 	return 	Super::ChoosePlayerStart(Player);
 }
 
+void ABOGameMode::StartGame()
+{
+
+	EnableInput(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+	bStarted = true;
+	inst->m_Socket->bAllReady = false;
+}

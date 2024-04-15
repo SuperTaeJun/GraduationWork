@@ -57,6 +57,7 @@ void ACharacter1::Tick(float DeltaTime)
 		{
 			FVector CurLoc = GetActorLocation();
 			UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), TimeReplayNiagara, CurLoc);
+			//패킷 - id,캐릭터타입,CurLoc
 			NiagaraSpawnSavedTime = 0.f;
 		}
 	}

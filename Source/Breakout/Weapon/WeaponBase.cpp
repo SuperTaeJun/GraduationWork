@@ -114,7 +114,6 @@ void AWeaponBase::WeaponTraceHit(const FVector& TraceStart, const FVector& HitTa
 			{
 				Beam->SetVectorParameter(FName("End"), BeamEnd);
 			}
-			Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_AttackPacket(Cast<ACharacterBase>(GetOwner())->_SessionId, StartBeam, EndBeam);
 		}
 	}
 }
@@ -209,7 +208,7 @@ void AWeaponBase::Fire(const FVector& HitTarget)
 			if (World)
 			{
 				World->SpawnActor<AProjectileBullet>(ProjectileBulletClass, SocketTransform.GetLocation(), ToTargetRot, SpawnParameters);
-				//서버 총알생성
+				Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Fire_Effect(Cast<ACharacterBase>(GetOwner())->_SessionId, SocketTransform.GetLocation(), ToTargetRot, 0);
 			}
 			if (ImpactNiagara)
 			{

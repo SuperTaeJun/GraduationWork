@@ -27,7 +27,7 @@ ACharacter3::ACharacter3()
 
 	bCoolTimeFinish = true;
 
-	OldMaterial = ConstructorHelpers::FObjectFinder<UMaterialInstance>(TEXT("/Game/BreakoutAsset/Character/캐릭터3/M_Character3_Inst.M_Character3_Inst")).Object;
+	OldMaterial = ConstructorHelpers::FObjectFinder<UMaterialInstance>(TEXT("/Script/Engine.MaterialInstanceConstant'/Game/Niagara/SKill/Skill3/M_Character3_Inst.M_Character3_Inst'")).Object;
 }
 void ACharacter3::BeginPlay()
 {
@@ -84,11 +84,13 @@ void ACharacter3::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 void ACharacter3::Skill_S(const FInputActionValue& Value)
 {
 	GhostStart();
+	//패킷 
 }
 
 void ACharacter3::Skill_E(const FInputActionValue& Value)
 {
 	GhostEnd();
+	//패킷
 }
 
 void ACharacter3::GhostStart()

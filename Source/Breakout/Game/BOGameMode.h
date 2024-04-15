@@ -16,9 +16,15 @@ class BREAKOUT_API ABOGameMode : public AGameMode
 	
 public:
 	ABOGameMode();
+	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
+
 	float StartTime = 10.f;
 	float CountdownTime = 10.f;
+
+	void SetDamageInsigator(class ACharacterBase* DamageInsigatorCh) { DamageInsigator = DamageInsigatorCh; }
+	class ACharacterBase* GetDamageInsigator() { return  DamageInsigator; }
+
 	void Respawn(class ACharacter* RespawnedCh, class AController* RespawnedController, FName TagName);
 	//캐릭터 선택한거 적용
 	virtual UClass* GetDefaultPawnClassForController_Implementation(AController* InController) override;
@@ -30,7 +36,11 @@ public:
 	TSubclassOf<class ACharacterBase>Character3;
 	TSubclassOf<class ACharacterBase>Character4;
 
-//private:
-//	ClientSocket* m_Socket;
-//	bool connect;
+	FTimerHandle StartTimeHandle;
+	void StartGame();
+	bool bStarted;
+	class UBOGameInstance* inst;
+
+private:
+	TObjectPtr<class ACharacterBase> DamageInsigator;
 };

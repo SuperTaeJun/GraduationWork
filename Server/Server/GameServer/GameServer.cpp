@@ -17,6 +17,7 @@ SOCKET sever_socket;
 concurrency::concurrent_priority_queue <timer_ev> timer_q;
 array <CLIENT, MAX_USER> clients;
 atomic<int> ready_count = 0;
+atomic<int> ingamecount = 0;
 using std::chrono::duration_cast;
 using std::chrono::milliseconds;
 using std::chrono::seconds;
@@ -237,6 +238,8 @@ void process_packet(int s_id, char* p)
 		cl.y = packet->y;
 		cl.z = packet->z;
 		cl.p_type = packet->p_type;
+		cl.connected = true;
+		ingamecount++;
 		send_select_character_type_packet(cl._s_id);
 
 
@@ -297,8 +300,19 @@ void process_packet(int s_id, char* p)
 			cl.do_send(sizeof(packet), &packet);
 
 		}
+		cout << "몇명 들어옴 : " << ingamecount << endl;
 		//m.unlock();
-
+		if (ingamecount >= 2)
+		{
+			for (auto& player : clients) {
+				if (ST_INGAME != player._state)
+					continue;
+				m.lock();
+				send_ready_packet(player._s_id);
+				cout << "보낼 플레이어" << player._s_id << endl;
+				m.unlock();
+			}
+		}
 		break;
 	}
 	case CS_MOVE_Packet: {
@@ -333,6 +347,7 @@ void process_packet(int s_id, char* p)
 		CS_SELECT_WEAPO* packet = reinterpret_cast<CS_SELECT_WEAPO*>(p);
 		CLIENT& cl = clients[packet->id];
 		cl.w_type = packet->weapon_type;
+		cl.selectweapon = packet->bselectwep;
 		cout << "무기 타입" << cl.w_type << endl;
 		for (auto& other : clients) {
 			if (other._s_id == cl._s_id) continue;
@@ -347,26 +362,28 @@ void process_packet(int s_id, char* p)
 			packet.size = sizeof(packet);
 			packet.type = SC_OTHER_WEAPO;
 			packet.weapon_type = cl.w_type;
+			packet.bselectwep = cl.selectweapon;
 			//printf_s("[Send put object] id : %d, location : (%f,%f,%f), yaw : %f\n", packet.id, packet.x, packet.y, packet.z, packet.yaw);
 			cout << "이거 누구한테 감 :  ?" << other._s_id << endl; 
 			other.do_send(sizeof(packet), &packet);
 		}
-		for (auto& other : clients) {
-			if (other._s_id == cl._s_id) continue;
-			other.state_lock.lock();
-			if (ST_INGAME != other._state) {
-				other.state_lock.unlock();
-				continue;
-			}
-			else other.state_lock.unlock();
-			SC_SYNC_WEAPO packet;
-			packet.id = other._s_id;
-			packet.size = sizeof(packet);
-			packet.type = SC_OTHER_WEAPO;
-			packet.weapon_type = other.w_type;
-			//printf_s("[어떤 클라의 Send put object] id : %d, location : (%f,%f,%f), yaw : %f\n", packet.id, packet.x, packet.y, packet.z, packet.yaw);
-			cl.do_send(sizeof(packet), &packet);
-		}
+		//for (auto& other : clients) {
+		//	if (other._s_id == cl._s_id) continue;
+		//	other.state_lock.lock();
+		//	if (ST_INGAME != other._state) {
+		//		other.state_lock.unlock();
+		//		continue;
+		//	}
+		//	else other.state_lock.unlock();
+		//	SC_SYNC_WEAPO packet;
+		//	packet.id = other._s_id;
+		//	packet.size = sizeof(packet);
+		//	packet.type = SC_OTHER_WEAPO;
+		//	packet.weapon_type = other.w_type;
+		//	packet.bselectwep = other.selectweapon;
+		//	//printf_s("[어떤 클라의 Send put object] id : %d, location : (%f,%f,%f), yaw : %f\n", packet.id, packet.x, packet.y, packet.z, packet.yaw);
+		//	cl.do_send(sizeof(packet), &packet);
+		//}
 		break;
 	}
 	case CS_READY:
@@ -375,7 +392,7 @@ void process_packet(int s_id, char* p)
 		CLIENT& cl = clients[s_id];
 		ready_count++;
 		cout << "ready_count" << ready_count << endl;
-		if (ready_count >= 2)
+		if (ready_count >= 3)
 		{
 			for (auto& player : clients) {
 				if (ST_INGAME != player._state)
@@ -432,36 +449,34 @@ void process_packet(int s_id, char* p)
 		cl.s_y = packet->sy;
 		cl.s_z = packet->sz;
 		//--------------------
-		cl.ex0 = packet->ex0;
-		cl.ey0 = packet->ey0;
-		cl.ez0 = packet->ez0;
-		cout << cl.ex0 << "a" << cl.ey0 << cl.ez0 << endl;
-		cl.ex1 = packet->ex1;
-		cl.ey1 = packet->ey1;
-		cl.ez1 = packet->ez1;
-		cout << cl.ex1 << "a" << cl.ey1 << cl.ez1 << endl;
-		cl.ex2 = packet->ex2;
-		cl.ey2 = packet->ey2;
-		cl.ez2 = packet->ez2;
-		cl.ex3 = packet->ex3;
-		cl.ey3 = packet->ey3;
-		cl.ez3 = packet->ez3;
-		cl.ex4 = packet->ex4;
-		cl.ey4 = packet->ey4;
-		cl.ez4 = packet->ez4;
-		cl.ex5 = packet->ex5;
-		cl.ey5 = packet->ey5;
-		cl.ez5 = packet->ez5;
-		cout << cl.ex5 << "a" << cl.ey5 << cl.ez5 << endl;
-		cl.ex6 = packet->ex6;
-		cl.ey6 = packet->ey6;
-		cl.ez6 = packet->ez6;
-		cl.ex7 = packet->ex7;
-		cl.ey7 = packet->ey7;
-		cl.ez7 = packet->ez7;
-		cl.ex8 = packet->ex8;
-		cl.ey8 = packet->ey8;
-		cl.ez8 = packet->ez8;
+		cl.pitch0 = packet->pitch0;
+		cl.yaw0 = packet->yaw0;
+		cl.roll0 = packet->roll0;
+		cl.pitch1 = packet->pitch1;
+		cl.yaw1 = packet->yaw1;
+		cl.roll1 = packet->roll1;
+		cl.pitch2 = packet->pitch2;
+		cl.yaw2 = packet->yaw2;
+		cl.roll2 = packet->roll2;
+		cl.pitch3 = packet->pitch3;
+		cl.yaw3 = packet->yaw3;
+		cl.roll3 = packet->roll3;
+		cl.pitch4 = packet->pitch4;
+		cl.yaw4 = packet->yaw4;
+		cl.roll4 = packet->roll4;
+		cl.pitch5 = packet->pitch5;
+		cl.yaw5 = packet->yaw5;
+		cl.roll5 = packet->roll5;
+
+		cl.pitch6 = packet->pitch6;
+		cl.yaw6 = packet->yaw6;
+		cl.roll6 = packet->roll6;
+		cl.pitch7 = packet->pitch7;
+		cl.yaw7 = packet->yaw7;
+		cl.roll7 = packet->roll7;
+		cl.pitch8 = packet->pitch8;
+		cl.yaw8 = packet->yaw8;
+		cl.roll8 = packet->roll8;
 		/*cl.ex9 = packet->ex9;
 		cl.ey9 = packet->ey9;
 		cl.ez9 = packet->ey9;*/
@@ -481,38 +496,36 @@ void process_packet(int s_id, char* p)
 			packet.sx = cl.s_x;
 			packet.sy = cl.s_y;
 			packet.sz = cl.s_z;
-			packet.ex0 = cl.ex0;
-			packet.ey0 = cl.ey0;
-			packet.ey0 = cl.ez0;
-			packet.ex1 = cl.ex1;
-			packet.ey1 = cl.ey1;
-			packet.ez1 = cl.ez1;
-			packet.ex2 = cl.ex2;
-			packet.ey2 = cl.ey2;
-			packet.ez2 = cl.ez2;
-			packet.ex3 = cl.ex3;
-			packet.ey3 = cl.ey3;
-			packet.ez3 = cl.ez3;
-			packet.ex4 = cl.ex4;
-			packet.ey4 = cl.ey4;
-			packet.ez4 = cl.ez4;
-			packet.ex5 = cl.ex5;
-			packet.ey5 = cl.ey5;
-			packet.ez5 = cl.ez5;
-			packet.ex6 = cl.ex6;
-			packet.ey6 = cl.ey6;
-			packet.ez6 = cl.ez6;
-			packet.ex7 = cl.ex7;
-			packet.ey7 = cl.ey7;
-			packet.ez7 = cl.ez7;
-			packet.ex8 = cl.ex8;
-			packet.ey8 = cl.ey8;
-			packet.ez8 = cl.ez8;
+			packet.pitch0 = cl.pitch0;
+			packet.yaw0 = cl.yaw0;
+			packet.roll0 = cl.roll0;
+			packet.pitch1 = cl.pitch1;
+			packet.yaw1 = cl.yaw1;
+			packet.roll1 = cl.roll1;
+			packet.pitch2 = cl.pitch2;
+			packet.yaw2 = cl.yaw2;
+			packet.roll2 = cl.roll2;
+			packet.pitch3 = cl.pitch3;
+			packet.yaw3 = cl.yaw3;
+			packet.roll3 = cl.roll3;
+			packet.pitch4 = cl.pitch4;
+			packet.yaw4 = cl.yaw4;
+			packet.roll4 = cl.roll4;
+			packet.pitch5 = cl.pitch5;
+			packet.yaw5 = cl.yaw5;
+			packet.roll5 = cl.roll5;
+			packet.pitch6 = cl.pitch6;
+			packet.yaw6 = cl.yaw6;
+			packet.roll6 = cl.roll6;
+			packet.pitch7 = cl.pitch7;
+			packet.yaw7 = cl.yaw7;
+			packet.roll7 = cl.roll7;
+			packet.pitch8 = cl.pitch8;
+			packet.yaw8 = cl.yaw8;
+			packet.roll8 = cl.roll8;
 			/*packet.ex9 = cl.ex9;
 			packet.ey9 = cl.ey9;
 			packet.ez9 = cl.ez9;*/
-
-			cout << cl.ex0 << "a" << cl.ey0 << cl.ez0;
 			cout << "이거 누구한테 감 :  ?" << other._s_id << endl;
 			other.do_send(sizeof(packet), &packet);
 		

@@ -66,7 +66,12 @@ protected:
 	int32 ObtainedEscapeToolNum;
 
 	FVector SWAimLastLoc;
+	FTransform StartTransform;
 public:
+	void SetResetState();
+
+	int32 GetEscapeToolNum(){ return ObtainedEscapeToolNum; }
+	void SetEscapeToolNum(int32 Num) { ObtainedEscapeToolNum = Num; }
 	void SetWeapon(TSubclassOf<class AWeaponBase> Weapon, FName SocketName);
 	void SetWeaponUi();
 	void SetRespawnUi();
@@ -245,6 +250,12 @@ public:
 	//서버랑 연동하는 함수들
 	void SpawnBeam(FVector StartBeam, FVector EndBeam);
 	void SpawnHitImpact(FVector HitLoc, FRotator HitRot);
+	bool bStarted;
+	FTimerHandle StartHandle;
+	void StartGame();
+	float StartedCnt;
+
+
 };
 
 UENUM(BlueprintType)

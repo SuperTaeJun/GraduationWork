@@ -90,6 +90,8 @@ void ACharacter2::Skill_S(const FInputActionValue& Value)
 		//bDash = true;
 		//DashStart();
 		GetWorld()->GetTimerManager().SetTimer(DashTimer, this, &ACharacter2::DashFinishSetup, 0.2, false);
+
+		//스킬 패킷
 	}
 }
 

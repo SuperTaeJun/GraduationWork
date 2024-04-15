@@ -35,15 +35,22 @@ public:
 	TSubclassOf<class UUserWidget>RespawnSelectUiClass;
 	TObjectPtr<class URespawnSelect> RespawnSelectUi;
 
+	UPROPERTY(EditAnywhere, Category = "Player State")
+	TSubclassOf<class UUserWidget>MatchingUiClass;
+	TObjectPtr<class UMatchingUi> MatchingUi;
+
 
 
 	virtual void DrawHUD() override;
 
 	void AddSelectWeapon();
 	void AddSelectRespawn();
-
+	void AddMatchingUi();
 	void RemoveSelectWeapon();
 	void RemoveRespawnSelect();
+	void RemoveMatchingUi();
+
+
 protected:
 	virtual void BeginPlay() override;
 	void AddCharacterOverlay();

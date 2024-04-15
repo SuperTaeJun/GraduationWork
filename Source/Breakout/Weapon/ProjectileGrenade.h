@@ -23,6 +23,7 @@ public:
 	float DestroyTime = 3.f;
 protected:
 	virtual void BeginPlay() override;
+	virtual void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NomalImpulse, const FHitResult& Hit) override;
 
 public:
 	UFUNCTION()

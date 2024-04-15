@@ -82,6 +82,8 @@ ACharacterBase::ACharacterBase()
 	//bShowSelectUi = false;
 	ObtainedEscapeToolNum = 0;
 	CurWeaponType = EWeaponType::ECS_DEFAULT;
+	bStarted = false;
+	StartedCnt = 5.f;
 }
 
 //float ACharacterBase::GetAO_Yaw()
@@ -101,6 +103,9 @@ void ACharacterBase::BeginPlay()
 {
 	Super::BeginPlay();
 
+
+	StartTransform = GetActorTransform();
+
 	if (APlayerController* PlayerController = Cast<APlayerController>(GetController()))
 	{
 		//입력시스템 매핑
@@ -109,25 +114,25 @@ void ACharacterBase::BeginPlay()
 			Subsystem->AddMappingContext(DefalutMappingContext, 0);
 		}
 	}
-
-	//무기선택 ui생성
+	//MainHUD = MainHUD == nullptr ? Cast<AMainHUD>(MainController->GetHUD()) : MainHUD;
 	MainController = MainController == nullptr ? Cast<ACharacterController>(Controller) : MainController;
 	if (MainController)
 	{
-		SetWeaponUi();
-		//FInputModeUIOnly UiGameInput;
-		//MainController->SetInputMode(UiGameInput);
-		//MainController->DisableInput(MainController);
-		////bShowSelectUi = true;
-		//MainController->bShowMouseCursor = true;
-		//MainController->bEnableMouseOverEvents = true;
-
-		//MainController->showWeaponSelect();
+		EnableInput(MainController);
+		FInputModeGameOnly GameInput;
+		MainController->bShowMouseCursor = false;
+		MainController->SetInputMode(GameInput);
+		MainController->ShowMatchingUi();
+		MainController->SetHUDMatchingUi();
 	}
+	////무기선택 ui생성
+	//MainController = MainController == nullptr ? Cast<ACharacterController>(Controller) : MainController;
+	//if (MainController)
+	//{
+	//	SetWeaponUi();
+	//}
 
 	BojoMugiType = EBojoMugiType::ECS_DEFAULT;
-
-	OnTakeAnyDamage.AddDynamic(this, &ACharacterBase::ReciveDamage);
 
 	if (MainController)
 	{
@@ -140,6 +145,10 @@ void ACharacterBase::BeginPlay()
 	}
 	if(Aim)
 		Aim->SetAutoActivate(false);
+
+
+	OnTakeAnyDamage.AddDynamic(this, &ACharacterBase::ReciveDamage);
+
 }
 
 
@@ -228,9 +237,9 @@ void ACharacterBase::UpdateObtainedEscapeTool()
 
 void ACharacterBase::SetWeaponUi()
 {
-	FInputModeUIOnly UiGameInput;
 	if (MainController)
 	{
+		FInputModeUIOnly UiGameInput;
 		MainController->SetInputMode(UiGameInput);
 		MainController->DisableInput(MainController);
 		//bShowSelectUi = true;
@@ -255,6 +264,16 @@ void ACharacterBase::SetRespawnUi()
 
 		MainController->ShowRespawnSelect();
 	}
+}
+
+void ACharacterBase::SetResetState()
+{
+	Health = 100.f;
+	Stamina = 100.f;
+	UpdateHpHUD();
+	UpdateStaminaHUD();
+	CurWeapon->Destroy();
+	CurWeapon = nullptr;
 }
 
 void ACharacterBase::SetWeapon(TSubclassOf<class AWeaponBase> Weapon, FName SocketName)
@@ -372,6 +391,20 @@ void ACharacterBase::SetSpawnGrenade(TSubclassOf<AProjectileBase> Projectile)
 		if (World)
 		{
 			World->SpawnActor<AProjectileBase>(Projectile, StartLocation, ToHitTarget.Rotation(), SpawnParms);
+			if (Cast<UBOGameInstance>(GetGameInstance()))
+			{
+				switch (BojoMugiType)
+				{
+				case EBojoMugiType::E_Grenade:
+					Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Fire_Effect(_SessionId, StartLocation, ToHitTarget.Rotation(), 2);
+					break;
+				case EBojoMugiType::E_Wall:
+					Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Fire_Effect(_SessionId, StartLocation, ToHitTarget.Rotation(), 3);
+					break;
+
+				}
+					
+			}
 		}
 	}
 }
@@ -380,14 +413,22 @@ void ACharacterBase::ReciveDamage(AActor* DamagedActor, float Damage, const UDam
 {
 	Health = FMath::Clamp(Health - Damage, 0.f, MaxHealth);
 	UpdateHpHUD();
-
-
+	ACharacterBase* DamageInsigatorCh;
+	if (DamageCauser->Owner)
+	{
+		DamageInsigatorCh = Cast<ACharacterBase>(DamageCauser->Owner);
+	}
+	else
+	{
+		DamageInsigatorCh = Cast<ACharacterBase>(DamageCauser);
+	}
 	UE_LOG(LogTemp, Warning, TEXT("RECIVE DAMAGE"));
 	if (Health <= 0.0f)
 	{
 		ABOGameMode* GameMode = GetWorld()->GetAuthGameMode<ABOGameMode>();
 		if (GameMode)
 		{
+			GameMode->SetDamageInsigator(DamageInsigatorCh);
 			//MainController = MainController == nullptr ? Cast<ACharacterController>(Controller) : MainController;
 			//ACharacterController* AttackerController = Cast<ACharacterController>(InstigatorController);
 			GetWorld()->GetTimerManager().SetTimer(DeadTimer, this, &ACharacterBase::Dead, DeadTime, false);
@@ -711,6 +752,11 @@ void ACharacterBase::GrandeFire(const FInputActionValue& Value)
 				SpawnParms.Owner = this;
 
 				World->SpawnActor<AProjectileBase>(BoobyTrapClass, SWAimLastLoc, FRotator::ZeroRotator,SpawnParms);
+				//여기 부비트랩
+				if (Cast<UBOGameInstance>(GetGameInstance()))
+				{
+					Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Fire_Effect(_SessionId, SWAimLastLoc, FRotator::ZeroRotator, 4);
+				}
 			}
 		}
 		else
@@ -780,20 +826,6 @@ void ACharacterBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	//UE_LOG(LogTemp, Warning, TEXT("Tick HP : %f"), Health);
-	//if (Health <= 0.0f)
-	//{
-	//	//패킷보내야함
-	//	ABOGameMode* GameMode = GetWorld()->GetAuthGameMode<ABOGameMode>();
-	//	if (GameMode)
-	//	{
-	//		//MainController = MainController == nullptr ? Cast<ACharacterController>(Controller) : MainController;
-	//		//ACharacterController* AttackerController = Cast<ACharacterController>(InstigatorController);
-	//		GetWorld()->GetTimerManager().SetTimer(DeadTimer, this, &ACharacterBase::Dead, DeadTime, false);
-	//	}
-	//}
-
-
 	if (GetVelocity().Size() <= 0.f)
 		CharacterState = ECharacterState::ECS_IDLE;
 	switch (CharacterState)
@@ -838,7 +870,23 @@ void ACharacterBase::Tick(float DeltaTime)
 	{
 		PathSorce->SetHiddenInGame(true);
 	}
-	
+
+
+	if (Cast<UBOGameInstance>(GetWorld()->GetGameInstance())->m_Socket->bAllReady == true && !bStarted)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("StartGame"));
+		Cast<UBOGameInstance>(GetWorld()->GetGameInstance())->m_Socket->bAllReady = false;
+		bStarted = true;
+		//DisableInput(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+		GetWorldTimerManager().SetTimer(StartHandle, this, &ACharacterBase::StartGame, 5.f);
+	}
+	//if (StartedCnt <= 0.2f&& StartedCnt >= 0.1f)
+	//	DisableInput(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+	//if (bStarted && StartedCnt > 0.f)
+	//{
+	//	StartedCnt -= DeltaTime;
+	//	MainController->SetHUDMatchingUi(StartedCnt);
+	//}
 }
 
 void ACharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -887,4 +935,21 @@ void ACharacterBase::SpawnHitImpact(FVector HitLoc, FRotator HitRot)
 		HitLoc,
 		HitRot
 	);
+}
+
+void ACharacterBase::StartGame()
+{
+
+	Movement->Velocity = FVector::ZeroVector;
+	UE_LOG(LogTemp, Warning, TEXT("StartGame"));
+	MainController = MainController == nullptr ? Cast<ACharacterController>(Controller) : MainController;
+	if (MainController)
+	{
+		SetActorTransform(StartTransform);
+
+		MainController->MainHUD->RemoveMatchingUi();
+		//bStarted = false;
+		EnableInput(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+		SetWeaponUi();
+	}
 }

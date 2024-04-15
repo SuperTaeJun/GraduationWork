@@ -73,6 +73,10 @@ void AProjectileGrenade::BeginPlay()
 
 }
 
+void AProjectileGrenade::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NomalImpulse, const FHitResult& Hit)
+{
+}
+
 //바운스할때마다 발생 나중에 사운드 추가
 void AProjectileGrenade::OnBounce(const FHitResult& ImpactResult, const FVector& ImpactVelocity)
 {

@@ -56,22 +56,23 @@ public:
     bool  sfired = false;
     bool  hiteffect = false;
     bool  brecvdamage = false;
+    bool  bselectweapon = false;
     // ³ªÀÌ¾Æ°¡¶ó ½¸ ÀÌÆÑÆ®
     FVector Sshot;
     FVector Eshot;
     // ³ªÀÌ¾Æ°¡¶ó È÷ÆÃ ÀÌÆÑÆ®
     FVector Hshot;
     //¼¦°Ç ½¸ ÀÌÆÑÆ®
-    FVector sSshot;
-    FVector sEshot;
-    FVector sEshot1;
-    FVector sEshot2;
-    FVector sEshot3;
-    FVector sEshot4;
-    FVector sEshot5;
-    FVector sEshot6;
-    FVector sEshot7;
-    FVector sEshot8;
+   FVector sSshot;
+   FRotator sEshot;
+   FRotator sEshot1;
+   FRotator sEshot2;
+   FRotator sEshot3;
+   FRotator sEshot4;
+   FRotator sEshot5;
+   FRotator sEshot6;
+   FRotator sEshot7;
+   FRotator sEshot8;
     
     /////////////////
     FVector FMyLocation;
@@ -203,7 +204,7 @@ public:
     void Send_Fire_Effect(int attack_id, FVector ImLoc, FRotator ImRot, int wtype);
     void Send_AttackPacket(int attack_id, FVector SLoc, FVector ELoc);
     void Send_Damage_Packet(int damaged_id, float damage);
-    void Send_ShotGun_packet(int attack_id, TArray<FVector> ServerBeamStart, TArray<FVector> ServerBeamEnd, int size);
+    void Send_ShotGun_packet(int attack_id, FVector ServerBeamStart, TArray<FRotator> ServerBeamEnd, int size);
     void Send_ShotGun_damaged_packet(int damaged_id1, int damaged_id2, int damaged_id3, float damaged1, float damaged2, float damaged3);
     virtual bool Init() override;
     virtual uint32 Run() override;
