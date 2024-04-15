@@ -602,6 +602,30 @@ void process_packet(int s_id, char* p)
 
 		break;
 	}
+	case CS_NiAGARA: {
+		CS_NIAGARA_SYNC_PACKET* packet = reinterpret_cast<CS_NIAGARA_SYNC_PACKET*>(p);
+		CLIENT& cl = clients[packet->id];
+		cl.p_type = packet->playertype;
+		for (auto& other : clients) {
+			if (other._s_id == cl._s_id) continue;
+			other.state_lock.lock();
+			if (ST_INGAME != other._state) {
+				other.state_lock.unlock();
+				continue;
+			}
+			else other.state_lock.unlock();
+			CS_NIAGARA_SYNC_PACKET packet;
+			packet.id = cl._s_id;
+			packet.size = sizeof(packet);
+			packet.type = SC_NiAGARA;
+			packet.playertype = cl.p_type;
+			//packet.weapon_type = cl.w_type;
+		//printf_s("[Send put object] id : %d, location : (%f,%f,%f), yaw : %f\n", packet.id, packet.x, packet.y, packet.z, packet.yaw);
+			cout << "이거 누구한테 감 :  ?" << other._s_id << endl;
+			other.do_send(sizeof(packet), &packet);
+			break;
+		}
+	}
 	default:
 		cout << " 오류패킷타입 : " << p << endl;
 		break;

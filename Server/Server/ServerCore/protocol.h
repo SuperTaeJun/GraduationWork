@@ -43,6 +43,8 @@ const char CS_DAMAGE = 8;
 const char CS_SIGNAl = 9;
 const char CS_SHOTGUN_BEAM = 10;
 const char CS_SHOTGUN_DAMAGED = 11;
+const char CS_NiAGARA = 12;
+
 
 
 const char SC_LOGIN_OK = 1;
@@ -56,7 +58,7 @@ const char SC_EFFECT = 8;
 const char SC_PLAYER_DAMAGE = 9;
 const char SC_SHOTGUN_BEAM = 10;
 const char SC_SHOTGUN_DAMAGED = 11;
-
+const char SC_NiAGARA = 12;
 //const char CS_PACKET_DAMAGE = 7;
 //const char CS_PACKET_GET_ITEM = 8;
 //
@@ -231,6 +233,12 @@ struct SC_SHOTGUN_DAMAGED_CHANGE_PACKET {
 	float newhp1;
 	float newhp2;
 	float newhp3;
+};
+struct CS_NIAGARA_SYNC_PACKET {
+	unsigned char size;
+	unsigned char type;
+	int id;
+	PlayerType playertype;
 };
 #pragma pack(pop)
 

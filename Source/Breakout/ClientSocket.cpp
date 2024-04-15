@@ -231,6 +231,12 @@ bool ClientSocket::PacketProcess(char* ptr)
 		MyCharacterController->SetHp(player.damage);
 		break;
 	}
+	case SC_NiAGARA: {
+		CS_NIAGARA_SYNC_PACKET* packet = reinterpret_cast<CS_NIAGARA_SYNC_PACKET*>(ptr);
+		PlayerInfo.players[packet->id].p_type = packet->playertype;
+		PlayerInfo.players[packet->id].bniagara = true;
+		break;
+	}
 
 	default:
 		break;
@@ -407,6 +413,14 @@ void ClientSocket::Send_ShotGun_damaged_packet(int damaged_id1, int damaged_id2,
 	packet.damage2 = damaged3;
 
 	SendPacket(&packet);
+}
+void ClientSocket::Send_Niagara_packet(int clientid, PlayerType type)
+{
+	CS_NIAGARA_SYNC_PACKET packet;
+	packet.size = sizeof(packet);
+	packet.type = CS_NiAGARA;
+	packet.id = clientid;
+	packet.playertype = type;
 }
 bool ClientSocket::Init()
 {

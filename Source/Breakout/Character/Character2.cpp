@@ -8,9 +8,10 @@
 #include "Kismet/GameplayStatics.h"
 #include "Components/ArrowComponent.h"
 #include "Player/CharacterController.h"
-
+#include "Game/BOGameInstance.h"
 #include "InputMappingContext.h"
 #include "EnhancedInputComponent.h"
+#include "../../Server/Server/ServerCore/protocol.h"
 #include "EnhancedInputSubsystems.h"
 ACharacter2::ACharacter2()
 {
@@ -38,7 +39,7 @@ ACharacter2::ACharacter2()
 void ACharacter2::BeginPlay()
 {
 	Super::BeginPlay();
-
+	inst = Cast<UBOGameInstance>(GetGameInstance());
 	DashPoint = 3;
 	if (MainController)
 	{
@@ -92,6 +93,8 @@ void ACharacter2::Skill_S(const FInputActionValue& Value)
 		GetWorld()->GetTimerManager().SetTimer(DashTimer, this, &ACharacter2::DashFinishSetup, 0.2, false);
 
 		//스킬 패킷
+		if(inst)
+			Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Niagara_packet(Cast<ACharacterBase>(GetOwner())->_SessionId, PlayerType::Character2);
 	}
 }
 
@@ -149,4 +152,31 @@ void ACharacter2::FinishDashTimer()
 void ACharacter2::CoolTimeDashTimer()
 {
 	bCoolTimeFinish = true;
+}
+
+void ACharacter2::ServerNiagaraSync()
+{
+	if (DashPoint > 0 && !GetMovementComponent()->IsFalling())
+	{
+		DashSetup(DashSpeed, 100000000.f, FRotator(0.f, 0.f, 10000000.f), true);
+		NiagaraComp->Activate();
+		//bDash = true;
+		//DashStart();
+		GetWorld()->GetTimerManager().SetTimer(DashTimer, this, &ACharacter2::ServerDashFinish, 0.2, false);
+
+		//스킬 패킷
+		
+	}
+}
+
+void ACharacter2::ServerDashFinish()
+{
+
+
+	MovementComp->MaxAcceleration = OldMaxAcceleration;
+	MovementComp->MaxWalkSpeed = OldMaxWalkSpeed;
+	MovementComp->RotationRate = OldRotationRate;
+	GetMesh()->SetHiddenInGame(false, true);
+	CanJump = true;
+	//EnableInput(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 }

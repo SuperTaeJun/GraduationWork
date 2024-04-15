@@ -169,4 +169,5 @@ public:
 	bool login_cond;
 	
 	UBOGameInstance* inst;
+
 };

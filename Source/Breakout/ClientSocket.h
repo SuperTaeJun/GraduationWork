@@ -57,6 +57,7 @@ public:
     bool  hiteffect = false;
     bool  brecvdamage = false;
     bool  bselectweapon = false;
+    bool  bniagara = false;
     // ³ªÀÌ¾Æ°¡¶ó ½¸ ÀÌÆÑÆ®
     FVector Sshot;
     FVector Eshot;
@@ -206,6 +207,7 @@ public:
     void Send_Damage_Packet(int damaged_id, float damage);
     void Send_ShotGun_packet(int attack_id, FVector ServerBeamStart, TArray<FRotator> ServerBeamEnd, int size);
     void Send_ShotGun_damaged_packet(int damaged_id1, int damaged_id2, int damaged_id3, float damaged1, float damaged2, float damaged3);
+    void Send_Niagara_packet(int clientid, PlayerType type);
     virtual bool Init() override;
     virtual uint32 Run() override;
     virtual void Stop() override;
