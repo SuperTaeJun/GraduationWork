@@ -26,7 +26,9 @@
 #include "Camera/CameraComponent.h"
 #include "NiagaraFunctionLibrary.h"
 #include "NiagaraComponent.h"
+#include "NiagaraActor.h"
 #include "TimerManager.h"
+
 #include "../../Server/Server/ServerCore/protocol.h"
 #include <string>
 #include "ClientSocket.h"
@@ -638,6 +640,7 @@ bool ACharacterController::UpdateWorld()
 				if (Cast<ACharacter4>(OtherPlayer)) {
 					ACharacter4* Niagaraplayer = Cast<ACharacter4>(OtherPlayer);
 					Niagaraplayer->ServerStartNiagara();
+					ServerTemp->Destroy();
 		/*			Niagaraplayer->GetNiagaraComp()->Activate();
 					Niagaraplayer->GetMesh()->SetVisibility(true, false);
 					Niagaraplayer->GetCurWeapon()->GetWeaponMesh()->SetVisibility(true);*/

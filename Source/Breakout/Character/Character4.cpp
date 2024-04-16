@@ -112,8 +112,8 @@ void ACharacter4::SetLocation()
 void ACharacter4::ServerStartNiagara()
 {
 	NiagaraComp->Activate();
-	//ÆÐÅ¶
-	GetMesh()->SetVisibility(false, true);
+	GetMesh()->SetVisibility(false, false);
+	CurWeapon->GetWeaponMesh()->SetVisibility(false);
 	GetWorld()->GetTimerManager().SetTimer(TelpoTimer, this, &ACharacter4::ServerSetLocation, 0.5f, false);
 }
 
@@ -124,5 +124,4 @@ void ACharacter4::ServerSetLocation()
 	NiagaraComp->Deactivate();
 	GetMesh()->SetVisibility(true, false);
 	CurWeapon->GetWeaponMesh()->SetVisibility(true);
-	Temp->Destroy();
 }
