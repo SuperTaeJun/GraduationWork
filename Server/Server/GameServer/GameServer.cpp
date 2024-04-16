@@ -70,7 +70,7 @@ int main()
 		clients[i]._s_id = i;
 	for (int i = 0; i < MAX_OBJ; ++i) {
 		objects[i].ob_id = i;
-		cout << objects[i].ob_id << endl;
+		//cout << objects[i].ob_id << endl;
 	}
 	g_timer = CreateEvent(NULL, FALSE, FALSE, NULL);
 	vector <thread> worker_threads;
@@ -299,7 +299,7 @@ void process_packet(int s_id, char* p)
 		}
 		cout << "몇명 들어옴 : " << ingamecount << endl;
 		//m.unlock();
-		if (ingamecount >= 2)
+		if (ingamecount >= 3)
 		{
 			for (auto& player : clients) {
 				if (ST_INGAME != player._state)
