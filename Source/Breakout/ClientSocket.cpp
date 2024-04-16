@@ -242,6 +242,16 @@ bool ClientSocket::PacketProcess(char* ptr)
 	case SC_NiAGARA_CANCEL: {
 		CS_NIAGARA_CANCEL_PACKET* packet = reinterpret_cast<CS_NIAGARA_CANCEL_PACKET*>(ptr);
 		PlayerInfo.players[packet->id].bniagara = false;
+		break;
+	}
+	case SC_NiAGARA_CH1: {
+		CS_NIAGARA_PACKETCH1* packet = reinterpret_cast<CS_NIAGARA_PACKETCH1*>(ptr);
+		PlayerInfo.players[packet->id].p_type = packet->playertype;
+		PlayerInfo.players[packet->id].CH1NiaLoc.X = packet->x;
+		PlayerInfo.players[packet->id].CH1NiaLoc.Y = packet->y;
+		PlayerInfo.players[packet->id].CH1NiaLoc.Z = packet->z;
+		PlayerInfo.players[packet->id].bniagara = true;
+		break;
 	}
 	default:
 		break;
@@ -438,6 +448,18 @@ void ClientSocket::Send_Niagara_cancel(bool bcancel, int id)
 	packet.id = id;
 	SendPacket(&packet);
 
+}
+void ClientSocket::Send_Niagara_packetch1(int clinetid, PlayerType type, FVector loc)
+{
+	CS_NIAGARA_PACKETCH1 packet;
+	packet.size = sizeof(packet);
+	packet.type = CS_NiAGARA_CH1;
+	packet.id = clinetid;
+	packet.x = loc.X;
+	packet.y = loc.Y;
+	packet.z = loc.Z;
+
+	SendPacket(&packet);
 }
 void ClientSocket::Send_Start_game_packet()
 {

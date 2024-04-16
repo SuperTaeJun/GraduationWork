@@ -3,11 +3,13 @@
 
 #include "Character/Character1.h"
 #include "NiagaraFunctionLibrary.h"
-
+#include "Game/BOGameInstance.h"
+#include "ClientSocket.h"
 #include "InputMappingContext.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "Player/CharacterController.h"
+#include "../../Server/Server/ServerCore/protocol.h"
 #include "Game/BOGameMode.h"
 
 ACharacter1::ACharacter1()
@@ -20,6 +22,7 @@ ACharacter1::ACharacter1()
 void ACharacter1::BeginPlay()
 {
 	Super::BeginPlay();
+	inst = Cast<UBOGameInstance>(GetGameInstance());
 	if(MainController)
 		MainController->SetHUDCoolVisibility(false);
 	MaxSaveTime = 15.f;
@@ -59,6 +62,8 @@ void ACharacter1::Tick(float DeltaTime)
 			UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), TimeReplayNiagara, CurLoc);
 			//패킷 - id,캐릭터타입,CurLoc
 			NiagaraSpawnSavedTime = 0.f;
+			if (inst)
+				Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Niagara_packetch1(_SessionId, PlayerType::Character1, CurLoc);
 		}
 	}
 }
@@ -97,6 +102,7 @@ void ACharacter1::Skill_E(const FInputActionValue& Value)
 
 	MainController->SetHUDCoolVisibility(true);
 	MainController->SetHUDSkillOpacity(0.3);
+
 }
 
 void ACharacter1::Skill_T(const FInputActionValue& Value)

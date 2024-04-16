@@ -65,6 +65,10 @@ protected:
 	TObjectPtr<UClass> Anim3;
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<UClass> Anim4;
+	// 나이아가라 스킬 생성 동기화 용 
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<class UNiagaraSystem> TimeReplayNiagaraRef;
+
 
 	// 보조무기 생산 시 애니메이션 동기화 용
 	UPROPERTY(EditAnywhere, Category = Animation)

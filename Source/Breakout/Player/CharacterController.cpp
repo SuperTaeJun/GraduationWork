@@ -24,10 +24,12 @@
 #include "Weapon/ProjectileBullet.h"
 #include "Components/CapsuleComponent.h"
 #include "Camera/CameraComponent.h"
-//#include "Network/PacketData.h"
+#include "NiagaraFunctionLibrary.h"
+
 #include "../../Server/Server/ServerCore/protocol.h"
 #include <string>
 #include "ClientSocket.h"
+
 
 ACharacterController::ACharacterController()
 {
@@ -428,7 +430,9 @@ bool ACharacterController::UpdateWorld()
 			Firegun.X = info->Sshot.X;
 			Firegun.Y = info->Sshot.Y;
 			Firegun.Z = info->Sshot.Z;
-
+			//-----------------------
+			// 1번 캐릭터 나이아가라 벡터
+			FVector ch1skill;
 			//------------------------
 			//히팅 이팩트
 			FVector HEloc;
@@ -566,7 +570,23 @@ bool ACharacterController::UpdateWorld()
 				GetWorld()->SpawnActor<AProjectileBullet>(ShotgunRef, Vshotgun, Rshotgun8, SpawnParameters);
 				info->sfired = false;
 			}
-			
+			UE_LOG(LogTemp, Warning, TEXT("AKAKAKAKAK %d"), info->bniagara);
+		
+			if (info->p_type == PlayerType::Character1 && info->bniagara == true)
+			{
+				UE_LOG(LogTemp, Warning, TEXT("DADAD"));
+				if (Cast<ACharacter1>(OtherPlayer)) {
+					ACharacter1* Niagaraplayer = Cast<ACharacter1>(OtherPlayer);
+					Niagaraplayer->GetMesh()->SetHiddenInGame(true, true);
+					ch1skill.X = info->CH1NiaLoc.X;
+					ch1skill.Y = info->CH1NiaLoc.Y;
+					ch1skill.Z = info->CH1NiaLoc.Z;
+					UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), TimeReplayNiagaraRef, ch1skill);
+					info->bniagara = false;
+				}
+
+			}
+
 			if (info->p_type == PlayerType::Character2 && info->bniagara == true) {
 
 				if (Cast<ACharacter2>(OtherPlayer)) {
@@ -592,6 +612,9 @@ bool ACharacterController::UpdateWorld()
 					Niagaraplayer->ServerGhostEnd();
 				}
 			}
+		
+
+
 		}
 	}
 	return true;

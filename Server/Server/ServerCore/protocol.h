@@ -46,7 +46,7 @@ const char CS_SHOTGUN_DAMAGED = 11;
 const char CS_NiAGARA = 12;
 const char CS_NiAGARA_CANCEL = 13;
 const char CS_START_GAME = 14;
-
+const char CS_NiAGARA_CH1 = 15;
 
 
 const char SC_LOGIN_OK = 1;
@@ -62,7 +62,7 @@ const char SC_SHOTGUN_BEAM = 10;
 const char SC_SHOTGUN_DAMAGED = 11;
 const char SC_NiAGARA = 12;
 const char SC_NiAGARA_CANCEL = 13;
-
+const char SC_NiAGARA_CH1 = 15;
 //const char CS_PACKET_DAMAGE = 7;
 //const char CS_PACKET_GET_ITEM = 8;
 //
@@ -250,10 +250,18 @@ struct CS_NIAGARA_CANCEL_PACKET {
 	bool cancel;
 	int id;
 };
+struct CS_NIAGARA_PACKETCH1 {
+	unsigned char size;
+	unsigned char type;
+	int id;
+	PlayerType playertype;
+	float x, y, z;
+};
 struct CS_START_GAME_PACKET {
 	unsigned char size;
 	unsigned char type;
 };
+
 #pragma pack(pop)
 
 

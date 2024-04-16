@@ -299,7 +299,7 @@ void process_packet(int s_id, char* p)
 		}
 		cout << "몇명 들어옴 : " << ingamecount << endl;
 		//m.unlock();
-		if (ingamecount >= 3)
+		if (ingamecount >= 2)
 		{
 			for (auto& player : clients) {
 				if (ST_INGAME != player._state)
@@ -651,6 +651,35 @@ void process_packet(int s_id, char* p)
 			cout << "이거 누구한테 감 :  ?" << other._s_id << endl;
 			//	cout << "나이아가라" << endl;
 
+			other.do_send(sizeof(packet), &packet);
+
+		}
+		break;
+	}
+	case CS_NiAGARA_CH1: {
+		cout << "durdur";
+		CS_NIAGARA_PACKETCH1* packet = reinterpret_cast<CS_NIAGARA_PACKETCH1*>(p);
+		CLIENT& cl = clients[packet->id];
+		cl.p_type = packet->playertype;
+		cl.x = packet->x;
+		cl.y = packet->y;
+		cl.z = packet->z;
+		for (auto& other : clients) {
+			if (other._s_id == cl._s_id) continue;
+			other.state_lock.lock();
+			if (ST_INGAME != other._state) {
+				other.state_lock.unlock();
+				continue;
+			}
+			else other.state_lock.unlock();
+			CS_NIAGARA_PACKETCH1 packet;
+			packet.id = cl._s_id;
+			packet.size = sizeof(packet);
+			packet.type = SC_NiAGARA_CH1;
+			packet.playertype = cl.p_type;
+			packet.x = cl.x;
+			packet.y = cl.y;
+			packet.z = cl.z;
 			other.do_send(sizeof(packet), &packet);
 
 		}
