@@ -2,7 +2,7 @@
 #define SERVER_PORT		8001
 #include <vector>
 #include <array>
-#define SERVER_IP		"192.168.219.101"
+#define SERVER_IP		"192.168.121.161"
 #define MAX_INFO_SIZE   20
 //const char CS_PACKET_ATTACK = 3;
 enum PlayerType
