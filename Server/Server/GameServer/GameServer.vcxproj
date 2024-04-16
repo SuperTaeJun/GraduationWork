@@ -161,7 +161,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="CLIENT.cpp" />
+    <ClCompile Include="EscapeObject.cpp" />
     <ClCompile Include="GameServer.cpp" />
+    <ClCompile Include="LockQueue.cpp" />
     <ClCompile Include="Overlap.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -173,6 +175,8 @@
   <ItemGroup>
     <ClInclude Include="CLIENT.h" />
     <ClInclude Include="Enum.h" />
+    <ClInclude Include="EscapeObject.h" />
+    <ClInclude Include="LockQueue.h" />
     <ClInclude Include="Overlap.h" />
     <ClInclude Include="pch.h" />
   </ItemGroup>

@@ -9,6 +9,9 @@
 #include <stack>
 #include <map>
 #include <set>
+#include <thread>
+#include <string>
+#include <atomic>
 #include <unordered_map>
 #include <unordered_set>
 #include <thread>
