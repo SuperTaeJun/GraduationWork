@@ -229,7 +229,7 @@ void ACharacterController::SetHUDMatchingUi(float Time)
 	{
 		MainHUD->MatchingUi->WaitingText->SetVisibility(ESlateVisibility::Hidden);
 		MainHUD->MatchingUi->ContingText->SetVisibility(ESlateVisibility::Visible);
-		FString CountText = FString::Printf(TEXT("%d"), FMath::FloorToInt(Time)+1);
+		FString CountText = FString::Printf(TEXT("%d"), FMath::FloorToInt(Time) + 1);
 		MainHUD->MatchingUi->ContingText->SetText(FText::FromString(CountText));
 	}
 }
@@ -361,7 +361,7 @@ void ACharacterController::SetAttack(int _id)
 {
 	UWorld* World = GetWorld();
 	PlayerInfo->players[_id].fired = true;
-	
+
 }
 void ACharacterController::SetHitEffect(int _id)
 {
@@ -402,8 +402,8 @@ bool ACharacterController::UpdateWorld()
 
 			if (!info->IsAlive) continue;
 
-		
-		
+
+
 
 			if (!OtherPlayer || OtherPlayer->_SessionId == -1 || OtherPlayer->_SessionId == id)
 			{
@@ -439,7 +439,7 @@ bool ACharacterController::UpdateWorld()
 			HEloc.X = info->Hshot.X;
 			HEloc.Y = info->Hshot.Y;
 			HEloc.Z = info->Hshot.Z;
-			
+
 			FRotator EffectRot;
 			EffectRot.Pitch = info->FEffect.Pitch;
 			EffectRot.Yaw = info->FEffect.Yaw;
@@ -454,20 +454,20 @@ bool ACharacterController::UpdateWorld()
 					FName RifleSocketName = FName("RifleSocket");
 					OtherPlayer->SetWeapon(Rifle, RifleSocketName);
 					//UE_LOG(LogTemp, Warning, TEXT("RifleSocket"));
-				
+
 				}
 				else if (info->w_type == WeaponType::SHOTGUN)
 				{
 					UE_LOG(LogTemp, Warning, TEXT("SHOTGUN"));
 					FName ShotgunSocketName = FName("ShotgunSocket");
 					OtherPlayer->SetWeapon(ShotGun, ShotgunSocketName);
-					
+
 				}
 				else if (info->w_type == WeaponType::LAUNCHER)
 				{
 					FName LancherSocketName = FName("LancherSocket");
 					OtherPlayer->SetWeapon(Lancher, LancherSocketName);
-					
+
 				}
 				else
 				{
@@ -532,7 +532,7 @@ bool ACharacterController::UpdateWorld()
 			Rshotgun.Roll = info->sEshot.Roll;
 			Rshotgun1.Pitch = info->sEshot1.Pitch;
 			Rshotgun1.Yaw = info->sEshot1.Yaw;
-			Rshotgun1.Roll = info->sEshot1.Roll;			
+			Rshotgun1.Roll = info->sEshot1.Roll;
 			Rshotgun2.Pitch = info->sEshot2.Pitch;
 			Rshotgun2.Yaw = info->sEshot2.Yaw;
 			Rshotgun2.Roll = info->sEshot2.Roll;
@@ -570,24 +570,27 @@ bool ACharacterController::UpdateWorld()
 				GetWorld()->SpawnActor<AProjectileBullet>(ShotgunRef, Vshotgun, Rshotgun8, SpawnParameters);
 				info->sfired = false;
 			}
-			UE_LOG(LogTemp, Warning, TEXT("AKAKAKAKAK %d"), info->bniagara);
-		
-			if (info->p_type == PlayerType::Character1 && info->bniagara == true)
+		//	UE_LOG(LogTemp, Warning, TEXT("AKAKAKAKAK %d"), info->bniagara);
+
+			UE_LOG(LogTemp, Warning, TEXT("AKAKAKAKAK %d"), info->p_type);
+			if (info->bniagara == true)
 			{
-				UE_LOG(LogTemp, Warning, TEXT("DADAD"));
-				if (Cast<ACharacter1>(OtherPlayer)) {
-					ACharacter1* Niagaraplayer = Cast<ACharacter1>(OtherPlayer);
-					Niagaraplayer->GetMesh()->SetHiddenInGame(true, true);
-					ch1skill.X = info->CH1NiaLoc.X;
-					ch1skill.Y = info->CH1NiaLoc.Y;
-					ch1skill.Z = info->CH1NiaLoc.Z;
-					UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), TimeReplayNiagaraRef, ch1skill);
-					info->bniagara = false;
-				}
+
+				if (info->p_type == PlayerType::Character1)
+
+					if (Cast<ACharacter1>(OtherPlayer)) {
+						ACharacter1* Niagaraplayer = Cast<ACharacter1>(OtherPlayer);
+						Niagaraplayer->GetMesh()->SetHiddenInGame(true, true);
+						ch1skill.X = info->CH1NiaLoc.X;
+						ch1skill.Y = info->CH1NiaLoc.Y;
+						ch1skill.Z = info->CH1NiaLoc.Z;
+						UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), TimeReplayNiagaraRef, ch1skill);
+						info->bniagara = false;
+					}
+
 
 			}
-
-			if (info->p_type == PlayerType::Character2 && info->bniagara == true) {
+			else if (info->p_type == PlayerType::Character2 && info->bniagara == true) {
 
 				if (Cast<ACharacter2>(OtherPlayer)) {
 					ACharacter2* Niagaraplayer = Cast<ACharacter2>(OtherPlayer);
@@ -612,7 +615,7 @@ bool ACharacterController::UpdateWorld()
 					Niagaraplayer->ServerGhostEnd();
 				}
 			}
-		
+
 
 
 		}

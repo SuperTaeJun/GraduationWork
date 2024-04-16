@@ -455,6 +455,7 @@ void ClientSocket::Send_Niagara_packetch1(int clinetid, PlayerType type, FVector
 	packet.size = sizeof(packet);
 	packet.type = CS_NiAGARA_CH1;
 	packet.id = clinetid;
+	packet.playertype = type;
 	packet.x = loc.X;
 	packet.y = loc.Y;
 	packet.z = loc.Z;
