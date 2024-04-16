@@ -20,6 +20,7 @@ public:
 	virtual void Tick(float DeltaTime);
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent);
 	class UBOGameInstance* inst;
+
 protected:
 	virtual void Destroyed();
 

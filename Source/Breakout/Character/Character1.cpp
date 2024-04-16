@@ -102,7 +102,8 @@ void ACharacter1::Skill_E(const FInputActionValue& Value)
 
 	MainController->SetHUDCoolVisibility(true);
 	MainController->SetHUDSkillOpacity(0.3);
-
+	if (inst)
+		Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Niagara_cancel(true, _SessionId);
 }
 
 void ACharacter1::Skill_T(const FInputActionValue& Value)

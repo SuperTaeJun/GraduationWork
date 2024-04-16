@@ -570,9 +570,8 @@ bool ACharacterController::UpdateWorld()
 				GetWorld()->SpawnActor<AProjectileBullet>(ShotgunRef, Vshotgun, Rshotgun8, SpawnParameters);
 				info->sfired = false;
 			}
-		//	UE_LOG(LogTemp, Warning, TEXT("AKAKAKAKAK %d"), info->bniagara);
-
-			UE_LOG(LogTemp, Warning, TEXT("AKAKAKAKAK %d"), info->p_type);
+		
+		
 			if (info->bniagara == true)
 			{
 
@@ -580,7 +579,8 @@ bool ACharacterController::UpdateWorld()
 
 					if (Cast<ACharacter1>(OtherPlayer)) {
 						ACharacter1* Niagaraplayer = Cast<ACharacter1>(OtherPlayer);
-						Niagaraplayer->GetMesh()->SetHiddenInGame(true, true);
+						Niagaraplayer->GetMesh()->SetVisibility(false);
+						Niagaraplayer->GetCurWeapon()->GetWeaponMesh()->SetVisibility(false);
 						ch1skill.X = info->CH1NiaLoc.X;
 						ch1skill.Y = info->CH1NiaLoc.Y;
 						ch1skill.Z = info->CH1NiaLoc.Z;
@@ -589,6 +589,14 @@ bool ACharacterController::UpdateWorld()
 					}
 
 
+			}
+			else if (info->p_type == PlayerType::Character1 && info->bniagara == false) {
+				if (Cast<ACharacter1>(OtherPlayer)) {
+					ACharacter1* Niagaraplayer = Cast<ACharacter1>(OtherPlayer);
+					Niagaraplayer->GetMesh()->SetVisibility(true);
+					Niagaraplayer->GetCurWeapon()->GetWeaponMesh()->SetVisibility(true);
+					info->bniagara = false;
+				}
 			}
 			else if (info->p_type == PlayerType::Character2 && info->bniagara == true) {
 
@@ -615,7 +623,7 @@ bool ACharacterController::UpdateWorld()
 					Niagaraplayer->ServerGhostEnd();
 				}
 			}
-
+			
 
 
 		}

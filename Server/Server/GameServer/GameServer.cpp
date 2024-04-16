@@ -657,7 +657,7 @@ void process_packet(int s_id, char* p)
 		break;
 	}
 	case CS_NiAGARA_CH1: {
-		cout << "durdur";
+		
 		CS_NIAGARA_PACKETCH1* packet = reinterpret_cast<CS_NIAGARA_PACKETCH1*>(p);
 		CLIENT& cl = clients[packet->id];
 		cl.p_type = packet->playertype;
