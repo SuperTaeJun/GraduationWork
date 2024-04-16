@@ -625,28 +625,32 @@ bool ACharacterController::UpdateWorld()
 			}
 			else if (info->bniagara == true && info->p_type == PlayerType::Character4)
 			{
-
-				FActorSpawnParameters SpawnParameters;
-				SpawnParameters.Owner = OtherPlayer;
-				SpawnParameters.Instigator = OtherPlayer;
-				ch4skill.X = info->CH1NiaLoc.X;
-				ch4skill.Y = info->CH1NiaLoc.Y;
-				ch4skill.Z = info->CH1NiaLoc.Z;
-				UE_LOG(LogTemp, Warning, TEXT("Dadadad"));
-				ServerTemp = GetWorld()->SpawnActor<ANiagaraActor>(NiagaraActorRef, ch4skill, FRotator::ZeroRotator,SpawnParameters);
+				if (ACharacter4* Niagaraplayer =Cast<ACharacter4>(OtherPlayer)) {
+					Niagaraplayer->SaveCurLocation();
+					FActorSpawnParameters SpawnParameters;
+					SpawnParameters.Owner = OtherPlayer;
+					SpawnParameters.Instigator = OtherPlayer;
+					ch4skill.X = info->CH1NiaLoc.X;
+					ch4skill.Y = info->CH1NiaLoc.Y;
+					ch4skill.Z = info->CH1NiaLoc.Z;
+					GetWorld()->SpawnActor<ANiagaraActor>(NiagaraActorRef, ch4skill, FRotator::ZeroRotator, SpawnParameters);
+				}
 
 			}
 			else if (info->p_type == PlayerType::Character4 && info->bniagara == false) {
 				if (Cast<ACharacter4>(OtherPlayer)) {
 					ACharacter4* Niagaraplayer = Cast<ACharacter4>(OtherPlayer);
-					Niagaraplayer->ServerStartNiagara();
-					ServerTemp->Destroy();
-		/*			Niagaraplayer->GetNiagaraComp()->Activate();
-					Niagaraplayer->GetMesh()->SetVisibility(true, false);
-					Niagaraplayer->GetCurWeapon()->GetWeaponMesh()->SetVisibility(true);*/
-					//FTimerHandle TelpoTimer;
-					//info->bniagara = false;
+					Niagaraplayer->GetNiagaraComp()->Activate();
+					Niagaraplayer->GetMesh()->SetVisibility(false, false);
+					Niagaraplayer->GetCurWeapon()->GetWeaponMesh()->SetVisibility(false);
 				}
+			}
+			else if(info->p_type == PlayerType::Character4 && info->bch4end == true){
+				ACharacter4* Niagaraplayer = Cast<ACharacter4>(OtherPlayer);
+				Niagaraplayer->GetNiagaraComp()->Activate();
+				Niagaraplayer->GetMesh()->SetVisibility(true, false);
+				Niagaraplayer->GetCurWeapon()->GetWeaponMesh()->SetVisibility(true);
+				info->bch4end = false;
 			}
 
 		}

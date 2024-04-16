@@ -107,21 +107,6 @@ void ACharacter4::SetLocation()
 	GetMesh()->SetVisibility(true, true);
 
 	Temp->Destroy();
-}
-
-void ACharacter4::ServerStartNiagara()
-{
-	NiagaraComp->Activate();
-	GetMesh()->SetVisibility(false, false);
-	CurWeapon->GetWeaponMesh()->SetVisibility(false);
-	GetWorld()->GetTimerManager().SetTimer(TelpoTimer, this, &ACharacter4::ServerSetLocation, 0.5f, false);
-}
-
-void ACharacter4::ServerSetLocation()
-{
-	SetActorLocation(SavedLocation);
-
-	NiagaraComp->Deactivate();
-	GetMesh()->SetVisibility(true, false);
-	CurWeapon->GetWeaponMesh()->SetVisibility(true);
+	if (inst)
+		Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Signal_packet(_SessionId);
 }

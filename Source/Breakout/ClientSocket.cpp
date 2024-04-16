@@ -253,6 +253,11 @@ bool ClientSocket::PacketProcess(char* ptr)
 		PlayerInfo.players[packet->id].bniagara = true;
 		break;
 	}
+	case SC_SIGNAL: {
+		CS_SIGNAL_PACKET* packet = reinterpret_cast<CS_SIGNAL_PACKET*>(ptr);
+		PlayerInfo.players[packet->id].bch4end = true;
+		break;
+	}
 	default:
 		break;
 	}
@@ -469,6 +474,14 @@ void ClientSocket::Send_Start_game_packet()
 	packet.type = CS_START_GAME;
 	SendPacket(&packet);
 
+}
+void ClientSocket::Send_Signal_packet(int id)
+{
+	CS_SIGNAL_PACKET packet;
+	packet.size = sizeof(packet);
+	packet.type = CS_SIGNAl;
+	packet.id = id;
+	SendPacket(&packet);
 }
 bool ClientSocket::Init()
 {

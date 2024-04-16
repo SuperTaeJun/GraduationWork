@@ -658,6 +658,9 @@ void process_packet(int s_id, char* p)
 	}
 	case CS_NiAGARA_CH1: {
 		
+
+
+
 		CS_NIAGARA_PACKETCH1* packet = reinterpret_cast<CS_NIAGARA_PACKETCH1*>(p);
 		CLIENT& cl = clients[packet->id];
 		cl.p_type = packet->playertype;
@@ -680,6 +683,26 @@ void process_packet(int s_id, char* p)
 			packet.x = cl.x;
 			packet.y = cl.y;
 			packet.z = cl.z;
+			other.do_send(sizeof(packet), &packet);
+
+		}
+		break;
+	}
+	case CS_SIGNAl:{
+		CS_SIGNAL_PACKET* packet = reinterpret_cast<CS_SIGNAL_PACKET*>(p);
+		CLIENT& cl = clients[packet->id];
+		for (auto& other : clients) {
+			if (other._s_id == cl._s_id) continue;
+			other.state_lock.lock();
+			if (ST_INGAME != other._state) {
+				other.state_lock.unlock();
+				continue;
+			}
+			else other.state_lock.unlock();
+			CS_SIGNAL_PACKET packet;
+			packet.id = cl._s_id;
+			packet.size = sizeof(packet);
+			packet.type = SC_SIGNAL;
 			other.do_send(sizeof(packet), &packet);
 
 		}

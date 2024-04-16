@@ -39,10 +39,8 @@ private:
 	bool TelepoChargeTime = true;
 	bool bSaved = false;
 	float CoolChargeTime = 0.f;
-	void SaveCurLocation();
 	void SetLocation();
 public:
-	void ServerStartNiagara();
-	void ServerSetLocation();
+	void SaveCurLocation();
 	class UBOGameInstance* inst;
 };

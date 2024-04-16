@@ -59,6 +59,7 @@ public:
 	bool  bselectweapon = false;
 	bool  bniagara = false;
 	bool  bniagarach1 = false;
+	bool  bch4end = false;
 	// ³ªÀÌ¾Æ°¡¶ó ½¸ ÀÌÆÑÆ®
 	FVector Sshot;
 	FVector Eshot;
@@ -214,6 +215,7 @@ public:
 	void Send_Niagara_cancel(bool bcancel, int id);
 	void Send_Niagara_packetch1(int clinetid, PlayerType type, FVector loc);
 	void Send_Start_game_packet();
+	void Send_Signal_packet(int id);
 	virtual bool Init() override;
 	virtual uint32 Run() override;
 	virtual void Stop() override;
