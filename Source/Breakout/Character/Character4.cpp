@@ -69,9 +69,9 @@ void ACharacter4::Skill_S(const FInputActionValue& Value)
 	else if(bSaved)
 	{
 		NiagaraComp->Activate();
+		//패킷
 		GetMesh()->SetVisibility(false, true);
 		GetWorld()->GetTimerManager().SetTimer(TelpoTimer, this, &ACharacter4::SetLocation, 0.5f, false);
-		//패킷
 	}
 }
 
