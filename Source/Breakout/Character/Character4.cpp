@@ -9,6 +9,9 @@
 #include "Player/CharacterController.h"
 #include "InputMappingContext.h"
 #include "EnhancedInputComponent.h"
+#include "Game/BOGameInstance.h"
+#include "Weapon/WeaponBase.h"
+#include "ClientSocket.h"
 #include "EnhancedInputSubsystems.h"
 ACharacter4::ACharacter4()
 {
@@ -22,7 +25,7 @@ void ACharacter4::BeginPlay()
 {
 	Super::BeginPlay();
 	TelepoChargeTime = true;
-
+	inst = Cast<UBOGameInstance>(GetGameInstance());
 	if(MainController)
 		MainController->SetHUDCoolVisibility(false);
 }
@@ -64,7 +67,8 @@ void ACharacter4::Skill_S(const FInputActionValue& Value)
 		SaveCurLocation();
 		FActorSpawnParameters SpawnParameters;
 		Temp = GetWorld()->SpawnActor<ANiagaraActor>(NiagaraActor, GetActorLocation(), GetActorRotation(), SpawnParameters);
-		//패킷
+		if (inst)
+			Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Niagara_packetch1(_SessionId, PlayerType::Character4, GetActorLocation());
 	}
 	else if(bSaved)
 	{
@@ -72,6 +76,8 @@ void ACharacter4::Skill_S(const FInputActionValue& Value)
 		//패킷
 		GetMesh()->SetVisibility(false, true);
 		GetWorld()->GetTimerManager().SetTimer(TelpoTimer, this, &ACharacter4::SetLocation, 0.5f, false);
+		if (inst)
+			Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Niagara_cancel(true, _SessionId);
 	}
 }
 
@@ -100,5 +106,23 @@ void ACharacter4::SetLocation()
 	NiagaraComp->Deactivate();
 	GetMesh()->SetVisibility(true, true);
 
+	Temp->Destroy();
+}
+
+void ACharacter4::ServerStartNiagara()
+{
+	NiagaraComp->Activate();
+	//패킷
+	GetMesh()->SetVisibility(false, true);
+	GetWorld()->GetTimerManager().SetTimer(TelpoTimer, this, &ACharacter4::ServerSetLocation, 0.5f, false);
+}
+
+void ACharacter4::ServerSetLocation()
+{
+	SetActorLocation(SavedLocation);
+
+	NiagaraComp->Deactivate();
+	GetMesh()->SetVisibility(true, false);
+	CurWeapon->GetWeaponMesh()->SetVisibility(true);
 	Temp->Destroy();
 }

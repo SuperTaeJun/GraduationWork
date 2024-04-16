@@ -20,6 +20,8 @@ public:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime);
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent);
+
+	class UNiagaraComponent* GetNiagaraComp() { return NiagaraComp; }
 protected:
 	virtual void Skill_S(const FInputActionValue& Value) override;
 	virtual void Skill_E(const FInputActionValue& Value) override;
@@ -39,5 +41,8 @@ private:
 	float CoolChargeTime = 0.f;
 	void SaveCurLocation();
 	void SetLocation();
-
+public:
+	void ServerStartNiagara();
+	void ServerSetLocation();
+	class UBOGameInstance* inst;
 };

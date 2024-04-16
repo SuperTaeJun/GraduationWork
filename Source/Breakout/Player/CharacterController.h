@@ -68,7 +68,8 @@ protected:
 	// 나이아가라 스킬 생성 동기화 용 
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<class UNiagaraSystem> TimeReplayNiagaraRef;
-
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class ANiagaraActor> NiagaraActorRef;
 
 	// 보조무기 생산 시 애니메이션 동기화 용
 	UPROPERTY(EditAnywhere, Category = Animation)
@@ -171,7 +172,7 @@ public:
 	char data[BUFSIZE] = { 0 };
 	int remainData = 0;
 	bool login_cond;
-	
+	class ANiagaraActor* ServerTemp;
 	UBOGameInstance* inst;
 
 };

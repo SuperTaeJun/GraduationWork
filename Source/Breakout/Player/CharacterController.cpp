@@ -25,7 +25,8 @@
 #include "Components/CapsuleComponent.h"
 #include "Camera/CameraComponent.h"
 #include "NiagaraFunctionLibrary.h"
-
+#include "NiagaraComponent.h"
+#include "TimerManager.h"
 #include "../../Server/Server/ServerCore/protocol.h"
 #include <string>
 #include "ClientSocket.h"
@@ -433,6 +434,7 @@ bool ACharacterController::UpdateWorld()
 			//-----------------------
 			// 1번 캐릭터 나이아가라 벡터
 			FVector ch1skill;
+			FVector ch4skill;
 			//------------------------
 			//히팅 이팩트
 			FVector HEloc;
@@ -572,22 +574,18 @@ bool ACharacterController::UpdateWorld()
 			}
 		
 		
-			if (info->bniagara == true)
+			if (info->bniagara == true && info->p_type == PlayerType::Character1)
 			{
-
-				if (info->p_type == PlayerType::Character1)
-
-					if (Cast<ACharacter1>(OtherPlayer)) {
-						ACharacter1* Niagaraplayer = Cast<ACharacter1>(OtherPlayer);
-						Niagaraplayer->GetMesh()->SetVisibility(false);
-						Niagaraplayer->GetCurWeapon()->GetWeaponMesh()->SetVisibility(false);
-						ch1skill.X = info->CH1NiaLoc.X;
-						ch1skill.Y = info->CH1NiaLoc.Y;
-						ch1skill.Z = info->CH1NiaLoc.Z;
-						UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), TimeReplayNiagaraRef, ch1skill);
-						info->bniagara = false;
-					}
-
+				if (Cast<ACharacter1>(OtherPlayer)) {
+					ACharacter1* Niagaraplayer = Cast<ACharacter1>(OtherPlayer);
+					Niagaraplayer->GetMesh()->SetVisibility(false);
+					Niagaraplayer->GetCurWeapon()->GetWeaponMesh()->SetVisibility(false);
+					ch1skill.X = info->CH1NiaLoc.X;
+					ch1skill.Y = info->CH1NiaLoc.Y;
+					ch1skill.Z = info->CH1NiaLoc.Z;
+					UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), TimeReplayNiagaraRef, ch1skill);
+					info->bniagara = false;
+				}
 
 			}
 			else if (info->p_type == PlayerType::Character1 && info->bniagara == false) {
@@ -623,8 +621,30 @@ bool ACharacterController::UpdateWorld()
 					Niagaraplayer->ServerGhostEnd();
 				}
 			}
-			
+			else if (info->bniagara == true && info->p_type == PlayerType::Character4)
+			{
 
+				FActorSpawnParameters SpawnParameters;
+				SpawnParameters.Owner = OtherPlayer;
+				SpawnParameters.Instigator = OtherPlayer;
+				ch4skill.X = info->CH1NiaLoc.X;
+				ch4skill.Y = info->CH1NiaLoc.Y;
+				ch4skill.Z = info->CH1NiaLoc.Z;
+				UE_LOG(LogTemp, Warning, TEXT("Dadadad"));
+				ServerTemp = GetWorld()->SpawnActor<ANiagaraActor>(NiagaraActorRef, ch4skill, FRotator::ZeroRotator,SpawnParameters);
+
+			}
+			else if (info->p_type == PlayerType::Character4 && info->bniagara == false) {
+				if (Cast<ACharacter4>(OtherPlayer)) {
+					ACharacter4* Niagaraplayer = Cast<ACharacter4>(OtherPlayer);
+					Niagaraplayer->ServerStartNiagara();
+		/*			Niagaraplayer->GetNiagaraComp()->Activate();
+					Niagaraplayer->GetMesh()->SetVisibility(true, false);
+					Niagaraplayer->GetCurWeapon()->GetWeaponMesh()->SetVisibility(true);*/
+					//FTimerHandle TelpoTimer;
+					//info->bniagara = false;
+				}
+			}
 
 		}
 	}
