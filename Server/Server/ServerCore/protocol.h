@@ -200,6 +200,7 @@ struct CS_SIGNAL_PACKET
 	unsigned char size;
 	unsigned char type;
 	int id;
+	int num;
 };
 #pragma pack(pop)
 #pragma pack (push, 1)
@@ -245,12 +246,14 @@ struct CS_NIAGARA_SYNC_PACKET {
 	unsigned char type;
 	int id;
 	PlayerType playertype;
+	int num;
 };
 struct CS_NIAGARA_CANCEL_PACKET {
 	unsigned char size;
 	unsigned char type;
 	bool cancel;
 	int id;
+	int num;
 };
 struct CS_NIAGARA_PACKETCH1 {
 	unsigned char size;
@@ -258,6 +261,7 @@ struct CS_NIAGARA_PACKETCH1 {
 	int id;
 	PlayerType playertype;
 	float x, y, z;
+	int num;
 };
 
 struct CS_START_GAME_PACKET {

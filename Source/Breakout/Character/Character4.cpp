@@ -68,7 +68,7 @@ void ACharacter4::Skill_S(const FInputActionValue& Value)
 		FActorSpawnParameters SpawnParameters;
 		Temp = GetWorld()->SpawnActor<ANiagaraActor>(NiagaraActor, GetActorLocation(), GetActorRotation(), SpawnParameters);
 		if (inst)
-			Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Niagara_packetch1(_SessionId, PlayerType::Character4, GetActorLocation());
+			Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Niagara_packetch1(_SessionId, PlayerType::Character4, GetActorLocation(), 3);
 	}
 	else if(bSaved)
 	{
@@ -77,7 +77,7 @@ void ACharacter4::Skill_S(const FInputActionValue& Value)
 		GetMesh()->SetVisibility(false, true);
 		GetWorld()->GetTimerManager().SetTimer(TelpoTimer, this, &ACharacter4::SetLocation, 0.5f, false);
 		if (inst)
-			Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Niagara_cancel(true, _SessionId);
+			Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Niagara_cancel(true, _SessionId, 2);
 	}
 }
 
@@ -108,5 +108,5 @@ void ACharacter4::SetLocation()
 
 	Temp->Destroy();
 	if (inst)
-		Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Signal_packet(_SessionId);
+		Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Signal_packet(_SessionId, 1);
 }

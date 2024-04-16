@@ -576,7 +576,7 @@ bool ACharacterController::UpdateWorld()
 			}
 		
 		
-			if (info->bniagara == true && info->p_type == PlayerType::Character1)
+			if (info->skilltype == 0 && info->p_type == PlayerType::Character1)
 			{
 				if (Cast<ACharacter1>(OtherPlayer)) {
 					ACharacter1* Niagaraplayer = Cast<ACharacter1>(OtherPlayer);
@@ -586,27 +586,29 @@ bool ACharacterController::UpdateWorld()
 					ch1skill.Y = info->CH1NiaLoc.Y;
 					ch1skill.Z = info->CH1NiaLoc.Z;
 					UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), TimeReplayNiagaraRef, ch1skill);
-					info->bniagara = false;
+
+					info->skilltype = -1;
 				}
 
 			}
-			else if (info->p_type == PlayerType::Character1 && info->bniagara == false) {
+			else if (info->p_type == PlayerType::Character1 && info->skilltype == 1) {
 				if (Cast<ACharacter1>(OtherPlayer)) {
 					ACharacter1* Niagaraplayer = Cast<ACharacter1>(OtherPlayer);
 					Niagaraplayer->GetMesh()->SetVisibility(true);
 					Niagaraplayer->GetCurWeapon()->GetWeaponMesh()->SetVisibility(true);
-					info->bniagara = false;
+		
+					info->skilltype = -1;
 				}
 			}
-			else if (info->p_type == PlayerType::Character2 && info->bniagara == true) {
+			else if (info->p_type == PlayerType::Character2 && info->skilltype == 0) {
 
 				if (Cast<ACharacter2>(OtherPlayer)) {
 					ACharacter2* Niagaraplayer = Cast<ACharacter2>(OtherPlayer);
 					Niagaraplayer->ServerNiagaraSync();
-					info->bniagara = false;
+					info->skilltype = -1;
 				}
 			}
-			else if (info->p_type == PlayerType::Character3 && info->bniagara == true)
+			else if (info->p_type == PlayerType::Character3 && info->skilltype == 0)
 			{
 				if (Cast<ACharacter3>(OtherPlayer)) {
 					ACharacter3* Niagaraplayer = Cast<ACharacter3>(OtherPlayer);
@@ -615,15 +617,17 @@ bool ACharacterController::UpdateWorld()
 					Niagaraplayer->ServerGhostStart();
 					Niagaraplayer->DynamicMaterial->SetVectorParameterValue(FName("Loc"), Niagaraplayer->GetCapsuleComponent()->GetForwardVector() * -1.f);
 					Niagaraplayer->DynamicMaterial->SetScalarParameterValue(FName("Amount"), Niagaraplayer->GetCharacterMovement()->Velocity.Length() / 4);
+					//info->skilltype = -1;
 				}
 			}
-			else if (info->p_type == PlayerType::Character3 && info->bniagara == false) {
+			else if (info->p_type == PlayerType::Character3 && info->skilltype == 1) {
 				if (Cast<ACharacter3>(OtherPlayer)) {
 					ACharacter3* Niagaraplayer = Cast<ACharacter3>(OtherPlayer);
 					Niagaraplayer->ServerGhostEnd();
+					info->skilltype = -1;
 				}
 			}
-			else if (info->bniagara == true && info->p_type == PlayerType::Character4)
+			else if (info->skilltype == 0 && info->p_type == PlayerType::Character4)
 			{
 				if (ACharacter4* Niagaraplayer =Cast<ACharacter4>(OtherPlayer)) {
 					Niagaraplayer->SaveCurLocation();
@@ -634,25 +638,28 @@ bool ACharacterController::UpdateWorld()
 					ch4skill.Y = info->CH1NiaLoc.Y;
 					ch4skill.Z = info->CH1NiaLoc.Z;
 					GetWorld()->SpawnActor<ANiagaraActor>(NiagaraActorRef, ch4skill, FRotator::ZeroRotator, SpawnParameters);
+					info->skilltype = -1;
 				}
 
 			}
-			else if (info->p_type == PlayerType::Character4 && info->bniagara == false) {
+			else if (info->p_type == PlayerType::Character4 && info->skilltype == 1) {
 				if (Cast<ACharacter4>(OtherPlayer)) {
 					ACharacter4* Niagaraplayer = Cast<ACharacter4>(OtherPlayer);
 					Niagaraplayer->GetNiagaraComp()->Activate();
 					Niagaraplayer->GetMesh()->SetVisibility(false, false);
 					Niagaraplayer->GetCurWeapon()->GetWeaponMesh()->SetVisibility(false);
+					info->skilltype = -1;
 				}
 			}
-			if(info->p_type == PlayerType::Character4 && info->bch4end == true){
+			if(info->p_type == PlayerType::Character4 && info->skilltype == 2){
 				ACharacter4* Niagaraplayer = Cast<ACharacter4>(OtherPlayer);
-				Niagaraplayer->GetNiagaraComp()->Deactivate();
+				Niagaraplayer->GetNiagaraComp()->Deactivate();/*
 				Niagaraplayer->GetMesh()->SetVisibility(true, false);
-				Niagaraplayer->GetCurWeapon()->GetWeaponMesh()->SetVisibility(true);
+				Niagaraplayer->GetCurWeapon()->GetWeaponMesh()->SetVisibility(true);*/
 				info->bch4end = false;
 				bool Test = Niagaraplayer->GetMesh()->IsVisible();
-				UE_LOG(LogTemp, Warning, TEXT("hahah : %d"), Test)
+				UE_LOG(LogTemp, Warning, TEXT("hahah : %d"), Test);
+				info->skilltype = -1;
 			}
 
 		}

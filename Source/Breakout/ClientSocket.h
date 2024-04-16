@@ -35,6 +35,7 @@ public:
 	//int hp;
 	int weptype;
 	int damage;
+	int skilltype;
 	// 아이디 비번
 	char    userId[20] = {};
 	char    userPw[20] = {};
@@ -211,11 +212,11 @@ public:
 	void Send_Damage_Packet(int damaged_id, float damage);
 	void Send_ShotGun_packet(int attack_id, FVector ServerBeamStart, TArray<FRotator> ServerBeamEnd, int size);
 	void Send_ShotGun_damaged_packet(int damaged_id1, int damaged_id2, int damaged_id3, float damaged1, float damaged2, float damaged3);
-	void Send_Niagara_packet(int clientid, PlayerType type);
-	void Send_Niagara_cancel(bool bcancel, int id);
-	void Send_Niagara_packetch1(int clinetid, PlayerType type, FVector loc);
+	void Send_Niagara_packet(int clientid, PlayerType type, int num);
+	void Send_Niagara_cancel(bool bcancel, int id, int num);
+	void Send_Niagara_packetch1(int clinetid, PlayerType type, FVector loc, int num);
 	void Send_Start_game_packet();
-	void Send_Signal_packet(int id);
+	void Send_Signal_packet(int id, int num);
 	virtual bool Init() override;
 	virtual uint32 Run() override;
 	virtual void Stop() override;

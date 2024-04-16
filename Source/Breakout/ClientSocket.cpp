@@ -236,12 +236,14 @@ bool ClientSocket::PacketProcess(char* ptr)
 		CS_NIAGARA_SYNC_PACKET* packet = reinterpret_cast<CS_NIAGARA_SYNC_PACKET*>(ptr);
 		PlayerInfo.players[packet->id].p_type = packet->playertype;
 		PlayerInfo.players[packet->id].bniagara = true;
+		PlayerInfo.players[packet->id].skilltype = packet->num;
 		UE_LOG(LogClass, Warning, TEXT("BNIAGAR : %d"), PlayerInfo.players[packet->id].bniagara);
 		break;
 	}
 	case SC_NiAGARA_CANCEL: {
 		CS_NIAGARA_CANCEL_PACKET* packet = reinterpret_cast<CS_NIAGARA_CANCEL_PACKET*>(ptr);
 		PlayerInfo.players[packet->id].bniagara = false;
+		PlayerInfo.players[packet->id].skilltype = packet->num;
 		break;
 	}
 	case SC_NiAGARA_CH1: {
@@ -250,12 +252,12 @@ bool ClientSocket::PacketProcess(char* ptr)
 		PlayerInfo.players[packet->id].CH1NiaLoc.X = packet->x;
 		PlayerInfo.players[packet->id].CH1NiaLoc.Y = packet->y;
 		PlayerInfo.players[packet->id].CH1NiaLoc.Z = packet->z;
-		PlayerInfo.players[packet->id].bniagara = true;
+		PlayerInfo.players[packet->id].skilltype = packet->num;
 		break;
 	}
 	case SC_SIGNAL: {
 		CS_SIGNAL_PACKET* packet = reinterpret_cast<CS_SIGNAL_PACKET*>(ptr);
-		PlayerInfo.players[packet->id].bch4end = true;
+		PlayerInfo.players[packet->id].skilltype = packet->num;
 		break;
 	}
 	default:
@@ -434,7 +436,7 @@ void ClientSocket::Send_ShotGun_damaged_packet(int damaged_id1, int damaged_id2,
 
 	SendPacket(&packet);
 }
-void ClientSocket::Send_Niagara_packet(int clientid, PlayerType type)
+void ClientSocket::Send_Niagara_packet(int clientid, PlayerType type, int num)
 {
 	UE_LOG(LogClass, Warning, TEXT("BNIAGAR "));
 	CS_NIAGARA_SYNC_PACKET packet;
@@ -442,19 +444,21 @@ void ClientSocket::Send_Niagara_packet(int clientid, PlayerType type)
 	packet.type = CS_NiAGARA;
 	packet.id = clientid;
 	packet.playertype = type;
+	packet.num = num;
 	SendPacket(&packet);
 }
-void ClientSocket::Send_Niagara_cancel(bool bcancel, int id)
+void ClientSocket::Send_Niagara_cancel(bool bcancel, int id,int num)
 {
 	CS_NIAGARA_CANCEL_PACKET packet;
 	packet.size = sizeof(packet);
 	packet.type = CS_NiAGARA_CANCEL;
 	packet.cancel = bcancel;
 	packet.id = id;
+	packet.num = num;
 	SendPacket(&packet);
 
 }
-void ClientSocket::Send_Niagara_packetch1(int clinetid, PlayerType type, FVector loc)
+void ClientSocket::Send_Niagara_packetch1(int clinetid, PlayerType type, FVector loc, int num)
 {
 	CS_NIAGARA_PACKETCH1 packet;
 	packet.size = sizeof(packet);
@@ -464,7 +468,7 @@ void ClientSocket::Send_Niagara_packetch1(int clinetid, PlayerType type, FVector
 	packet.x = loc.X;
 	packet.y = loc.Y;
 	packet.z = loc.Z;
-
+	packet.num = num;
 	SendPacket(&packet);
 }
 void ClientSocket::Send_Start_game_packet()
@@ -475,12 +479,13 @@ void ClientSocket::Send_Start_game_packet()
 	SendPacket(&packet);
 
 }
-void ClientSocket::Send_Signal_packet(int id)
+void ClientSocket::Send_Signal_packet(int id, int num)
 {
 	CS_SIGNAL_PACKET packet;
 	packet.size = sizeof(packet);
 	packet.type = CS_SIGNAl;
 	packet.id = id;
+	packet.num = num;
 	SendPacket(&packet);
 }
 bool ClientSocket::Init()
