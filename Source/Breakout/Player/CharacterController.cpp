@@ -645,12 +645,14 @@ bool ACharacterController::UpdateWorld()
 					Niagaraplayer->GetCurWeapon()->GetWeaponMesh()->SetVisibility(false);
 				}
 			}
-			else if(info->p_type == PlayerType::Character4 && info->bch4end == true){
+			if(info->p_type == PlayerType::Character4 && info->bch4end == true){
 				ACharacter4* Niagaraplayer = Cast<ACharacter4>(OtherPlayer);
-				Niagaraplayer->GetNiagaraComp()->Activate();
+				Niagaraplayer->GetNiagaraComp()->Deactivate();
 				Niagaraplayer->GetMesh()->SetVisibility(true, false);
 				Niagaraplayer->GetCurWeapon()->GetWeaponMesh()->SetVisibility(true);
 				info->bch4end = false;
+				bool Test = Niagaraplayer->GetMesh()->IsVisible();
+				UE_LOG(LogTemp, Warning, TEXT("hahah : %d"), Test)
 			}
 
 		}
