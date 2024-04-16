@@ -19,6 +19,8 @@ public:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime);
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent);
+	class UBOGameInstance* inst;
+
 protected:
 	virtual void Destroyed();
 
@@ -57,6 +59,7 @@ private:
 
 	void UpdateHUDCool(float Cool, float MaxCool);
 	
+
 };
 
 USTRUCT(BluePrintType)

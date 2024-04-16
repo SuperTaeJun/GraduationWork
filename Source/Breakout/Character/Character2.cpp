@@ -95,7 +95,7 @@ void ACharacter2::Skill_S(const FInputActionValue& Value)
 
 		//스킬 패킷
 		if(inst)
-			Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Niagara_packet(_SessionId, PlayerType::Character2);
+			Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Niagara_packet(_SessionId, PlayerType::Character2, 0);
 	}
 }
 
