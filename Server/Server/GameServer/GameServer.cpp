@@ -6,15 +6,17 @@
 #include "CorePch.h"
 #include "CLIENT.h"
 #include "Overlap.h"
-#include <thread>
-#include <string>
-#include <mutex>
-#include <atomic>
-
+#include "LockQueue.h"
+#include "EscapeObject.h"
+;
 
 HANDLE g_h_iocp;
+HANDLE g_timer;
 SOCKET sever_socket;
+LockQueue<timer_ev> timer_q;
 array <CLIENT, MAX_USER> clients;
+array<EscapeObject, MAX_OBJ> objects;
+condition_variable cv;
 atomic<int> ready_count = 0;
 atomic<int> ingamecount = 0;
 using std::chrono::duration_cast;
@@ -22,6 +24,7 @@ using std::chrono::milliseconds;
 using std::chrono::seconds;
 using std::chrono::system_clock;
 using namespace std;
+void ev_timer();
 void show_err();
 int get_id();
 void send_select_character_type_packet(int _s_id);
@@ -65,26 +68,21 @@ int main()
 
 	for (int i = 0; i < MAX_USER; ++i)
 		clients[i]._s_id = i;
-
+	for (int i = 0; i < MAX_OBJ; ++i) {
+		objects[i].ob_id = i;
+		cout << objects[i].ob_id << endl;
+	}
+	g_timer = CreateEvent(NULL, FALSE, FALSE, NULL);
 	vector <thread> worker_threads;
-
-
-
-	// 시스템 정보 가져옴
-	//SYSTEM_INFO sysInfo;
-	//GetSystemInfo(&sysInfo);
-	//printf_s("[INFO] CPU 쓰레드 갯수 : %d\n", sysInfo.dwNumberOfProcessors);
-	// 적절한 작업 스레드의 갯수는 (CPU * 2) + 1
-	//int nThreadCnt = sysInfo.dwNumberOfProcessors;
-	//int nThreadCnt = 5;
-
+	thread servertherad{ ev_timer };
 
 	for (int i = 0; i < 16; ++i)
 		worker_threads.emplace_back(worker_thread);
 
 	for (auto& th : worker_threads)
 		th.join();
-
+	if(servertherad.joinable())
+		servertherad.join();
 	for (auto& cl : clients) {
 		if (ST_INGAME == cl._state)
 			Disconnect(cl._s_id);
@@ -823,3 +821,45 @@ void send_ready_packet(int _s_id)
 //	packet.ez = clients[_s_id].e_z;
 //	clients[_s_id].do_send(sizeof(packet), &packet);
 //}
+
+void ev_timer()
+{
+	//WaitForSingleObject(g_timer, INFINITE);
+	//{
+	//	timer_q.Clear();
+	//}
+	//while (true) {
+	//	timer_ev order;
+	//	timer_q.WaitPop(order);
+	//	//auto t = order.start_t - chrono::system_clock::now();
+	//	int s_id = order.this_id;
+	//	if (false == is_player(s_id)) continue;
+	//	if (clients[s_id]._state != ST_INGAME) continue;
+	//	if (clients[s_id]._is_active == false) continue;
+	//	if (order.start_t <= chrono::system_clock::now()) {
+	//		if (order.order == CL_BONEFIRE) {
+	//			if (clients[s_id].is_bone == false) continue;
+	//			Player_Event(s_id, order.target_id, OP_PLAYER_HEAL);
+	//			this_thread::sleep_for(50ms);
+	//		}
+	//		else if (order.order == CL_BONEOUT) {
+	//			if (clients[s_id].is_bone == true) continue;
+	//			Player_Event(s_id, order.target_id, OP_PLAYER_DAMAGE);
+	//			this_thread::sleep_for(50ms);
+	//		}
+	//		else if (order.order == CL_MATCH) {
+	//			Player_Event(s_id, order.target_id, OP_PLAYER_HEAL);
+	//			this_thread::sleep_for(50ms);
+	//		}
+	//		else if (order.order == CL_END_MATCH) {
+	//			send_is_bone_packet(s_id);
+	//			this_thread::sleep_for(50ms);
+	//		}
+	//	}
+	//	else {
+	//		timer_q.Push(order);
+	//		this_thread::sleep_for(10ms);
+	//	}
+	//}
+
+}

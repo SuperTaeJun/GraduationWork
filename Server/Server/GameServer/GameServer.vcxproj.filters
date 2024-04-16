@@ -16,6 +16,12 @@
     <Filter Include="Overlapped">
       <UniqueIdentifier>{5e2f35d2-9b0c-4aa1-9903-b362245d1e5d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="LockQueue">
+      <UniqueIdentifier>{337dab1d-3258-4103-bd85-38c10c8eed5a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object">
+      <UniqueIdentifier>{99c70f8f-dcc8-4b4d-bff0-865814bbfa23}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GameServer.cpp">
@@ -30,6 +36,12 @@
     <ClCompile Include="Overlap.cpp">
       <Filter>Overlapped</Filter>
     </ClCompile>
+    <ClCompile Include="LockQueue.cpp">
+      <Filter>LockQueue</Filter>
+    </ClCompile>
+    <ClCompile Include="EscapeObject.cpp">
+      <Filter>Object</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -43,6 +55,12 @@
     </ClInclude>
     <ClInclude Include="Enum.h">
       <Filter>Enum</Filter>
+    </ClInclude>
+    <ClInclude Include="LockQueue.h">
+      <Filter>LockQueue</Filter>
+    </ClInclude>
+    <ClInclude Include="EscapeObject.h">
+      <Filter>Object</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
