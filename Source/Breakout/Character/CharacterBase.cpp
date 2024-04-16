@@ -18,6 +18,7 @@
 #include "Player/CharacterController.h"
 #include "GameFramework/PlayerController.h"
 #include "Game/BOGameInstance.h"
+#include "ClientSocket.h"
 #include "Weapon/ProjectileBase.h"
 #include "Game/BOGameMode.h"
 #include "Components/CapsuleComponent.h"
@@ -105,7 +106,7 @@ void ACharacterBase::BeginPlay()
 
 
 	StartTransform = GetActorTransform();
-
+	inst = Cast<UBOGameInstance>(GetGameInstance());
 	if (APlayerController* PlayerController = Cast<APlayerController>(GetController()))
 	{
 		//입력시스템 매핑
@@ -951,7 +952,9 @@ void ACharacterBase::StartGame()
 		//bStarted = false;
 		EnableInput(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 		SetWeaponUi();
-		
+		//여기서 패킷 보낼 것
+		if (inst)
+			Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Start_game_packet();
 	}
 
 }

@@ -439,6 +439,14 @@ void ClientSocket::Send_Niagara_cancel(bool bcancel, int id)
 	SendPacket(&packet);
 
 }
+void ClientSocket::Send_Start_game_packet()
+{
+	CS_START_GAME_PACKET packet;
+	packet.size = sizeof(packet);
+	packet.type = CS_START_GAME;
+	SendPacket(&packet);
+
+}
 bool ClientSocket::Init()
 {
 	//UE_LOG(LogTemp, Warning, TEXT("Thread has been initialized"));

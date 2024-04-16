@@ -209,6 +209,7 @@ public:
     void Send_ShotGun_damaged_packet(int damaged_id1, int damaged_id2, int damaged_id3, float damaged1, float damaged2, float damaged3);
     void Send_Niagara_packet(int clientid, PlayerType type);
     void Send_Niagara_cancel(bool bcancel, int id);
+    void Send_Start_game_packet();
     virtual bool Init() override;
     virtual uint32 Run() override;
     virtual void Stop() override;

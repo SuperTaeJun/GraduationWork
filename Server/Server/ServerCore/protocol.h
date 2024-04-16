@@ -2,7 +2,7 @@
 #define SERVER_PORT		8001
 #include <vector>
 #include <array>
-#define SERVER_IP		"192.168.0.28"
+#define SERVER_IP		"192.168.219.101"
 #define MAX_INFO_SIZE   20
 //const char CS_PACKET_ATTACK = 3;
 enum PlayerType
@@ -45,6 +45,7 @@ const char CS_SHOTGUN_BEAM = 10;
 const char CS_SHOTGUN_DAMAGED = 11;
 const char CS_NiAGARA = 12;
 const char CS_NiAGARA_CANCEL = 13;
+const char CS_START_GAME = 14;
 
 
 
@@ -248,6 +249,10 @@ struct CS_NIAGARA_CANCEL_PACKET {
 	unsigned char type;
 	bool cancel;
 	int id;
+};
+struct CS_START_GAME_PACKET {
+	unsigned char size;
+	unsigned char type;
 };
 #pragma pack(pop)
 

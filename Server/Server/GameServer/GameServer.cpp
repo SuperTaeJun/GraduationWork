@@ -10,11 +10,10 @@
 #include <string>
 #include <mutex>
 #include <atomic>
-using namespace std;
-mutex m;
+
+
 HANDLE g_h_iocp;
 SOCKET sever_socket;
-concurrency::concurrent_priority_queue <timer_ev> timer_q;
 array <CLIENT, MAX_USER> clients;
 atomic<int> ready_count = 0;
 atomic<int> ingamecount = 0;
@@ -22,7 +21,7 @@ using std::chrono::duration_cast;
 using std::chrono::milliseconds;
 using std::chrono::seconds;
 using std::chrono::system_clock;
-
+using namespace std;
 void show_err();
 int get_id();
 void send_select_character_type_packet(int _s_id);
@@ -307,10 +306,10 @@ void process_packet(int s_id, char* p)
 			for (auto& player : clients) {
 				if (ST_INGAME != player._state)
 					continue;
-				m.lock();
+				/*state_lock();*/
 				send_ready_packet(player._s_id);
 				cout << "보낼 플레이어" << player._s_id << endl;
-				m.unlock();
+				//m.unlock();
 			}
 		}
 		break;
@@ -397,10 +396,10 @@ void process_packet(int s_id, char* p)
 			for (auto& player : clients) {
 				if (ST_INGAME != player._state)
 					continue;
-				m.lock();
+				//m.lock();
 				send_ready_packet(player._s_id);
 				cout << "보낼 플레이어" << player._s_id << endl;
-				m.unlock();
+				//m.unlock();
 			}
 			//cl._state = ST_INGAME;
 		}

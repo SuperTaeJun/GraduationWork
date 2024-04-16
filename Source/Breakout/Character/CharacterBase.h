@@ -255,7 +255,7 @@ public:
 	FTimerHandle StartHandle;
 	void StartGame();
 	float StartedCnt;
-
+	class UBOGameInstance* inst;
 	class UCameraComponent* GetCamera() { return FollowCamera; }
 };
 
