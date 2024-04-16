@@ -13,5 +13,8 @@ UCLASS()
 class BREAKOUT_API ASkill4Actor : public ANiagaraActor
 {
 	GENERATED_BODY()
-	
+public:
+	virtual void BeginPlay() override;
+	FTimerHandle TelpoTimer;
+	void Dead();
 };
