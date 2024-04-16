@@ -13,6 +13,7 @@
 #include "Weapon/WeaponBase.h"
 #include "ClientSocket.h"
 #include "EnhancedInputSubsystems.h"
+#include "FX/Skill4Actor.h"
 ACharacter4::ACharacter4()
 {
 	NiagaraComp = CreateDefaultSubobject<UNiagaraComponent>(TEXT("NiagaraComp"));
@@ -68,7 +69,7 @@ void ACharacter4::Skill_S(const FInputActionValue& Value)
 		FActorSpawnParameters SpawnParameters;
 		Temp = GetWorld()->SpawnActor<ANiagaraActor>(NiagaraActor, GetActorLocation(), GetActorRotation(), SpawnParameters);
 		if (inst)
-			Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Niagara_packetch1(_SessionId, PlayerType::Character4, GetActorLocation(), 3);
+			Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Niagara_packetch1(_SessionId, PlayerType::Character4, GetActorLocation(), 0);
 	}
 	else if(bSaved)
 	{
@@ -76,8 +77,9 @@ void ACharacter4::Skill_S(const FInputActionValue& Value)
 		//ÆÐÅ¶
 		GetMesh()->SetVisibility(false, true);
 		GetWorld()->GetTimerManager().SetTimer(TelpoTimer, this, &ACharacter4::SetLocation, 0.5f, false);
+		Cast<ASkill4Actor>(Temp)->bTimerStart = true;
 		if (inst)
-			Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Niagara_cancel(true, _SessionId, 2);
+			Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Niagara_cancel(true, _SessionId, 1);
 	}
 }
 
@@ -108,5 +110,5 @@ void ACharacter4::SetLocation()
 
 	Temp->Destroy();
 	if (inst)
-		Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Signal_packet(_SessionId, 1);
+		Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Signal_packet(_SessionId, 2);
 }

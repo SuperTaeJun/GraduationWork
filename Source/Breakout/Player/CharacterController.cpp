@@ -1,7 +1,4 @@
 
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "Player/CharacterController.h"
 #include "HUD/MainHUD.h"
 #include "HUD/CharacterUi.h"
@@ -28,6 +25,7 @@
 #include "NiagaraComponent.h"
 #include "NiagaraActor.h"
 #include "TimerManager.h"
+#include "FX/Skill4Actor.h"
 
 #include "../../Server/Server/ServerCore/protocol.h"
 #include <string>
@@ -637,7 +635,7 @@ bool ACharacterController::UpdateWorld()
 					ch4skill.X = info->CH1NiaLoc.X;
 					ch4skill.Y = info->CH1NiaLoc.Y;
 					ch4skill.Z = info->CH1NiaLoc.Z;
-					GetWorld()->SpawnActor<ANiagaraActor>(NiagaraActorRef, ch4skill, FRotator::ZeroRotator, SpawnParameters);
+					ServerTemp =GetWorld()->SpawnActor<ANiagaraActor>(NiagaraActorRef, ch4skill, FRotator::ZeroRotator, SpawnParameters);
 					info->skilltype = -1;
 				}
 
@@ -649,13 +647,14 @@ bool ACharacterController::UpdateWorld()
 					Niagaraplayer->GetMesh()->SetVisibility(false, false);
 					Niagaraplayer->GetCurWeapon()->GetWeaponMesh()->SetVisibility(false);
 					info->skilltype = -1;
+					Cast<ASkill4Actor>(ServerTemp)->bTimerStart = true;
 				}
 			}
 			if(info->p_type == PlayerType::Character4 && info->skilltype == 2){
 				ACharacter4* Niagaraplayer = Cast<ACharacter4>(OtherPlayer);
-				Niagaraplayer->GetNiagaraComp()->Deactivate();/*
+				Niagaraplayer->GetNiagaraComp()->Deactivate();
 				Niagaraplayer->GetMesh()->SetVisibility(true, false);
-				Niagaraplayer->GetCurWeapon()->GetWeaponMesh()->SetVisibility(true);*/
+				Niagaraplayer->GetCurWeapon()->GetWeaponMesh()->SetVisibility(true);
 				info->bch4end = false;
 				bool Test = Niagaraplayer->GetMesh()->IsVisible();
 				UE_LOG(LogTemp, Warning, TEXT("hahah : %d"), Test);

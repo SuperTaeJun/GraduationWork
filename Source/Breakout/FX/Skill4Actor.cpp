@@ -6,8 +6,15 @@
 void ASkill4Actor::BeginPlay()
 {
 	Super::BeginPlay();
+}
 
-	GetWorld()->GetTimerManager().SetTimer(TelpoTimer, this, &ASkill4Actor::Dead, 0.5f, false);
+void ASkill4Actor::Tick(float Delta)
+{
+	if (bTimerStart)
+	{
+		GetWorld()->GetTimerManager().SetTimer(TelpoTimer, this, &ASkill4Actor::Dead, 0.5f, false);
+		bTimerStart = false;
+	}
 }
 
 void ASkill4Actor::Dead()
