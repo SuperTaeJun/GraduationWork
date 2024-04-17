@@ -9,6 +9,9 @@
 #include "Game/BOGameInstance.h"
 #include "ClientSocket.h"
 #include "Character/CharacterBase.h"
+#include "Sound/SoundCue.h"
+#include "Kismet/GameplayStatics.h"
+
 void ARocketLauncher::Fire(const FVector& HitTarget)
 {
 	APawn* InstigatorPawn = Cast<APawn>(GetOwner());
@@ -35,13 +38,24 @@ void ARocketLauncher::Fire(const FVector& HitTarget)
 			}
 			if (ImpactNiagara)
 			{
-				UNiagaraFunctionLibrary::SpawnSystemAtLocation(
+				UNiagaraFunctionLibrary::SpawnSystemAtLocation
+				(
 					World,
 					ImpactNiagara,
 					SocketTransform.GetLocation()
 				);
-
 			}
+
+			if (FireSound)
+			{
+				UGameplayStatics::PlaySoundAtLocation(
+					this,
+					FireSound,
+					SocketTransform.GetLocation()
+				);
+			}
+
+
 		}
 
 	}

@@ -50,6 +50,14 @@ void AShotGun::Fire(const FVector& HitTarget)
 			}
 
 		}
+		if (FireSound)
+		{
+			UGameplayStatics::PlaySoundAtLocation(
+				this,
+				FireSound,
+				SocketTransform.GetLocation()
+			);
+		}
 		Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_ShotGun_packet(Cast<ACharacterBase>(GetOwner())->_SessionId, SocketTransform.GetLocation(), SeverRots, SeverRots.Num());
 	}
 	

@@ -17,6 +17,7 @@
 #include "Game/BOGameInstance.h"
 #include "ClientSocket.h"
 #include "Weapon/ProjectileBullet.h"
+#include "Sound/SoundCue.h"
 //#define TRACE_LENGTH 1000.f
 
 AWeaponBase::AWeaponBase()
@@ -212,15 +213,22 @@ void AWeaponBase::Fire(const FVector& HitTarget)
 			}
 			if (ImpactNiagara)
 			{
-				UNiagaraFunctionLibrary::SpawnSystemAtLocation(
+				UNiagaraFunctionLibrary::SpawnSystemAtLocation
+				(
 					World,
 					ImpactNiagara,
 					SocketTransform.GetLocation()
 				);
-
 			}
+			if (FireSound)
+			{
+				UGameplayStatics::PlaySoundAtLocation(
+					this,
+					FireSound,
+					SocketTransform.GetLocation()
+				);
+			}
+
 		}
-	
 	}
 }
-

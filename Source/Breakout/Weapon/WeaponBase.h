@@ -35,6 +35,9 @@ protected:
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class AProjectileBullet> ProjectileBulletClass;
 
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<class USoundCue> FireSound;
+
 	//√—æÀ »Â≈Õ¡¸ ø‰º“µÈ
 	UPROPERTY(EditAnywhere, Category = "Weapon Scatter")
 	float DistanceToSphere = 800.f;
