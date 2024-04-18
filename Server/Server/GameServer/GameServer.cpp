@@ -880,42 +880,23 @@ void send_ready_packet(int _s_id)
 
 void ev_timer()
 {
-	//WaitForSingleObject(g_timer, INFINITE);
-	//{
-	//	timer_q.Clear();
-	//}
-	//while (true) {
-	//	timer_ev order;
-	//	timer_q.WaitPop(order);
-	//	//auto t = order.start_t - chrono::system_clock::now();
-	//	int s_id = order.this_id;
-	//	if (false == is_player(s_id)) continue;
-	//	if (clients[s_id]._state != ST_INGAME) continue;
-	//	if (clients[s_id]._is_active == false) continue;
-	//	if (order.start_t <= chrono::system_clock::now()) {
-	//		if (order.order == CL_BONEFIRE) {
-	//			if (clients[s_id].is_bone == false) continue;
-	//			Player_Event(s_id, order.target_id, OP_PLAYER_HEAL);
-	//			this_thread::sleep_for(50ms);
-	//		}
-	//		else if (order.order == CL_BONEOUT) {
-	//			if (clients[s_id].is_bone == true) continue;
-	//			Player_Event(s_id, order.target_id, OP_PLAYER_DAMAGE);
-	//			this_thread::sleep_for(50ms);
-	//		}
-	//		else if (order.order == CL_MATCH) {
-	//			Player_Event(s_id, order.target_id, OP_PLAYER_HEAL);
-	//			this_thread::sleep_for(50ms);
-	//		}
-	//		else if (order.order == CL_END_MATCH) {
-	//			send_is_bone_packet(s_id);
-	//			this_thread::sleep_for(50ms);
-	//		}
-	//	}
-	//	else {
-	//		timer_q.Push(order);
-	//		this_thread::sleep_for(10ms);
-	//	}
-	//}
+	WaitForSingleObject(g_timer, INFINITE);
+	{
+		timer_q.Clear();
+	}
+	while (true) {
+		timer_ev order;
+		timer_q.WaitPop(order);
+		auto t = order.start_t - chrono::system_clock::now();
+		int s_id = order.this_id;
+		if (clients[s_id]._state != ST_INGAME) continue;
+		if (clients[s_id]._is_active == false) continue;
+		if (order.start_t <= chrono::system_clock::now()) {
+		}
+		else {
+			timer_q.Push(order);
+			this_thread::sleep_for(10ms);
+		}
+	}
 
 }
