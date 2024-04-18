@@ -71,11 +71,11 @@ void AProjectileBullet::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherAc
 			FiringPawn,
 			UDamageType::StaticClass()
 		);
-		else if (DamagedWall)
+	/*	else if (DamagedWall)
 		{
 			UE_LOG(LogTemp, Warning, TEXT("DamagedWall"));
 			DamagedWall->SetBulletHole(Hit.ImpactPoint);
-		}
+		}*/
 	}
 	Destroy();
 }

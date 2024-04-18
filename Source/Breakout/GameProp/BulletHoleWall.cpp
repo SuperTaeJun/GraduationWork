@@ -13,11 +13,8 @@ ABulletHoleWall::ABulletHoleWall()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
-	ProceduralMesh = CreateDefaultSubobject<UProceduralMeshComponent>(TEXT("ProceduralMesh"));
-	ProceduralMesh->SetupAttachment(RootComponent);
-
-	Sphere = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Sphere"));
-	Sphere->SetupAttachment(RootComponent);
+	//ProceduralMesh = CreateDefaultSubobject<UProceduralMeshComponent>(TEXT("ProceduralMesh"));
+	//Sphere = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Sphere"));
 
 }
 
@@ -34,7 +31,7 @@ void ABulletHoleWall::Tick(float DeltaTime)
 
 void ABulletHoleWall::SetBulletHole(const FVector SweepResult)
 {
-	HitLoc = SweepResult;
+	/*HitLoc = SweepResult;
 	Sphere->SetWorldLocation(HitLoc);
 
 
@@ -53,10 +50,10 @@ void ABulletHoleWall::SetBulletHole(const FVector SweepResult)
 	TransformMeshData(MeshDataA, Temp, true, FVector(0.f, 0.f, 0.f));
 
 	TArray<FProcMeshTangent> Tangents = {};
-	ProceduralMesh->CreateMeshSection_LinearColor(0, MeshDataA.Verts, MeshDataA.Tris, MeshDataA.Normals, MeshDataA.UVs, MeshDataA.Colors,Tangents, true);
+	ProceduralMesh->CreateMeshSection_LinearColor(0, MeshDataA.Verts, MeshDataA.Tris, MeshDataA.Normals, MeshDataA.UVs, MeshDataA.Colors,Tangents, true);*/
 }
 
-FMeshData ABulletHoleWall::MeshBoolean(FMeshData DataA, FTransform TransformA, FMeshData DataB, FTransform TransformB)
+FMeshData ABulletHoleWall::MeshBoolean(UPARAM(ref)FMeshData DataA, FTransform TransformA, UPARAM(ref)FMeshData DataB, FTransform TransformB)
 {
 	UE::Geometry::FDynamicMesh3 BooleanOutput;
 	BooleanOutput.EnableAttributes();
@@ -377,7 +374,7 @@ void ABulletHoleWall::SetColorData(UPARAM(ref) FMeshData& Data, FLinearColor Col
 	}
 }
 
-FMeshData ABulletHoleWall::SetRandomVertex(FMeshData& MeshData, float Min, float Max, float Tolerance)
+FMeshData ABulletHoleWall::SetRandomVertex(UPARAM(ref)FMeshData& MeshData, float Min, float Max, float Tolerance)
 {
 
 	FMeshData Result = MeshData;
