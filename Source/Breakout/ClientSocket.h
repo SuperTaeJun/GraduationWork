@@ -117,7 +117,7 @@ public:
 	}
 };
 
-const int buffsize = 1000;
+const int buffsize = 2048;
 
 enum IO_type
 {

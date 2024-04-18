@@ -90,6 +90,11 @@ bool ClientSocket::PacketProcess(char* ptr)
 		UE_LOG(LogClass, Warning, TEXT("aaaaa"));
 		break;
 	}
+	case SC_ITEM: {
+		SC_ITEM_PACKET* packet = reinterpret_cast<SC_ITEM_PACKET*>(ptr);
+		UE_LOG(LogTemp, Warning, TEXT("packet loc0 : %d, %f, %f, %f"), packet->item[0].id, packet->item[0].x, packet->item[0].y, packet->item[0].z)
+		break;
+	}
 	case SC_OTHER_PLAYER:
 	{
 		//UE_LOG(LogClass, Warning, TEXT("other ROGIN?"));
