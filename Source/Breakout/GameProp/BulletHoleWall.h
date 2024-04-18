@@ -30,10 +30,11 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
-	//UPROPERTY(EditAnywhere, BlueprintReadWrite,Category = "Mesh")
-	//TObjectPtr<class UProceduralMeshComponent> ProceduralMesh;
-	//UPROPERTY(EditAnywhere, Category = "Mesh")
-	//TObjectPtr<class UStaticMeshComponent > Sphere;
+	TObjectPtr<class USceneComponent> DefaultRoot;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite,Category = "Mesh")
+	TObjectPtr<class UProceduralMeshComponent> ProceduralMesh;
+	UPROPERTY(EditAnywhere, Category = "Mesh")
+	TObjectPtr<class UStaticMeshComponent > Sphere;
 
 	UPROPERTY(BlueprintReadWrite)
 	FMeshData MeshDataA;
