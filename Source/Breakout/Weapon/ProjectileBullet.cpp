@@ -63,14 +63,7 @@ void AProjectileBullet::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherAc
 		ACharacterBase* DamagedCharacter=Cast<ACharacterBase>(OtherActor);
 		ABulletHoleWall* DamagedWall = Cast<ABulletHoleWall>(OtherActor);
 		if(DamagedCharacter)
-		UGameplayStatics::ApplyDamage
-		(
-			DamagedCharacter,
-			Damage,
-			FiringController,
-			FiringPawn,
-			UDamageType::StaticClass()
-		);
+			UGameplayStatics::ApplyDamage(DamagedCharacter,Damage,FiringController,FiringPawn,UDamageType::StaticClass());
 		else if (DamagedWall)
 		{
 			UE_LOG(LogTemp, Warning, TEXT("DamagedWall"));
@@ -87,6 +80,10 @@ void AProjectileBullet::Destroyed()
 		if (ImpactNiagara)
 		{
 			UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), ImpactNiagara, GetActorLocation());
+		}
+		if (ImpactSound)
+		{
+			UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation());
 		}
 	}
 }

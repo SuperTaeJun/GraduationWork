@@ -56,6 +56,7 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Player Stats")
 	float DeadTime = 4.f;
 
+	bool bCanEscape;
 	bool StaminaExhaustionState;
 
 	int32 GrendeNum=10;
@@ -71,6 +72,7 @@ protected:
 public:
 	void SetResetState();
 
+	void SetbCanEscape(bool _bCanEscape) { bCanEscape = _bCanEscape; }
 	int32 GetEscapeToolNum(){ return ObtainedEscapeToolNum; }
 	void SetEscapeToolNum(int32 Num) { ObtainedEscapeToolNum = Num; }
 	void SetWeapon(TSubclassOf<class AWeaponBase> Weapon, FName SocketName);

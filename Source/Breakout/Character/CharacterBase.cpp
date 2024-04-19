@@ -85,6 +85,7 @@ ACharacterBase::ACharacterBase()
 	CurWeaponType = EWeaponType::ECS_DEFAULT;
 	bStarted = false;
 	StartedCnt = 5.f;
+	bCanEscape = false;
 }
 
 //float ACharacterBase::GetAO_Yaw()
@@ -699,6 +700,12 @@ void ACharacterBase::Inter(const FInputActionValue& Value)
 	{
 		//UE_LOG(LogTemp, Log, TEXT("TEST"));
 		EToolTranfrom(Value);
+	}
+
+	if (bCanEscape)
+	{
+		//여기서 게임끝남
+		UE_LOG(LogTemp, Warning, TEXT("ESCAPE GOOD"));
 	}
 }
 void ACharacterBase::EToolTranfrom(const FInputActionValue& Value)
