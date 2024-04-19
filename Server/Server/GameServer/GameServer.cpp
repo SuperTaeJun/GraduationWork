@@ -37,6 +37,7 @@ void send_change_hp(int _s_id);
 void send_put_object(int _s_id, int target);
 void Disconnect(int _s_id);
 void send_ready_packet(int _s_id);
+void send_endgame_packet(int _s_id);
 void send_item_packet(int _s_id, int item_index);
 void worker_thread();
 // 랜덤 넘버 생성기 초기화
@@ -699,6 +700,29 @@ void process_packet(int s_id, char* p)
 		}
 		break;
 	}
+	case CS_END_GAME:{
+		CS_END_GAME_PACKET* packet = reinterpret_cast<CS_END_GAME_PACKET*>(p);
+		CLIENT& cl = clients[packet->id];
+
+		cout << "누가 이김 " << packet->id << endl;
+		for (auto& other : clients) {
+			other.state_lock.lock();
+			if (ST_INGAME != other._state) {
+				other.state_lock.unlock();
+				continue;
+			}
+			else other.state_lock.unlock();
+			CS_END_GAME_PACKET packet;
+			
+			packet.id = cl._s_id;
+			packet.winnerid = cl._s_id;
+			packet.size = sizeof(packet);
+			packet.type = SC_END_GAME;
+			packet.bEND = true;
+			other.do_send(sizeof(packet), &packet);
+		}
+		break;
+	}
 	default:
 		cout << " 오류패킷타입 : " << p << endl;
 		break;
@@ -846,6 +870,16 @@ void send_ready_packet(int _s_id)
 	packet.size = sizeof(packet);
 	packet.type = SC_ALL_READY;
 	packet.ingame = true;
+	clients[_s_id].do_send(sizeof(packet), &packet);
+}
+
+void send_endgame_packet(int _s_id)
+{
+	CS_END_GAME_PACKET packet;
+	packet.size = sizeof(packet);
+	packet.type = SC_END_GAME;
+	packet.id = _s_id;
+	packet.bEND = true;
 	clients[_s_id].do_send(sizeof(packet), &packet);
 }
 

@@ -150,6 +150,7 @@ void ACharacterBase::BeginPlay()
 
 
 	OnTakeAnyDamage.AddDynamic(this, &ACharacterBase::ReciveDamage);
+	SetEscapeToolNum(10);
 
 }
 
@@ -692,6 +693,7 @@ void ACharacterBase::Inter(const FInputActionValue& Value)
 	if (bCanObtainEscapeTool && OverlappingEscapeTool)
 	{
 		ObtainedEscapeToolNum += 1;
+		//패킷(id, num)
 		UpdateObtainedEscapeTool();
 		OverlappingEscapeTool->SetHideMesh();
 		OverlappingEscapeTool = nullptr;
@@ -704,8 +706,9 @@ void ACharacterBase::Inter(const FInputActionValue& Value)
 
 	if (bCanEscape)
 	{
-		//여기서 게임끝남
-		UE_LOG(LogTemp, Warning, TEXT("ESCAPE GOOD"));
+		if (inst)
+			Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_End_Game_packet(inst->GetPlayerID());
+		
 	}
 }
 void ACharacterBase::EToolTranfrom(const FInputActionValue& Value)

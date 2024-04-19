@@ -328,13 +328,7 @@ void ACharacterController::Tick(float DeltaTime)
 		SetHUDHealth(BaseCharacter->GetHealth(), BaseCharacter->MaxGetHealth());
 	}
 
-	//if (inst->m_Socket->bAllReady == true)
-	//{
-	//	UE_LOG(LogTemp, Warning, TEXT("ballready!!!!!!!!!!!!!!!!!"));
-	//	DisableInput(UGameplayStatics::GetPlayerController(GetWorld(), 0));
-	//	//GetWorldTimerManager().SetTimer(StartTimeHandle, this, &ABOGameMode::StartGame, 5.f);
-
-	//}
+	
 }
 
 void ACharacterController::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -412,7 +406,11 @@ bool ACharacterController::UpdateWorld()
 
 			if (!info->IsAlive) continue;
 
-
+		/*	if (OtherPlayer && OtherPlayer->_SessionId == id)
+			{*/
+				if (info->bEndGame == true)
+					UE_LOG(LogTemp, Warning, TEXT("WINNER : %d"), info->WinnerID);
+			//}
 
 
 			if (!OtherPlayer || OtherPlayer->_SessionId == -1 || OtherPlayer->_SessionId == id)

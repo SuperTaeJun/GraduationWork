@@ -273,6 +273,13 @@ bool ClientSocket::PacketProcess(char* ptr)
 		PlayerInfo.players[packet->id].skilltype = packet->num;
 		break;
 	}
+	case SC_END_GAME: {
+		UE_LOG(LogClass, Warning, TEXT("endgamegagagagagaga"));
+		CS_END_GAME_PACKET* packet = reinterpret_cast<CS_END_GAME_PACKET*>(ptr);
+		PlayerInfo.players[packet->id].bEndGame = true;
+		PlayerInfo.players[packet->id].WinnerID = packet->winnerid;
+		break;
+	}
 	default:
 		break;
 	}
@@ -492,6 +499,14 @@ void ClientSocket::Send_Start_game_packet(int id)
 	packet.id = id;
 	SendPacket(&packet);
 
+}
+void ClientSocket::Send_End_Game_packet(int id)
+{
+	CS_END_GAME_PACKET packet;
+	packet.size = sizeof(packet);
+	packet.type = CS_END_GAME;
+	packet.id = id;
+	SendPacket(&packet);
 }
 void ClientSocket::Send_Signal_packet(int id, int num)
 {

@@ -68,6 +68,7 @@ public:
 
 	// 세션 아이디
 	int Id = -1;
+	int WinnerID = -1;
 	//int hp;
 	int weptype;
 	int damage;
@@ -97,6 +98,7 @@ public:
 	bool  bniagara = false;
 	bool  bniagarach1 = false;
 	bool  bch4end = false;
+	bool  bEndGame = false;
 	// 나이아가라 슛 이팩트
 	FVector Sshot;
 	FVector Eshot;
@@ -286,6 +288,7 @@ public:
 	void Send_Niagara_cancel(bool bcancel, int id, int num);
 	void Send_Niagara_packetch1(int clinetid, PlayerType type, FVector loc, int num);
 	void Send_Start_game_packet(int id);
+	void Send_End_Game_packet(int id);
 	void Send_Signal_packet(int id, int num);
 	virtual bool Init() override;
 	virtual uint32 Run() override;
