@@ -523,7 +523,7 @@ void process_packet(int s_id, char* p)
 		CLIENT& cl = clients[packet->id];
 		cout << "cl.sid" << cl._s_id << endl;
 		cl.state_lock.lock();
-		for (int i = 0; i < 20; ++i) {
+		for (int i = 0; i < 1; ++i) {
 			send_item_packet(cl._s_id, i);
 		}
 		cl.state_lock.unlock();
