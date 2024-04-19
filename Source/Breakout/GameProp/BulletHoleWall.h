@@ -16,9 +16,12 @@ class BREAKOUT_API ABulletHoleWall : public AActor
 public:	
 	ABulletHoleWall();
 	virtual void Tick(float DeltaTime) override;
+
+	UFUNCTION(BlueprintCallable)
 	void SetBulletHole(const FVector SweepResult);
 	//void SetBulletHole(const FHitResult& SweepResult);
-	FMeshData MeshBoolean(FMeshData DataA, FTransform TransformA, FMeshData DataB, FTransform TransformB);
+	UFUNCTION(BlueprintCallable)
+	FMeshData MeshBoolean(UPARAM(ref)FMeshData DataA, FTransform TransformA, UPARAM(ref)FMeshData DataB, FTransform TransformB);
 
 	UE::Geometry::FDynamicMesh3 ConvertToFDynamicMesh3(FMeshData& Data);
 	FMeshData ConverToFMeshData(UE::Geometry::FDynamicMesh3& Input, FMeshData& Output);
@@ -27,7 +30,8 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite,Category = "Mesh")
+	TObjectPtr<class USceneComponent> DefaultRoot;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite,Category = "Mesh")
 	TObjectPtr<class UProceduralMeshComponent> ProceduralMesh;
 	UPROPERTY(EditAnywhere, Category = "Mesh")
 	TObjectPtr<class UStaticMeshComponent > Sphere;
@@ -47,7 +51,8 @@ private:
 	void GetMeshDataFromStaticMesh(UStaticMesh* Mesh, UPARAM(ref) FMeshData& Data, int32 LODIndex, int32 SectionIndex, bool GetAllSections);
 	UFUNCTION(BlueprintCallable)
 	void SetColorData(UPARAM(ref) FMeshData& Data, FLinearColor Color);
-	FMeshData SetRandomVertex(FMeshData& MeshData, float Min, float Max, float Tolerance);
+	UFUNCTION(BlueprintCallable)
+	FMeshData SetRandomVertex(UPARAM(ref)FMeshData& MeshData, float Min, float Max, float Tolerance);
 	UFUNCTION(BlueprintCallable)
 	FMeshData TransformMeshData(UPARAM(ref) FMeshData& Data, FTransform Transform, bool InPlace, FVector Pivot);
 };

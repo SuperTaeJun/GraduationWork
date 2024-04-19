@@ -13,12 +13,12 @@ ABulletHoleWall::ABulletHoleWall()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
+	DefaultRoot = CreateDefaultSubobject<USceneComponent>("DefaultRootComponent");
+	RootComponent = DefaultRoot;
 	ProceduralMesh = CreateDefaultSubobject<UProceduralMeshComponent>(TEXT("ProceduralMesh"));
 	ProceduralMesh->SetupAttachment(RootComponent);
-
 	Sphere = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Sphere"));
 	Sphere->SetupAttachment(RootComponent);
-
 }
 
 void ABulletHoleWall::BeginPlay()
@@ -41,22 +41,21 @@ void ABulletHoleWall::SetBulletHole(const FVector SweepResult)
 	FTransform ATransform = ProceduralMesh->GetRelativeTransform();
 	FTransform BTransform;
 	BTransform.SetLocation(Sphere->GetRelativeTransform().GetLocation());
-	BTransform.SetRotation(ProceduralMesh->GetRelativeTransform().GetRotation());
+	BTransform.SetRotation(GetActorRotation().Quaternion());
 	BTransform.SetScale3D(FVector(60.f, 0.2f, 0.2f));
 
 	MeshDataA =MeshBoolean(MeshDataA, ATransform, SetRandomVertex(MeshDataB, -20.f, 20.f, 0.001), BTransform);
-	FTransform Temp;
-	ProceduralMesh->GetRelativeLocation();
-	Temp.SetLocation(FVector(0.f, 0.f, 0.f) - ProceduralMesh->GetComponentLocation());
-	Temp.SetRotation(ProceduralMesh->GetComponentQuat());
-	Temp.SetScale3D(FVector(1.f, 1.f, 1.f) / ProceduralMesh->GetRelativeScale3D());
-	TransformMeshData(MeshDataA, Temp, true, FVector(0.f, 0.f, 0.f));
+	//FTransform Temp;
+	//Temp.SetLocation(FVector(0.f, 0.f, 0.f) - ProceduralMesh->GetComponentLocation());
+	//Temp.SetRotation(ProceduralMesh->GetComponentQuat());
+	//Temp.SetScale3D(FVector(1.f, 1.f, 1.f) / ProceduralMesh->GetRelativeScale3D());
+	//TransformMeshData(MeshDataA, Temp, true, FVector(0.f, 0.f, 0.f));
 
 	TArray<FProcMeshTangent> Tangents = {};
 	ProceduralMesh->CreateMeshSection_LinearColor(0, MeshDataA.Verts, MeshDataA.Tris, MeshDataA.Normals, MeshDataA.UVs, MeshDataA.Colors,Tangents, true);
 }
 
-FMeshData ABulletHoleWall::MeshBoolean(FMeshData DataA, FTransform TransformA, FMeshData DataB, FTransform TransformB)
+FMeshData ABulletHoleWall::MeshBoolean(UPARAM(ref)FMeshData DataA, FTransform TransformA, UPARAM(ref)FMeshData DataB, FTransform TransformB)
 {
 	UE::Geometry::FDynamicMesh3 BooleanOutput;
 	BooleanOutput.EnableAttributes();
@@ -377,7 +376,7 @@ void ABulletHoleWall::SetColorData(UPARAM(ref) FMeshData& Data, FLinearColor Col
 	}
 }
 
-FMeshData ABulletHoleWall::SetRandomVertex(FMeshData& MeshData, float Min, float Max, float Tolerance)
+FMeshData ABulletHoleWall::SetRandomVertex(UPARAM(ref)FMeshData& MeshData, float Min, float Max, float Tolerance)
 {
 
 	FMeshData Result = MeshData;

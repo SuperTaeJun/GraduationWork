@@ -2,7 +2,7 @@
 #define SERVER_PORT		8001
 #include <vector>
 #include <array>
-#define SERVER_IP		"192.168.0.28"
+#define SERVER_IP		"127.0.0.1"
 #define MAX_INFO_SIZE   20
 //const char CS_PACKET_ATTACK = 3;
 enum PlayerType
@@ -19,10 +19,11 @@ enum WeaponType
 	SHOTGUN,
 	LAUNCHER
 };
-struct SHOTGUNLOC {
+struct itempos {
 	float x;
 	float y;
 	float z;
+	int id;
 };
 constexpr int BUFSIZE = 1048;
 const int  ReZone_HEIGHT = 2000;
@@ -47,7 +48,7 @@ const char CS_NiAGARA = 12;
 const char CS_NiAGARA_CANCEL = 13;
 const char CS_START_GAME = 14;
 const char CS_NiAGARA_CH1 = 15;
-const char CS_BLANK = 16;
+
 
 const char SC_LOGIN_OK = 1;
 const char SC_OTHER_PLAYER = 2;
@@ -64,6 +65,7 @@ const char SC_NiAGARA = 12;
 const char SC_NiAGARA_CANCEL = 13;
 const char SC_SIGNAL = 14;
 const char SC_NiAGARA_CH1 = 15;
+const char SC_ITEM = 16;
 //const char CS_PACKET_DAMAGE = 7;
 //const char CS_PACKET_GET_ITEM = 8;
 //
@@ -267,6 +269,12 @@ struct CS_NIAGARA_PACKETCH1 {
 struct CS_START_GAME_PACKET {
 	unsigned char size;
 	unsigned char type;
+};
+struct SC_ITEM_PACKET {
+	unsigned char size;
+	unsigned char type;
+	std::array<itempos, 1> item;
+	
 };
 
 #pragma pack(pop)

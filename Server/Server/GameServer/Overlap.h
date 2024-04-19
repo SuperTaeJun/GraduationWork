@@ -6,7 +6,7 @@ public:
     WSAOVERLAPPED   _wsa_over;
     IO_type         _op;
     WSABUF         _wsa_buf;
-    char   _net_buf[BUFSIZE];
+    char   _net_buf[2048];
     int            _target;
 public:
     Overlap(IO_type _op, char num_bytes, void* mess) : _op(_op)

@@ -456,11 +456,11 @@ void ACharacterBase::Dead()
 
 void ACharacterBase::TurnInPlace(float DeltaTime)
 {
-	if (AO_Yaw > 90.f)
+	if (AO_Yaw > 45.f)
 	{
 		TurningType = ETurningInPlace::ETIP_Right;
 	}
-	else if (AO_Yaw < -90.f)
+	else if (AO_Yaw < -45.f)
 	{
 		TurningType = ETurningInPlace::ETIP_Left;
 	}
