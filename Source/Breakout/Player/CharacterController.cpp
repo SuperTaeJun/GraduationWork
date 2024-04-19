@@ -77,6 +77,18 @@ void ACharacterController::BeginPlay()
 			break;
 		}
 	}
+	TArray<AActor*> SpawnPlayer;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AEscapeTool::StaticClass(), SpawnPlayer);
+	FVector Location = SpawnPlayer[0]->GetActorLocation();
+	FVector Location1 = SpawnPlayer[1]->GetActorLocation();
+	FVector Location2 = SpawnPlayer[2]->GetActorLocation();
+	FVector Location3 = SpawnPlayer[3]->GetActorLocation();
+	FVector Location4 = SpawnPlayer[4]->GetActorLocation();
+	UE_LOG(LogTemp, Warning, TEXT("%f, %f, %f"), Location.X, Location.Y, Location.Z);
+	UE_LOG(LogTemp, Warning, TEXT("%f, %f, %f"), Location1.X, Location1.Y, Location1.Z);
+	UE_LOG(LogTemp, Warning, TEXT("%f, %f, %f"), Location2.X, Location2.Y, Location2.Z);
+	UE_LOG(LogTemp, Warning, TEXT("%f, %f, %f"), Location3.X, Location3.Y, Location3.Z);
+	UE_LOG(LogTemp, Warning, TEXT("%f, %f, %f"), Location4.X, Location4.Y, Location4.Z);
 }
 
 
@@ -259,31 +271,6 @@ void ACharacterController::ShowMatchingUi()
 	}
 }
 
-//void ACharacterController::RecvPacket()
-//{
-//	//UE_LOG(LogClass, Warning, TEXT("RECVPACKET"));
-//
-//	int bufferSize = c_socket->buffer.unsafe_size();
-//
-//	while (remainData < bufferSize)
-//	{
-//		while (remainData < BUFSIZE && remainData < bufferSize)
-//		{
-//			c_socket->buffer.try_pop(data[remainData++]);
-//		}
-//
-//		while (remainData > 0 && data[0] <= remainData)
-//		{
-//			if (c_socket->PacketProcess(data) == false)
-//				return;
-//			remainData -= data[0];
-//			bufferSize -= data[0];
-//			memcpy(data, data + data[0], BUFSIZE - data[0]);
-//		}
-//	}
-//
-//}
-
 void ACharacterController::InitPlayer()
 {
 	auto my_player = Cast<ACharacterBase>(UGameplayStatics::GetPlayerCharacter(this, 0));
@@ -302,8 +289,8 @@ void ACharacterController::Tick(float DeltaTime)
 	//새 플레이어 스폰
 	if (bNewPlayerEntered)
 		UpdateSyncPlayer();
-	if(bSync)
-		UpdateSyncItem();
+	//if(NewItem.size())
+	//	UpdateSyncItem();
 
 	UpdateWorld();
 	//UE_LOG(LogTemp, Warning, TEXT("HHHHHH : %s"), *GetOwner()->GetVelocity().ToString());
@@ -356,9 +343,9 @@ void ACharacterController::SetNewCharacterInfo(std::shared_ptr<CPlayer> InitPlay
 
 void ACharacterController::SetNewItemInfo(std::shared_ptr<CItem> initItem)
 {
-	//bSync = true;
-	//UE_LOG(LogTemp, Warning, TEXT("initSetNewItemInfo"));
-	//NewItem.push(initItem);
+	
+	UE_LOG(LogTemp, Warning, TEXT("initSetNewItemInfo"));
+	NewItem.push(initItem);
 }
 
 void ACharacterController::SetAttack(int _id)
@@ -844,34 +831,38 @@ void ACharacterController::UpdateSyncPlayer()
 
 void ACharacterController::UpdateSyncItem()
 {
-	/*UE_LOG(LogTemp, Warning, TEXT("UpdateSyncItem"));
 	UWorld* const world = GetWorld();
-	FVector S_LOCATION;
-	S_LOCATION.X = NewItem.front()->X;
-	S_LOCATION.Y = NewItem.front()->Y;
-	S_LOCATION.Z = NewItem.front()->Z;
-	FRotator S_ROTATOR;
-	S_ROTATOR.Yaw = 0.0f;
-	S_ROTATOR.Pitch = 0.0f;
-	S_ROTATOR.Roll = 0.0f;
-	FActorSpawnParameters SpawnActor;
-	SpawnActor.Owner = this;
-	SpawnActor.Instigator = GetInstigator();
-	SpawnActor.Name = FName(*FString(to_string(NewItem.front()->Id).c_str()));
-	AEscapeTool* SpawnCharacter = world->SpawnActor<AEscapeTool>(ItemSpawn,
-		S_LOCATION, S_ROTATOR, SpawnActor);
-	if (ItemInfo != nullptr)
+	int size_ = NewItem.size();
+	for (int i = 0; i < size_; ++i)
 	{
-		CItem info;
-		info.Id = NewItem.front()->Id;
-		info.X = NewItem.front()->X;
-		info.Y = NewItem.front()->Y;
-		info.Z = NewItem.front()->Z;
-		ItemInfo->items[NewItem.front()->Id] = info;
+		UE_LOG(LogTemp, Warning, TEXT("UpdateSyncItem"));
+
+		FVector S_LOCATION;
+		S_LOCATION.X = NewItem.front()->X;
+		S_LOCATION.Y = NewItem.front()->Y;
+		S_LOCATION.Z = NewItem.front()->Z;
+		FRotator S_ROTATOR;
+		S_ROTATOR.Yaw = 0.0f;
+		S_ROTATOR.Pitch = 0.0f;
+		S_ROTATOR.Roll = 0.0f;
+		FActorSpawnParameters SpawnActor;
+		SpawnActor.Owner = this;
+		SpawnActor.Instigator = GetInstigator();
+		SpawnActor.Name = FName(*FString(to_string(NewItem.front()->Id).c_str()));
+		AEscapeTool* SpawnCharacter = world->SpawnActor<AEscapeTool>(ItemSpawn,
+			S_LOCATION, S_ROTATOR, SpawnActor);
+		if (ItemInfo != nullptr)
+		{
+			CItem info;
+			info.Id = NewItem.front()->Id;
+			info.X = NewItem.front()->X;
+			info.Y = NewItem.front()->Y;
+			info.Z = NewItem.front()->Z;
+			ItemInfo->items[NewItem.front()->Id] = info;
+		}
+		NewItem.front() = nullptr;
+		NewItem.pop();
 	}
-	NewItem.front() = nullptr;
-	NewItem.pop();
-	bSync = false;*/
 }
 
 void ACharacterController::UpdatePlayer()

@@ -265,6 +265,7 @@ public:
 		return stream;
 	}
 };
+
 class BREAKOUT_API ClientSocket : public FRunnable
 {
 public:
@@ -309,9 +310,7 @@ public:
 	void SetPlayerController(ACharacterController* CharacterController);
 	HANDLE Iocp;
 	Overlap _recv_over;
-
 	SOCKET ServerSocket;
-	unsigned char recvBuffer[1000];
 	FRunnableThread* Thread;
 	FThreadSafeCounter StopTaskCounter;
 	int _prev_size = 0;
