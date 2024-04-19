@@ -92,7 +92,15 @@ bool ClientSocket::PacketProcess(char* ptr)
 	}
 	case SC_ITEM: {
 		SC_ITEM_PACKET* packet = reinterpret_cast<SC_ITEM_PACKET*>(ptr);
-		UE_LOG(LogTemp, Warning, TEXT("packet loc0 : %d, %f, %f, %f"), packet->item[0].id, packet->item[0].x, packet->item[0].y, packet->item[0].z)
+		/*Iteminfo.items[packet->id].X = packet->x;
+		Iteminfo.items[packet->id].Y = packet->y;
+		Iteminfo.items[packet->id].Z = packet->z;*/
+		auto info = make_shared<CItem>();
+		info->Id = packet->id;
+		info->X = packet->x;
+		info->Y = packet->y;
+		info->Z = packet->z;
+		MyCharacterController->SetNewItemInfo(info);
 		break;
 	}
 	case SC_OTHER_PLAYER:
@@ -476,11 +484,12 @@ void ClientSocket::Send_Niagara_packetch1(int clinetid, PlayerType type, FVector
 	packet.num = num;
 	SendPacket(&packet);
 }
-void ClientSocket::Send_Start_game_packet()
+void ClientSocket::Send_Start_game_packet(int id)
 {
 	CS_START_GAME_PACKET packet;
 	packet.size = sizeof(packet);
 	packet.type = CS_START_GAME;
+	packet.id = id;
 	SendPacket(&packet);
 
 }

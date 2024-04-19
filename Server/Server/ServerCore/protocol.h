@@ -19,12 +19,7 @@ enum WeaponType
 	SHOTGUN,
 	LAUNCHER
 };
-struct itempos {
-	float x;
-	float y;
-	float z;
-	int id;
-};
+
 constexpr int BUFSIZE = 1048;
 const int  ReZone_HEIGHT = 2000;
 const int  ReZone_WIDTH = 2000;
@@ -269,12 +264,15 @@ struct CS_NIAGARA_PACKETCH1 {
 struct CS_START_GAME_PACKET {
 	unsigned char size;
 	unsigned char type;
+	int id;
 };
 struct SC_ITEM_PACKET {
 	unsigned char size;
 	unsigned char type;
-	std::array<itempos, 1> item;
-	
+	float x;
+	float y;
+	float z;
+	int id;
 };
 
 #pragma pack(pop)

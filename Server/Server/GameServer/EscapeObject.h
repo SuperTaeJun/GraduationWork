@@ -17,10 +17,10 @@ public:
         z = z_val;
     }
 
-    void setRandomPosition(std::mt19937& gen, std::uniform_real_distribution<float>& dis) {
+    void setRandomPosition(std::mt19937& gen, std::uniform_real_distribution<float>& dis, std::uniform_real_distribution<float>& disz) {
         x = dis(gen);
         y = dis(gen);
-        z = dis(gen);
+        z = disz(gen);
     }
 
     void removeOBJ() {

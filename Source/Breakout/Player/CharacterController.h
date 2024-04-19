@@ -14,6 +14,7 @@
 
 //ClientSocket* c_socket = nullptr;
 class CPlayer;
+class Citem;
 class ClientSocket;
 class CPlayerInfo;
 class UBOGameInstance;
@@ -99,6 +100,7 @@ public:
 	CPlayer initplayer;
 	// 다른 캐릭터들의 정보
 	std::queue<std::shared_ptr<CPlayer>> NewPlayer;
+	std::queue<std::shared_ptr<CItem>> NewItem;
 	//int my_session_id;
 	//bool ProcessPacket(char* p);
 
@@ -135,11 +137,13 @@ public:
 	void SetInitPlayerInfo(const CPlayer& owner_player);
 	//-----------------------------------------------------
 	void SetNewCharacterInfo(std::shared_ptr<CPlayer> InitPlayer);
+	void SetNewItemInfo(std::shared_ptr<CItem> InitPlayer);
 	void SetAttack(int _id);
 	void SetHitEffect(int _id);
 	void UpdatePlayer();
 	//동기화 용
 	void UpdateSyncPlayer();
+	void UpdateSyncItem();
 	bool UpdateWorld();
 	void SetHp(float DamagedHp);
 	float damaged = 0;
@@ -155,6 +159,8 @@ public:
 	// 스폰시킬 다른 캐릭터
 	UPROPERTY(EditAnywhere, Category = "Spawning")
 	TSubclassOf<class ACharacterBase> ToSpawn;
+	UPROPERTY(EditAnywhere, Category = "Spawning")
+	TSubclassOf<class AEscapeTool> ItemSpawn;
 	void Set_Weapon_Type(EWeaponType Type);
 	//void UpdateWeaponMesh();
 	virtual void OnPossess(APawn* InPawn) override;
@@ -166,6 +172,7 @@ public:
 	bool bInitPlayerSetting = false;
 	//ClientSocket* c_socket;
 	CPlayerInfo* PlayerInfo;
+	CItemInfo* ItemInfo;
 	int p_cnt;
 	bool connect;
 	bool Set_Weapon;
@@ -174,5 +181,5 @@ public:
 	bool login_cond;
 	class ANiagaraActor* ServerTemp;
 	UBOGameInstance* inst;
-
+	bool bSync = false;
 };

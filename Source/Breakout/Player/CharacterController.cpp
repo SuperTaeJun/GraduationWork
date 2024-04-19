@@ -26,7 +26,7 @@
 #include "NiagaraActor.h"
 #include "TimerManager.h"
 #include "FX/Skill4Actor.h"
-
+#include "GameProp/EscapeTool.h"
 #include "../../Server/Server/ServerCore/protocol.h"
 #include <string>
 #include "ClientSocket.h"
@@ -302,6 +302,8 @@ void ACharacterController::Tick(float DeltaTime)
 	//새 플레이어 스폰
 	if (bNewPlayerEntered)
 		UpdateSyncPlayer();
+	if(bSync)
+		UpdateSyncItem();
 
 	UpdateWorld();
 	//UE_LOG(LogTemp, Warning, TEXT("HHHHHH : %s"), *GetOwner()->GetVelocity().ToString());
@@ -356,6 +358,13 @@ void ACharacterController::SetNewCharacterInfo(std::shared_ptr<CPlayer> InitPlay
 		NewPlayer.push(InitPlayer);
 		UE_LOG(LogTemp, Warning, TEXT("The value of size_: %d"), NewPlayer.size());
 	}
+}
+
+void ACharacterController::SetNewItemInfo(std::shared_ptr<CItem> initItem)
+{
+	//bSync = true;
+	//UE_LOG(LogTemp, Warning, TEXT("initSetNewItemInfo"));
+	//NewItem.push(initItem);
 }
 
 void ACharacterController::SetAttack(int _id)
@@ -833,6 +842,38 @@ void ACharacterController::UpdateSyncPlayer()
 		NewPlayer.pop();
 	}
 	bNewPlayerEntered = false;
+}
+
+void ACharacterController::UpdateSyncItem()
+{
+	/*UE_LOG(LogTemp, Warning, TEXT("UpdateSyncItem"));
+	UWorld* const world = GetWorld();
+	FVector S_LOCATION;
+	S_LOCATION.X = NewItem.front()->X;
+	S_LOCATION.Y = NewItem.front()->Y;
+	S_LOCATION.Z = NewItem.front()->Z;
+	FRotator S_ROTATOR;
+	S_ROTATOR.Yaw = 0.0f;
+	S_ROTATOR.Pitch = 0.0f;
+	S_ROTATOR.Roll = 0.0f;
+	FActorSpawnParameters SpawnActor;
+	SpawnActor.Owner = this;
+	SpawnActor.Instigator = GetInstigator();
+	SpawnActor.Name = FName(*FString(to_string(NewItem.front()->Id).c_str()));
+	AEscapeTool* SpawnCharacter = world->SpawnActor<AEscapeTool>(ItemSpawn,
+		S_LOCATION, S_ROTATOR, SpawnActor);
+	if (ItemInfo != nullptr)
+	{
+		CItem info;
+		info.Id = NewItem.front()->Id;
+		info.X = NewItem.front()->X;
+		info.Y = NewItem.front()->Y;
+		info.Z = NewItem.front()->Z;
+		ItemInfo->items[NewItem.front()->Id] = info;
+	}
+	NewItem.front() = nullptr;
+	NewItem.pop();
+	bSync = false;*/
 }
 
 void ACharacterController::UpdatePlayer()

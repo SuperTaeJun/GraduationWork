@@ -43,6 +43,7 @@ void worker_thread();
 std::random_device rd;
 std::mt19937 gen(rd());
 std::uniform_real_distribution<float> dis(-100.0f, 100.0f); 
+std::uniform_real_distribution<float> disz(82.15f, 100.0f); 
 
 int main()
 {
@@ -75,11 +76,11 @@ int main()
 		clients[i]._s_id = i;
 	for (int i = 0; i < MAX_OBJ; ++i) {
 		objects[i].ob_id = i;
-		objects[i].setRandomPosition(gen, dis); // 랜덤한 좌표 설정
+		objects[i].setRandomPosition(gen, dis, disz); // 랜덤한 좌표 설정
 	}
 
 	for (int i = 0; i < MAX_OBJ; ++i) {
-		cout << "pos : " << objects[i].x << ", " << objects[i].y << endl;
+		cout << "pos : " << objects[i].x << ", " << objects[i].z << endl;
 	}
 
 	g_timer = CreateEvent(NULL, FALSE, FALSE, NULL);
@@ -249,9 +250,8 @@ void process_packet(int s_id, char* p)
 		cl.connected = true;
 		ingamecount++;
 		send_select_character_type_packet(cl._s_id);
-		for (int i = 0; i < 20; ++i) {
-			send_item_packet(cl._s_id, i);
-		}
+		
+	
 
 		cout << "cl._s_id : " << cl._s_id << ",  " << cl.p_type << endl;
 		//m.lock();
@@ -518,14 +518,15 @@ void process_packet(int s_id, char* p)
 		break;
 	}
 	case CS_START_GAME: {
-		//CS_START_GAME_PACKET* packet = reinterpret_cast<CS_START_GAME_PACKET*>(p);
-		////CLIENT& cl = clients[packet->id];
-		//for (auto& player : clients) {
-		//	if (ST_INGAME != player._state)
-		//		continue;
-		//	
-		//}
-		//break;
+		CS_START_GAME_PACKET* packet = reinterpret_cast<CS_START_GAME_PACKET*>(p);
+		CLIENT& cl = clients[packet->id];
+		cout << "cl.sid" << cl._s_id << endl;
+		cl.state_lock.lock();
+		for (int i = 0; i < 20; ++i) {
+			send_item_packet(cl._s_id, i);
+		}
+		cl.state_lock.unlock();
+		break;
 	}
 	case CS_SHOTGUN_DAMAGED: {
 		CS_SHOTGUN_DAMAGED_PACKET* packet = reinterpret_cast<CS_SHOTGUN_DAMAGED_PACKET*>(p);
@@ -856,10 +857,10 @@ void send_item_packet(int _s_id, int item_index)
 	packet.type = SC_ITEM;
 	packet.size = sizeof(packet);
 
-	packet.item[0].x = objects[item_index].x;
-	packet.item[0].y = objects[item_index].y;
-	packet.item[0].z = objects[item_index].z;
-	packet.item[0].id = objects[item_index].ob_id; // 아이템 ID 설정
+	packet.x = objects[item_index].x;
+	packet.y = objects[item_index].y;
+	packet.z = objects[item_index].z;
+	packet.id = objects[item_index].ob_id; // 아이템 ID 설정
 
 	clients[_s_id].do_send(sizeof(packet), &packet);
 	

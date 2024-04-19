@@ -7,7 +7,7 @@
 #pragma comment(lib, "ws2_32.lib")
 #include <WinSock2.h>
 #include <WS2tcpip.h>
-
+#include <queue>
 #include <fstream>
 #include <map>
 #include <mutex>
@@ -17,11 +17,47 @@
 #include "Windows/PostWindowsApi.h"
 #include "Windows/HideWindowsPlatformTypes.h"
 #include "CoreMinimal.h"
-#include <concurrent_queue.h>
 
 class UBOGameInstance;
 class ACharacterController;
 using namespace std;
+
+const int buffsize = 2048;
+
+enum IO_type
+{
+	IO_RECV,
+	IO_SEND,
+	IO_ACCEPT,
+};
+
+class Overlap {
+public:
+	WSAOVERLAPPED   _wsa_over;
+	IO_type         _op;
+	WSABUF         _wsa_buf;
+	char   _net_buf[buffsize];
+	int            _target;
+public:
+	Overlap(IO_type _op, char num_bytes, void* mess) : _op(_op)
+	{
+		ZeroMemory(&_wsa_over, sizeof(_wsa_over));
+		_wsa_buf.buf = reinterpret_cast<char*>(_net_buf);
+		_wsa_buf.len = num_bytes;
+		memcpy(_net_buf, mess, num_bytes);
+	}
+
+	Overlap(IO_type _op) : _op(_op) {}
+
+	Overlap()
+	{
+		_op = IO_RECV;
+	}
+
+	~Overlap()
+	{
+	}
+};
 
 // 플레이어 클래스 
 class CPlayer
@@ -117,43 +153,6 @@ public:
 	}
 };
 
-const int buffsize = 2048;
-
-enum IO_type
-{
-	IO_RECV,
-	IO_SEND,
-	IO_ACCEPT,
-};
-
-class Overlap {
-public:
-	WSAOVERLAPPED   _wsa_over;
-	IO_type         _op;
-	WSABUF         _wsa_buf;
-	char   _net_buf[buffsize];
-	int            _target;
-public:
-	Overlap(IO_type _op, char num_bytes, void* mess) : _op(_op)
-	{
-		ZeroMemory(&_wsa_over, sizeof(_wsa_over));
-		_wsa_buf.buf = reinterpret_cast<char*>(_net_buf);
-		_wsa_buf.len = num_bytes;
-		memcpy(_net_buf, mess, num_bytes);
-	}
-
-	Overlap(IO_type _op) : _op(_op) {}
-
-	Overlap()
-	{
-		_op = IO_RECV;
-	}
-
-	~Overlap()
-	{
-	}
-};
-
 class CPlayerInfo
 {
 public:
@@ -193,6 +192,77 @@ public:
 	}
 };
 
+class CItem
+{
+public:
+	CItem() { };
+	~CItem() {};
+
+	// 세션 아이디
+	int Id = -1;
+	//int hp;
+	// 위치
+	float X = 0;
+	float Y = 0;
+	float Z = 0;
+	// 속도
+	friend ostream& operator<<(ostream& stream, CItem& info)
+	{
+		stream << info.Id << endl;
+		stream << info.X << endl;
+		stream << info.Y << endl;
+		stream << info.Z << endl;
+		return stream;
+	}
+
+	friend istream& operator>>(istream& stream, CItem& info)
+	{
+		stream >> info.Id;
+		stream >> info.X;
+		stream >> info.Y;
+		stream >> info.Z;
+		return stream;
+	}
+};
+
+class CItemInfo
+{
+public:
+	CItemInfo() {};
+	~CItemInfo() {};
+
+	map<int, CItem> items;
+
+	friend ostream& operator<<(ostream& stream, CItemInfo& info)
+	{
+		stream << info.items.size() << endl;
+		for (auto& kvp : info.items)
+		{
+			stream << kvp.first << endl;
+			stream << kvp.second << endl;
+		}
+
+		return stream;
+	}
+
+	friend istream& operator>>(istream& stream, CItemInfo& info)
+	{
+		int nitems = 0;
+		int SessionId = 0;
+		CItem item;
+		info.items.clear();
+
+		stream >> nitems;
+		for (int i = 0; i < nitems; i++)
+		{
+			stream >> SessionId;
+			stream >> item;
+			info.items[SessionId] = item;
+		}
+
+		return stream;
+	}
+};
 class BREAKOUT_API ClientSocket : public FRunnable
 {
 public:
@@ -215,7 +285,7 @@ public:
 	void Send_Niagara_packet(int clientid, PlayerType type, int num);
 	void Send_Niagara_cancel(bool bcancel, int id, int num);
 	void Send_Niagara_packetch1(int clinetid, PlayerType type, FVector loc, int num);
-	void Send_Start_game_packet();
+	void Send_Start_game_packet(int id);
 	void Send_Signal_packet(int id, int num);
 	virtual bool Init() override;
 	virtual uint32 Run() override;
@@ -245,11 +315,11 @@ public:
 	int local_id = -1;
 	bool login_cond = false;
 	bool bAllReady = false;
-	Concurrency::concurrent_queue<char> buffer;
+	
 private:
 	ACharacterController* MyCharacterController;
 	CPlayerInfo PlayerInfo;
 	UBOGameInstance* gameinst;
-
+	CItemInfo Iteminfo;
 };
 
