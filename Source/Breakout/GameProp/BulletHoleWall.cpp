@@ -19,13 +19,51 @@ ABulletHoleWall::ABulletHoleWall()
 	ProceduralMesh->SetupAttachment(RootComponent);
 	Sphere = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Sphere"));
 	Sphere->SetupAttachment(RootComponent);
+
+	Hp = 50.f;
+	bDestroyed = false;
 }
 
 void ABulletHoleWall::BeginPlay()
 {
 	Super::BeginPlay();
 
+	OnTakeAnyDamage.AddDynamic(this, &ABulletHoleWall::ReciveDamage);
+	UE_LOG(LogTemp, Warning, TEXT("HP: %f"), Hp);
+	Hp = 50.f;
+	bDestroyed = false;
+}
+void ABulletHoleWall::ReciveDamage(AActor* DamagedActor, float Damage, const UDamageType* DamageType, AController* InstigatorController, AActor* DamageCauser)
+{
+	Hp -= Damage;
+	UE_LOG(LogTemp, Warning, TEXT("HP: %f"), Hp);
+	if (Hp <= 0.f && !bDestroyed)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Destroy"));
+		//저장 부셔진 조각들 계산해서
+		for (int i = 0; i < 5; ++i)
+		{
+			FTransform DataATransform;
+			FTransform SculptureTransform;
+			MeshDataStorage.Add(MeshBoolean(MeshDataA, DataATransform, SetRandomVertex(SculptureData, -3.f, 10.f, 0.1f), SculptureTransform, false));
+		}
 
+		//각각 조각들 설정
+		for (int i = 0; i < MeshDataStorage.Num() - 1; ++i)
+		{
+			FTransform AddTransform;
+			UProceduralMeshComponent* TempComponent;
+			TempComponent = Cast<UProceduralMeshComponent>(AddComponentByClass(UProceduralMeshComponent::StaticClass(),false, AddTransform,true));
+			if (TempComponent)
+			{
+				TArray<FProcMeshTangent> Tangents = {};
+				TempComponent->CreateMeshSection_LinearColor(0, MeshDataStorage[i].Verts, MeshDataStorage[i].Tris, MeshDataStorage[i].Normals, MeshDataStorage[i].UVs, MeshDataStorage[i].Colors, Tangents,true);
+
+				TempComponent->AddCollisionConvexMesh(MeshDataStorage[i].Verts);
+				ProceduralMesh->DestroyComponent();
+			}
+		}
+	}
 }
 void ABulletHoleWall::Tick(float DeltaTime)
 {
@@ -44,7 +82,7 @@ void ABulletHoleWall::SetBulletHole(const FVector SweepResult)
 	BTransform.SetRotation(GetActorRotation().Quaternion());
 	BTransform.SetScale3D(FVector(60.f, 0.2f, 0.2f));
 
-	MeshDataA =MeshBoolean(MeshDataA, ATransform, SetRandomVertex(MeshDataB, -20.f, 20.f, 0.001), BTransform);
+	MeshDataA =MeshBoolean(MeshDataA, ATransform, SetRandomVertex(MeshDataB, -20.f, 20.f, 0.001), BTransform,true);
 	//FTransform Temp;
 	//Temp.SetLocation(FVector(0.f, 0.f, 0.f) - ProceduralMesh->GetComponentLocation());
 	//Temp.SetRotation(ProceduralMesh->GetComponentQuat());
@@ -55,7 +93,7 @@ void ABulletHoleWall::SetBulletHole(const FVector SweepResult)
 	ProceduralMesh->CreateMeshSection_LinearColor(0, MeshDataA.Verts, MeshDataA.Tris, MeshDataA.Normals, MeshDataA.UVs, MeshDataA.Colors,Tangents, true);
 }
 
-FMeshData ABulletHoleWall::MeshBoolean(UPARAM(ref)FMeshData DataA, FTransform TransformA, UPARAM(ref)FMeshData DataB, FTransform TransformB)
+FMeshData ABulletHoleWall::MeshBoolean(UPARAM(ref)FMeshData DataA, FTransform TransformA, UPARAM(ref)FMeshData DataB, FTransform TransformB, bool OptionType)
 {
 	UE::Geometry::FDynamicMesh3 BooleanOutput;
 	BooleanOutput.EnableAttributes();
@@ -64,7 +102,10 @@ FMeshData ABulletHoleWall::MeshBoolean(UPARAM(ref)FMeshData DataA, FTransform Tr
 	BooleanOutput.EnableVertexUVs(FVector2f(0.0f, 0.0f));
 
 	UE::Geometry::FMeshBoolean::EBooleanOp Option;
-	Option= UE::Geometry::FMeshBoolean::EBooleanOp::Difference;
+	if (OptionType)
+		Option = UE::Geometry::FMeshBoolean::EBooleanOp::Difference;
+	else
+		Option = UE::Geometry::FMeshBoolean::EBooleanOp::Intersect;
 
 	FTransform3d ConvertedTransformA = ConvertToFTransform3d(TransformA);
 	FTransform3d ConvertedTransformB = ConvertToFTransform3d(TransformB);

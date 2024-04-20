@@ -66,8 +66,8 @@ void AProjectileBullet::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherAc
 			UGameplayStatics::ApplyDamage(DamagedCharacter,Damage,FiringController,FiringPawn,UDamageType::StaticClass());
 		else if (DamagedWall)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("DamagedWall"));
 			DamagedWall->SetBulletHole(Hit.ImpactPoint);
+			UGameplayStatics::ApplyDamage(DamagedWall, Damage, FiringController, FiringPawn, UDamageType::StaticClass());
 		}
 	}
 	Destroy();

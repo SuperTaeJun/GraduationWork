@@ -79,16 +79,40 @@ void ACharacterController::BeginPlay()
 	}
 	TArray<AActor*> SpawnPlayer;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AEscapeTool::StaticClass(), SpawnPlayer);
-	FVector Location = SpawnPlayer[0]->GetActorLocation();
-	FVector Location1 = SpawnPlayer[1]->GetActorLocation();
-	FVector Location2 = SpawnPlayer[2]->GetActorLocation();
-	FVector Location3 = SpawnPlayer[3]->GetActorLocation();
-	FVector Location4 = SpawnPlayer[4]->GetActorLocation();
-	UE_LOG(LogTemp, Warning, TEXT("%f, %f, %f"), Location.X, Location.Y, Location.Z);
-	UE_LOG(LogTemp, Warning, TEXT("%f, %f, %f"), Location1.X, Location1.Y, Location1.Z);
-	UE_LOG(LogTemp, Warning, TEXT("%f, %f, %f"), Location2.X, Location2.Y, Location2.Z);
-	UE_LOG(LogTemp, Warning, TEXT("%f, %f, %f"), Location3.X, Location3.Y, Location3.Z);
-	UE_LOG(LogTemp, Warning, TEXT("%f, %f, %f"), Location4.X, Location4.Y, Location4.Z);
+	if(SpawnPlayer.Num()==1)
+		FVector Location = SpawnPlayer[0]->GetActorLocation();
+	else if (SpawnPlayer.Num() == 2) 
+	{
+		FVector Location = SpawnPlayer[0]->GetActorLocation();
+		FVector Location1 = SpawnPlayer[1]->GetActorLocation();
+	}
+	else if (SpawnPlayer.Num() == 3)
+	{
+		FVector Location = SpawnPlayer[0]->GetActorLocation();
+		FVector Location1 = SpawnPlayer[1]->GetActorLocation();
+		FVector Location2 = SpawnPlayer[2]->GetActorLocation();
+	}
+	else if (SpawnPlayer.Num() == 4)
+	{
+		FVector Location = SpawnPlayer[0]->GetActorLocation();
+		FVector Location1 = SpawnPlayer[1]->GetActorLocation();
+		FVector Location2 = SpawnPlayer[2]->GetActorLocation();
+		FVector Location3 = SpawnPlayer[3]->GetActorLocation();
+	}
+	else if (SpawnPlayer.Num() == 5)
+	{
+		FVector Location = SpawnPlayer[0]->GetActorLocation();
+		FVector Location1 = SpawnPlayer[1]->GetActorLocation();
+		FVector Location2 = SpawnPlayer[2]->GetActorLocation();
+		FVector Location3 = SpawnPlayer[3]->GetActorLocation();
+		FVector Location4 = SpawnPlayer[4]->GetActorLocation();
+	}
+
+	//UE_LOG(LogTemp, Warning, TEXT("%f, %f, %f"), Location.X, Location.Y, Location.Z);
+	//UE_LOG(LogTemp, Warning, TEXT("%f, %f, %f"), Location1.X, Location1.Y, Location1.Z);
+	//UE_LOG(LogTemp, Warning, TEXT("%f, %f, %f"), Location2.X, Location2.Y, Location2.Z);
+	//UE_LOG(LogTemp, Warning, TEXT("%f, %f, %f"), Location3.X, Location3.Y, Location3.Z);
+	//UE_LOG(LogTemp, Warning, TEXT("%f, %f, %f"), Location4.X, Location4.Y, Location4.Z);
 }
 
 

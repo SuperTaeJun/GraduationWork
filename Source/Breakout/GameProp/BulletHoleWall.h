@@ -21,7 +21,7 @@ public:
 	void SetBulletHole(const FVector SweepResult);
 	//void SetBulletHole(const FHitResult& SweepResult);
 	UFUNCTION(BlueprintCallable)
-	FMeshData MeshBoolean(UPARAM(ref)FMeshData DataA, FTransform TransformA, UPARAM(ref)FMeshData DataB, FTransform TransformB);
+	FMeshData MeshBoolean(UPARAM(ref)FMeshData DataA, FTransform TransformA, UPARAM(ref)FMeshData DataB, FTransform TransformB,bool OptionType);
 
 	UE::Geometry::FDynamicMesh3 ConvertToFDynamicMesh3(FMeshData& Data);
 	FMeshData ConverToFMeshData(UE::Geometry::FDynamicMesh3& Input, FMeshData& Output);
@@ -29,6 +29,8 @@ public:
 	FTransform3d ConvertToFTransform3d(FTransform Input);
 protected:
 	virtual void BeginPlay() override;
+	UFUNCTION()
+	void ReciveDamage(AActor* DamagedActor, float Damage, const UDamageType* DamageType, class AController* InstigatorController, AActor* DamageCauser);
 
 	TObjectPtr<class USceneComponent> DefaultRoot;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite,Category = "Mesh")
@@ -40,7 +42,8 @@ protected:
 	FMeshData MeshDataA;
 	UPROPERTY(BlueprintReadWrite)
 	FMeshData MeshDataB;
-
+	UPROPERTY(BlueprintReadWrite)
+	FMeshData SculptureData;
 	FVector HitLoc;
 	FVector HitNomal;
 	FVector DirWorld;
@@ -55,4 +58,8 @@ private:
 	FMeshData SetRandomVertex(UPARAM(ref)FMeshData& MeshData, float Min, float Max, float Tolerance);
 	UFUNCTION(BlueprintCallable)
 	FMeshData TransformMeshData(UPARAM(ref) FMeshData& Data, FTransform Transform, bool InPlace, FVector Pivot);
+
+	float Hp = 50.f;
+	bool bDestroyed = false;
+	TArray<FMeshData> MeshDataStorage;
 };
