@@ -39,7 +39,6 @@ void ABulletHoleWall::ReciveDamage(AActor* DamagedActor, float Damage, const UDa
 	UE_LOG(LogTemp, Warning, TEXT("HP: %f"), Hp);
 	if (Hp <= 0.f && !bDestroyed)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Destroy"));
 		//저장 부셔진 조각들 계산해서
 		for (int i = 0; i < 5; ++i)
 		{
@@ -53,13 +52,17 @@ void ABulletHoleWall::ReciveDamage(AActor* DamagedActor, float Damage, const UDa
 		{
 			FTransform AddTransform;
 			UProceduralMeshComponent* TempComponent;
-			TempComponent = Cast<UProceduralMeshComponent>(AddComponentByClass(UProceduralMeshComponent::StaticClass(),false, AddTransform,true));
+			TempComponent = Cast<UProceduralMeshComponent>(AddComponentByClass(UProceduralMeshComponent::StaticClass(), false, AddTransform, false));
+			AddInstanceComponent(TempComponent);
 			if (TempComponent)
 			{
 				TArray<FProcMeshTangent> Tangents = {};
-				TempComponent->CreateMeshSection_LinearColor(0, MeshDataStorage[i].Verts, MeshDataStorage[i].Tris, MeshDataStorage[i].Normals, MeshDataStorage[i].UVs, MeshDataStorage[i].Colors, Tangents,true);
-
+				//부셔진 조각들이 물리 시뮬 가능하게 변경해줌 bUseComplexAsSimpleCollision를 false로 바꿔서 AddCollisionConvexMesh로 컬리션을 다시 만들어줌
+				TempComponent->bUseComplexAsSimpleCollision = false;
+				TempComponent->SetSimulatePhysics(true);
 				TempComponent->AddCollisionConvexMesh(MeshDataStorage[i].Verts);
+				TempComponent->CreateMeshSection_LinearColor(0, MeshDataStorage[i].Verts, MeshDataStorage[i].Tris, MeshDataStorage[i].Normals, MeshDataStorage[i].UVs, MeshDataStorage[i].Colors, Tangents, true);
+
 				ProceduralMesh->DestroyComponent();
 			}
 		}
