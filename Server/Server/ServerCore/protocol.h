@@ -44,6 +44,7 @@ const char CS_NiAGARA_CANCEL = 13;
 const char CS_START_GAME = 14;
 const char CS_NiAGARA_CH1 = 15;
 const char CS_END_GAME = 16;
+const char CS_ITEM = 17;
 
 
 const char SC_LOGIN_OK = 1;
@@ -282,6 +283,12 @@ struct CS_END_GAME_PACKET {
 	int id;
 	int winnerid;
 	bool bEND;
+};
+struct CS_ITEM_PACKET {
+	unsigned char size;
+	unsigned char type;
+	int itemid;
+	float x, y, z;
 };
 
 #pragma pack(pop)

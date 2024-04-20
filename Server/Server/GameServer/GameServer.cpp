@@ -723,6 +723,11 @@ void process_packet(int s_id, char* p)
 		}
 		break;
 	}
+	case CS_ITEM: {
+		CS_ITEM_PACKET* packet = reinterpret_cast<CS_ITEM_PACKET*>(p);
+		cout << packet->itemid << packet->x << packet->y << packet->z << endl;
+		break;
+	}
 	default:
 		cout << " 오류패킷타입 : " << p << endl;
 		break;
