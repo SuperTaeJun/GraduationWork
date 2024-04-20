@@ -517,6 +517,18 @@ void ClientSocket::Send_Signal_packet(int id, int num)
 	packet.num = num;
 	SendPacket(&packet);
 }
+void ClientSocket::Send_Item_packet(int itemid, FVector loc)
+{
+	CS_ITEM_PACKET packet;
+	packet.size = sizeof(packet);
+	packet.type = CS_ITEM;
+	packet.itemid = itemid;
+	packet.x = loc.X;
+	packet.y = loc.Y;
+	packet.z = loc.Z;
+	UE_LOG(LogTemp, Warning, TEXT("%f, %f, %f"), packet.x, packet.y, packet.z);
+	SendPacket(&packet);
+}
 bool ClientSocket::Init()
 {
 	//UE_LOG(LogTemp, Warning, TEXT("Thread has been initialized"));
