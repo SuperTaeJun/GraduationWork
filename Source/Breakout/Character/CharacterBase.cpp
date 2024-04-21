@@ -264,7 +264,6 @@ void ACharacterBase::SetRespawnUi()
 		//bShowSelectUi = true;
 		MainController->bShowMouseCursor = true;
 		MainController->bEnableMouseOverEvents = true;
-
 		MainController->ShowRespawnSelect();
 	}
 }
@@ -434,6 +433,8 @@ void ACharacterBase::ReciveDamage(AActor* DamagedActor, float Damage, const UDam
 			GameMode->SetDamageInsigator(DamageInsigatorCh);
 			//MainController = MainController == nullptr ? Cast<ACharacterController>(Controller) : MainController;
 			//ACharacterController* AttackerController = Cast<ACharacterController>(InstigatorController);
+			DisableInput(MainController);
+			PlayAnimMontage(DeadMontage);
 			GetWorld()->GetTimerManager().SetTimer(DeadTimer, this, &ACharacterBase::Dead, DeadTime, false);
 		}
 	}

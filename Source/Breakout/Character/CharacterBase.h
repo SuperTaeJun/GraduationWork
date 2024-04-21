@@ -72,6 +72,7 @@ protected:
 public:
 	void SetResetState();
 
+	UAnimMontage* GetDeadMontage() { return DeadMontage; }
 	void SetbCanEscape(bool _bCanEscape) { bCanEscape = _bCanEscape; }
 	int32 GetEscapeToolNum(){ return ObtainedEscapeToolNum; }
 	void SetEscapeToolNum(int32 Num) { ObtainedEscapeToolNum = Num; }
@@ -137,6 +138,8 @@ protected:
 	TObjectPtr<class UAnimMontage> FireActionMontage;
 	UPROPERTY(EditAnywhere, Category = Animation)
 	TObjectPtr<class UAnimMontage> GrenadeMontage;
+	UPROPERTY(EditAnywhere, Category = Animation)
+	TObjectPtr<class UAnimMontage> DeadMontage;
 
 	FName RightSocketName;
 

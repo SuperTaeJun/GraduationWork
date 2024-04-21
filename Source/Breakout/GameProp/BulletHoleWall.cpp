@@ -39,16 +39,26 @@ void ABulletHoleWall::ReciveDamage(AActor* DamagedActor, float Damage, const UDa
 	UE_LOG(LogTemp, Warning, TEXT("HP: %f"), Hp);
 	if (Hp <= 0.f && !bDestroyed)
 	{
-		//저장 부셔진 조각들 계산해서
-		for (int i = 0; i < 5; ++i)
+		//저장 부셔진 조각들 계산해서 여기는 수정해야함
+		for (int i = 0; i < 3; ++i)
 		{
-			FTransform DataATransform;
-			FTransform SculptureTransform;
-			MeshDataStorage.Add(MeshBoolean(MeshDataA, DataATransform, SetRandomVertex(SculptureData, -3.f, 10.f, 0.1f), SculptureTransform, false));
+			for (int j = 0; j < 3; ++j)
+			{
+				for (int k = 0; k < 2; ++k)
+				{
+					FVector Loc = FVector(i, j, k) * 50.f;
+					FTransform DataATransform;
+					FTransform SculptureTransform;
+					SculptureTransform.SetLocation(Loc);
+					SculptureTransform.SetScale3D(FVector(0.5, 0.5, 0.5));
+					MeshDataStorage.Add(MeshBoolean(MeshDataA, DataATransform, SetRandomVertex(SculptureData, -3.f, 10.f, 0.1f), SculptureTransform, false));
+
+				}
+			}
 		}
 
 		//각각 조각들 설정
-		for (int i = 0; i < MeshDataStorage.Num() - 1; ++i)
+		for (int i = 0; i < MeshDataStorage.Num(); ++i)
 		{
 			FTransform AddTransform;
 			UProceduralMeshComponent* TempComponent;
