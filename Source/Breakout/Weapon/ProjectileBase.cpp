@@ -38,7 +38,8 @@ void AProjectileBase::BeginPlay()
 	Super::BeginPlay();
 
 	CollisionBox->IgnoreActorWhenMoving(GetOwner(), true);
-	SetAllowHitEventTimer();
+	CollisionBox->OnComponentHit.AddDynamic(this, &AProjectileBase::OnHit);
+	//SetAllowHitEventTimer();
 }
 
 void AProjectileBase::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NomalImpulse, const FHitResult& Hit)
