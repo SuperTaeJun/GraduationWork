@@ -11,7 +11,7 @@
 #include "Game/BOGameInstance.h"
 #include "InputMappingContext.h"
 #include "EnhancedInputComponent.h"
-#include "../../Server/Server/ServerCore/protocol.h"
+#include "../../Server/Server/Server/ServerCore/protocol.h"
 #include "EnhancedInputSubsystems.h"
 #include "Camera/CameraComponent.h"
 ACharacter2::ACharacter2()

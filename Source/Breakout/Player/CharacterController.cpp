@@ -27,7 +27,7 @@
 #include "TimerManager.h"
 #include "FX/Skill4Actor.h"
 #include "GameProp/EscapeTool.h"
-#include "../../Server/Server/ServerCore/protocol.h"
+#include "../../Server/Server/Server/ServerCore/protocol.h"
 #include <string>
 #include "ClientSocket.h"
 
@@ -77,13 +77,13 @@ void ACharacterController::BeginPlay()
 			break;
 		}
 	}
-	TArray<AActor*> SpawnPlayer;
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AEscapeTool::StaticClass(), SpawnPlayer);
-	for (int i = 0; i < SpawnPlayer.Num(); i++)
-	{
-		FVector Location = SpawnPlayer[i]->GetActorLocation(); 
-		inst->m_Socket->Send_Item_packet(i, Location);
-	}
+	//TArray<AActor*> SpawnPlayer;
+	//UGameplayStatics::GetAllActorsOfClass(GetWorld(), AEscapeTool::StaticClass(), SpawnPlayer);
+	//for (int i = 0; i < SpawnPlayer.Num(); i++)
+	//{
+	//	FVector Location = SpawnPlayer[i]->GetActorLocation(); 
+	//	inst->m_Socket->Send_Item_packet(i, Location);
+	//}
 
 }
 
@@ -285,7 +285,7 @@ void ACharacterController::Tick(float DeltaTime)
 	//새 플레이어 스폰
 	if (bNewPlayerEntered)
 		UpdateSyncPlayer();
-	//if(NewItem.size())
+	//if(NewItem.size() == 1)
 	//	UpdateSyncItem();
 
 	UpdateWorld();

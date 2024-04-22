@@ -40,6 +40,8 @@ public:
 	void StartGame();
 	bool bStarted;
 	class UBOGameInstance* inst;
+	UPROPERTY(EditAnywhere, Category = "Spawning")
+	TSubclassOf<class AEscapeTool> ItemSpawn;
 
 private:
 	TObjectPtr<class ACharacterBase> DamageInsigator;

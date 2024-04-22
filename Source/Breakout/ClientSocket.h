@@ -11,9 +11,9 @@
 #include <fstream>
 #include <map>
 #include <mutex>
+#include "../../Server/Server/Server/ServerCore/protocol.h"
 #include <vector>
 #include <iostream>
-#include "../../Server/Server/ServerCore/protocol.h"
 #include "Windows/PostWindowsApi.h"
 #include "Windows/HideWindowsPlatformTypes.h"
 #include "CoreMinimal.h"
@@ -318,11 +318,12 @@ public:
 	int local_id = -1;
 	bool login_cond = false;
 	bool bAllReady = false;
-	
+	std::queue<std::shared_ptr<CItem>> ItemQueue;
 private:
 	ACharacterController* MyCharacterController;
 	CPlayerInfo PlayerInfo;
 	UBOGameInstance* gameinst;
 	CItemInfo Iteminfo;
+
 };
 

@@ -100,7 +100,8 @@ bool ClientSocket::PacketProcess(char* ptr)
 		info->X = packet->x;
 		info->Y = packet->y;
 		info->Z = packet->z;
-		MyCharacterController->SetNewItemInfo(info);
+		//MyCharacterController->SetNewItemInfo(info);
+		ItemQueue.push(info);
 		break;
 	}
 	case SC_OTHER_PLAYER:
