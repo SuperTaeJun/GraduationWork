@@ -124,10 +124,13 @@ void AEscapeTool::OnSphereEndOverlap(UPrimitiveComponent* OverlappedComponent, A
 
 	ACharacterBase* characterbase = Cast<ACharacterBase>(OtherActor);
 
-	characterbase->SetbCanObtainEscapeTool(false);
-	characterbase->OverlappingEscapeTool = nullptr;
-	bOverlap = 2;
-	
+	if (characterbase)
+	{
+		characterbase->SetbCanObtainEscapeTool(false);
+		characterbase->OverlappingEscapeTool = nullptr;
+		bOverlap = 2;
+
+	}
 }
 
 void AEscapeTool::UpdatePercent(float Percent)

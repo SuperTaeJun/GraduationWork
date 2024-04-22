@@ -433,8 +433,9 @@ void ACharacterBase::ReciveDamage(AActor* DamagedActor, float Damage, const UDam
 			GameMode->SetDamageInsigator(DamageInsigatorCh);
 			//MainController = MainController == nullptr ? Cast<ACharacterController>(Controller) : MainController;
 			//ACharacterController* AttackerController = Cast<ACharacterController>(InstigatorController);
-			DisableInput(MainController);
+			CurWeapon->CurAmmo = 0;
 			PlayAnimMontage(DeadMontage);
+			DisableInput(MainController);
 			GetWorld()->GetTimerManager().SetTimer(DeadTimer, this, &ACharacterBase::Dead, DeadTime, false);
 		}
 	}
@@ -540,6 +541,7 @@ void ACharacterBase::Fire()
 		bCanFire = false;
 		if (CurWeapon) 
 		{
+			//UE_LOG(LogTemp, Warning, TEXT("FIRE"));
 			CurWeapon->Fire(HitTarget);
 		}
 		PlayFireActionMontage();
@@ -957,8 +959,14 @@ void ACharacterBase::StartGame()
 	MainController = MainController == nullptr ? Cast<ACharacterController>(Controller) : MainController;
 	if (MainController)
 	{
+		//if (MainHUD)
+		//{
+		//	UE_LOG(LogTemp, Warning, TEXT("ADDTOOLNUM"));
+		//	MainHUD->AddToolNumUi();
+		//}
+		UE_LOG(LogTemp, Warning, TEXT("ADDTOOLNUM"));
+		MainController->MainHUD->AddToolNumUi();
 		SetActorTransform(StartTransform);
-
 		MainController->MainHUD->RemoveMatchingUi();
 		//bStarted = false;
 		EnableInput(UGameplayStatics::GetPlayerController(GetWorld(), 0));
