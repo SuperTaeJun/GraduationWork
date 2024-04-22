@@ -58,8 +58,4 @@ public:
 	UPROPERTY(EditAnywhere)
 	class UTexture2D* BoobtTrapImage;
 
-	UPROPERTY(meta = (BindWidget))
-	class UTextBlock* Player1;
-	UPROPERTY(meta = (BindWidget))
-	class UTextBlock* Player2;
 };
