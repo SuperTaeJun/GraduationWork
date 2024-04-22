@@ -7,6 +7,7 @@
 #include "HUD/RespawnSelect.h"
 #include "HUD/CharacterUi.h"
 #include "HUD/MatchingUi.h"
+#include "HUD/EscapeToolNumUi.h"
 
 void AMainHUD::BeginPlay()
 {
@@ -73,6 +74,17 @@ void AMainHUD::DrawHUD()
 
 	}
 
+}
+
+void AMainHUD::AddToolNumUi()
+{
+	APlayerController* PlayerController = GetOwningPlayerController();
+	if (PlayerController)
+	{
+		EscapeToolNumUi = CreateWidget<UEscapeToolNumUi>(PlayerController, EscapeToolNumUiClass);
+		if (EscapeToolNumUi)
+			EscapeToolNumUi->AddToViewport();
+	}
 }
 
 void AMainHUD::AddSelectWeapon()

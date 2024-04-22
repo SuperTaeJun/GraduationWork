@@ -39,10 +39,14 @@ public:
 	TSubclassOf<class UUserWidget>MatchingUiClass;
 	TObjectPtr<class UMatchingUi> MatchingUi;
 
+	UPROPERTY(EditAnywhere, Category = "Player State")
+	TSubclassOf<class UUserWidget>EscapeToolNumUiClass;
+	TObjectPtr<class UEscapeToolNumUi> EscapeToolNumUi;
 
 
 	virtual void DrawHUD() override;
 
+	void AddToolNumUi();
 	void AddSelectWeapon();
 	void AddSelectRespawn();
 	void AddMatchingUi();
