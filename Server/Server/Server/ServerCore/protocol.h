@@ -44,7 +44,8 @@ const char CS_NiAGARA_CANCEL = 13;
 const char CS_START_GAME = 14;
 const char CS_NiAGARA_CH1 = 15;
 const char CS_END_GAME = 16;
-const char CS_ITEM = 17;
+//const char CS_ITEM = 17;
+const char CS_GETITEM = 17;
 
 
 const char SC_LOGIN_OK = 1;
@@ -64,6 +65,7 @@ const char SC_SIGNAL = 14;
 const char SC_NiAGARA_CH1 = 15;
 const char SC_ITEM = 16;
 const char SC_END_GAME = 17;
+const char SC_ITEM_ACQUIRE = 18;
 //const char CS_PACKET_DAMAGE = 7;
 //const char CS_PACKET_GET_ITEM = 8;
 //
@@ -287,10 +289,16 @@ struct CS_END_GAME_PACKET {
 struct CS_ITEM_PACKET {
 	unsigned char size;
 	unsigned char type;
-	int itemid;
-	float x, y, z;
+	int id;
+	int itemCount;
 };
-
+struct SC_ITEM_ACQUIRE_PACKET {
+	unsigned char size;
+	unsigned char type;
+	int acquireid;
+	int id;
+	int itemCount;
+};
 #pragma pack(pop)
 
 

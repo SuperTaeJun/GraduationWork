@@ -723,9 +723,28 @@ void process_packet(int s_id, char* p)
 		}
 		break;
 	}
-	case CS_ITEM: {
+	case CS_GETITEM: {
 		CS_ITEM_PACKET* packet = reinterpret_cast<CS_ITEM_PACKET*>(p);
-		cout << packet->itemid << packet->x << packet->y << packet->z << endl;
+		CLIENT& cl = clients[packet->id];
+		cl.myItemCount = packet->itemCount;
+		cout << "내가 획득한 아이템 개수"  <<cl._s_id << " : " << cl.myItemCount << endl;
+		for (auto& other : clients) {
+			other.state_lock.lock();
+			if (ST_INGAME != other._state) {
+				other.state_lock.unlock();
+				continue;
+			}
+			else other.state_lock.unlock();
+			SC_ITEM_ACQUIRE_PACKET packet;
+
+			
+			packet.size = sizeof(packet);
+			packet.type = SC_ITEM_ACQUIRE;
+			packet.id = cl._s_id;
+			packet.acquireid = cl._s_id;
+			packet.itemCount = cl.myItemCount;
+			other.do_send(sizeof(packet), &packet);
+		}
 		break;
 	}
 	default:

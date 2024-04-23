@@ -15,7 +15,8 @@ public:
     float	y;
     float	z;
     // 회전값
-
+    // 아이템 획득 카운트
+    int myItemCount;
     bool connected = false;
     bool selectweapon = false;
     float	Yaw;
@@ -30,21 +31,15 @@ public:
     int _max_hp; // 최대 체력
     int _hp; // 체력
     int damage;
-    int _level; // 레벨
-    int _max_exp;
-    int _exp;
     int _atk; // 공격력
     int _def;
-    int _at_range = 1; // 기본 공격 범위
-    int _sk_range = 2; // 스킬 범위
-    bool is_bone = false;
+       bool is_bone = false;
     int32 iMaxSnowballCount;
     int32 iCurrentSnowballCount;
     int32 iCurrentMatchCount;
     bool recvdamage;
     bool bHasUmbrella;
     bool bHasBag;
-    bool bIsSnowman;	// 현재 캐릭터가 눈사람인지
     bool bCancel;
     bool bEndGame = false;
     WeaponType w_type;
@@ -83,10 +78,8 @@ public:
 public:
     CLIENT() : _state(ST_FREE), _prev_size(0)
     {
-        //x = 0;
-        //y = 0;
-        _max_exp = 100;
         _hp = 100;
+        myItemCount = 0;
     }
 
 
