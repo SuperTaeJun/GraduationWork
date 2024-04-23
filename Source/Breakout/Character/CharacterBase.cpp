@@ -443,6 +443,7 @@ void ACharacterBase::ReciveDamage(AActor* DamagedActor, float Damage, const UDam
 
 void ACharacterBase::Dead()
 {
+	bCanFire = true;
 	SetRespawnUi();
 	//ABOGameMode* GameMode = GetWorld()->GetAuthGameMode<ABOGameMode>();
 	//if (GameMode)
@@ -896,13 +897,7 @@ void ACharacterBase::Tick(float DeltaTime)
 		//DisableInput(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 		GetWorldTimerManager().SetTimer(StartHandle, this, &ACharacterBase::StartGame, 5.f);
 	}
-	//if (StartedCnt <= 0.2f&& StartedCnt >= 0.1f)
-	//	DisableInput(UGameplayStatics::GetPlayerController(GetWorld(), 0));
-	//if (bStarted && StartedCnt > 0.f)
-	//{
-	//	StartedCnt -= DeltaTime;
-	//	MainController->SetHUDMatchingUi(StartedCnt);
-	//}
+
 }
 
 void ACharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)

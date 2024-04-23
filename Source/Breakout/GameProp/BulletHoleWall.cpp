@@ -40,13 +40,13 @@ void ABulletHoleWall::ReciveDamage(AActor* DamagedActor, float Damage, const UDa
 	if (Hp <= 0.f && !bDestroyed)
 	{
 		//저장 부셔진 조각들 계산해서 여기는 수정해야함
-		for (int i = 0; i < 3; ++i)
+		for (int i = 0; i < 4; ++i)
 		{
-			for (int j = 0; j < 3; ++j)
+			for (int j = 0; j < 4; ++j)
 			{
 				for (int k = 0; k < 2; ++k)
 				{
-					FVector Loc = FVector(i, j, k) * 50.f;
+					FVector Loc = FVector(i, j, k) * 80.f;
 					FTransform DataATransform;
 					FTransform SculptureTransform;
 					SculptureTransform.SetLocation(Loc);

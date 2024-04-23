@@ -21,71 +21,32 @@ void URespawnSelect::NativeConstruct()
 void URespawnSelect::Respawn1Pressed()
 {
 	FName TagName = FName(TEXT("PlayerStart1"));
+	SelectButton(TagName);
 
-	ACharacterBase* Character = Cast<ACharacterBase>(GetOwningPlayerPawn());
-	ACharacterController* Controller = Cast<ACharacterController>(Character->Controller);
-	ABOGameMode* BOGameMode = Cast<ABOGameMode>(GetWorld()->GetAuthGameMode());
-	AMainHUD* MainHUD = Cast<AMainHUD>(Controller->GetHUD());
-
-	FInputModeGameOnly GameOnlyInput;
-	Controller->SetInputMode(GameOnlyInput);
-	Controller->bShowMouseCursor = false;
-	Controller->bEnableMouseOverEvents = false;
-
-	MainHUD->RemoveRespawnSelect();
-
-	if (BOGameMode)
-	{
-		BOGameMode->Respawn(Character, Controller, TagName);
-	}
 }
 
 void URespawnSelect::Respawn2Pressed()
 {
 	FName TagName = FName(TEXT("PlayerStart2"));
+	SelectButton(TagName);
 
-	ACharacterBase* Character = Cast<ACharacterBase>(GetOwningPlayerPawn());
-	ACharacterController* Controller = Cast<ACharacterController>(Character->Controller);
-	ABOGameMode* BOGameMode = Cast<ABOGameMode>(GetWorld()->GetAuthGameMode());
-	AMainHUD* MainHUD = Cast<AMainHUD>(Controller->GetHUD());
-
-	FInputModeGameOnly GameOnlyInput;
-	Controller->SetInputMode(GameOnlyInput);
-	Controller->bShowMouseCursor = false;
-	Controller->bEnableMouseOverEvents = false;
-
-	MainHUD->RemoveRespawnSelect();
-
-	if (BOGameMode)
-	{
-		BOGameMode->Respawn(Character, Controller, TagName);
-	}
 }
 
 void URespawnSelect::Respawn3Pressed()
 {
 	FName TagName = FName(TEXT("PlayerStart3"));
-	ACharacterBase* Character = Cast<ACharacterBase>(GetOwningPlayerPawn());
-	ACharacterController* Controller = Cast<ACharacterController>(Character->Controller);
-	ABOGameMode* BOGameMode = Cast<ABOGameMode>(GetWorld()->GetAuthGameMode());
-	AMainHUD* MainHUD = Cast<AMainHUD>(Controller->GetHUD());
+	SelectButton(TagName);
 
-	FInputModeGameOnly GameOnlyInput;
-	Controller->SetInputMode(GameOnlyInput);
-	Controller->bShowMouseCursor = false;
-	Controller->bEnableMouseOverEvents = false;
-
-	MainHUD->RemoveRespawnSelect();
-
-	if (BOGameMode)
-	{
-		BOGameMode->Respawn(Character, Controller, TagName);
-	}
 }
 
 void URespawnSelect::Respawn4Pressed()
 {
 	FName TagName = FName(TEXT("PlayerStart4"));
+	SelectButton(TagName);
+}
+
+void URespawnSelect::SelectButton(FName TagName)
+{
 	ACharacterBase* Character = Cast<ACharacterBase>(GetOwningPlayerPawn());
 	ACharacterController* Controller = Cast<ACharacterController>(Character->Controller);
 	ABOGameMode* BOGameMode = Cast<ABOGameMode>(GetWorld()->GetAuthGameMode());
@@ -103,3 +64,4 @@ void URespawnSelect::Respawn4Pressed()
 		BOGameMode->Respawn(Character, Controller, TagName);
 	}
 }
+
