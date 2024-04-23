@@ -291,7 +291,7 @@ public:
 	void Send_Start_game_packet(int id);
 	void Send_End_Game_packet(int id);
 	void Send_Signal_packet(int id, int num);
-	void Send_Item_packet(int itemid, FVector loc);
+	void Send_Item_packet(int id, int itemCount);
 	virtual bool Init() override;
 	virtual uint32 Run() override;
 	virtual void Stop() override;

@@ -281,6 +281,11 @@ bool ClientSocket::PacketProcess(char* ptr)
 		PlayerInfo.players[packet->id].WinnerID = packet->winnerid;
 		break;
 	}
+	case SC_ITEM_ACQUIRE: {
+		SC_ITEM_ACQUIRE_PACKET* packet = reinterpret_cast<SC_ITEM_ACQUIRE_PACKET*>(ptr);
+		UE_LOG(LogTemp, Warning, TEXT("GETITEMid : %d, GetItemCount : %d"), packet->acquireid, packet->itemCount);
+		break;
+	}
 	default:
 		break;
 	}
@@ -518,16 +523,13 @@ void ClientSocket::Send_Signal_packet(int id, int num)
 	packet.num = num;
 	SendPacket(&packet);
 }
-void ClientSocket::Send_Item_packet(int itemid, FVector loc)
+void ClientSocket::Send_Item_packet(int id, int itemCount)
 {
 	CS_ITEM_PACKET packet;
 	packet.size = sizeof(packet);
-	packet.type = CS_ITEM;
-	packet.itemid = itemid;
-	packet.x = loc.X;
-	packet.y = loc.Y;
-	packet.z = loc.Z;
-	UE_LOG(LogTemp, Warning, TEXT("%f, %f, %f"), packet.x, packet.y, packet.z);
+	packet.type = CS_GETITEM;
+	packet.id = id;
+	packet.itemCount = itemCount;
 	SendPacket(&packet);
 }
 bool ClientSocket::Init()
