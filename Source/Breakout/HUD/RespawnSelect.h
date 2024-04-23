@@ -38,4 +38,6 @@ public:
 	UPROPERTY(meta = (BindWidget))
 	class UButton* Respawn4;
 
+private:
+	void SelectButton(FName TagName);
 };
