@@ -23,4 +23,5 @@ public:
 	class UTextBlock* Player1Ch;
 	UPROPERTY(meta = (BindWidget))
 	class UTextBlock* Player2Ch;
+
 };

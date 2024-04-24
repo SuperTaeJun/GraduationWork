@@ -24,6 +24,7 @@ using namespace std;
 
 const int buffsize = 2048;
 
+
 enum IO_type
 {
 	IO_RECV,
@@ -269,6 +270,8 @@ public:
 class BREAKOUT_API ClientSocket : public FRunnable
 {
 public:
+	int Tempid;
+	int Tempcnt;
 	ClientSocket();
 	virtual ~ClientSocket();
 	bool InitSocket();
