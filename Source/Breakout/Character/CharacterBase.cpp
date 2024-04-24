@@ -976,3 +976,8 @@ void ACharacterBase::StartGame()
 	}
 
 }
+
+void ACharacterBase::Server_PlayDeadAnim()
+{
+	PlayAnimMontage(DeadMontage);
+}

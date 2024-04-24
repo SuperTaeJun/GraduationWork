@@ -263,6 +263,7 @@ public:
 	float StartedCnt;
 	class UBOGameInstance* inst;
 	class UCameraComponent* GetCamera() { return FollowCamera; }
+	void Server_PlayDeadAnim();
 };
 
 UENUM(BlueprintType)
