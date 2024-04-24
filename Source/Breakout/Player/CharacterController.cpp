@@ -685,6 +685,9 @@ bool ACharacterController::UpdateWorld()
 				UE_LOG(LogTemp, Warning, TEXT("hahah : %d"), Test);
 				info->skilltype = -1;
 			}
+			if (OtherPlayer->GetHealth() <= 0) {
+				OtherPlayer->PlayAnimMontage(OtherPlayer->GetDeadMontage());
+			}
 
 		}
 	}

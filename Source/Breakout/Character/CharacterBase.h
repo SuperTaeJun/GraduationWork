@@ -86,6 +86,7 @@ public:
 	void SetHealth(float DamagedHp);
 
 	class AWeaponBase* GetWeapon() { return CurWeapon; }
+
 	FORCEINLINE float GetHealth() const { return Health; }
 	FORCEINLINE bool GetbFfirePressed() const { return bFirePressed; }
 	FORCEINLINE float MaxGetHealth() const { return MaxHealth; }
