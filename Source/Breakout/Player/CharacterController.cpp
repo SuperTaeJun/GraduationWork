@@ -739,8 +739,8 @@ void ACharacterController::UpdateSyncPlayer()
 				SpawnCharacter->SpawnDefaultController();
 				SpawnCharacter->_SessionId = NewPlayer.front()->Id;
 				SpawnCharacter->GetMesh()->SetSkeletalMesh(SkMeshAsset1);
-				/*if (Anim1)
-					SpawnCharacter->GetMesh()->SetAnimClass(Anim1);*/
+				if (Anim1)
+					SpawnCharacter->GetMesh()->SetAnimClass(Anim1);
 			}
 			break;
 		case  PlayerType::Character2:
