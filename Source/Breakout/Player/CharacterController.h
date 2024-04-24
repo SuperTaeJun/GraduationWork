@@ -105,7 +105,7 @@ public:
 	//bool ProcessPacket(char* p);
 
 	//virtual void OnPossess(APawn* InPawn) override;
-	void SetName(FString& Player1Name, FString& Player2Name);
+	void SetName(FString Player1Name, FString Player2Name);
 	void SetNum(int Player1Num, int Player2Num);
 
 	void SetHUDHealth(float Health, float MaxHealth);

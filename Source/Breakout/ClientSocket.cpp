@@ -76,10 +76,6 @@ void ClientSocket::CloseSocket()
 	WSACleanup();
 }
 
-//Àü¿ª
-int id;
-int cnt;
-
 bool ClientSocket::PacketProcess(char* ptr)
 {
 	//UE_LOG(LogClass, Warning, TEXT("init?"));
