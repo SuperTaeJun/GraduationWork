@@ -88,7 +88,7 @@ void ACharacterController::BeginPlay()
 
 }
 
-void ACharacterController::SetName(FString& Player1Name, FString& Player2Name)
+void ACharacterController::SetName(FString Player1Name, FString Player2Name)
 {
 	if (MainHUD)
 	{
@@ -105,10 +105,12 @@ void ACharacterController::SetName(FString& Player1Name, FString& Player2Name)
 	}
 }
 
+//Å»Ãâµµ±¸
 void ACharacterController::SetNum(int Player1Num, int Player2Num)
 {
 	if (MainHUD)
 	{
+	
 		if (inst->m_Socket->Tempid == 0)
 		{
 			FString Player1 = FString::Printf(TEXT("%d"), inst->m_Socket->Tempcnt);
