@@ -689,9 +689,10 @@ bool ACharacterController::UpdateWorld()
 			}
 			UE_LOG(LogTemp, Warning, TEXT("otherplayer hp : %f"), OtherPlayer->GetHealth());
 			
-			if (OtherPlayer->GetHealth() <= 0) {
+			if (OtherPlayer->GetHealth() <= 0&& OtherPlayer->bDeadAnim == false) {
 				UE_LOG(LogTemp, Warning, TEXT("otherplayer hp : %f"), OtherPlayer->GetHealth());
 				OtherPlayer->Server_PlayDeadAnim();
+				OtherPlayer->bDeadAnim = true;
 			}
 
 		}
@@ -738,8 +739,8 @@ void ACharacterController::UpdateSyncPlayer()
 				SpawnCharacter->SpawnDefaultController();
 				SpawnCharacter->_SessionId = NewPlayer.front()->Id;
 				SpawnCharacter->GetMesh()->SetSkeletalMesh(SkMeshAsset1);
-				if (Anim1)
-					SpawnCharacter->GetMesh()->SetAnimClass(Anim1);
+				/*if (Anim1)
+					SpawnCharacter->GetMesh()->SetAnimClass(Anim1);*/
 			}
 			break;
 		case  PlayerType::Character2:

@@ -261,6 +261,7 @@ public:
 	FTimerHandle StartHandle;
 	void StartGame();
 	float StartedCnt;
+	bool bDeadAnim = false;
 	class UBOGameInstance* inst;
 	class UCameraComponent* GetCamera() { return FollowCamera; }
 	void Server_PlayDeadAnim();
