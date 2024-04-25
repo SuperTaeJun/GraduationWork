@@ -76,7 +76,6 @@ void ClientSocket::CloseSocket()
 	WSACleanup();
 }
 
-
 bool ClientSocket::PacketProcess(char* ptr)
 {
 	//UE_LOG(LogClass, Warning, TEXT("init?"));
@@ -284,6 +283,8 @@ bool ClientSocket::PacketProcess(char* ptr)
 	case SC_ITEM_ACQUIRE: {
 		SC_ITEM_ACQUIRE_PACKET* packet = reinterpret_cast<SC_ITEM_ACQUIRE_PACKET*>(ptr);
 		UE_LOG(LogTemp, Warning, TEXT("GETITEMid : %d, GetItemCount : %d"), packet->acquireid, packet->itemCount);
+		Tempid = packet->acquireid;
+		Tempcnt = packet->itemCount;
 		break;
 	}
 	default:

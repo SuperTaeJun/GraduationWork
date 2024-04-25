@@ -86,6 +86,7 @@ public:
 	void SetHealth(float DamagedHp);
 
 	class AWeaponBase* GetWeapon() { return CurWeapon; }
+
 	FORCEINLINE float GetHealth() const { return Health; }
 	FORCEINLINE bool GetbFfirePressed() const { return bFirePressed; }
 	FORCEINLINE float MaxGetHealth() const { return MaxHealth; }
@@ -260,8 +261,10 @@ public:
 	FTimerHandle StartHandle;
 	void StartGame();
 	float StartedCnt;
+	bool bDeadAnim = false;
 	class UBOGameInstance* inst;
 	class UCameraComponent* GetCamera() { return FollowCamera; }
+	void Server_PlayDeadAnim();
 };
 
 UENUM(BlueprintType)

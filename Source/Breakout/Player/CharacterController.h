@@ -105,6 +105,9 @@ public:
 	//bool ProcessPacket(char* p);
 
 	//virtual void OnPossess(APawn* InPawn) override;
+	void SetName(FString Player1Name, FString Player2Name);
+	void SetNum(int Player1Num, int Player2Num);
+
 	void SetHUDHealth(float Health, float MaxHealth);
 	void SetHUDStamina(float Stamina, float MaxStamina);
 	void SetHUDAmmo(int32 Ammo);
@@ -165,6 +168,7 @@ public:
 	//void UpdateWeaponMesh();
 	virtual void OnPossess(APawn* InPawn) override;
 public:
+
 	TObjectPtr<class AMainHUD> MainHUD;
 	int id;
 	bool bNewPlayerEntered = false;

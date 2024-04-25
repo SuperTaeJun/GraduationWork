@@ -3,6 +3,7 @@
 #include "HUD/MainHUD.h"
 #include "HUD/CharacterUi.h"
 #include "HUD/MatchingUi.h"
+#include "HUD/EscapeToolNumUi.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/ProgressBar.h"
 #include "Components/TextBlock.h"
@@ -87,6 +88,42 @@ void ACharacterController::BeginPlay()
 
 }
 
+void ACharacterController::SetName(FString Player1Name, FString Player2Name)
+{
+	if (MainHUD)
+	{
+		if (inst->m_Socket->Tempid == 0)
+		{
+			FString Player1 = FString::Printf(TEXT("%d"), inst->m_Socket->Tempid);
+			MainHUD->EscapeToolNumUi->Player1Ch->SetText(FText::FromString(Player1));
+		}
+		else if (inst->m_Socket->Tempid == 1)
+		{
+			FString Player2 = FString::Printf(TEXT("%d"), inst->m_Socket->Tempid);
+			MainHUD->EscapeToolNumUi->Player2Ch->SetText(FText::FromString(Player2));
+		}
+	}
+}
+
+//Å»Ãâµµ±¸
+void ACharacterController::SetNum(int Player1Num, int Player2Num)
+{
+	if (MainHUD)
+	{
+	
+		if (inst->m_Socket->Tempid == 0)
+		{
+			FString Player1 = FString::Printf(TEXT("%d"), inst->m_Socket->Tempcnt);
+			MainHUD->EscapeToolNumUi->Player1->SetText(FText::FromString(Player1));
+		}
+		else if (inst->m_Socket->Tempid == 1)
+		{
+			FString Player2 = FString::Printf(TEXT("%d"), inst->m_Socket->Tempcnt);
+			MainHUD->EscapeToolNumUi->Player1->SetText(FText::FromString(Player2));
+		}
+
+	}
+}
 
 //void ACharacterController::OnPossess(APawn* InPawn)
 //{
@@ -650,6 +687,13 @@ bool ACharacterController::UpdateWorld()
 				UE_LOG(LogTemp, Warning, TEXT("hahah : %d"), Test);
 				info->skilltype = -1;
 			}
+			UE_LOG(LogTemp, Warning, TEXT("otherplayer hp : %f"), OtherPlayer->GetHealth());
+			
+			if (OtherPlayer->GetHealth() <= 0&& OtherPlayer->bDeadAnim == false) {
+				UE_LOG(LogTemp, Warning, TEXT("otherplayer hp : %f"), OtherPlayer->GetHealth());
+				OtherPlayer->Server_PlayDeadAnim();
+				OtherPlayer->bDeadAnim = true;
+			}
 
 		}
 	}
@@ -914,7 +958,6 @@ void ACharacterController::OnPossess(APawn* InPawn)
 		showWeaponSelect();
 	}
 }
-
 
 void ACharacterController::SetHp(float recvdamaged)
 {

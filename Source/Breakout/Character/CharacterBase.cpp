@@ -963,6 +963,8 @@ void ACharacterBase::StartGame()
 		//}
 		UE_LOG(LogTemp, Warning, TEXT("ADDTOOLNUM"));
 		MainController->MainHUD->AddToolNumUi();
+		MainController->SetNum(0, 0);
+		MainController->SetName(FString(TEXT("S")), FString(TEXT("S")));
 		SetActorTransform(StartTransform);
 		MainController->MainHUD->RemoveMatchingUi();
 		//bStarted = false;
@@ -973,4 +975,9 @@ void ACharacterBase::StartGame()
 			Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Start_game_packet(inst->GetPlayerID());*/
 	}
 
+}
+
+void ACharacterBase::Server_PlayDeadAnim()
+{
+	PlayAnimMontage(DeadMontage);
 }
