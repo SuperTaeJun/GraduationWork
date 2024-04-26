@@ -379,6 +379,13 @@ void ACharacterBase::SpawnGrenade()
 
 }
 
+void ACharacterBase::ReloadForMontage()
+{
+	CurWeapon->CurAmmo = CurWeapon->MaxAmmo;
+	MainController->SetHUDAmmo(CurWeapon->CurAmmo);
+	bCanFire = true;
+}
+
 void ACharacterBase::SetSpawnGrenade(TSubclassOf<AProjectileBase> Projectile)
 {
 	//UE_LOG(LogTemp, Log, TEXT("GRENDADE SPAWN"));
@@ -730,8 +737,11 @@ void ACharacterBase::Reroad(const FInputActionValue& Value)
 {
 	if (CurWeapon)
 	{
-		CurWeapon->CurAmmo = CurWeapon->MaxAmmo;
-		MainController->SetHUDAmmo(CurWeapon->CurAmmo);
+		if (ReloadMontage)
+		{
+			PlayAnimMontage(ReloadMontage);
+			bCanFire = false;
+		}
 	}
 }
 
@@ -890,7 +900,7 @@ void ACharacterBase::Tick(float DeltaTime)
 	}
 
 
-	if (Cast<UBOGameInstance>(GetWorld()->GetGameInstance())->m_Socket->bAllReady == true && !bStarted)
+	if (/*Cast<UBOGameInstance>(GetWorld()->GetGameInstance())->m_Socket->bAllReady == true &&*/ !bStarted)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("StartGame"));
 		Cast<UBOGameInstance>(GetWorld()->GetGameInstance())->m_Socket->bAllReady = false;
