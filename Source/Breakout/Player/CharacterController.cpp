@@ -691,9 +691,12 @@ bool ACharacterController::UpdateWorld()
 			
 			if (OtherPlayer->GetHealth() <= 0&& OtherPlayer->bDeadAnim == false) {
 				UE_LOG(LogTemp, Warning, TEXT("otherplayer hp : %f"), OtherPlayer->GetHealth());
-				OtherPlayer->Server_PlayDeadAnim();
+				OtherPlayer->PlayAnimMontage(SyncDeadMontage);
 				OtherPlayer->bDeadAnim = true;
 			}
+		/*	if (bool adad == true) { Ã³¸®
+				OtherPlayer->StopAnimMontage(SyncDeadMontage);
+			}*/
 
 		}
 	}
