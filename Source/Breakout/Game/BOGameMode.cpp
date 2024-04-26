@@ -96,6 +96,7 @@ void ABOGameMode::Respawn(ACharacter* RespawnedCh, AController* RespawnedControl
 		PlayerStarts=FindPlayerStart(MyCharacter->GetController(), *Tagname.ToString());
 		MyCharacter->SetResetState();
 		MyCharacter->SetActorTransform(PlayerStarts->GetActorTransform());
+		//ÆÐÅ¶ BOOL °ª
 		MyCharacter->StopAnimMontage(MyCharacter->GetDeadMontage());
 		Cast<ACharacterController>(RespawnedController)->OnPossess(MyCharacter);
 		//RestartPlayerAtPlayerStart(RespawnedController, PlayerStarts);

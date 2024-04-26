@@ -413,6 +413,7 @@ void ACharacterBase::SetSpawnGrenade(TSubclassOf<AProjectileBase> Projectile)
 
 void ACharacterBase::ReciveDamage(AActor* DamagedActor, float Damage, const UDamageType* DamageType, class AController* InstigatorController, AActor* DamageCauser)
 {
+	
 	Health = FMath::Clamp(Health - Damage, 0.f, MaxHealth);
 	UpdateHpHUD();
 	ACharacterBase* DamageInsigatorCh;
@@ -963,6 +964,7 @@ void ACharacterBase::StartGame()
 		//}
 		UE_LOG(LogTemp, Warning, TEXT("ADDTOOLNUM"));
 		MainController->MainHUD->AddToolNumUi();
+		// num 계수, name 처리 
 		MainController->SetNum(0, 0);
 		MainController->SetName(FString(TEXT("S")), FString(TEXT("S")));
 		SetActorTransform(StartTransform);

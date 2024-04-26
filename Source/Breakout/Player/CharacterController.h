@@ -57,6 +57,10 @@ protected:
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class AProjectileBullet> ShotgunRef;
 
+	//애니메이션 동기화 용
+	UPROPERTY(EditAnywhere, Category = Animation)
+	TObjectPtr<class UAnimMontage> SyncDeadMontage;
+
 	// 플레이어 동기화 용
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<UClass> Anim1;
