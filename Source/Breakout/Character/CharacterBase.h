@@ -108,6 +108,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SpawnGrenade();
 
+	UFUNCTION(BlueprintCallable)
+	void ReloadForMontage();
+
 	void SetSpawnGrenade(TSubclassOf<class AProjectileBase> Projectile);
 
 	void Dead();
@@ -141,6 +144,8 @@ protected:
 	TObjectPtr<class UAnimMontage> GrenadeMontage;
 	UPROPERTY(EditAnywhere, Category = Animation)
 	TObjectPtr<class UAnimMontage> DeadMontage;
+	UPROPERTY(EditAnywhere, Category = Animation)
+	TObjectPtr<class UAnimMontage> ReloadMontage;
 
 	FName RightSocketName;
 
