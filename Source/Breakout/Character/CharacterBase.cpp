@@ -982,9 +982,7 @@ void ACharacterBase::StartGame()
 		//bStarted = false;
 		EnableInput(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 		SetWeaponUi();
-		//여기서 패킷 보낼 것
-	/*	if (inst)
-			Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Start_game_packet(inst->GetPlayerID());*/
+	
 	}
 
 }
