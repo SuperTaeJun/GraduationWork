@@ -8,6 +8,7 @@
 #include "ClientSocket.h"
 #include "Kismet/GameplayStatics.h"
 #include "Animation/SkeletalMeshActor.h"
+#include "Sound/SoundCue.h"
 
 //#include "Network/PacketData.h"
 void USelectCharacterUi::NativeConstruct()
@@ -55,11 +56,16 @@ void USelectCharacterUi::SetAllCharacterMeshWithTag()
 
 void USelectCharacterUi::Matching()
 {
+	if (ClickSound)
+	{
+		PlaySound(ClickSound);
+	}
 	if(bClicked){
 		//Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Ready_Packet(bClicked);
 		
 		GetWorld()->ServerTravel(FString("/Game/Maps/MainMap"), true);
 		//GetWorld()->ServerTravel(FString("/Game/Maps/TestMap"), true);
+
 	}
 		//GetWorld()->ServerTravel(FString("/Game/Maps/MainMap"), true);
 }
@@ -76,6 +82,10 @@ void USelectCharacterUi::Character1ButtonPressed()
 	Character4Mesh->SetActorHiddenInGame(true);
 
 	bClicked = true;
+	if (ClickSound)
+	{
+		PlaySound(ClickSound);
+	}
 }
 
 void USelectCharacterUi::Character2ButtonPressed()
@@ -89,6 +99,10 @@ void USelectCharacterUi::Character2ButtonPressed()
 	Character4Mesh->SetActorHiddenInGame(true);
 
 	bClicked = true;
+	if (ClickSound)
+	{
+		PlaySound(ClickSound);
+	}
 }
 
 void USelectCharacterUi::Character3ButtonPressed()
@@ -102,6 +116,10 @@ void USelectCharacterUi::Character3ButtonPressed()
 	Character4Mesh->SetActorHiddenInGame(true);
 
 	bClicked = true;
+	if (ClickSound)
+	{
+		PlaySound(ClickSound);
+	}
 }
 
 void USelectCharacterUi::Character4ButtonPressed()
@@ -115,6 +133,10 @@ void USelectCharacterUi::Character4ButtonPressed()
 	Character4Mesh->SetActorHiddenInGame(false);
 
 	bClicked = true;
+	if (ClickSound)
+	{
+		PlaySound(ClickSound);
+	}
 }
 
 void USelectCharacterUi::EndHovered()
@@ -135,22 +157,31 @@ void USelectCharacterUi::Button1Hovered()
 {
 	if (!bClicked)
 		Character1Mesh->SetActorHiddenInGame(false);
+
+	if (HoverSound)
+		PlaySound(HoverSound);
 }
 
 void USelectCharacterUi::Button2Hovered()
 {
 	if (!bClicked)
 		Character2Mesh->SetActorHiddenInGame(false);
+	if (HoverSound)
+		PlaySound(HoverSound);
 }
 
 void USelectCharacterUi::Button3Hovered()
 {
 	if (!bClicked)
 		Character3Mesh->SetActorHiddenInGame(false);
+	if (HoverSound)
+		PlaySound(HoverSound);
 }
 
 void USelectCharacterUi::Button4Hovered()
 {
 	if (!bClicked)
 		Character4Mesh->SetActorHiddenInGame(false);
+	if (HoverSound)
+		PlaySound(HoverSound);
 }

@@ -45,4 +45,7 @@ public:
 
 private:
 	TObjectPtr<class ACharacterBase> DamageInsigator;
+
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<class USoundCue> BackGroundSound;
 };

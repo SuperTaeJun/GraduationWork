@@ -44,4 +44,8 @@ public:
 	TSubclassOf<class AWeaponBase> Lancher;
 private:
 	ACharacterController* MyCharacterController;
+
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<class USoundCue> ClickSound;
+
 };

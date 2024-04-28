@@ -6,7 +6,7 @@
 #include "Components/EditableText.h"
 #include "Game/BOGameInstance.h"
 #include "ClientSocket.h"
-
+#include "Sound/SoundCue.h"
 void ULogin::NativeConstruct()
 {
 	Super::NativeConstruct();
@@ -26,6 +26,11 @@ void ULogin::PressLogin()
 
 	if(Cast<UBOGameInstance>(GetGameInstance())->m_Socket)
 		Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Login_Info(TCHAR_TO_UTF8(*IDToString), TCHAR_TO_UTF8(*PasswordToString));
+
+	if (ClickSound)
+	{
+		PlaySound(ClickSound);
+	}
 
 	RemoveFromParent();
 }

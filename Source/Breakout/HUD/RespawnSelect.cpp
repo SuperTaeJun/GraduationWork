@@ -8,6 +8,8 @@
 #include "GameFramework/PlayerController.h"
 #include "MainHUD.h"
 #include"Game/BOGameMode.h"
+#include "Sound/SoundCue.h"
+
 void URespawnSelect::NativeConstruct()
 {
 	Super::NativeConstruct();
@@ -20,6 +22,9 @@ void URespawnSelect::NativeConstruct()
 
 void URespawnSelect::Respawn1Pressed()
 {
+	if (ClickSound)
+		PlaySound(ClickSound);
+
 	FName TagName = FName(TEXT("PlayerStart1"));
 	SelectButton(TagName);
 
@@ -27,6 +32,9 @@ void URespawnSelect::Respawn1Pressed()
 
 void URespawnSelect::Respawn2Pressed()
 {
+	if (ClickSound)
+		PlaySound(ClickSound);
+
 	FName TagName = FName(TEXT("PlayerStart2"));
 	SelectButton(TagName);
 
@@ -34,6 +42,9 @@ void URespawnSelect::Respawn2Pressed()
 
 void URespawnSelect::Respawn3Pressed()
 {
+	if (ClickSound)
+		PlaySound(ClickSound);
+
 	FName TagName = FName(TEXT("PlayerStart3"));
 	SelectButton(TagName);
 
@@ -42,6 +53,9 @@ void URespawnSelect::Respawn3Pressed()
 
 void URespawnSelect::Respawn4Pressed()
 {
+	if (ClickSound)
+		PlaySound(ClickSound);
+
 	FName TagName = FName(TEXT("PlayerStart4"));
 	SelectButton(TagName);
 }

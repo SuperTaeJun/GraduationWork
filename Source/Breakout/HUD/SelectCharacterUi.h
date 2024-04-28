@@ -64,4 +64,10 @@ public:
 private:
 	ACharacterController* MyCharacterController;
 	bool bClicked;
+
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<class USoundCue> ClickSound;
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<class USoundCue> HoverSound;
+
 };
