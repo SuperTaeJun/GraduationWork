@@ -38,6 +38,10 @@ void ABOGameMode::BeginPlay()
 	//GetWorldTimerManager().SetTimer(StartTimeHandle, this, &ABOGameMode::StartGame, 5.f);
 	if (inst)
 		Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Start_game_packet(inst->GetPlayerID());
+
+	if (BackGroundSound)
+	{
+	}
 }
 
 void ABOGameMode::Tick(float DeltaTime)
