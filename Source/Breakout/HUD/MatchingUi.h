@@ -22,4 +22,5 @@ public:
 
 	void SetWaitingText();
 	void SetContingText(float Time);
+
 };

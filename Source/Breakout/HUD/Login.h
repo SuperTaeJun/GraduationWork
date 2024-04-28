@@ -27,6 +27,8 @@ public:
 
 	UFUNCTION()
 	void PressLogin();
-
+private:
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<class USoundCue> ClickSound;
 
 };

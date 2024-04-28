@@ -40,4 +40,6 @@ public:
 
 private:
 	void SelectButton(FName TagName);
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<class USoundCue> ClickSound;
 };
