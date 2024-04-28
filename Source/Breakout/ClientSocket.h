@@ -100,6 +100,7 @@ public:
 	bool  bniagarach1 = false;
 	bool  bch4end = false;
 	bool  bEndGame = false;
+	bool  bStopAnim = false;
 	// ³ªÀÌ¾Æ°¡¶ó ½¸ ÀÌÆÑÆ®
 	FVector Sshot;
 	FVector Eshot;
@@ -295,6 +296,7 @@ public:
 	void Send_End_Game_packet(int id);
 	void Send_Signal_packet(int id, int num);
 	void Send_Item_packet(int id, int itemCount);
+	void Send_Stop_Anim_packet(int id);
 	virtual bool Init() override;
 	virtual uint32 Run() override;
 	virtual void Stop() override;

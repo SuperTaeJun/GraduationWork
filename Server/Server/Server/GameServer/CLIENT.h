@@ -47,6 +47,8 @@ public:
     float s_x, s_y, s_z;
     float e_x, e_y, e_z;
     int wtype;
+    //--------------------
+    bool bStopAnim;
     unordered_set   <int>  viewlist; // 시야 안 오브젝트
     mutex vl;
     mutex hp_lock;
@@ -54,12 +56,12 @@ public:
 
     mutex state_lock;
     CL_STATE _state;
-    atomic_bool   _is_active = false;
+    atomic_bool  _is_active = false;
 
     //COMBAT _combat;
     int num;
-    atomic_int    _count;
-    int      _type;   // 1.Player 2.고블린  3.오거 4.드래곤(Boss)   
+    atomic_int  _count;
+    int      _type;   
     //-------------
     float pitch0, yaw0, roll0;
     float pitch1, yaw1, roll1;

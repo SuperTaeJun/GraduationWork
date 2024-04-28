@@ -44,8 +44,8 @@ const char CS_NiAGARA_CANCEL = 13;
 const char CS_START_GAME = 14;
 const char CS_NiAGARA_CH1 = 15;
 const char CS_END_GAME = 16;
-//const char CS_ITEM = 17;
 const char CS_GETITEM = 17;
+const char CS_STOP_ANIM = 18;
 
 
 const char SC_LOGIN_OK = 1;
@@ -66,6 +66,7 @@ const char SC_NiAGARA_CH1 = 15;
 const char SC_ITEM = 16;
 const char SC_END_GAME = 17;
 const char SC_ITEM_ACQUIRE = 18;
+const char SC_STOP_ANIM = 19;
 //const char CS_PACKET_DAMAGE = 7;
 //const char CS_PACKET_GET_ITEM = 8;
 //
@@ -95,6 +96,8 @@ struct SC_LOGIN_BACK {
 	unsigned char size;
 	unsigned type;
 	int id;
+	char cid[MAX_INFO_SIZE];
+	char cpw[MAX_INFO_SIZE];
 };
 #pragma pack(pop)
 
@@ -298,6 +301,12 @@ struct SC_ITEM_ACQUIRE_PACKET {
 	int acquireid;
 	int id;
 	int itemCount;
+};
+struct CS_STOP_ANIM_PACKET {
+	unsigned char size;
+	unsigned char type;
+	int id;
+	bool bStopAnim;
 };
 #pragma pack(pop)
 

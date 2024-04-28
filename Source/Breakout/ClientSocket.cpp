@@ -91,15 +91,11 @@ bool ClientSocket::PacketProcess(char* ptr)
 	}
 	case SC_ITEM: {
 		SC_ITEM_PACKET* packet = reinterpret_cast<SC_ITEM_PACKET*>(ptr);
-		/*Iteminfo.items[packet->id].X = packet->x;
-		Iteminfo.items[packet->id].Y = packet->y;
-		Iteminfo.items[packet->id].Z = packet->z;*/
 		auto info = make_shared<CItem>();
 		info->Id = packet->id;
 		info->X = packet->x;
 		info->Y = packet->y;
 		info->Z = packet->z;
-		//MyCharacterController->SetNewItemInfo(info);
 		ItemQueue.push(info);
 		break;
 	}
@@ -227,9 +223,6 @@ bool ClientSocket::PacketProcess(char* ptr)
 		PlayerInfo.players[packet->attack_id].FEffect.Yaw = packet->r_yaw;
 		PlayerInfo.players[packet->attack_id].FEffect.Roll = packet->r_roll;
 		PlayerInfo.players[packet->attack_id].weptype = packet->wep_type;
-
-		//UE_LOG(LogTemp, Warning, TEXT("%f, %f"), packet->sx, packet->ex);
-	
 		MyCharacterController->SetHitEffect(packet->attack_id);
 	
 		break;
@@ -285,6 +278,11 @@ bool ClientSocket::PacketProcess(char* ptr)
 		UE_LOG(LogTemp, Warning, TEXT("GETITEMid : %d, GetItemCount : %d"), packet->acquireid, packet->itemCount);
 		Tempid = packet->acquireid;
 		Tempcnt = packet->itemCount;
+		break;
+	}
+	case SC_STOP_ANIM: {
+		CS_STOP_ANIM_PACKET* packet = reinterpret_cast<CS_STOP_ANIM_PACKET*>(ptr);
+		PlayerInfo.players[packet->id].bStopAnim = packet->bStopAnim;
 		break;
 	}
 	default:
@@ -531,6 +529,14 @@ void ClientSocket::Send_Item_packet(int id, int itemCount)
 	packet.type = CS_GETITEM;
 	packet.id = id;
 	packet.itemCount = itemCount;
+	SendPacket(&packet);
+}
+void ClientSocket::Send_Stop_Anim_packet(int id)
+{
+	CS_STOP_ANIM_PACKET packet;
+	packet.size = sizeof(packet);
+	packet.type = CS_STOP_ANIM;
+	packet.id = id;
 	SendPacket(&packet);
 }
 bool ClientSocket::Init()
