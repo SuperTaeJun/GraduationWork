@@ -694,9 +694,10 @@ bool ACharacterController::UpdateWorld()
 				OtherPlayer->PlayAnimMontage(SyncDeadMontage);
 				OtherPlayer->bDeadAnim = true;
 			}
-		/*	if (bool adad == true) { 贸府
+			if (info->bStopAnim == true) { //贸府
 				OtherPlayer->StopAnimMontage(SyncDeadMontage);
-			}*/
+				info->bStopAnim = false;
+			}
 
 		}
 	}

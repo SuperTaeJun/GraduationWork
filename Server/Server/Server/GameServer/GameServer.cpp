@@ -725,6 +725,7 @@ void process_packet(int s_id, char* p)
 	}
 	case CS_GETITEM: {
 		CS_ITEM_PACKET* packet = reinterpret_cast<CS_ITEM_PACKET*>(p);
+	
 		CLIENT& cl = clients[packet->id];
 		cl.myItemCount = packet->itemCount;
 		cout << "내가 획득한 아이템 개수"  <<cl._s_id << " : " << cl.myItemCount << endl;
@@ -745,6 +746,30 @@ void process_packet(int s_id, char* p)
 			packet.itemCount = cl.myItemCount;
 			other.do_send(sizeof(packet), &packet);
 		}
+		break;
+	}
+	case CS_STOP_ANIM:{
+		CS_STOP_ANIM_PACKET* packet = reinterpret_cast<CS_STOP_ANIM_PACKET*>(p);
+		cout << "packet->id : " << packet->id << endl;
+		CLIENT& cl = clients[packet->id];
+		cl.bStopAnim = true;
+		for (auto& other : clients) {
+			other.state_lock.lock();
+			if (ST_INGAME != other._state) {
+				other.state_lock.unlock();
+				continue;
+			}
+			else other.state_lock.unlock();
+			CS_STOP_ANIM_PACKET packet;
+
+
+			packet.size = sizeof(packet);
+			packet.type = SC_STOP_ANIM;
+			packet.id = cl._s_id;
+			packet.bStopAnim = cl.bStopAnim;
+			other.do_send(sizeof(packet), &packet);
+		}
+
 		break;
 	}
 	default:
@@ -821,14 +846,6 @@ void worker_thread()
 			}
 			else {
 				CLIENT& cl = clients[n__s_id];
-				/*	cl.x = rand() % ReZone_WIDTH;
-					cl.y = rand() % ReZone_HEIGHT;
-					cl.z = 0;
-					cl.Yaw = 0;
-					cl.Pitch = 0;
-					cl.Roll = 0;*/
-					//cl.x = 200;
-					//cl.y = 200;
 				cl.state_lock.lock();
 				cl._s_id = n__s_id;
 				cl._state = ST_ACCEPT;
@@ -851,7 +868,7 @@ void worker_thread()
 				sizeof(SOCKADDR_IN) + 16, NULL, &exp_over->_wsa_over);
 
 		}
-					  break;
+		break;
 		}
 	}
 }
