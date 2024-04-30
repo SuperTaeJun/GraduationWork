@@ -92,7 +92,7 @@ void ACharacterController::SetName(FString Player1Name, FString Player2Name)
 {
 	if (MainHUD)
 	{
-		if (inst->m_Socket->Tempid == 0)
+		/*if (inst->m_Socket->Tempid == 0)
 		{
 			FString Player1 = FString::Printf(TEXT("%d"), inst->m_Socket->Tempid);
 			MainHUD->EscapeToolNumUi->Player1Ch->SetText(FText::FromString(Player1));
@@ -101,7 +101,7 @@ void ACharacterController::SetName(FString Player1Name, FString Player2Name)
 		{
 			FString Player2 = FString::Printf(TEXT("%d"), inst->m_Socket->Tempid);
 			MainHUD->EscapeToolNumUi->Player2Ch->SetText(FText::FromString(Player2));
-		}
+		}*/
 	}
 }
 
@@ -111,7 +111,7 @@ void ACharacterController::SetNum(int Player1Num, int Player2Num)
 	if (MainHUD)
 	{
 	
-		if (inst->m_Socket->Tempid == 0)
+	/*	if (inst->m_Socket->Tempid == 0)
 		{
 			FString Player1 = FString::Printf(TEXT("%d"), inst->m_Socket->Tempcnt);
 			MainHUD->EscapeToolNumUi->Player1->SetText(FText::FromString(Player1));
@@ -120,7 +120,7 @@ void ACharacterController::SetNum(int Player1Num, int Player2Num)
 		{
 			FString Player2 = FString::Printf(TEXT("%d"), inst->m_Socket->Tempcnt);
 			MainHUD->EscapeToolNumUi->Player1->SetText(FText::FromString(Player2));
-		}
+		}*/
 
 	}
 }

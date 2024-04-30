@@ -97,7 +97,7 @@ struct SC_LOGIN_BACK {
 	unsigned type;
 	int id;
 	char cid[MAX_INFO_SIZE];
-	char cpw[MAX_INFO_SIZE];
+
 };
 #pragma pack(pop)
 

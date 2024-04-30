@@ -152,6 +152,7 @@ void send_login_ok_packet(int _s_id)
 	packet.size = sizeof(packet);
 	packet.type = SC_LOGIN_OK;
 	packet.id = _s_id;
+	strcpy_s(packet.cid, clients[_s_id].name);
 	cout << "_s_id" << _s_id << endl;
 
 	clients[_s_id].do_send(sizeof(packet), &packet);
@@ -234,6 +235,9 @@ void process_packet(int s_id, char* p)
 		cl.state_lock.lock();
 		cl._state = ST_INGAME;
 		cl.state_lock.unlock();
+	
+		strcpy_s(cl.name, packet->id);
+		cout << "czc : " << cl.name << endl;
 		send_login_ok_packet(cl._s_id);
 		cout << "플레이어[" << s_id << "]" << " 로그인 성공" << endl;
 

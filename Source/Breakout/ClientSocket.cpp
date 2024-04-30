@@ -110,8 +110,9 @@ bool ClientSocket::PacketProcess(char* ptr)
 		info->Z = packet->z;
 		info->Yaw = packet->yaw;
 		info->p_type = packet->p_type;
+		info->userId =  packet->name;
 		//float z = packet->z;
-		UE_LOG(LogClass, Warning, TEXT("recv - info->id: %d,"), info->Id);
+		UE_LOG(LogClass, Warning, TEXT("recv - iinfo->userId: %s"), *info->userId);
 		MyCharacterController->SetNewCharacterInfo(info);
 		break;
 	}
@@ -276,8 +277,8 @@ bool ClientSocket::PacketProcess(char* ptr)
 	case SC_ITEM_ACQUIRE: {
 		SC_ITEM_ACQUIRE_PACKET* packet = reinterpret_cast<SC_ITEM_ACQUIRE_PACKET*>(ptr);
 		UE_LOG(LogTemp, Warning, TEXT("GETITEMid : %d, GetItemCount : %d"), packet->acquireid, packet->itemCount);
-		Tempid = packet->acquireid;
-		Tempcnt = packet->itemCount;
+		/*Tempid = packet->acquireid;
+		Tempcnt = packet->itemCount;*/
 		break;
 	}
 	case SC_STOP_ANIM: {

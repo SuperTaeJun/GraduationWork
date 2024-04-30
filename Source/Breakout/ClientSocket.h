@@ -75,8 +75,8 @@ public:
 	int damage;
 	int skilltype;
 	// 아이디 비번
-	char    userId[20] = {};
-	char    userPw[20] = {};
+	FString    userId = {};
+	FString    userPw = {};
 	// 위치
 	float X;
 	float Y = 0;
@@ -271,8 +271,7 @@ public:
 class BREAKOUT_API ClientSocket : public FRunnable
 {
 public:
-	int Tempid;
-	int Tempcnt;
+
 	ClientSocket();
 	virtual ~ClientSocket();
 	bool InitSocket();
