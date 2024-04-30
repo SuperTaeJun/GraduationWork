@@ -32,7 +32,7 @@ public:
     int damage;
     int _atk; // °ø°Ý·Â
     int _def;
-       bool is_bone = false;
+    bool is_bone = false;
     int32 iMaxSnowballCount;
     int32 iCurrentSnowballCount;
     int32 iCurrentMatchCount;
@@ -60,7 +60,7 @@ public:
     //COMBAT _combat;
     int num;
     atomic_int  _count;
-    int      _type;   
+    int      _type;
     //-------------
     float pitch0, yaw0, roll0;
     float pitch1, yaw1, roll1;

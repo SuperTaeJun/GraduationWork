@@ -235,7 +235,7 @@ void process_packet(int s_id, char* p)
 		cl.state_lock.lock();
 		cl._state = ST_INGAME;
 		cl.state_lock.unlock();
-	
+
 		strcpy_s(cl.name, packet->id);
 		cout << "czc : " << cl.name << endl;
 		send_login_ok_packet(cl._s_id);
@@ -255,7 +255,7 @@ void process_packet(int s_id, char* p)
 		cl.connected = true;
 		ingamecount++;
 		send_select_character_type_packet(cl._s_id);
-		
+
 
 
 		cout << "cl._s_id : " << cl._s_id << ",  " << cl.p_type << endl;
@@ -729,10 +729,10 @@ void process_packet(int s_id, char* p)
 	}
 	case CS_GETITEM: {
 		CS_ITEM_PACKET* packet = reinterpret_cast<CS_ITEM_PACKET*>(p);
-	
+
 		CLIENT& cl = clients[packet->id];
 		cl.myItemCount = packet->itemCount;
-		cout << "내가 획득한 아이템 개수"  <<cl._s_id << " : " << cl.myItemCount << endl;
+		cout << "내가 획득한 아이템 개수" << cl._s_id << " : " << cl.myItemCount << endl;
 		for (auto& other : clients) {
 			other.state_lock.lock();
 			if (ST_INGAME != other._state) {
@@ -742,7 +742,7 @@ void process_packet(int s_id, char* p)
 			else other.state_lock.unlock();
 			SC_ITEM_ACQUIRE_PACKET packet;
 
-			
+
 			packet.size = sizeof(packet);
 			packet.type = SC_ITEM_ACQUIRE;
 			packet.id = cl._s_id;
@@ -752,7 +752,7 @@ void process_packet(int s_id, char* p)
 		}
 		break;
 	}
-	case CS_STOP_ANIM:{
+	case CS_STOP_ANIM: {
 		CS_STOP_ANIM_PACKET* packet = reinterpret_cast<CS_STOP_ANIM_PACKET*>(p);
 		cout << "packet->id : " << packet->id << endl;
 		CLIENT& cl = clients[packet->id];
@@ -872,7 +872,7 @@ void worker_thread()
 				sizeof(SOCKADDR_IN) + 16, NULL, &exp_over->_wsa_over);
 
 		}
-		break;
+					  break;
 		}
 	}
 }
