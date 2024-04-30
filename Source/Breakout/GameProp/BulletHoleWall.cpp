@@ -40,13 +40,13 @@ void ABulletHoleWall::ReciveDamage(AActor* DamagedActor, float Damage, const UDa
 	if (Hp <= 0.f && !bDestroyed)
 	{
 		//저장 부셔진 조각들 계산해서 여기는 수정해야함
-		for (int i = 0; i < 4; ++i)
+		for (int i = 0; i < 3; ++i)
 		{
-			for (int j = 0; j < 4; ++j)
+			for (int j = 0; j < 3; ++j)
 			{
-				for (int k = 0; k < 2; ++k)
+				for (int k = 0; k < 1; ++k)
 				{
-					FVector Loc = FVector(i, j, k) * 80.f;
+					FVector Loc = FVector(i, j, k) * 30.f;
 					FTransform DataATransform;
 					FTransform SculptureTransform;
 					SculptureTransform.SetLocation(Loc);
@@ -72,8 +72,20 @@ void ABulletHoleWall::ReciveDamage(AActor* DamagedActor, float Damage, const UDa
 				TempComponent->SetSimulatePhysics(true);
 				TempComponent->AddCollisionConvexMesh(MeshDataStorage[i].Verts);
 				TempComponent->CreateMeshSection_LinearColor(0, MeshDataStorage[i].Verts, MeshDataStorage[i].Tris, MeshDataStorage[i].Normals, MeshDataStorage[i].UVs, MeshDataStorage[i].Colors, Tangents, true);
-
+				if (CurMaterial)
+				{
+					DynamicMaterial = UMaterialInstanceDynamic::Create(CurMaterial, this);
+					if (DynamicMaterial)
+						TempComponent->SetMaterial(0, DynamicMaterial);
+				}
 				ProceduralMesh->DestroyComponent();
+
+				GetWorldTimerManager().SetTimer(
+					DestroyTimer,
+					this,
+					&ABulletHoleWall::AllDestroy,
+					3.f
+				);
 			}
 		}
 	}
@@ -355,6 +367,11 @@ FMeshData ABulletHoleWall::TransformMeshData(UPARAM(ref) FMeshData& Data, FTrans
 		}
 	}
 	return newdata;
+}
+
+void ABulletHoleWall::AllDestroy()
+{
+	Destroy();
 }
 
 void ABulletHoleWall::GetMeshDataFromStaticMesh(UStaticMesh* Mesh, UPARAM(ref) FMeshData& Data, int32 LODIndex, int32 SectionIndex, bool GetAllSections)

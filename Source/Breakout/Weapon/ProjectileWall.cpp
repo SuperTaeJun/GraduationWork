@@ -30,7 +30,9 @@ void AProjectileWall::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActo
 		UWorld* World = GetWorld();
 		if (World)
 		{
-			World->SpawnActor<ABulletHoleWall>(WallClass, Hit.Location, Rotation, SpawnParameters);
+			FVector ConvertLoc = Hit.Location;
+			ConvertLoc.X += 200.f;
+			World->SpawnActor<ABulletHoleWall>(WallClass, ConvertLoc, Rotation, SpawnParameters);
 		}
 	}
 	

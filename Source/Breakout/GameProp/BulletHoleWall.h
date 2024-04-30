@@ -58,8 +58,13 @@ private:
 	FMeshData SetRandomVertex(UPARAM(ref)FMeshData& MeshData, float Min, float Max, float Tolerance);
 	UFUNCTION(BlueprintCallable)
 	FMeshData TransformMeshData(UPARAM(ref) FMeshData& Data, FTransform Transform, bool InPlace, FVector Pivot);
-
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<class UMaterialInstance> CurMaterial;
+	TObjectPtr<class UMaterialInstanceDynamic> DynamicMaterial;
 	float Hp = 50.f;
 	bool bDestroyed = false;
 	TArray<FMeshData> MeshDataStorage;
+	FTimerHandle DestroyTimer;
+
+	void AllDestroy();
 };
