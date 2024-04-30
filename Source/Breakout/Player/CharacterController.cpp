@@ -88,39 +88,43 @@ void ACharacterController::BeginPlay()
 
 }
 
-void ACharacterController::SetName(FString Player1Name, FString Player2Name)
+void ACharacterController::SetName()
 {
 	if (MainHUD)
 	{
-		/*if (inst->m_Socket->Tempid == 0)
+		if (inst->m_Socket->tempid == 0)
 		{
-			FString Player1 = FString::Printf(TEXT("%d"), inst->m_Socket->Tempid);
+			FString Player1 = inst->m_Socket->TempName;
 			MainHUD->EscapeToolNumUi->Player1Ch->SetText(FText::FromString(Player1));
-		}
-		else if (inst->m_Socket->Tempid == 1)
-		{
-			FString Player2 = FString::Printf(TEXT("%d"), inst->m_Socket->Tempid);
+			FString Player2 = "taejoon";
 			MainHUD->EscapeToolNumUi->Player2Ch->SetText(FText::FromString(Player2));
-		}*/
+		}
+		else if (inst->m_Socket->tempid == 1)
+		{
+			/*FString Player1 = inst->m_Socket->TempName;
+			MainHUD->EscapeToolNumUi->Player1Ch->SetText(FText::FromString(Player1));
+			FString Player2 = "taejoon";
+			MainHUD->EscapeToolNumUi->Player2Ch->SetText(FText::FromString(Player2));*/
+		}
 	}
 }
 
 //Å»Ãâµµ±¸
-void ACharacterController::SetNum(int Player1Num, int Player2Num)
+void ACharacterController::SetNum()
 {
 	if (MainHUD)
 	{
 	
-	/*	if (inst->m_Socket->Tempid == 0)
+		if (inst->m_Socket->tempid == 0)
 		{
 			FString Player1 = FString::Printf(TEXT("%d"), inst->m_Socket->Tempcnt);
 			MainHUD->EscapeToolNumUi->Player1->SetText(FText::FromString(Player1));
 		}
-		else if (inst->m_Socket->Tempid == 1)
+		else if (inst->m_Socket->tempid == 1)
 		{
 			FString Player2 = FString::Printf(TEXT("%d"), inst->m_Socket->Tempcnt);
 			MainHUD->EscapeToolNumUi->Player1->SetText(FText::FromString(Player2));
-		}*/
+		}
 
 	}
 }
@@ -347,7 +351,7 @@ void ACharacterController::Tick(float DeltaTime)
 		//BaseCharacter->SetHealth(BaseCharacter->GetHealth());
 		SetHUDHealth(BaseCharacter->GetHealth(), BaseCharacter->MaxGetHealth());
 	}
-
+	//SetNum();
 	
 }
 

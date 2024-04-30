@@ -87,6 +87,8 @@ bool ClientSocket::PacketProcess(char* ptr)
 		//to_do
 		gameinst->SetPlayerID(packet->id);
 		UE_LOG(LogClass, Warning, TEXT("aaaaa"));
+		TempName = packet->cid;
+		tempid = packet->id;
 		break;
 	}
 	case SC_ITEM: {
@@ -111,6 +113,10 @@ bool ClientSocket::PacketProcess(char* ptr)
 		info->Yaw = packet->yaw;
 		info->p_type = packet->p_type;
 		info->userId =  packet->name;
+
+		CharacterInfo iinfo;
+		TempName = packet->name;
+		tempid = packet->id;
 		//float z = packet->z;
 		UE_LOG(LogClass, Warning, TEXT("recv - iinfo->userId: %s"), *info->userId);
 		MyCharacterController->SetNewCharacterInfo(info);
@@ -277,8 +283,8 @@ bool ClientSocket::PacketProcess(char* ptr)
 	case SC_ITEM_ACQUIRE: {
 		SC_ITEM_ACQUIRE_PACKET* packet = reinterpret_cast<SC_ITEM_ACQUIRE_PACKET*>(ptr);
 		UE_LOG(LogTemp, Warning, TEXT("GETITEMid : %d, GetItemCount : %d"), packet->acquireid, packet->itemCount);
-		/*Tempid = packet->acquireid;
-		Tempcnt = packet->itemCount;*/
+		/*Tempid = packet->acquireid;*/
+		Tempcnt = packet->itemCount;
 		break;
 	}
 	case SC_STOP_ANIM: {

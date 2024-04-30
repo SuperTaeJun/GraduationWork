@@ -268,6 +268,11 @@ public:
 	}
 };
 
+struct CharacterInfo {
+	FString nickname;
+	int clid;
+};
+
 class BREAKOUT_API ClientSocket : public FRunnable
 {
 public:
@@ -323,6 +328,9 @@ public:
 	bool login_cond = false;
 	bool bAllReady = false;
 	std::queue<std::shared_ptr<CItem>> ItemQueue;
+	FString TempName;
+	int tempid;
+	int Tempcnt;
 private:
 	ACharacterController* MyCharacterController;
 	CPlayerInfo PlayerInfo;
