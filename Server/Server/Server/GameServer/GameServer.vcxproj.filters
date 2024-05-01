@@ -59,6 +59,8 @@
     <ClInclude Include="EscapeObject.h">
       <Filter>EscapeTool</Filter>
     </ClInclude>
-    <ClInclude Include="LockQueue.h" />
+    <ClInclude Include="LockQueue.h">
+      <Filter>LockQueue</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

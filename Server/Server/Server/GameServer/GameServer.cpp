@@ -259,7 +259,6 @@ void process_packet(int s_id, char* p)
 
 
 		cout << "cl._s_id : " << cl._s_id << ",  " << cl.p_type << endl;
-		//m.lock();
 		for (auto& other : clients) {
 			if (other._s_id == cl._s_id) continue;
 			other.state_lock.lock();
@@ -272,7 +271,6 @@ void process_packet(int s_id, char* p)
 			SC_PLAYER_SYNC packet;
 			packet.id = cl._s_id;
 			strcpy_s(packet.name, cl.name);
-			//packet.object_type = 0;
 			packet.size = sizeof(packet);
 			packet.type = SC_OTHER_PLAYER;
 			packet.x = cl.x;
@@ -285,8 +283,7 @@ void process_packet(int s_id, char* p)
 			cout << "이거 누구한테 감 :  ?" << other._s_id << endl;
 			other.do_send(sizeof(packet), &packet);
 		}
-		//m.unlock();
-		//m.lock();
+	
 		// 새로 접속한 플레이어에게 주위 객체 정보를 보낸다
 		for (auto& other : clients) {
 			if (other._s_id == cl._s_id) continue;
@@ -301,7 +298,7 @@ void process_packet(int s_id, char* p)
 			SC_PLAYER_SYNC packet;
 			packet.id = other._s_id;
 			strcpy_s(packet.name, other.name);
-			//packet.object_type = 0;
+	
 			packet.size = sizeof(packet);
 			packet.type = SC_OTHER_PLAYER;
 			packet.x = other.x;
@@ -316,22 +313,21 @@ void process_packet(int s_id, char* p)
 
 		}
 		cout << "몇명 들어옴 : " << ingamecount << endl;
-		//m.unlock();
+	
 		if (ingamecount >= 2)
 		{
 			for (auto& player : clients) {
 				if (ST_INGAME != player._state)
 					continue;
-				/*state_lock();*/
+				
 				send_ready_packet(player._s_id);
 				cout << "보낼 플레이어" << player._s_id << endl;
-				//m.unlock();
+				
 			}
 		}
 		break;
 	}
 	case CS_MOVE_Packet: {
-		//cout << "들어옴?" << endl;
 		CS_MOVE_PACKET* packet = reinterpret_cast<CS_MOVE_PACKET*>(p);
 		CLIENT& cl = clients[packet->id];
 		cl.x = packet->x;
@@ -373,7 +369,6 @@ void process_packet(int s_id, char* p)
 			packet.type = SC_OTHER_WEAPO;
 			packet.weapon_type = cl.w_type;
 			packet.bselectwep = cl.selectweapon;
-			//printf_s("[Send put object] id : %d, location : (%f,%f,%f), yaw : %f\n", packet.id, packet.x, packet.y, packet.z, packet.yaw);
 			cout << "이거 누구한테 감 :  ?" << other._s_id << endl;
 			other.do_send(sizeof(packet), &packet);
 		}
@@ -390,12 +385,9 @@ void process_packet(int s_id, char* p)
 			for (auto& player : clients) {
 				if (ST_INGAME != player._state)
 					continue;
-				//m.lock();
 				send_ready_packet(player._s_id);
 				cout << "보낼 플레이어" << player._s_id << endl;
-				//m.unlock();
 			}
-			//cl._state = ST_INGAME;
 		}
 		break;
 	}
@@ -467,9 +459,7 @@ void process_packet(int s_id, char* p)
 		cl.pitch8 = packet->pitch8;
 		cl.yaw8 = packet->yaw8;
 		cl.roll8 = packet->roll8;
-		/*cl.ex9 = packet->ex9;
-		cl.ey9 = packet->ey9;
-		cl.ez9 = packet->ey9;*/
+		
 		//--------------------
 		for (auto& other : clients) {
 			if (other._s_id == cl._s_id) continue;
@@ -513,9 +503,6 @@ void process_packet(int s_id, char* p)
 			packet.pitch8 = cl.pitch8;
 			packet.yaw8 = cl.yaw8;
 			packet.roll8 = cl.roll8;
-			/*packet.ex9 = cl.ex9;
-			packet.ey9 = cl.ey9;
-			packet.ez9 = cl.ez9;*/
 			cout << "이거 누구한테 감 :  ?" << other._s_id << endl;
 			other.do_send(sizeof(packet), &packet);
 
@@ -526,11 +513,9 @@ void process_packet(int s_id, char* p)
 		CS_START_GAME_PACKET* packet = reinterpret_cast<CS_START_GAME_PACKET*>(p);
 		CLIENT& cl = clients[packet->id];
 		cout << "cl.sid" << cl._s_id << endl;
-		//cl.state_lock.lock();
 		for (int i = 0; i < 20; ++i) {
 			send_item_packet(cl._s_id, i);
 		}
-		//cl.state_lock.unlock();
 		break;
 	}
 	case CS_SHOTGUN_DAMAGED: {
@@ -573,9 +558,6 @@ void process_packet(int s_id, char* p)
 			packet.r_yaw = cl.Yaw;
 			packet.r_roll = cl.Roll;
 			packet.wep_type = cl.wtype;
-			//packet.weapon_type = cl.w_type;
-		//printf_s("[Send put object] id : %d, location : (%f,%f,%f), yaw : %f\n", packet.id, packet.x, packet.y, packet.z, packet.yaw);
-			cout << "이거 누구한테 감 :  ?" << other._s_id << endl;
 			other.do_send(sizeof(packet), &packet);
 
 		}
@@ -611,11 +593,7 @@ void process_packet(int s_id, char* p)
 			packet.type = SC_NiAGARA;
 			packet.playertype = cl.p_type;
 			packet.num = cl.num;
-			//packet.weapon_type = cl.w_type;
-		//printf_s("[Send put object] id : %d, location : (%f,%f,%f), yaw : %f\n", packet.id, packet.x, packet.y, packet.z, packet.yaw);
 			cout << "이거 누구한테 감 :  ?" << other._s_id << endl;
-			//	cout << "나이아가라" << endl;
-
 			other.do_send(sizeof(packet), &packet);
 
 		}

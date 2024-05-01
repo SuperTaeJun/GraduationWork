@@ -329,8 +329,11 @@ public:
 	bool bAllReady = false;
 	std::queue<std::shared_ptr<CItem>> ItemQueue;
 	FString TempName;
+	FString TempName2;
 	int tempid;
+	//int tempid2;
 	int Tempcnt;
+	int Tempcnt2;	
 private:
 	ACharacterController* MyCharacterController;
 	CPlayerInfo PlayerInfo;

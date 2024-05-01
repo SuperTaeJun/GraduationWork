@@ -115,8 +115,8 @@ bool ClientSocket::PacketProcess(char* ptr)
 		info->userId =  packet->name;
 
 		CharacterInfo iinfo;
-		TempName = packet->name;
-		tempid = packet->id;
+		TempName2 = packet->name;
+		//tempid2 = packet->id;
 		//float z = packet->z;
 		UE_LOG(LogClass, Warning, TEXT("recv - iinfo->userId: %s"), *info->userId);
 		MyCharacterController->SetNewCharacterInfo(info);
