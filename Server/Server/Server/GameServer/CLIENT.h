@@ -33,12 +33,7 @@ public:
     int _atk; // °ø°Ý·Â
     int _def;
     bool is_bone = false;
-    int32 iMaxSnowballCount;
-    int32 iCurrentSnowballCount;
-    int32 iCurrentMatchCount;
-    bool recvdamage;
-    bool bHasUmbrella;
-    bool bHasBag;
+
     bool bCancel;
     bool bEndGame = false;
     WeaponType w_type;
@@ -76,14 +71,13 @@ public:
     SOCKET  _socket;
     int      _prev_size;
     int      last_move_time;
+
 public:
     CLIENT() : _state(ST_FREE), _prev_size(0)
     {
         _hp = 100;
         myItemCount = 0;
     }
-
-
 
     ~CLIENT()
     {
@@ -114,9 +108,5 @@ public:
                 error_display(error_num);
         }
     }
-
-    void Item_Ability(int _iAtt, int _iHp);
-    void UnEquip_Item(int _iIdx);
-
 };
 

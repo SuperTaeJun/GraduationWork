@@ -1,16 +1,11 @@
-﻿  pch.cpp
-  CLIENT.cpp
-  EscapeObject.cpp
-  GameServer.cpp
-D:\Downloads\GraduationWork-28040638e1d9a6cea75a8d6004cd31cc44f02fc8\Server\Server\Server\GameServer\GameServer.cpp(538,46): warning C4244: '=': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-D:\Downloads\GraduationWork-28040638e1d9a6cea75a8d6004cd31cc44f02fc8\Server\Server\Server\GameServer\GameServer.cpp(540,47): warning C4244: '=': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-D:\Downloads\GraduationWork-28040638e1d9a6cea75a8d6004cd31cc44f02fc8\Server\Server\Server\GameServer\GameServer.cpp(542,47): warning C4244: '=': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-D:\Downloads\GraduationWork-28040638e1d9a6cea75a8d6004cd31cc44f02fc8\Server\Server\Server\GameServer\GameServer.cpp(589,21): warning C4244: '=': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-  LockQueue.cpp
-  Overlap.cpp
+﻿  GameServer.cpp
+C:\Users\sejin\Downloads\GraduationWork\Server\Server\Server\GameServer\GameServer.cpp(523,46): warning C4244: '=': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\sejin\Downloads\GraduationWork\Server\Server\Server\GameServer\GameServer.cpp(525,47): warning C4244: '=': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\sejin\Downloads\GraduationWork\Server\Server\Server\GameServer\GameServer.cpp(527,47): warning C4244: '=': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\sejin\Downloads\GraduationWork\Server\Server\Server\GameServer\GameServer.cpp(571,21): warning C4244: '=': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
   코드를 생성하고 있습니다.
-  34 of 496 functions ( 6.9%) were compiled, the rest were copied from previous compilation.
+  1 of 496 functions ( 0.2%) were compiled, the rest were copied from previous compilation.
     0 functions were new in current compilation
-    4 functions had inline decision re-evaluated but remain unchanged
+    5 functions had inline decision re-evaluated but remain unchanged
   코드를 생성했습니다.
-  GameServer.vcxproj -> D:\Downloads\GraduationWork-28040638e1d9a6cea75a8d6004cd31cc44f02fc8\Server\Server\Server\Binary\Release\GameServer.exe
+  GameServer.vcxproj -> C:\Users\sejin\Downloads\GraduationWork\Server\Server\Server\Binary\Release\GameServer.exe

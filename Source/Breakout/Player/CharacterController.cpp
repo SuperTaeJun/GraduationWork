@@ -96,15 +96,15 @@ void ACharacterController::SetName()
 		{
 			FString Player1 = inst->m_Socket->TempName;
 			MainHUD->EscapeToolNumUi->Player1Ch->SetText(FText::FromString(Player1));
-			FString Player2 = "taejoon";
+			FString Player2 = inst->m_Socket->TempName2;
 			MainHUD->EscapeToolNumUi->Player2Ch->SetText(FText::FromString(Player2));
 		}
 		else if (inst->m_Socket->tempid == 1)
 		{
-			/*FString Player1 = inst->m_Socket->TempName;
+			FString Player1 = inst->m_Socket->TempName;
 			MainHUD->EscapeToolNumUi->Player1Ch->SetText(FText::FromString(Player1));
-			FString Player2 = "taejoon";
-			MainHUD->EscapeToolNumUi->Player2Ch->SetText(FText::FromString(Player2));*/
+			FString Player2 = inst->m_Socket->TempName2;
+			MainHUD->EscapeToolNumUi->Player2Ch->SetText(FText::FromString(Player2));
 		}
 	}
 }
