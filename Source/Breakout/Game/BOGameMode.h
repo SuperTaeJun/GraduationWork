@@ -22,7 +22,7 @@ public:
 	float StartTime = 10.f;
 	float CountdownTime = 10.f;
 
-	void SetDamageInsigator(class ACharacterBase* DamageInsigatorCh) { DamageInsigator = DamageInsigatorCh; }
+	void SetDamageInsigator(class ACharacterBase* DamageInsigatorCh);
 	class ACharacterBase* GetDamageInsigator() { return  DamageInsigator; }
 
 	void Respawn(class ACharacter* RespawnedCh, class AController* RespawnedController, FName TagName);
