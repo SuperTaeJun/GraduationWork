@@ -283,7 +283,7 @@ void process_packet(int s_id, char* p)
 			cout << "이거 누구한테 감 :  ?" << other._s_id << endl;
 			other.do_send(sizeof(packet), &packet);
 		}
-	
+
 		// 새로 접속한 플레이어에게 주위 객체 정보를 보낸다
 		for (auto& other : clients) {
 			if (other._s_id == cl._s_id) continue;
@@ -298,7 +298,7 @@ void process_packet(int s_id, char* p)
 			SC_PLAYER_SYNC packet;
 			packet.id = other._s_id;
 			strcpy_s(packet.name, other.name);
-	
+
 			packet.size = sizeof(packet);
 			packet.type = SC_OTHER_PLAYER;
 			packet.x = other.x;
@@ -313,16 +313,16 @@ void process_packet(int s_id, char* p)
 
 		}
 		cout << "몇명 들어옴 : " << ingamecount << endl;
-	
+
 		if (ingamecount >= 2)
 		{
 			for (auto& player : clients) {
 				if (ST_INGAME != player._state)
 					continue;
-				
+
 				send_ready_packet(player._s_id);
 				cout << "보낼 플레이어" << player._s_id << endl;
-				
+
 			}
 		}
 		break;
@@ -459,7 +459,7 @@ void process_packet(int s_id, char* p)
 		cl.pitch8 = packet->pitch8;
 		cl.yaw8 = packet->yaw8;
 		cl.roll8 = packet->roll8;
-		
+
 		//--------------------
 		for (auto& other : clients) {
 			if (other._s_id == cl._s_id) continue;

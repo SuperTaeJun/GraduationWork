@@ -283,8 +283,9 @@ bool ClientSocket::PacketProcess(char* ptr)
 	case SC_ITEM_ACQUIRE: {
 		SC_ITEM_ACQUIRE_PACKET* packet = reinterpret_cast<SC_ITEM_ACQUIRE_PACKET*>(ptr);
 		UE_LOG(LogTemp, Warning, TEXT("GETITEMid : %d, GetItemCount : %d"), packet->acquireid, packet->itemCount);
-		/*Tempid = packet->acquireid;*/
+		tempid = packet->acquireid;
 		Tempcnt = packet->itemCount;
+		bAcquire = true;
 		break;
 	}
 	case SC_STOP_ANIM: {
@@ -415,7 +416,6 @@ void ClientSocket::Send_ShotGun_packet(int attack_id, FVector ServerBeamStart, T
 	packet.size = sizeof(packet);
 	packet.type = CS_SHOTGUN_BEAM;
 	packet.attackid = attack_id;
-	//ServerBeamStart.SetNum(size);
 	ServerBeamEnd.SetNum(size);
 	packet.sx = ServerBeamStart.X;
 	packet.sy = ServerBeamStart.Y;
@@ -449,9 +449,7 @@ void ClientSocket::Send_ShotGun_packet(int attack_id, FVector ServerBeamStart, T
 	packet.pitch8 = ServerBeamEnd[8].Pitch;
 	packet.yaw8 = ServerBeamEnd[8].Yaw;
 	packet.roll8 = ServerBeamEnd[8].Roll;
-	/*packet.ex9 = ServerBeamEnd[9].X;
-	packet.ey9 = ServerBeamEnd[9].Y;
-	packet.ez9 = ServerBeamEnd[9].Z;*/
+
 	SendPacket(&packet);
 }
 void ClientSocket::Send_ShotGun_damaged_packet(int damaged_id1, int damaged_id2, int damaged_id3, float damaged1, float damaged2, float damaged3)
@@ -545,6 +543,10 @@ void ClientSocket::Send_Stop_Anim_packet(int id)
 	packet.type = CS_STOP_ANIM;
 	packet.id = id;
 	SendPacket(&packet);
+}
+void ClientSocket::Send_Destroyed_item_packet(int id)
+{
+	//SendPacket(&packet);
 }
 bool ClientSocket::Init()
 {

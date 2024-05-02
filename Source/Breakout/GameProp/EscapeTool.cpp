@@ -7,6 +7,7 @@
 #include "Components/SphereComponent.h"
 #include "Components/ProgressBar.h"
 #include "Components/WidgetComponent.h"
+#include "Game/BOGameInstance.h"
 #include "HUD/ETPercentBar.h"
 #include "Components/SphereComponent.h"
 #include "Materials/MaterialInstanceDynamic.h"
@@ -23,6 +24,7 @@ AEscapeTool::AEscapeTool()
 void AEscapeTool::BeginPlay()
 {
 	Super::BeginPlay();
+	inst = Cast<UBOGameInstance>(GetGameInstance());
 	DynamicMaterial = UMaterialInstanceDynamic::Create(OldMaterial, this);
 	if (DynamicMaterial)
 	{
@@ -51,6 +53,14 @@ void AEscapeTool::Tick(float DeltaTime)
 
 
 
+}
+
+void AEscapeTool::Destroyed()
+{
+	Super::Destroyed();
+	//if (inst)
+	//	;
+	//
 }
 
 void AEscapeTool::TransformMesh(float DeltaTime, bool Clamp, bool TransformReverse)

@@ -301,6 +301,7 @@ public:
 	void Send_Signal_packet(int id, int num);
 	void Send_Item_packet(int id, int itemCount);
 	void Send_Stop_Anim_packet(int id);
+	void Send_Destroyed_item_packet(int id);
 	virtual bool Init() override;
 	virtual uint32 Run() override;
 	virtual void Stop() override;
@@ -334,6 +335,7 @@ public:
 	//int tempid2;
 	int Tempcnt;
 	int Tempcnt2;	
+	bool bAcquire = false;
 private:
 	ACharacterController* MyCharacterController;
 	CPlayerInfo PlayerInfo;

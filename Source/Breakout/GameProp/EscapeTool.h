@@ -21,7 +21,7 @@ public:
 
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime);
-
+	virtual void Destroyed() override;
 	void TransformMesh(float DeltaTime, bool Clamp, bool TransformReverse);
 	void SetHideMesh();
 
@@ -56,7 +56,7 @@ private:
 	TObjectPtr<class UWidgetComponent> PercentBar;
 
 	void UpdatePercent(float Percent);
-
+	class UBOGameInstance* inst;
 	//0 = 기본상태
 	//1 = a->b로 보간중인 상태
 	//2 = b->a로 다시 돌아가는 상태
