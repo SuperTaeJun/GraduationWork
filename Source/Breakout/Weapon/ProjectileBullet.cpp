@@ -56,7 +56,7 @@ void AProjectileBullet::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherAc
 {
 	bHit = true;
 
-	APawn* FiringPawn = GetInstigator();
+	APawn* FiringPawn =GetInstigator();
 	AController* FiringController = FiringPawn->GetController();
 	if (FiringPawn)
 	{

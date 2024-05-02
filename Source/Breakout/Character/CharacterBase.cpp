@@ -283,7 +283,11 @@ void ACharacterBase::SetWeapon(TSubclassOf<class AWeaponBase> Weapon, FName Sock
 	if (!CurWeapon)
 	{
 		RightSocketName = SocketName;
-		AActor* SpawnWeapon = GetWorld()->SpawnActor<AWeaponBase>(Weapon);
+
+		FActorSpawnParameters SpawnParameters;
+		SpawnParameters.Owner = this;
+		SpawnParameters.Instigator = this;
+		AActor* SpawnWeapon = GetWorld()->SpawnActor<AWeaponBase>(Weapon, SpawnParameters);
 		CurWeapon = Cast<AWeaponBase>(SpawnWeapon);
 
 		//UE_LOG(LogTemp, Warning, TEXT("SPAWN WEAPON"));
@@ -427,10 +431,6 @@ void ACharacterBase::ReciveDamage(AActor* DamagedActor, float Damage, const UDam
 	if (DamageCauser->Owner)
 	{
 		DamageInsigatorCh = Cast<ACharacterBase>(DamageCauser->Owner);
-	}
-	else
-	{
-		DamageInsigatorCh = Cast<ACharacterBase>(DamageCauser);
 	}
 	UE_LOG(LogTemp, Warning, TEXT("RECIVE DAMAGE"));
 	if (Health <= 0.0f)
