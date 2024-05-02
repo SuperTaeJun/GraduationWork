@@ -76,6 +76,12 @@ void ABOGameMode::Tick(float DeltaTime)
 }
 
 
+void ABOGameMode::SetDamageInsigator(ACharacterBase* DamageInsigatorCh)
+{
+	DamageInsigator = DamageInsigatorCh;
+	UE_LOG(LogTemp, Warning, TEXT("ID : %d"), DamageInsigatorCh->_SessionId);
+}
+
 void ABOGameMode::Respawn(ACharacter* RespawnedCh, AController* RespawnedController, FName TagName)
 {
 	ACharacterBase* MyCharacter=Cast<ACharacterBase>(RespawnedCh);
