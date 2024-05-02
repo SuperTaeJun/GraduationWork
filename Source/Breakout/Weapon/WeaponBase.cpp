@@ -203,7 +203,7 @@ void AWeaponBase::Fire(const FVector& HitTarget)
 		if (ProjectileBulletClass && OwnerPawn)
 		{
 			FActorSpawnParameters SpawnParameters;
-			SpawnParameters.Owner = GetOwner();
+			SpawnParameters.Owner = OwnerPawn;
 			SpawnParameters.Instigator = OwnerPawn;
 			UWorld* World = GetWorld();
 			if (World)
