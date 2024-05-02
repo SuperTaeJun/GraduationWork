@@ -68,7 +68,7 @@ void ABOGameMode::Tick(float DeltaTime)
 		SpawnActor.Instigator = GetInstigator();
 		AEscapeTool* SpawnCharacter = world->SpawnActor<AEscapeTool>(ItemSpawn,
 			S_LOCATION, S_ROTATOR, SpawnActor);
-
+		SpawnCharacter->ItemID = inst->m_Socket->ItemQueue.front()->Id;
 		inst->m_Socket->ItemQueue.front() = nullptr;
 		inst->m_Socket->ItemQueue.pop();
 	}

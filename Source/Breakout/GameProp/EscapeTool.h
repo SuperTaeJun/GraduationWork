@@ -17,6 +17,8 @@ class BREAKOUT_API AEscapeTool : public APropBase
 public:
 	AEscapeTool();
 
+	int ItemID = -1;
+
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime);
 
