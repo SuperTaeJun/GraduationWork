@@ -78,13 +78,7 @@ void ACharacterController::BeginPlay()
 			break;
 		}
 	}
-	//TArray<AActor*> SpawnPlayer;
-	//UGameplayStatics::GetAllActorsOfClass(GetWorld(), AEscapeTool::StaticClass(), SpawnPlayer);
-	//for (int i = 0; i < SpawnPlayer.Num(); i++)
-	//{
-	//	FVector Location = SpawnPlayer[i]->GetActorLocation(); 
-	//	inst->m_Socket->Send_Item_packet(i, Location);
-	//}
+
 
 }
 
@@ -705,7 +699,14 @@ bool ACharacterController::UpdateWorld()
 				OtherPlayer->StopAnimMontage(SyncDeadMontage);
 				info->bStopAnim = false;
 			}
-
+			TArray<AActor*> EscapeTools;
+			UGameplayStatics::GetAllActorsOfClass(GetWorld(), AEscapeTool::StaticClass(), EscapeTools);
+			for (int i = 0; i < EscapeTools.Num(); i++)
+			{
+				if(Cast<AEscapeTool>(EscapeTools[i]))
+					if (Escapeid == Cast<AEscapeTool>(EscapeTools[i])->ItemID)
+						Cast<AEscapeTool>(EscapeTools[i])->Destroy();
+			}
 		}
 	}
 	return true;

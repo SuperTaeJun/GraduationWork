@@ -8,6 +8,7 @@
 #include "Components/ProgressBar.h"
 #include "Components/WidgetComponent.h"
 #include "Game/BOGameInstance.h"
+#include "ClientSocket.h"
 #include "HUD/ETPercentBar.h"
 #include "Components/SphereComponent.h"
 #include "Materials/MaterialInstanceDynamic.h"
@@ -58,9 +59,9 @@ void AEscapeTool::Tick(float DeltaTime)
 void AEscapeTool::Destroyed()
 {
 	Super::Destroyed();
-	//if (inst)
-	//	;
-	//
+	if (inst)
+		inst->m_Socket->Send_Destroyed_item_packet(ItemID);
+	
 }
 
 void AEscapeTool::TransformMesh(float DeltaTime, bool Clamp, bool TransformReverse)

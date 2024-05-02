@@ -754,6 +754,26 @@ void process_packet(int s_id, char* p)
 
 		break;
 	}
+	case CS_REMOVE_ITEM: {
+		CS_REMOVE_ITEM_PACKET* packet = reinterpret_cast<CS_REMOVE_ITEM_PACKET*>(p);
+		cout << "itemid : " << packet->itemid << endl;
+		int itemid = packet->itemid;
+		for (auto& other : clients) {
+			if (other._s_id == cl._s_id) continue;
+			other.state_lock.lock();
+			if (ST_INGAME != other._state) {
+				other.state_lock.unlock();
+				continue;
+			}
+			else other.state_lock.unlock();
+			CS_REMOVE_ITEM_PACKET packet;
+			packet.itemid = itemid;
+			packet.size = sizeof(packet);
+			packet.type = SC_REMOVE_ITEM;
+			other.do_send(sizeof(packet), &packet);
+		}
+		break;
+	}
 	default:
 		cout << " 오류패킷타입 : " << p << endl;
 		break;

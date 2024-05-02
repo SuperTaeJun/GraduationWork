@@ -293,6 +293,13 @@ bool ClientSocket::PacketProcess(char* ptr)
 		PlayerInfo.players[packet->id].bStopAnim = packet->bStopAnim;
 		break;
 	}
+	case SC_REMOVE_ITEM: {
+		UE_LOG(LogTemp, Warning, TEXT("paZVZV"));
+		CS_REMOVE_ITEM_PACKET* packet = reinterpret_cast<CS_REMOVE_ITEM_PACKET*>(ptr);
+		UE_LOG(LogTemp, Warning, TEXT("packet->id item destroy : %d"), packet->itemid);
+		MyCharacterController->SetDestroyItemid(packet->itemid);
+		break;
+	}
 	default:
 		break;
 	}
@@ -546,7 +553,11 @@ void ClientSocket::Send_Stop_Anim_packet(int id)
 }
 void ClientSocket::Send_Destroyed_item_packet(int id)
 {
-	//SendPacket(&packet);
+	CS_REMOVE_ITEM_PACKET packet;
+	packet.size = sizeof(packet);
+	packet.type = CS_REMOVE_ITEM;
+	packet.itemid = id;
+	SendPacket(&packet);
 }
 bool ClientSocket::Init()
 {

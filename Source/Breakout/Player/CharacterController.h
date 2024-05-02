@@ -151,8 +151,9 @@ public:
 	//동기화 용
 	void UpdateSyncPlayer();
 	void UpdateSyncItem();
-	bool UpdateWorld();
 	void SetHp(float DamagedHp);
+	void SetDestroyItemid(int itemid) { Escapeid = itemid; };
+	bool UpdateWorld();
 	float damaged = 0;
 	//초기 컨트롤러 세팅
 	
@@ -175,6 +176,7 @@ public:
 
 	TObjectPtr<class AMainHUD> MainHUD;
 	int id;
+	int Escapeid;
 	bool bNewPlayerEntered = false;
 	bool bNewWeaponEntered = false;
 	bool bInitPlayerSetting = false;
