@@ -438,7 +438,8 @@ void ACharacterBase::ReciveDamage(AActor* DamagedActor, float Damage, const UDam
 		ABOGameMode* GameMode = GetWorld()->GetAuthGameMode<ABOGameMode>();
 		if (GameMode)
 		{
-			GameMode->SetDamageInsigator(DamageInsigatorCh);
+			UE_LOG(LogTemp, Warning, TEXT("ID : %d"), DamageInsigatorCh->_SessionId);
+			//GameMode->SetDamageInsigator(DamageInsigatorCh);
 			//MainController = MainController == nullptr ? Cast<ACharacterController>(Controller) : MainController;
 			//ACharacterController* AttackerController = Cast<ACharacterController>(InstigatorController);
 			CurWeapon->CurAmmo = 0;
