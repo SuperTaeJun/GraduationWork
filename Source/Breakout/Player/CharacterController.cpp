@@ -82,7 +82,7 @@ void ACharacterController::BeginPlay()
 
 }
 
-void ACharacterController::SetName()
+void ACharacterController::SetChName()
 {
 	if (MainHUD)
 	{

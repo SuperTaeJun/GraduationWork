@@ -109,7 +109,7 @@ public:
 	//bool ProcessPacket(char* p);
 
 	//virtual void OnPossess(APawn* InPawn) override;
-	void SetName();
+	void SetChName();
 	void SetNum();
 
 	void SetHUDHealth(float Health, float MaxHealth);

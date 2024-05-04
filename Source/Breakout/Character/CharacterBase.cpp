@@ -427,22 +427,16 @@ void ACharacterBase::ReciveDamage(AActor* DamagedActor, float Damage, const UDam
 	
 	Health = FMath::Clamp(Health - Damage, 0.f, MaxHealth);
 	UpdateHpHUD();
-	ACharacterBase* DamageInsigatorCh;
+	ACharacterBase* DamageInsigatorCh=nullptr;
 	if (DamageCauser->Owner)
 	{
 		DamageInsigatorCh = Cast<ACharacterBase>(DamageCauser->Owner);
 	}
-	UE_LOG(LogTemp, Warning, TEXT("RECIVE DAMAGE"));
 	if (Health <= 0.0f)
 	{
 		ABOGameMode* GameMode = GetWorld()->GetAuthGameMode<ABOGameMode>();
 		if (GameMode)
 		{
-			if(DamageInsigatorCh)
-				UE_LOG(LogTemp, Warning, TEXT("ID : %d"), DamageInsigatorCh->_SessionId);
-			//GameMode->SetDamageInsigator(DamageInsigatorCh);
-			//MainController = MainController == nullptr ? Cast<ACharacterController>(Controller) : MainController;
-			//ACharacterController* AttackerController = Cast<ACharacterController>(InstigatorController);
 			CurWeapon->CurAmmo = 0;
 			PlayAnimMontage(DeadMontage);
 			DisableInput(MainController);
@@ -902,7 +896,7 @@ void ACharacterBase::Tick(float DeltaTime)
 	}
 
 
-	if (Cast<UBOGameInstance>(GetWorld()->GetGameInstance())->m_Socket->bAllReady == true && !bStarted)
+	if (/*Cast<UBOGameInstance>(GetWorld()->GetGameInstance())->m_Socket->bAllReady == true &&*/ !bStarted)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("StartGame"));
 		Cast<UBOGameInstance>(GetWorld()->GetGameInstance())->m_Socket->bAllReady = false;
@@ -978,7 +972,7 @@ void ACharacterBase::StartGame()
 		MainController->MainHUD->AddToolNumUi();
 		// num 계수, name 처리 
 		MainController->SetNum();
-		MainController->SetName();
+		MainController->SetChName();
 		SetActorTransform(StartTransform);
 		MainController->MainHUD->RemoveMatchingUi();
 		//bStarted = false;
