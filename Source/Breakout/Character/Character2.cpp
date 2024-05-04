@@ -165,7 +165,7 @@ void ACharacter2::ServerNiagaraSync()
 		NiagaraComp->Activate();
 		//bDash = true;
 		//DashStart();
-		GetCamera()->bCameraMeshHiddenInGame = true;
+		//GetCamera()->bCameraMeshHiddenInGame = true;
 		GetWorld()->GetTimerManager().SetTimer(DashTimer, this, &ACharacter2::ServerDashFinish, 0.2, false);
 
 		//스킬 패킷
