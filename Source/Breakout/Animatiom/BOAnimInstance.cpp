@@ -12,6 +12,8 @@ void UBOAnimInstance::NativeInitializeAnimation()
 	if (BaseCharacter)
 	{
 		Movement = BaseCharacter->GetCharacterMovement();
+
+		bUseLeftHand = true;
 	}
 }
 
