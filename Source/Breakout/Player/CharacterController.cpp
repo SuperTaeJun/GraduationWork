@@ -108,18 +108,10 @@ void ACharacterController::SetNum()
 {
 	if (MainHUD)
 	{
-	
-		if (inst->m_Socket->tempid == 0)
-		{
-			FString Player1 = FString::Printf(TEXT("%d"), inst->m_Socket->Tempcnt);
-			MainHUD->EscapeToolNumUi->Player1->SetText(FText::FromString(Player1));
-		}
-		else if (inst->m_Socket->tempid == 1)
-		{
-			FString Player2 = FString::Printf(TEXT("%d"), inst->m_Socket->Tempcnt);
-			MainHUD->EscapeToolNumUi->Player1->SetText(FText::FromString(Player2));
-		}
-
+		FString Player1 = FString::Printf(TEXT("%d"), inst->m_Socket->Tempcnt);
+		MainHUD->EscapeToolNumUi->Player1->SetText(FText::FromString(Player1));
+		FString Player2 = FString::Printf(TEXT("%d"), inst->m_Socket->Tempcnt2);
+		MainHUD->EscapeToolNumUi->Player2->SetText(FText::FromString(Player2));
 	}
 }
 

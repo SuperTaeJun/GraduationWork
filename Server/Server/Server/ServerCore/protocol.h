@@ -67,7 +67,7 @@ const char SC_END_GAME = 17;
 const char SC_ITEM_ACQUIRE = 18;
 const char SC_STOP_ANIM = 19;
 const char SC_REMOVE_ITEM = 20;
-
+const char SC_MYITEM_COUNT = 21;
 
 #pragma pack (push, 1)
 struct CS_LOGIN_PACKET
@@ -297,6 +297,12 @@ struct CS_REMOVE_ITEM_PACKET {
 	unsigned char size;
 	unsigned char type;
 	int itemid;
+};
+struct SC_MY_ITEM_COUNT {
+	unsigned char size;
+	unsigned char type;
+	int id;
+	int MyITEMCount;
 };
 #pragma pack(pop)
 

@@ -280,11 +280,17 @@ bool ClientSocket::PacketProcess(char* ptr)
 		PlayerInfo.players[packet->id].WinnerID = packet->winnerid;
 		break;
 	}
+	case SC_MYITEM_COUNT:{
+		SC_MY_ITEM_COUNT* packet = reinterpret_cast<SC_MY_ITEM_COUNT*>(ptr);
+		Tempcnt = packet->MyITEMCount;
+		bAcquire = true;
+		break;
+	}
 	case SC_ITEM_ACQUIRE: {
 		SC_ITEM_ACQUIRE_PACKET* packet = reinterpret_cast<SC_ITEM_ACQUIRE_PACKET*>(ptr);
 		UE_LOG(LogTemp, Warning, TEXT("GETITEMid : %d, GetItemCount : %d"), packet->acquireid, packet->itemCount);
-		tempid = packet->acquireid;
-		Tempcnt = packet->itemCount;
+		//tempid = packet->acquireid;
+		Tempcnt2 = packet->itemCount;
 		bAcquire = true;
 		break;
 	}

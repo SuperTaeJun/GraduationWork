@@ -39,6 +39,7 @@ void Disconnect(int _s_id);
 void send_ready_packet(int _s_id);
 void send_endgame_packet(int _s_id);
 void send_item_packet(int _s_id, int item_index);
+void send_myitem_packet(int _s_id);
 void worker_thread();
 // 랜덤 넘버 생성기 초기화
 std::random_device rd;
@@ -658,8 +659,11 @@ void process_packet(int s_id, char* p)
 
 		CLIENT& cl = clients[packet->id];
 		cl.myItemCount = packet->itemCount;
+		send_myitem_packet(cl._s_id);
+
 		cout << "내가 획득한 아이템 개수" << cl._s_id << " : " << cl.myItemCount << endl;
 		for (auto& other : clients) {
+			if (other._s_id == cl._s_id) continue;
 			other.state_lock.lock();
 			if (ST_INGAME != other._state) {
 				other.state_lock.unlock();
@@ -667,8 +671,6 @@ void process_packet(int s_id, char* p)
 			}
 			else other.state_lock.unlock();
 			SC_ITEM_ACQUIRE_PACKET packet;
-
-
 			packet.size = sizeof(packet);
 			packet.type = SC_ITEM_ACQUIRE;
 			packet.id = cl._s_id;
@@ -873,6 +875,16 @@ void send_endgame_packet(int _s_id)
 	packet.bEND = true;
 	clients[_s_id].do_send(sizeof(packet), &packet);
 }
+void send_myitem_packet(int _s_id)
+{
+	SC_MY_ITEM_COUNT packet;
+	packet.size = sizeof(packet);
+	packet.type = SC_MYITEM_COUNT;
+	packet.id = _s_id;
+	packet.MyITEMCount = clients[_s_id].myItemCount;
+	clients[_s_id].do_send(sizeof(packet), &packet);
+}
+
 
 void send_item_packet(int _s_id, int item_index)
 {
