@@ -393,30 +393,7 @@ void ClientSocket::Send_Fire_Effect(int attack_id, FVector ImLoc, FRotator ImRot
 	packet.wep_type = wtype;
 	SendPacket(&packet);
 }
-void ClientSocket::Send_AttackPacket(int attack_id, FVector SLoc, FVector ELoc)
-{
-	UE_LOG(LogClass, Warning, TEXT("Send_AttackPacket"));
-	CS_ATTACK_PLAYER packet;
-	packet.size = sizeof(packet);
-	packet.type = CS_ATTACK;
-	packet.attack_id = attack_id;
-	packet.sx = SLoc.X;
-	packet.sy = SLoc.Y;
-	packet.sz = SLoc.Z;
-	packet.ex = ELoc.X;
-	packet.ey = ELoc.Y;
-	packet.ez = ELoc.Z;
-	SendPacket(&packet);
-}
-void ClientSocket::Send_Damage_Packet(int damaged_id, float damage)
-{
-	CS_DAMAGE_PACKET packet;
-	packet.size = sizeof(packet);
-	packet.type = CS_DAMAGE;
-	packet.damaged_id = damaged_id;
-	packet.damage = damage;
-	SendPacket(&packet);
-}
+
 void ClientSocket::Send_ShotGun_packet(int attack_id, FVector ServerBeamStart, TArray<FRotator> ServerBeamEnd, int size)
 {
 	CS_SHOTGUN_BEAM_PACKET packet;
@@ -456,20 +433,6 @@ void ClientSocket::Send_ShotGun_packet(int attack_id, FVector ServerBeamStart, T
 	packet.pitch8 = ServerBeamEnd[8].Pitch;
 	packet.yaw8 = ServerBeamEnd[8].Yaw;
 	packet.roll8 = ServerBeamEnd[8].Roll;
-
-	SendPacket(&packet);
-}
-void ClientSocket::Send_ShotGun_damaged_packet(int damaged_id1, int damaged_id2, int damaged_id3, float damaged1, float damaged2, float damaged3)
-{
-	CS_SHOTGUN_DAMAGED_PACKET packet;
-	packet.size = sizeof(packet);
-	packet.type = CS_SHOTGUN_DAMAGED;
-	packet.damaged_id = damaged_id1;
-	packet.damaged_id1 = damaged_id2;
-	packet.damaged_id2 = damaged_id3;
-	packet.damage = damaged1;
-	packet.damage1 = damaged2;
-	packet.damage2 = damaged3;
 
 	SendPacket(&packet);
 }
