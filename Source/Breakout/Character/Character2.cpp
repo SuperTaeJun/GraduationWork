@@ -175,8 +175,6 @@ void ACharacter2::ServerNiagaraSync()
 
 void ACharacter2::ServerDashFinish()
 {
-	UE_LOG(LogTemp, Warning, TEXT("HHHHHHHHHHH"));
-
 	MovementComp->MaxAcceleration = OldMaxAcceleration;
 	MovementComp->MaxWalkSpeed = OldMaxWalkSpeed;
 	MovementComp->RotationRate = OldRotationRate;
