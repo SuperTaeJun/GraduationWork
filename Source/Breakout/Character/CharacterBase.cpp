@@ -27,7 +27,7 @@
 #include "NiagaraFunctionLibrary.h"
 #include "NiagaraComponent.h"
 #include "NiagaraDataInterfaceArrayFunctionLibrary.h"
-
+#include "Animatiom/BOAnimInstance.h"
 
 
 ACharacterBase::ACharacterBase()
@@ -721,6 +721,25 @@ void ACharacterBase::Inter(const FInputActionValue& Value)
 		
 	}
 }
+void ACharacterBase::Inter_Start(const FInputActionValue& Value)
+{
+		if (!bCanObtainEscapeTool && OverlappingEscapeTool)
+		{
+			UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+			Cast<UBOAnimInstance>(AnimInstance)->bUseLeftHand = false;
+			if(InterMontage)
+				PlayAnimMontage(InterMontage);
+		}
+}
+void ACharacterBase::Inter_End(const FInputActionValue& Value)
+{
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+	Cast<UBOAnimInstance>(AnimInstance)->bUseLeftHand = true;
+	if (InterMontage)
+		StopAnimMontage(InterMontage);
+
+
+}
 void ACharacterBase::EToolTranfrom(const FInputActionValue& Value)
 {
 	//if (OverlappingEscapeTool)
@@ -920,6 +939,8 @@ void ACharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Triggered, this, &ACharacterBase::Sprint_S);
 		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Completed, this, &ACharacterBase::Sprint_E);
 		EnhancedInputComponent->BindAction(InterAction, ETriggerEvent::Triggered, this, &ACharacterBase::Inter);
+		EnhancedInputComponent->BindAction(InterAction, ETriggerEvent::Started, this, &ACharacterBase::Inter_Start);
+		EnhancedInputComponent->BindAction(InterAction, ETriggerEvent::Completed, this, &ACharacterBase::Inter_End);
 		EnhancedInputComponent->BindAction(FireAction, ETriggerEvent::Triggered, this, &ACharacterBase::Fire_S);
 		EnhancedInputComponent->BindAction(FireAction, ETriggerEvent::Completed, this, &ACharacterBase::Fire_E);
 		EnhancedInputComponent->BindAction(ReRoadAction, ETriggerEvent::Triggered, this, &ACharacterBase::Reroad);

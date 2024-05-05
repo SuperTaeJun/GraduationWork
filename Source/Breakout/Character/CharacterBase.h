@@ -146,6 +146,8 @@ protected:
 	TObjectPtr<class UAnimMontage> DeadMontage;
 	UPROPERTY(EditAnywhere, Category = Animation)
 	TObjectPtr<class UAnimMontage> ReloadMontage;
+	UPROPERTY(EditAnywhere, Category = Animation)
+	TObjectPtr<class UAnimMontage> InterMontage;
 
 	FName RightSocketName;
 
@@ -244,6 +246,8 @@ protected:
 	void Fire_S(const FInputActionValue& Value);
 	void Fire_E(const FInputActionValue& Value);
 	void Inter(const FInputActionValue& Value);
+	void Inter_Start(const FInputActionValue& Value);
+	void Inter_End(const FInputActionValue& Value);
 	void EToolTranfrom(const FInputActionValue& Value);
 	void Reroad(const FInputActionValue& Value);
 	void GrandeFire_Aiming(const FInputActionValue& Value);
