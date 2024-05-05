@@ -289,10 +289,7 @@ public:
 	void Send_Weapon_Type(WeaponType type, int id);
 	void Send_Ready_Packet(bool ready);
 	void Send_Fire_Effect(int attack_id, FVector ImLoc, FRotator ImRot, int wtype);
-	void Send_AttackPacket(int attack_id, FVector SLoc, FVector ELoc);
-	void Send_Damage_Packet(int damaged_id, float damage);
 	void Send_ShotGun_packet(int attack_id, FVector ServerBeamStart, TArray<FRotator> ServerBeamEnd, int size);
-	void Send_ShotGun_damaged_packet(int damaged_id1, int damaged_id2, int damaged_id3, float damaged1, float damaged2, float damaged3);
 	void Send_Niagara_packet(int clientid, PlayerType type, int num);
 	void Send_Niagara_cancel(bool bcancel, int id, int num);
 	void Send_Niagara_packetch1(int clinetid, PlayerType type, FVector loc, int num);

@@ -391,39 +391,7 @@ void process_packet(int s_id, char* p)
 		}
 		break;
 	}
-	case CS_ATTACK: {
-		CS_ATTACK_PLAYER* packet = reinterpret_cast<CS_ATTACK_PLAYER*>(p);
-		CLIENT& cl = clients[packet->attack_id];
-		cl.s_x = packet->sx;
-		cl.s_y = packet->sy;
-		cl.s_z = packet->sz;
-		cl.e_x = packet->ex;
-		cl.e_y = packet->ey;
-		cl.e_z = packet->ez;
-		cout << "cl.s_x" << cl.s_x << "cl.e_x" << cl.e_x << endl;
-		/*	send_damage_packet(packet->attack_id);*/
-		for (auto& other : clients) {
-			if (other._s_id == cl._s_id) continue;
-			other.state_lock.lock();
-			if (ST_INGAME != other._state) {
-				other.state_lock.unlock();
-				continue;
-			}
-			else other.state_lock.unlock();
-			SC_ATTACK_PLAYER packet;
-			packet.clientid = cl._s_id;
-			packet.size = sizeof(packet);
-			packet.type = SC_ATTACK;
-			packet.sx = cl.s_x;
-			packet.sy = cl.s_y;
-			packet.sz = cl.s_z;
-			packet.ex = cl.e_x;
-			packet.ey = cl.e_y;
-			packet.ez = cl.e_z;
-			other.do_send(sizeof(packet), &packet);
-		}
-		break;
-	}
+
 	case CS_SHOTGUN_BEAM: {
 		CS_SHOTGUN_BEAM_PACKET* packet = reinterpret_cast<CS_SHOTGUN_BEAM_PACKET*>(p);
 		CLIENT& cl = clients[packet->attackid];
@@ -518,17 +486,6 @@ void process_packet(int s_id, char* p)
 		}
 		break;
 	}
-	case CS_SHOTGUN_DAMAGED: {
-		CS_SHOTGUN_DAMAGED_PACKET* packet = reinterpret_cast<CS_SHOTGUN_DAMAGED_PACKET*>(p);
-		clients[packet->damaged_id].damage = packet->damage;
-		send_change_hp(packet->damaged_id);
-		clients[packet->damaged_id1].damage = packet->damage1;
-		send_change_hp(packet->damaged_id1);
-		clients[packet->damaged_id2].damage = packet->damage2;
-		send_change_hp(packet->damaged_id2);
-
-		break;
-	}
 	case CS_HIT_EFFECT: {
 		CS_EFFECT_PACKET* packet = reinterpret_cast<CS_EFFECT_PACKET*>(p);
 		CLIENT& cl = clients[packet->attack_id];
@@ -563,15 +520,6 @@ void process_packet(int s_id, char* p)
 		}
 		break;
 
-	}
-	case CS_DAMAGE: {
-		CS_DAMAGE_PACKET* packet = reinterpret_cast<CS_DAMAGE_PACKET*>(p);
-		CLIENT& cl = clients[packet->damaged_id];
-		//데미지 저장
-		cl.damage = packet->damage;
-		send_change_hp(cl._s_id);
-
-		break;
 	}
 	case CS_NiAGARA: {
 		//cout << "나이아가라 들어옴?" << endl;
