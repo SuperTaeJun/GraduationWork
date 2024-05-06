@@ -249,7 +249,7 @@ void process_packet(int s_id, char* p)
 
 		CS_SELECT_CHARACTER* packet = reinterpret_cast<CS_SELECT_CHARACTER*>(p);
 		CLIENT& cl = clients[packet->id];
-		cout << "cl.sid" << cl._s_id << endl;
+		cout << "cl.sid?= " <<packet->id << ", 00 , " << cl._s_id << endl;
 		cl.x = packet->x;
 		cl.y = packet->y;
 		cl.z = packet->z;
@@ -260,7 +260,7 @@ void process_packet(int s_id, char* p)
 
 
 
-		cout << "cl._s_id : " << cl._s_id << ",  " << cl.p_type << endl;
+		cout << "cl._s_id : " << cl._s_id << ", 131 ,, " << cl.p_type << endl;
 		for (auto& other : clients) {
 			if (other._s_id == cl._s_id) continue;
 			other.state_lock.lock();
@@ -376,8 +376,7 @@ void process_packet(int s_id, char* p)
 		}
 		break;
 	}
-	case CS_READY:
-	{
+	case CS_READY:{
 		CS_READY_PACKET* packet = reinterpret_cast<CS_READY_PACKET*>(p);
 		CLIENT& cl = clients[s_id];
 		ready_count++;
