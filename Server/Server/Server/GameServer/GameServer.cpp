@@ -236,7 +236,7 @@ void process_packet(int s_id, char* p)
 		cl.state_lock.lock();
 		cl._state = ST_INGAME;
 		cl.state_lock.unlock();
-
+		cout << "cl.sid : " << cl._s_id << endl;
 		strcpy_s(cl.name, packet->id);
 		cout << "czc : " << cl.name << endl;
 		send_login_ok_packet(cl._s_id);
@@ -248,7 +248,8 @@ void process_packet(int s_id, char* p)
 	case CS_SELECT_CHAR: {
 
 		CS_SELECT_CHARACTER* packet = reinterpret_cast<CS_SELECT_CHARACTER*>(p);
-		CLIENT& cl = clients[s_id];
+		CLIENT& cl = clients[packet->id];
+		cout << "cl.sid" << cl._s_id << endl;
 		cl.x = packet->x;
 		cl.y = packet->y;
 		cl.z = packet->z;
@@ -793,6 +794,7 @@ void worker_thread()
 			SOCKET c_socket = *(reinterpret_cast<SOCKET*>(exp_over->_net_buf));
 
 			int n__s_id = get_id();
+			cout << "n__s_id : " << n__s_id << endl;
 			if (-1 == n__s_id) {
 				cout << "user over.\n";
 			}
