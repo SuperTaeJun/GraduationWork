@@ -54,7 +54,7 @@ struct FMeshData
 		NumSections = 0;
 	}
 
-	FORCEINLINE void CountSections() {
+	/*FORCEINLINE void CountSections() {
 		int sum = 0;
 		for (const int& i : SectSizes) {
 			sum += i;
@@ -71,7 +71,7 @@ struct FMeshData
 			NumSections = n;
 			if (NumSections <= 0) { NumSections = 1; }
 		}
-	}
+	}*/
 
 };
 
