@@ -298,7 +298,7 @@ FMeshData ABulletHoleWall::ConverToFMeshData(UE::Geometry::FDynamicMesh3& Input,
 		x += 3;
 	}
 
-	//Result.CountSections();
+	Result.CountSections();
 
 	return Result;
 }
@@ -391,10 +391,10 @@ void ABulletHoleWall::GetMeshDataFromStaticMesh(UStaticMesh* Mesh, UPARAM(ref) F
 	while (true)
 	{
 		const FStaticMeshLODResources& LOD = Mesh->GetRenderData()->LODResources[LODIndex];
-		//if (!LOD.Sections.IsValidIndex(SectionIndex))
-		//{
-		//	Data.CountSections(); return;
-		//}
+		if (!LOD.Sections.IsValidIndex(SectionIndex))
+		{
+			Data.CountSections(); return;
+		}
 		TMap<int32, int32> MeshToSectionVertMap = {};
 		uint32 i = 0, is = LOD.Sections[SectionIndex].FirstIndex, l = LOD.Sections[SectionIndex].FirstIndex + LOD.Sections[SectionIndex].NumTriangles * 3;
 		FIndexArrayView Indices = LOD.IndexBuffer.GetArrayView();
@@ -428,10 +428,10 @@ void ABulletHoleWall::GetMeshDataFromStaticMesh(UStaticMesh* Mesh, UPARAM(ref) F
 
 		}
 
-		//if (!GetAllSections)
-		//{
-		//	Data.CountSections(); return;
-		//}
+		if (!GetAllSections)
+		{
+			Data.CountSections(); return;
+		}
 		SectionIndex += 1;
 		sec += 1;
 		Data.NumSections += 1;
