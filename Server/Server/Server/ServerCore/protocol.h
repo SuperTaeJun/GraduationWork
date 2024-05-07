@@ -1,6 +1,6 @@
 #pragma once
 #define SERVER_PORT		8001
-#define SERVER_IP		"127.0.0.1"
+#define SERVER_IP		"192.168.219.103"
 #define MAX_INFO_SIZE   20
 #include <vector>
 #include <array>
@@ -296,6 +296,7 @@ struct CS_STOP_ANIM_PACKET {
 struct CS_REMOVE_ITEM_PACKET {
 	unsigned char size;
 	unsigned char type;
+	int id;
 	int itemid;
 };
 struct SC_MY_ITEM_COUNT {

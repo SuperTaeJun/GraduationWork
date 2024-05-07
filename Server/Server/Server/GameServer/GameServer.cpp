@@ -225,7 +225,7 @@ void Disconnect(int _s_id)
 void process_packet(int s_id, char* p)
 {
 	unsigned char packet_type = p[1];
-	CLIENT& cl = clients[s_id];
+	//CLIENT& cl = clients[s_id];
 	//cout << "packet type :" << to_string(packet_type) << endl;
 	switch (packet_type) {
 	case CS_LOGIN: {
@@ -316,7 +316,7 @@ void process_packet(int s_id, char* p)
 		}
 		cout << "몇명 들어옴 : " << ingamecount << endl;
 
-		if (ingamecount >= 2)
+		if (ingamecount >= 3)
 		{
 			for (auto& player : clients) {
 				if (ST_INGAME != player._state)
@@ -706,6 +706,7 @@ void process_packet(int s_id, char* p)
 	}
 	case CS_REMOVE_ITEM: {
 		CS_REMOVE_ITEM_PACKET* packet = reinterpret_cast<CS_REMOVE_ITEM_PACKET*>(p);
+		CLIENT& cl = clients[s_id];
 		cout << "itemid : " << packet->itemid << endl;
 		int itemid = packet->itemid;
 		for (auto& other : clients) {
@@ -820,8 +821,9 @@ void worker_thread()
 			AcceptEx(sever_socket, c_socket, exp_over->_net_buf + 8, 0, sizeof(SOCKADDR_IN) + 16,
 				sizeof(SOCKADDR_IN) + 16, NULL, &exp_over->_wsa_over);
 
+
+			break;
 		}
-					  break;
 		}
 	}
 }
