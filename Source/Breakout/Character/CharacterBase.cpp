@@ -440,7 +440,7 @@ void ACharacterBase::ReciveDamage(AActor* DamagedActor, float Damage, const UDam
 				Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Increase_item_count_packet(inst->GetPlayerID(), ObtainedEscapeToolNum);
 			}
 		}
-		else if ( 10 >= ObtainedEscapeToolNum)
+		else if ( 10 <= ObtainedEscapeToolNum)
 		{
 			DamageInsigatorCh->SetEscapeToolNum(DamageInsigatorCh->ObtainedEscapeToolNum + 4);
 			ObtainedEscapeToolNum -= 4;
@@ -451,7 +451,8 @@ void ACharacterBase::ReciveDamage(AActor* DamagedActor, float Damage, const UDam
 		PlayAnimMontage(DeadMontage);
 		DisableInput(MainController);
 		GetWorld()->GetTimerManager().SetTimer(DeadTimer, this, &ACharacterBase::Dead, DeadTime, false);
-		
+
+		UpdateObtainedEscapeTool();
 	}
 }
 
@@ -933,6 +934,7 @@ void ACharacterBase::Tick(float DeltaTime)
 		//DisableInput(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 		GetWorldTimerManager().SetTimer(StartHandle, this, &ACharacterBase::StartGame, 5.f);
 	}
+
 
 }
 

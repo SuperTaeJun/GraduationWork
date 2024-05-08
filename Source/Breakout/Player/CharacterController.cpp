@@ -425,8 +425,11 @@ bool ACharacterController::UpdateWorld()
 
 		/*	if (OtherPlayer && OtherPlayer->_SessionId == id)
 			{*/
-				if (info->bEndGame == true)
-					UE_LOG(LogTemp, Warning, TEXT("WINNER : %d"), info->WinnerID);
+			if (info->bEndGame == true) 
+			{
+				Cast<ACharacterBase>(GetPawn())->PlayAnimMontage(Cast<ACharacterBase>(GetPawn())->GetDeadMontage());
+				UE_LOG(LogTemp, Warning, TEXT("WINNER : %d"), info->WinnerID);
+			}
 			//}
 
 
