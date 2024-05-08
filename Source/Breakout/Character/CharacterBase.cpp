@@ -429,8 +429,6 @@ void ACharacterBase::ReciveDamage(AActor* DamagedActor, float Damage, const UDam
 	UpdateHpHUD();
 	ACharacterBase* DamageInsigatorCh= Cast<ACharacterBase>(DamageCauser);
 
-	DamageInsigatorCh->PlayAnimMontage(DeadMontage);
-
 	if (Health <= 0.0f)
 	{
 		ABOGameMode* GameMode = GetWorld()->GetAuthGameMode<ABOGameMode>();
