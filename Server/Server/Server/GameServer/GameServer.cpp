@@ -26,14 +26,11 @@ using std::chrono::seconds;
 using std::chrono::system_clock;
 
 void ev_timer();
-void show_err();
 int get_id();
 void send_select_character_type_packet(int _s_id);
 void send_login_ok_packet(int _s_id);
-//void send_login_fail_packet(int _s_id);
 void send_move_packet(int _id, int target);
 void send_change_hp(int _s_id);
-//void send_remove_object(int _s_id, int victim);
 void send_put_object(int _s_id, int target);
 void Disconnect(int _s_id);
 void send_ready_packet(int _s_id);
@@ -104,9 +101,6 @@ int main()
 	WSACleanup();
 }
 
-void show_err() {
-	cout << "error" << endl;
-}
 
 void Player_Event(int target, int player_id, IO_type type)
 {
@@ -316,7 +310,7 @@ void process_packet(int s_id, char* p)
 		}
 		cout << "몇명 들어옴 : " << ingamecount << endl;
 
-		if (ingamecount >= 3)
+		if (ingamecount >= 2)
 		{
 			for (auto& player : clients) {
 				if (ST_INGAME != player._state)

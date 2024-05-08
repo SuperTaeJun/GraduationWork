@@ -187,10 +187,9 @@ void AWeaponBase::Fire(const FVector& HitTarget)
 {
 	APawn* OwnerPawn = Cast<APawn>(GetOwner());
 	if (OwnerPawn == nullptr) return;
-	AController* InstigatorController = OwnerPawn->GetController();
 
 	const USkeletalMeshSocket* MuzzleSocket = GetWeaponMesh()->GetSocketByName("MuzzleFlash");
-	if (MuzzleSocket && InstigatorController)
+	if (MuzzleSocket)
 	{
 		FTransform SocketTransform = MuzzleSocket->GetSocketTransform(GetWeaponMesh());
 		FVector Start = SocketTransform.GetLocation();
@@ -206,10 +205,12 @@ void AWeaponBase::Fire(const FVector& HitTarget)
 			SpawnParameters.Owner = OwnerPawn;
 			SpawnParameters.Instigator = OwnerPawn;
 			UWorld* World = GetWorld();
+			AProjectileBullet* FiredBullet = nullptr;
 			if (World)
 			{
-				World->SpawnActor<AProjectileBullet>(ProjectileBulletClass, SocketTransform.GetLocation(), ToTargetRot, SpawnParameters);
+				FiredBullet=World->SpawnActor<AProjectileBullet>(ProjectileBulletClass, SocketTransform.GetLocation(), ToTargetRot, SpawnParameters);
 				Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Fire_Effect(Cast<ACharacterBase>(GetOwner())->_SessionId, SocketTransform.GetLocation(), ToTargetRot, 0);
+				FiredBullet->SetOwner(OwnerPawn);
 			}
 			if (ImpactNiagara)
 			{
