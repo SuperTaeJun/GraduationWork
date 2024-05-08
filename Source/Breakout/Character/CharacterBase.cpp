@@ -295,10 +295,10 @@ void ACharacterBase::SetWeapon(TSubclassOf<class AWeaponBase> Weapon, FName Sock
 		const USkeletalMeshSocket* WeaponSocket = GetMesh()->GetSocketByName(SocketName);
 
 
-		if (WeaponSocket && SpawnWeapon)
+		if (WeaponSocket && CurWeapon)
 		{
-			WeaponSocket->AttachActor(SpawnWeapon, GetMesh());
-			SpawnWeapon->SetOwner(this);
+			WeaponSocket->AttachActor(CurWeapon, GetMesh());
+			CurWeapon->SetOwner(this);
 		}
 
 	}
@@ -427,11 +427,10 @@ void ACharacterBase::ReciveDamage(AActor* DamagedActor, float Damage, const UDam
 	
 	Health = FMath::Clamp(Health - Damage, 0.f, MaxHealth);
 	UpdateHpHUD();
-	ACharacterBase* DamageInsigatorCh=nullptr;
-	if (DamageCauser->Owner)
-	{
-		DamageInsigatorCh = Cast<ACharacterBase>(DamageCauser->Owner);
-	}
+	ACharacterBase* DamageInsigatorCh= Cast<ACharacterBase>(DamageCauser);
+
+	DamageInsigatorCh->PlayAnimMontage(DeadMontage);
+
 	if (Health <= 0.0f)
 	{
 		ABOGameMode* GameMode = GetWorld()->GetAuthGameMode<ABOGameMode>();
@@ -915,7 +914,7 @@ void ACharacterBase::Tick(float DeltaTime)
 	}
 
 
-	if (Cast<UBOGameInstance>(GetWorld()->GetGameInstance())->m_Socket->bAllReady == true && !bStarted)
+	if (/*Cast<UBOGameInstance>(GetWorld()->GetGameInstance())->m_Socket->bAllReady == true &&*/ !bStarted)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("StartGame"));
 		Cast<UBOGameInstance>(GetWorld()->GetGameInstance())->m_Socket->bAllReady = false;
