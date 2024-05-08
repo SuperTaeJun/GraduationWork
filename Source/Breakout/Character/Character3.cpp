@@ -163,7 +163,8 @@ void ACharacter3::ServerGhostStart()
 	//if (DynamicMaterial)
 	//	GetMesh()->SetMaterial(0, DynamicMaterial);
 	// 1=스킬사용할때 머터리얼 0=기본머터리얼
-	DynamicMaterial->SetScalarParameterValue(FName("Alpha"), 1.f);
+	if(DynamicMaterial)
+		DynamicMaterial->SetScalarParameterValue(FName("Alpha"), 1.f);
 	GetWorld()->GetTimerManager().SetTimer(GhostTimer, this, &ACharacter3::ServerGhostEnd, 4.f, false);
 }
 
@@ -182,7 +183,8 @@ void ACharacter3::ServerGhostEnd()
 		//	GetMesh()->SetMaterial(0, OldMaterial);
 		bGhost = false;
 		// 1=스킬사용할때 머터리얼 0=기본머터리얼
-		DynamicMaterial->SetScalarParameterValue(FName("Alpha"), 0.f);
+		if(DynamicMaterial)
+			DynamicMaterial->SetScalarParameterValue(FName("Alpha"), 0.f);
 		
 	}
 }

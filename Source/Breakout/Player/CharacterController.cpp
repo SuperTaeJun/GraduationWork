@@ -635,7 +635,7 @@ bool ACharacterController::UpdateWorld()
 					Niagaraplayer->ServerGhostStart();
 					Niagaraplayer->DynamicMaterial->SetVectorParameterValue(FName("Loc"), Niagaraplayer->GetCapsuleComponent()->GetForwardVector() * -1.f);
 					Niagaraplayer->DynamicMaterial->SetScalarParameterValue(FName("Amount"), Niagaraplayer->GetCharacterMovement()->Velocity.Length() / 4);
-					//info->skilltype = -1;
+					info->skilltype = -1;
 				}
 			}
 			else if (info->p_type == PlayerType::Character3 && info->skilltype == 1) {
