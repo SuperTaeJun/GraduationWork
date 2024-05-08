@@ -429,7 +429,8 @@ bool ACharacterController::UpdateWorld()
 			{
 				inst->m_Socket->Exit();
 				//Cast<ACharacterBase>(GetPawn())->PlayAnimMontage(Cast<ACharacterBase>(GetPawn())->GetDeadMontage());
-				FGenericPlatformMisc::RequestExit(true);
+				//FGenericPlatformMisc::RequestExit(true);
+				GetWorld()->ServerTravel(FString("/Game/Maps/GameRoom"), true);
 				UE_LOG(LogTemp, Warning, TEXT("WINNER : %d"), info->WinnerID);
 			}
 			//}
