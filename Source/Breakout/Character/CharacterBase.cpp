@@ -150,7 +150,6 @@ void ACharacterBase::BeginPlay()
 
 
 	OnTakeAnyDamage.AddDynamic(this, &ACharacterBase::ReciveDamage);
-	SetEscapeToolNum(10);
 
 }
 
@@ -429,18 +428,24 @@ void ACharacterBase::ReciveDamage(AActor* DamagedActor, float Damage, const UDam
 	UpdateHpHUD();
 	ACharacterBase* DamageInsigatorCh= Cast<ACharacterBase>(DamageCauser);
 
-	DamageInsigatorCh->PlayAnimMontage(DeadMontage);
-
 	if (Health <= 0.0f)
 	{
-		ABOGameMode* GameMode = GetWorld()->GetAuthGameMode<ABOGameMode>();
-		if (GameMode)
+		//¼­¹ö
+		if (ObtainedEscapeToolNum > 0 && 10> ObtainedEscapeToolNum)
 		{
-			CurWeapon->CurAmmo = 0;
-			PlayAnimMontage(DeadMontage);
-			DisableInput(MainController);
-			GetWorld()->GetTimerManager().SetTimer(DeadTimer, this, &ACharacterBase::Dead, DeadTime, false);
+			DamageInsigatorCh->SetEscapeToolNum(DamageInsigatorCh->ObtainedEscapeToolNum + 1);
+			ObtainedEscapeToolNum -= 1;
 		}
+		else if ( 10 > ObtainedEscapeToolNum)
+		{
+			DamageInsigatorCh->SetEscapeToolNum(DamageInsigatorCh->ObtainedEscapeToolNum + 4);
+			ObtainedEscapeToolNum -= 4;
+		}
+		CurWeapon->CurAmmo = 0;
+		PlayAnimMontage(DeadMontage);
+		DisableInput(MainController);
+		GetWorld()->GetTimerManager().SetTimer(DeadTimer, this, &ACharacterBase::Dead, DeadTime, false);
+		
 	}
 }
 
