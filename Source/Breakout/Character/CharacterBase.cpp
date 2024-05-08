@@ -150,7 +150,6 @@ void ACharacterBase::BeginPlay()
 
 
 	OnTakeAnyDamage.AddDynamic(this, &ACharacterBase::ReciveDamage);
-	SetEscapeToolNum(10);
 
 }
 
