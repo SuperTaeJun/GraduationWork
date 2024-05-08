@@ -435,11 +435,17 @@ void ACharacterBase::ReciveDamage(AActor* DamagedActor, float Damage, const UDam
 		{
 			DamageInsigatorCh->SetEscapeToolNum(DamageInsigatorCh->ObtainedEscapeToolNum + 1);
 			ObtainedEscapeToolNum -= 1;
+			if (inst) {
+				Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Increase_item_count_packet(DamageInsigatorCh->_SessionId, DamageInsigatorCh->GetEscapeToolNum());
+				Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Increase_item_count_packet(inst->GetPlayerID(), ObtainedEscapeToolNum);
+			}
 		}
-		else if ( 10 > ObtainedEscapeToolNum)
+		else if ( 10 >= ObtainedEscapeToolNum)
 		{
 			DamageInsigatorCh->SetEscapeToolNum(DamageInsigatorCh->ObtainedEscapeToolNum + 4);
 			ObtainedEscapeToolNum -= 4;
+			if (inst)
+				Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Increase_item_count_packet(DamageInsigatorCh->_SessionId, DamageInsigatorCh->GetEscapeToolNum());
 		}
 		CurWeapon->CurAmmo = 0;
 		PlayAnimMontage(DeadMontage);

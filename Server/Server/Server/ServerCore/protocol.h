@@ -46,6 +46,7 @@ const char CS_END_GAME = 16;
 const char CS_GETITEM = 17;
 const char CS_STOP_ANIM = 18;
 const char CS_REMOVE_ITEM = 19;
+const char CS_INCREASE_COUNT = 20;
 
 const char SC_LOGIN_OK = 1;
 const char SC_OTHER_PLAYER = 2;
@@ -68,6 +69,7 @@ const char SC_ITEM_ACQUIRE = 18;
 const char SC_STOP_ANIM = 19;
 const char SC_REMOVE_ITEM = 20;
 const char SC_MYITEM_COUNT = 21;
+const char SC_INCREASE_COUNT = 22;
 
 #pragma pack (push, 1)
 struct CS_LOGIN_PACKET
@@ -285,6 +287,7 @@ struct SC_ITEM_ACQUIRE_PACKET {
 	unsigned char type;
 	int acquireid;
 	int id;
+	char cid[MAX_INFO_SIZE];
 	int itemCount;
 };
 struct CS_STOP_ANIM_PACKET {
@@ -304,6 +307,13 @@ struct SC_MY_ITEM_COUNT {
 	unsigned char type;
 	int id;
 	int MyITEMCount;
+};
+struct CS_INCREASE_ITEM_PACKET {
+	unsigned char size;
+	unsigned char type;
+	char cid[MAX_INFO_SIZE];
+	int Increaseid;
+	int itemCount;
 };
 #pragma pack(pop)
 

@@ -87,8 +87,8 @@ bool ClientSocket::PacketProcess(char* ptr)
 		//to_do
 		gameinst->SetPlayerID(packet->id);
 		UE_LOG(LogClass, Warning, TEXT("aaaaa"));
-		TempName = packet->cid;
-		tempid = packet->id;
+	/*	TempName = packet->cid;
+		tempid = packet->id;*/
 		break;
 	}
 	case SC_ITEM: {
@@ -113,11 +113,7 @@ bool ClientSocket::PacketProcess(char* ptr)
 		info->Yaw = packet->yaw;
 		info->p_type = packet->p_type;
 		info->userId =  packet->name;
-
-		CharacterInfo iinfo;
-		TempName2 = packet->name;
-		//tempid2 = packet->id;
-		//float z = packet->z;
+		Tempname.push(packet->name);
 		UE_LOG(LogClass, Warning, TEXT("recv - iinfo->userId: %s"), *info->userId);
 		MyCharacterController->SetNewCharacterInfo(info);
 		break;
@@ -290,6 +286,7 @@ bool ClientSocket::PacketProcess(char* ptr)
 		SC_ITEM_ACQUIRE_PACKET* packet = reinterpret_cast<SC_ITEM_ACQUIRE_PACKET*>(ptr);
 		UE_LOG(LogTemp, Warning, TEXT("GETITEMid : %d, GetItemCount : %d"), packet->acquireid, packet->itemCount);
 		//tempid = packet->acquireid;
+		TempPlayerName = packet->cid;
 		Tempcnt2 = packet->itemCount;
 		bAcquire = true;
 		break;
@@ -304,6 +301,13 @@ bool ClientSocket::PacketProcess(char* ptr)
 		CS_REMOVE_ITEM_PACKET* packet = reinterpret_cast<CS_REMOVE_ITEM_PACKET*>(ptr);
 		UE_LOG(LogTemp, Warning, TEXT("packet->id item destroy : %d"), packet->itemid);
 		MyCharacterController->SetDestroyItemid(packet->itemid);
+		break;
+	}
+	case SC_INCREASE_COUNT: {
+		CS_INCREASE_ITEM_PACKET* packet = reinterpret_cast<CS_INCREASE_ITEM_PACKET*>(ptr);
+		TempPlayerName = packet->cid;
+		Tempcnt2 = packet->itemCount;
+		bAcquire = true;
 		break;
 	}
 	default:
@@ -526,6 +530,15 @@ void ClientSocket::Send_Destroyed_item_packet(int id)
 	packet.size = sizeof(packet);
 	packet.type = CS_REMOVE_ITEM;
 	packet.itemid = id;
+	SendPacket(&packet);
+}
+void ClientSocket::Send_Increase_item_count_packet(int id, int itemcount)
+{
+	CS_INCREASE_ITEM_PACKET packet;
+	packet.size = sizeof(packet);
+	packet.type = CS_INCREASE_COUNT;
+	packet.Increaseid = id;
+	packet.itemCount = itemcount;
 	SendPacket(&packet);
 }
 bool ClientSocket::Init()

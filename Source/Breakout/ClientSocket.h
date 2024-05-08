@@ -299,6 +299,7 @@ public:
 	void Send_Item_packet(int id, int itemCount);
 	void Send_Stop_Anim_packet(int id);
 	void Send_Destroyed_item_packet(int id);
+	void Send_Increase_item_count_packet(int id, int itemcount);
 	virtual bool Init() override;
 	virtual uint32 Run() override;
 	virtual void Stop() override;
@@ -326,12 +327,12 @@ public:
 	bool login_cond = false;
 	bool bAllReady = false;
 	std::queue<std::shared_ptr<CItem>> ItemQueue;
-	FString TempName;
-	FString TempName2;
+	queue<FString>Tempname;
 	int tempid;
-	//int tempid2;
+	int tempid2;
 	int Tempcnt;
-	int Tempcnt2;	
+	int Tempcnt2;
+	FString TempPlayerName;
 	bool bAcquire = false;
 private:
 	ACharacterController* MyCharacterController;
