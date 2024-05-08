@@ -430,14 +430,22 @@ void ACharacterBase::ReciveDamage(AActor* DamagedActor, float Damage, const UDam
 
 	if (Health <= 0.0f)
 	{
-		ABOGameMode* GameMode = GetWorld()->GetAuthGameMode<ABOGameMode>();
-		if (GameMode)
+		//¼­¹ö
+		if (ObtainedEscapeToolNum > 0 && 10> ObtainedEscapeToolNum)
 		{
-			CurWeapon->CurAmmo = 0;
-			PlayAnimMontage(DeadMontage);
-			DisableInput(MainController);
-			GetWorld()->GetTimerManager().SetTimer(DeadTimer, this, &ACharacterBase::Dead, DeadTime, false);
+			DamageInsigatorCh->SetEscapeToolNum(DamageInsigatorCh->ObtainedEscapeToolNum + 1);
+			ObtainedEscapeToolNum -= 1;
 		}
+		else if ( 10 > ObtainedEscapeToolNum)
+		{
+			DamageInsigatorCh->SetEscapeToolNum(DamageInsigatorCh->ObtainedEscapeToolNum + 4);
+			ObtainedEscapeToolNum -= 4;
+		}
+		CurWeapon->CurAmmo = 0;
+		PlayAnimMontage(DeadMontage);
+		DisableInput(MainController);
+		GetWorld()->GetTimerManager().SetTimer(DeadTimer, this, &ACharacterBase::Dead, DeadTime, false);
+		
 	}
 }
 
