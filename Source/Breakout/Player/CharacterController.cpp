@@ -427,6 +427,7 @@ bool ACharacterController::UpdateWorld()
 			{*/
 			if (info->bEndGame == true) 
 			{
+				inst->m_Socket->Exit();
 				//Cast<ACharacterBase>(GetPawn())->PlayAnimMontage(Cast<ACharacterBase>(GetPawn())->GetDeadMontage());
 				FGenericPlatformMisc::RequestExit(true);
 				UE_LOG(LogTemp, Warning, TEXT("WINNER : %d"), info->WinnerID);
