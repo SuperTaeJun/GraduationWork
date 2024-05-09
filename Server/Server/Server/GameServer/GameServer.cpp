@@ -667,6 +667,7 @@ void process_packet(int s_id, char* p)
 			SC_ITEM_ACQUIRE_PACKET packet;
 			packet.size = sizeof(packet);
 			packet.type = SC_ITEM_ACQUIRE;
+			strcpy_s(packet.cid, cl.name);
 			packet.id = cl._s_id;
 			packet.acquireid = cl._s_id;
 			packet.itemCount = cl.myItemCount;
@@ -715,6 +716,28 @@ void process_packet(int s_id, char* p)
 			packet.itemid = itemid;
 			packet.size = sizeof(packet);
 			packet.type = SC_REMOVE_ITEM;
+			other.do_send(sizeof(packet), &packet);
+		}
+		break;
+	}
+	case CS_INCREASE_COUNT: {
+		CS_INCREASE_ITEM_PACKET* packet = reinterpret_cast<CS_INCREASE_ITEM_PACKET*>(p);
+		CLIENT& cl = clients[packet->Increaseid];
+		cl.myItemCount = packet->itemCount;
+		for (auto& other : clients) {
+			if (other._s_id == cl._s_id) continue;
+			other.state_lock.lock();
+			if (ST_INGAME != other._state) {
+				other.state_lock.unlock();
+				continue;
+			}
+			else other.state_lock.unlock();
+			CS_INCREASE_ITEM_PACKET packet;
+			packet.Increaseid = cl._s_id;
+			strcpy_s(packet.cid, cl.name);
+			packet.itemCount = cl.myItemCount;
+			packet.size = sizeof(packet);
+			packet.type = SC_INCREASE_COUNT;
 			other.do_send(sizeof(packet), &packet);
 		}
 		break;

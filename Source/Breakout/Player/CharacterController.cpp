@@ -86,20 +86,20 @@ void ACharacterController::SetChName()
 {
 	if (MainHUD)
 	{
-		if (inst->m_Socket->tempid == 0)
+		/*if (inst->m_Socket->tempid == 0)
+		{*/
+			FString Player1 = inst->m_Socket->Tempname.front();
+			MainHUD->EscapeToolNumUi->Player1Ch->SetText(FText::FromString(Player1));
+			FString Player2 = inst->m_Socket->Tempname.back();
+			MainHUD->EscapeToolNumUi->Player2Ch->SetText(FText::FromString(Player2));
+	/*	}*/
+		/*else if (inst->m_Socket->tempid == 1)
 		{
 			FString Player1 = inst->m_Socket->TempName;
 			MainHUD->EscapeToolNumUi->Player1Ch->SetText(FText::FromString(Player1));
 			FString Player2 = inst->m_Socket->TempName2;
 			MainHUD->EscapeToolNumUi->Player2Ch->SetText(FText::FromString(Player2));
-		}
-		else if (inst->m_Socket->tempid == 1)
-		{
-			FString Player1 = inst->m_Socket->TempName;
-			MainHUD->EscapeToolNumUi->Player1Ch->SetText(FText::FromString(Player1));
-			FString Player2 = inst->m_Socket->TempName2;
-			MainHUD->EscapeToolNumUi->Player2Ch->SetText(FText::FromString(Player2));
-		}
+		}*/
 	}
 }
 
@@ -108,10 +108,14 @@ void ACharacterController::SetNum()
 {
 	if (MainHUD)
 	{
-		FString Player1 = FString::Printf(TEXT("%d"), inst->m_Socket->Tempcnt);
-		MainHUD->EscapeToolNumUi->Player1->SetText(FText::FromString(Player1));
-		FString Player2 = FString::Printf(TEXT("%d"), inst->m_Socket->Tempcnt2);
-		MainHUD->EscapeToolNumUi->Player2->SetText(FText::FromString(Player2));
+		if (MainHUD->EscapeToolNumUi->Player1Ch->Text.ToString() == inst->m_Socket->TempPlayerName) {
+			FString Player1 = FString::Printf(TEXT("%d"), inst->m_Socket->Tempcnt2);
+			MainHUD->EscapeToolNumUi->Player1->SetText(FText::FromString(Player1));
+		}
+		else if (MainHUD->EscapeToolNumUi->Player2Ch->Text.ToString() == inst->m_Socket->TempPlayerName) {
+			FString Player2 = FString::Printf(TEXT("%d"), inst->m_Socket->Tempcnt2);
+			MainHUD->EscapeToolNumUi->Player2->SetText(FText::FromString(Player2));
+		}
 	}
 }
 
@@ -421,8 +425,13 @@ bool ACharacterController::UpdateWorld()
 
 		/*	if (OtherPlayer && OtherPlayer->_SessionId == id)
 			{*/
-				if (info->bEndGame == true)
-					UE_LOG(LogTemp, Warning, TEXT("WINNER : %d"), info->WinnerID);
+			if (info->bEndGame == true) 
+			{
+				inst->m_Socket->Exit();
+				//Cast<ACharacterBase>(GetPawn())->PlayAnimMontage(Cast<ACharacterBase>(GetPawn())->GetDeadMontage());
+				//FGenericPlatformMisc::RequestExit(true);
+				GetWorld()->ServerTravel(FString("/Game/Maps/GameRoom"), true);
+			}
 			//}
 
 
