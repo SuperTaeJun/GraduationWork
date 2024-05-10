@@ -722,7 +722,7 @@ void process_packet(int s_id, char* p)
 	case CS_ITEM_INFO: {
 		CS_ITEM_INFO_PACKET* packet = reinterpret_cast<CS_ITEM_INFO_PACKET*> (p);
 		CLIENT& cl = clients[s_id];
-		cout << packet->objid; 
+		
 		send_item_packet(cl._s_id, packet->objid);
 		break;
 	}

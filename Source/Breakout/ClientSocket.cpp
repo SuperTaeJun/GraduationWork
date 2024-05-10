@@ -492,6 +492,7 @@ void ClientSocket::Send_Start_game_packet(int id)
 }
 void ClientSocket::Send_item_info_packet(int objid)
 {
+	UE_LOG(LogTemp, Warning, TEXT("count"));
 	CS_ITEM_INFO_PACKET packet;
 	packet.size = sizeof(packet);
 	packet.type = CS_ITEM_INFO;

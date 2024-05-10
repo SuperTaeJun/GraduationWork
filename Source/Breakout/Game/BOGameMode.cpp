@@ -46,7 +46,7 @@ void ABOGameMode::BeginPlay()
 	{
 		if (Cast<AEscapeTool>(Actors[i]) && inst)
 		{
-			int objid = Cast<AEscapeTool>(Actors[i])->ItemID;
+			int objid = i;
 			inst->m_Socket->Send_item_info_packet(objid);
 		
 			EscapeTools.Add(Cast<AEscapeTool>(Actors[i]));
@@ -74,7 +74,7 @@ void ABOGameMode::Tick(float DeltaTime)
 		itemLoc.Z = inst->m_Socket->ItemQueue.front()->Z;
 
 		EscapeTools[inst->m_Socket->ItemQueue.front()->Id]->SetActorLocation(itemLoc);
-
+		EscapeTools[inst->m_Socket->ItemQueue.front()->Id]->ItemID = inst->m_Socket->ItemQueue.front()->Id;
 		inst->m_Socket->ItemQueue.front() = nullptr;
 		inst->m_Socket->ItemQueue.pop();
 	}

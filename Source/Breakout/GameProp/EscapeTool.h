@@ -16,7 +16,6 @@ class BREAKOUT_API AEscapeTool : public APropBase
 	
 public:
 	AEscapeTool();
-
 	UPROPERTY(EditAnywhere)
 	int ItemID = -1;
 
