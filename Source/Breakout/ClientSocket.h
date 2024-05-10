@@ -294,6 +294,7 @@ public:
 	void Send_Niagara_cancel(bool bcancel, int id, int num);
 	void Send_Niagara_packetch1(int clinetid, PlayerType type, FVector loc, int num);
 	void Send_Start_game_packet(int id);
+	void Send_item_info_packet(int objid);
 	void Send_End_Game_packet(int id);
 	void Send_Signal_packet(int id, int num);
 	void Send_Item_packet(int id, int itemCount);

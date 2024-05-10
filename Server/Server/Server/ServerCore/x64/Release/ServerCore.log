@@ -1,1 +1,3 @@
-﻿  ServerCore.vcxproj -> C:\Users\sejin\Downloads\GraduationWork\Server\Server\Server\Libraries\Release\ServerCore.lib
+﻿  pch.cpp
+  CorePch.cpp
+  ServerCore.vcxproj -> C:\Users\sejin\Downloads\GraduationWork\Server\Server\Server\Libraries\Release\ServerCore.lib

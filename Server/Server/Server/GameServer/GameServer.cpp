@@ -73,12 +73,12 @@ int main()
 
 	for (int i = 0; i < MAX_USER; ++i)
 		clients[i]._s_id = i;
-	for (int i = 0; i < MAX_OBJ; ++i) {
+	for (int i = 0; i < 5; ++i) {
 		objects[i].ob_id = i;
 		objects[i].setRandomPosition(gen, dis, disz); // 랜덤한 좌표 설정
 	}
 
-	for (int i = 0; i < MAX_OBJ; ++i) {
+	for (int i = 0; i < 5; ++i) {
 		cout << "pos : " << objects[i].x << ", " << objects[i].z << endl;
 	}
 
@@ -190,23 +190,6 @@ void send_put_object(int _s_id, int target)
 void Disconnect(int _s_id)
 {
 	CLIENT& cl = clients[_s_id];
-	/*cl.vl.lock();
-	unordered_set <int> my_vl = cl.viewlist;
-	cl.vl.unlock();
-
-	for (auto& other : my_vl) {
-		CLIENT& target = clients[other];
-
-		if (ST_INGAME != target._state)
-			continue;
-		target.vl.lock();
-		if (0 != target.viewlist.count(_s_id)) {
-			target.viewlist.erase(_s_id);
-			target.vl.unlock();
-			send_remove_object(other, _s_id);
-		}
-		else target.vl.unlock();
-	}*/
 	clients[_s_id].state_lock.lock();
 	clients[_s_id]._state = ST_FREE;
 	clients[_s_id].state_lock.unlock();
@@ -473,12 +456,6 @@ void process_packet(int s_id, char* p)
 		break;
 	}
 	case CS_START_GAME: {
-		CS_START_GAME_PACKET* packet = reinterpret_cast<CS_START_GAME_PACKET*>(p);
-		CLIENT& cl = clients[packet->id];
-		cout << "cl.sid" << cl._s_id << endl;
-		for (int i = 0; i < 20; ++i) {
-			send_item_packet(cl._s_id, i);
-		}
 		break;
 	}
 	case CS_HIT_EFFECT: {
@@ -740,6 +717,13 @@ void process_packet(int s_id, char* p)
 			packet.type = SC_INCREASE_COUNT;
 			other.do_send(sizeof(packet), &packet);
 		}
+		break;
+	}
+	case CS_ITEM_INFO: {
+		CS_ITEM_INFO_PACKET* packet = reinterpret_cast<CS_ITEM_INFO_PACKET*> (p);
+		CLIENT& cl = clients[s_id];
+		cout << packet->objid; 
+		send_item_packet(cl._s_id, packet->objid);
 		break;
 	}
 	default:
