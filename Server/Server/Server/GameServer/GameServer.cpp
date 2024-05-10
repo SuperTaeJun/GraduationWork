@@ -73,7 +73,18 @@ int main()
 
 	for (int i = 0; i < MAX_USER; ++i)
 		clients[i]._s_id = i;
-	for (int i = 0; i < 5; ++i) {
+
+	objects[5].ob_id = 5;
+	objects[5].x = -510.f;
+	objects[5].y = 670.f;
+	objects[5].z = -10.f;
+
+	objects[4].ob_id = 4;
+	objects[4].x = -510.f;
+	objects[4].y = -3100.f;
+	objects[4].z = 120.f;
+	
+	for (int i = 0; i < 4; ++i) {
 		objects[i].ob_id = i;
 		objects[i].setRandomPosition(gen, dis, disz); // 랜덤한 좌표 설정
 	}
