@@ -39,6 +39,19 @@ void ABOGameMode::BeginPlay()
 	if (inst)
 		Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Start_game_packet(inst->GetPlayerID());
 
+	TArray<AActor*> Actors;
+
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AEscapeTool::StaticClass(), Actors);
+	for (int i = 0; i < Actors.Num(); i++)
+	{
+		if (Cast<AEscapeTool>(Actors[i]) && inst)
+		{
+			int objid = Cast<AEscapeTool>(Actors[i])->ItemID;
+			inst->m_Socket->Send_item_info_packet(objid);
+		
+			EscapeTools.Add(Cast<AEscapeTool>(Actors[i]));
+		}
+	}
 	if (BackGroundSound)
 	{
 	}
@@ -53,22 +66,15 @@ void ABOGameMode::Tick(float DeltaTime)
 	//	UE_LOG(LogTemp, Warning, TEXT("ballready!!!!!!!!!!!!!!!!!"));
 	//	DisableInput(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 	//	GetWorldTimerManager().SetTimer(StartTimeHandle, this, &ABOGameMode::StartGame, 5.f);
-	if (inst->m_Socket->ItemQueue.size()) {
-		UWorld* const world = GetWorld();
-		FVector S_LOCATION;
-		S_LOCATION.X = inst->m_Socket->ItemQueue.front()->X;
-		S_LOCATION.Y = inst->m_Socket->ItemQueue.front()->Y;
-		S_LOCATION.Z = inst->m_Socket->ItemQueue.front()->Z;
-		FRotator S_ROTATOR;
-		S_ROTATOR.Yaw = 0.0f;
-		S_ROTATOR.Pitch = 0.0f;
-		S_ROTATOR.Roll = 0.0f;
-		FActorSpawnParameters SpawnActor;
-		SpawnActor.Owner = this;
-		SpawnActor.Instigator = GetInstigator();
-		AEscapeTool* SpawnCharacter = world->SpawnActor<AEscapeTool>(ItemSpawn,
-			S_LOCATION, S_ROTATOR, SpawnActor);
-		SpawnCharacter->ItemID = inst->m_Socket->ItemQueue.front()->Id;
+	if (inst->m_Socket->ItemQueue.size())
+	{
+		FVector itemLoc;
+		itemLoc.X = inst->m_Socket->ItemQueue.front()->X;
+		itemLoc.Y = inst->m_Socket->ItemQueue.front()->Y;
+		itemLoc.Z = inst->m_Socket->ItemQueue.front()->Z;
+
+		EscapeTools[inst->m_Socket->ItemQueue.front()->Id]->SetActorLocation(itemLoc);
+
 		inst->m_Socket->ItemQueue.front() = nullptr;
 		inst->m_Socket->ItemQueue.pop();
 	}

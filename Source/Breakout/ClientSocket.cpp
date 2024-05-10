@@ -490,6 +490,14 @@ void ClientSocket::Send_Start_game_packet(int id)
 	SendPacket(&packet);
 
 }
+void ClientSocket::Send_item_info_packet(int objid)
+{
+	CS_ITEM_INFO_PACKET packet;
+	packet.size = sizeof(packet);
+	packet.type = CS_ITEM_INFO;
+	packet.objid = objid;
+	SendPacket(&packet);
+}
 void ClientSocket::Send_End_Game_packet(int id)
 {
 	CS_END_GAME_PACKET packet;

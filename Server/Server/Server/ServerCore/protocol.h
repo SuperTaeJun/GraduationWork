@@ -1,6 +1,6 @@
 #pragma once
 #define SERVER_PORT		8001
-#define SERVER_IP		"192.168.213.28"
+#define SERVER_IP		"127.0.0.1"
 #define MAX_INFO_SIZE   20
 #include <vector>
 #include <array>
@@ -26,7 +26,7 @@ const int  ReZone_WIDTH = 2000;
 const int  MAX_NAME_SIZE = 20;
 const int  MAX_CHAT_SIZE = 100;
 const int  MAX_USER = 10000;
-const int  MAX_OBJ = 20;
+const int  MAX_OBJ = 10;
 
 const char CS_LOGIN = 1;
 const char CS_MOVE_Packet = 0;
@@ -47,6 +47,7 @@ const char CS_GETITEM = 17;
 const char CS_STOP_ANIM = 18;
 const char CS_REMOVE_ITEM = 19;
 const char CS_INCREASE_COUNT = 20;
+const char CS_ITEM_INFO = 21;
 
 const char SC_LOGIN_OK = 1;
 const char SC_OTHER_PLAYER = 2;
@@ -314,6 +315,11 @@ struct CS_INCREASE_ITEM_PACKET {
 	char cid[MAX_INFO_SIZE];
 	int Increaseid;
 	int itemCount;
+};
+struct CS_ITEM_INFO_PACKET {
+	unsigned char size;
+	unsigned char type;
+	int objid;
 };
 #pragma pack(pop)
 
