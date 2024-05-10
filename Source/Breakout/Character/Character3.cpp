@@ -29,6 +29,8 @@ ACharacter3::ACharacter3()
 	bCoolTimeFinish = true;
 
 	OldMaterial = ConstructorHelpers::FObjectFinder<UMaterialInstance>(TEXT("/Script/Engine.MaterialInstanceConstant'/Game/Niagara/SKill/Skill3/M_Character3_Inst.M_Character3_Inst'")).Object;
+
+	SetSprint();
 }
 void ACharacter3::BeginPlay()
 {

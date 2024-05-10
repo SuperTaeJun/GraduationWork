@@ -45,8 +45,8 @@ ACharacterBase::ACharacterBase()
 
 	Movement = GetCharacterMovement();
 	Movement->MaxWalkSpeed = 400.f;
-	Movement->bOrientRotationToMovement = false;
-	bUseControllerRotationYaw = true;
+	Movement->bOrientRotationToMovement = true;
+	bUseControllerRotationYaw = false;
 
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
 	CameraBoom->SetupAttachment(GetMesh());
@@ -77,15 +77,16 @@ ACharacterBase::ACharacterBase()
 	Stamina = MaxStamina;
 	StaminaExhaustionState = false;
 	bCanFire = true;
-	GrendeNum = 10;
-	WallGrendeNum = 10;
-	BoobyTrapNum = 10;
+	GrendeNum = 5;
+	WallGrendeNum = 5;
+	BoobyTrapNum = 5;
 	//bShowSelectUi = false;
 	ObtainedEscapeToolNum = 0;
 	CurWeaponType = EWeaponType::ECS_DEFAULT;
 	bStarted = false;
 	StartedCnt = 5.f;
 	bCanEscape = false;
+
 }
 
 //float ACharacterBase::GetAO_Yaw()
@@ -300,6 +301,7 @@ void ACharacterBase::SetWeapon(TSubclassOf<class AWeaponBase> Weapon, FName Sock
 			CurWeapon->SetOwner(this);
 		}
 
+		SetRun();
 	}
 
 }
@@ -341,7 +343,7 @@ void ACharacterBase::GrandeAim()
 	}
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 	if (AnimInstance && GrenadeMontage)
-		PlayAnimMontage(GrenadeMontage, 1.f, FName("Aim"));
+		PlayAnimMontage(GrenadeMontage, 1.5f, FName("Aim"));
 }
 void ACharacterBase::GrandeThrowFinish()
 {
@@ -367,14 +369,22 @@ void ACharacterBase::SpawnGrenade()
 	switch (BojoMugiType)
 	{
 	case EBojoMugiType::E_Grenade:
-		SetSpawnGrenade(GrenadeClass);
+		if (GrendeNum > 0)
+		{
+			SetSpawnGrenade(GrenadeClass);
+			GrendeNum -= 1;
+		}
 		break;
 	case EBojoMugiType::E_Wall:
-		SetSpawnGrenade(WallClass);
+		if (WallGrendeNum > 0)
+		{
+			SetSpawnGrenade(WallClass);
+			WallGrendeNum -= 1;
+		}
 		break;
-	case EBojoMugiType::E_BoobyTrap:
-		SetSpawnGrenade(BoobyTrapClass);
-		break;
+	//case EBojoMugiType::E_BoobyTrap:
+	//	SetSpawnGrenade(BoobyTrapClass);
+	//	break;
 	case EBojoMugiType::ECS_DEFAULT:
 		SetSpawnGrenade(GrenadeClass);
 		break;
@@ -631,6 +641,16 @@ void ACharacterBase::TraceUnderCrossHiar(FHitResult& TraceHitResult)
 	}
 	
 }
+void ACharacterBase::SetSprint()
+{
+	Movement->bOrientRotationToMovement = true;
+	bUseControllerRotationYaw = false;
+}
+void ACharacterBase::SetRun()
+{
+	Movement->bOrientRotationToMovement = false;
+	bUseControllerRotationYaw = true;
+}
 enum Move {
 	Move_Player
 };
@@ -668,22 +688,26 @@ void ACharacterBase::Sprint_S(const FInputActionValue& Value)
 	if (!StaminaExhaustionState)
 	{
 		CharacterState = ECharacterState::ECS_SPRINT;
-		Movement->bOrientRotationToMovement = true;
-		bUseControllerRotationYaw = false;
+		//Movement->bOrientRotationToMovement = true;
+		//bUseControllerRotationYaw = false;
+
+		SetSprint();
 	}
 	else
 	{
 		CharacterState = ECharacterState::ECS_RUN;
-		Movement->bOrientRotationToMovement = false;
-		bUseControllerRotationYaw = true;
+		//Movement->bOrientRotationToMovement = false;
+		//bUseControllerRotationYaw = true;
+		SetRun();
 	}
 }
 void ACharacterBase::Sprint_E(const FInputActionValue& Value)
 {
 	CharacterState = ECharacterState::ECS_RUN;
 	Movement->MaxWalkSpeed = 400;
-	Movement->bOrientRotationToMovement = false;
-	bUseControllerRotationYaw = true;
+	//Movement->bOrientRotationToMovement = false;
+	//bUseControllerRotationYaw = true;
+	SetRun();
 }
 void ACharacterBase::Fire_S(const FInputActionValue& Value)
 {
@@ -773,39 +797,44 @@ void ACharacterBase::Reroad(const FInputActionValue& Value)
 
 void ACharacterBase::GrandeFire_Aiming(const FInputActionValue& Value)
 {
-	Aim->Activate();
-	FPredictProjectilePathParams Path;
-	Path.StartLocation = PathSorce->GetComponentLocation();
-	Path.LaunchVelocity = FollowCamera->GetForwardVector() * 1500.f;
-	Path.ProjectileRadius = 3.f;
-	Path.bTraceWithCollision = true;
-	Path.ActorsToIgnore.Add(this);
-	//Path.DrawDebugType = EDrawDebugTrace::ForOneFrame;
-	FPredictProjectilePathResult Result;
-	UGameplayStatics::PredictProjectilePath(Grenade, Path,Result);
-	TArray<FVector> Locations;
-	for (auto OnePathData : Result.PathData)
+	if (CurWeapon)
 	{
-		Locations.Add(OnePathData.Location);
+		Aim->Activate();
+		FPredictProjectilePathParams Path;
+		Path.StartLocation = PathSorce->GetComponentLocation();
+		Path.LaunchVelocity = FollowCamera->GetForwardVector() * 1500.f;
+		Path.ProjectileRadius = 3.f;
+		Path.bTraceWithCollision = true;
+		Path.ActorsToIgnore.Add(this);
+		//Path.DrawDebugType = EDrawDebugTrace::ForOneFrame;
+		FPredictProjectilePathResult Result;
+		UGameplayStatics::PredictProjectilePath(Grenade, Path, Result);
+		TArray<FVector> Locations;
+		for (auto OnePathData : Result.PathData)
+		{
+			Locations.Add(OnePathData.Location);
+		}
+		SWAimLastLoc = Locations.Last();
+		UNiagaraDataInterfaceArrayFunctionLibrary::SetNiagaraArrayPosition(Aim, FName("PositionArray"), Locations);
 	}
-	SWAimLastLoc =Locations.Last();
-	UNiagaraDataInterfaceArrayFunctionLibrary::SetNiagaraArrayPosition(Aim, FName("PositionArray"), Locations);
 }
 
 void ACharacterBase::GrandeFire(const FInputActionValue& Value)
 {
-	Aim->Deactivate();
-	if (GrendeNum > 0)
+	if (CurWeapon)
 	{
+		Aim->Deactivate();
+
 		if (BojoMugiType == EBojoMugiType::E_BoobyTrap)
 		{
 			TObjectPtr<UWorld> World = GetWorld();
-			if (World)
+			if (World && BoobyTrapNum>0)
 			{
 				FActorSpawnParameters SpawnParms;
 				SpawnParms.Owner = this;
 
-				World->SpawnActor<AProjectileBase>(BoobyTrapClass, SWAimLastLoc, FRotator::ZeroRotator,SpawnParms);
+				World->SpawnActor<AProjectileBase>(BoobyTrapClass, SWAimLastLoc, FRotator::ZeroRotator, SpawnParms);
+				BoobyTrapNum -= 1;
 				//여기 부비트랩
 				if (Cast<UBOGameInstance>(GetGameInstance()))
 				{
@@ -815,6 +844,7 @@ void ACharacterBase::GrandeFire(const FInputActionValue& Value)
 		}
 		else
 			GrandeAim();
+
 	}
 }
 
@@ -853,6 +883,7 @@ void ACharacterBase::StopJump(const FInputActionValue& Value)
 
 void ACharacterBase::Skill_S(const FInputActionValue& Value)
 {
+
 }
 
 void ACharacterBase::Skill_E(const FInputActionValue& Value)

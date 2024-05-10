@@ -34,7 +34,7 @@ ACharacter2::ACharacter2()
 
 	DashSpeed = 4000.f;
 
-
+	SetSprint();
 }
 
 void ACharacter2::BeginPlay()
