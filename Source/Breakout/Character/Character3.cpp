@@ -88,7 +88,8 @@ void ACharacter3::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 
 void ACharacter3::Skill_S(const FInputActionValue& Value)
 {
-	GhostStart();
+	if(CurWeapon)
+		GhostStart();
 	////패킷 
 	//if (inst)
 	//	Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Niagara_packet(_SessionId, PlayerType::Character3, 0);
@@ -96,10 +97,13 @@ void ACharacter3::Skill_S(const FInputActionValue& Value)
 
 void ACharacter3::Skill_E(const FInputActionValue& Value)
 {
-	GhostEnd();
-	//패킷
-	if (inst)
-		Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Niagara_cancel(bCancel, _SessionId, 1);
+	if (CurWeapon)
+	{
+		GhostEnd();
+		//패킷
+		//if (inst)
+		//	Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Niagara_cancel(bCancel, _SessionId, 1);
+	}
 	
 }
 

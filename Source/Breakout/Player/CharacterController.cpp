@@ -433,7 +433,7 @@ bool ACharacterController::UpdateWorld()
 				//inst->m_Socket->Exit();
 				//Cast<ACharacterBase>(GetPawn())->PlayAnimMontage(Cast<ACharacterBase>(GetPawn())->GetDeadMontage());
 				//FGenericPlatformMisc::RequestExit(true);
-				GetWorld()->ServerTravel(FString("/Game/Maps/GameRoom"), true);
+				GetWorld()->ServerTravel(FString("/Game/Maps/GameRoom"), false, true);
 			}
 			//}
 

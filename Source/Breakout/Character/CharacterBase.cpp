@@ -754,7 +754,7 @@ void ACharacterBase::Inter(const FInputActionValue& Value)
 	{
 		if (inst)
 			Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_End_Game_packet(inst->GetPlayerID());
-		
+		//GetWorld()->ServerTravel(FString("/Game/Maps/GameRoom"), false,true);
 	}
 }
 void ACharacterBase::Inter_Start(const FInputActionValue& Value)
