@@ -35,7 +35,7 @@ protected:
 	TObjectPtr<class USceneComponent> DefaultRoot;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite,Category = "Mesh")
 	TObjectPtr<class UProceduralMeshComponent> ProceduralMesh;
-	UPROPERTY(EditAnywhere, Category = "Mesh")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite,Category = "Mesh")
 	TObjectPtr<class UStaticMeshComponent > Sphere;
 
 	UPROPERTY(BlueprintReadWrite)

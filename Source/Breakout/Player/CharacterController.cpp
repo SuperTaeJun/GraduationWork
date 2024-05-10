@@ -88,10 +88,13 @@ void ACharacterController::SetChName()
 	{
 		/*if (inst->m_Socket->tempid == 0)
 		{*/
+		if (inst->m_Socket->Tempname.size() > 0)
+		{
 			FString Player1 = inst->m_Socket->Tempname.front();
 			MainHUD->EscapeToolNumUi->Player1Ch->SetText(FText::FromString(Player1));
 			FString Player2 = inst->m_Socket->Tempname.back();
 			MainHUD->EscapeToolNumUi->Player2Ch->SetText(FText::FromString(Player2));
+		}
 	/*	}*/
 		/*else if (inst->m_Socket->tempid == 1)
 		{
