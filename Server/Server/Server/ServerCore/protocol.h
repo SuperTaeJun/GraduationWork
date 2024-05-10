@@ -28,14 +28,12 @@ const int  MAX_CHAT_SIZE = 100;
 const int  MAX_USER = 10000;
 const int  MAX_OBJ = 10;
 
-const char CS_LOGIN = 1;
 const char CS_MOVE_Packet = 0;
+const char CS_LOGIN = 1;
 const char CS_SELECT_CHAR = 3;
 const char CS_SELECT_WEP = 4;
 const char CS_READY = 5;
-
 const char CS_HIT_EFFECT = 7;
-
 const char CS_SIGNAl = 9;
 const char CS_SHOTGUN_BEAM = 10;
 const char CS_NiAGARA = 12;
@@ -48,6 +46,7 @@ const char CS_STOP_ANIM = 18;
 const char CS_REMOVE_ITEM = 19;
 const char CS_INCREASE_COUNT = 20;
 const char CS_ITEM_INFO = 21;
+const char CS_RELOAD = 22;
 
 const char SC_LOGIN_OK = 1;
 const char SC_OTHER_PLAYER = 2;
@@ -71,6 +70,7 @@ const char SC_STOP_ANIM = 19;
 const char SC_REMOVE_ITEM = 20;
 const char SC_MYITEM_COUNT = 21;
 const char SC_INCREASE_COUNT = 22;
+const char SC_RELOAD = 23;
 
 #pragma pack (push, 1)
 struct CS_LOGIN_PACKET
@@ -320,6 +320,12 @@ struct CS_ITEM_INFO_PACKET {
 	unsigned char size;
 	unsigned char type;
 	int objid;
+};
+struct CS_RELOAD_PACKET {
+	unsigned char size;
+	unsigned char type;
+	int id;
+	bool bReload;
 };
 #pragma pack(pop)
 

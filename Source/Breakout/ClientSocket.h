@@ -101,6 +101,7 @@ public:
 	bool  bch4end = false;
 	bool  bEndGame = false;
 	bool  bStopAnim = false;
+	bool  bServerReload = false;
 	// ³ªÀÌ¾Æ°¡¶ó ½¸ ÀÌÆÑÆ®
 	FVector Sshot;
 	FVector Eshot;
@@ -301,6 +302,7 @@ public:
 	void Send_Stop_Anim_packet(int id);
 	void Send_Destroyed_item_packet(int id);
 	void Send_Increase_item_count_packet(int id, int itemcount);
+	void Send_Reload_packet(int id, bool bReload);
 	virtual bool Init() override;
 	virtual uint32 Run() override;
 	virtual void Stop() override;

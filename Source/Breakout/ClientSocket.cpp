@@ -310,6 +310,11 @@ bool ClientSocket::PacketProcess(char* ptr)
 		bAcquire = true;
 		break;
 	}
+	case SC_RELOAD: {
+		CS_RELOAD_PACKET* packet = reinterpret_cast<CS_RELOAD_PACKET*>(ptr);
+		PlayerInfo.players[packet->id].bServerReload = packet->bReload;
+		break;
+	}
 	default:
 		break;
 	}
@@ -548,6 +553,15 @@ void ClientSocket::Send_Increase_item_count_packet(int id, int itemcount)
 	packet.type = CS_INCREASE_COUNT;
 	packet.Increaseid = id;
 	packet.itemCount = itemcount;
+	SendPacket(&packet);
+}
+void ClientSocket::Send_Reload_packet(int id, bool bReload)
+{
+	CS_RELOAD_PACKET packet;
+	packet.size = sizeof(packet);
+	packet.type = CS_RELOAD;
+	packet.id = id;
+	packet.bReload = bReload;
 	SendPacket(&packet);
 }
 bool ClientSocket::Init()

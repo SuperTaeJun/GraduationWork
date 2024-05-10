@@ -311,6 +311,7 @@ void ACharacterBase::SetbCanObtainEscapeTool(bool _bCanObtain)
 	bCanObtainEscapeTool = _bCanObtain;
 }
 
+
 void ACharacterBase::SetHealth(float Damaged)
 {
 	Health = Damaged;
@@ -790,6 +791,8 @@ void ACharacterBase::Reroad(const FInputActionValue& Value)
 		if (ReloadMontage)
 		{
 			PlayAnimMontage(ReloadMontage);
+			if (inst)
+				inst->m_Socket->Send_Reload_packet(inst->GetPlayerID(), true);
 			bCanFire = false;
 		}
 	}
