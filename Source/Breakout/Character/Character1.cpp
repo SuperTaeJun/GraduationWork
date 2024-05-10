@@ -17,6 +17,8 @@ ACharacter1::ACharacter1()
 	bCoolTimeFinish = true;
 	TimeReplayNiagara = ConstructorHelpers::FObjectFinder<UNiagaraSystem>(TEXT("/Script/Niagara.NiagaraSystem'/Game/Niagara/SKill/Skill1/NS_Skill1.NS_Skill1'")).Object;
 
+
+	SetSprint();
 }
 
 void ACharacter1::BeginPlay()

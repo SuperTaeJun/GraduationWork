@@ -59,7 +59,7 @@ protected:
 	bool bCanEscape;
 	bool StaminaExhaustionState;
 
-	int32 GrendeNum=10;
+	int32 GrendeNum;
 	int32 WallGrendeNum;
 	int32 BoobyTrapNum;
 
@@ -182,8 +182,6 @@ protected:
 	void Fire();
 	void FirePressd(bool _Pressd);
 	void TraceUnderCrossHiar(FHitResult& TraceHitResult);
-
-
 	
 	bool bInRespon;
 	bool bShowSelectUi;
@@ -202,6 +200,10 @@ protected:
 	TObjectPtr<class UTexture2D> CrosshairsBottom;
 	//크로스헤어기준으로 사거리만큼 조준했을때 마지막 충돌위치
 	FVector HitTarget;
+
+	void SetSprint();
+	void SetRun();
+
 
 	//입력값
 protected:

@@ -20,6 +20,8 @@ ACharacter4::ACharacter4()
 	NiagaraComp->SetAutoActivate(false);
 	ConstructorHelpers::FObjectFinder<UNiagaraSystem> FxRef(TEXT("/Game/Niagara/SKill/Skill4/NS_Skill4_S.NS_Skill4_S"));
 	NiagaraComp->SetAsset(FxRef.Object);
+
+	SetSprint();
 }
 
 void ACharacter4::BeginPlay()

@@ -46,7 +46,7 @@ void ABulletHoleWall::ReciveDamage(AActor* DamagedActor, float Damage, const UDa
 			{
 				for (int k = 0; k < 1; ++k)
 				{
-					FVector Loc = FVector(i, j, k) * 30.f;
+					FVector Loc = FVector(i, j, k) * 40.f;
 					FTransform DataATransform;
 					FTransform SculptureTransform;
 					SculptureTransform.SetLocation(Loc);
