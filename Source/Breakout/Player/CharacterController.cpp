@@ -692,17 +692,21 @@ bool ACharacterController::UpdateWorld()
 				UE_LOG(LogTemp, Warning, TEXT("hahah : %d"), Test);
 				info->skilltype = -1;
 			}
-			UE_LOG(LogTemp, Warning, TEXT("otherplayer hp : %f"), OtherPlayer->GetHealth());
-			
-			if (OtherPlayer->GetHealth() <= 0&& OtherPlayer->bDeadAnim == false) {
-				UE_LOG(LogTemp, Warning, TEXT("otherplayer hp : %f"), OtherPlayer->GetHealth());
-				OtherPlayer->PlayAnimMontage(SyncDeadMontage);
-				OtherPlayer->bDeadAnim = true;
-			}
+			/*UE_LOG(LogTemp, Warning, TEXT("otherplayer hp : %f"), OtherPlayer->GetHealth());*/
+			UE_LOG(LogTemp, Warning, TEXT("my hp : %f"), Cast<ACharacterBase>(GetPawn())->GetHealth());
 			if (info->bStopAnim == true) { //Ã³¸®
 				OtherPlayer->StopAnimMontage(SyncDeadMontage);
 				info->bStopAnim = false;
+				OtherPlayer->bDeadAnim = false;
+				OtherPlayer->SetHealth(100.f);
 			}
+			if (OtherPlayer->GetHealth() <= 0&& OtherPlayer->bDeadAnim == false) {
+				UE_LOG(LogTemp, Warning, TEXT("otherplayer hp : %f"), OtherPlayer->GetHealth());
+				UE_LOG(LogTemp, Warning, TEXT("my hp : %f"), Cast<ACharacterBase>(GetPawn())->GetHealth());
+				OtherPlayer->PlayAnimMontage(SyncDeadMontage);
+				OtherPlayer->bDeadAnim = true;
+			}
+			
 			TArray<AActor*> EscapeTools;
 			UGameplayStatics::GetAllActorsOfClass(GetWorld(), AEscapeTool::StaticClass(), EscapeTools);
 			for (int i = 0; i < EscapeTools.Num(); i++)

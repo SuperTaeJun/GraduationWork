@@ -78,7 +78,7 @@ int main()
 		objects[i].setRandomPosition(gen, dis, disz); // 랜덤한 좌표 설정
 	}
 
-	for (int i = 0; i < 5; ++i) {
+	for (int i = 0; i < 6; i++) {
 		cout << "pos : " << objects[i].x << ", " << objects[i].z << endl;
 	}
 

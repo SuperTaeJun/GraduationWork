@@ -313,7 +313,7 @@ void ACharacterBase::SetbCanObtainEscapeTool(bool _bCanObtain)
 
 void ACharacterBase::SetHealth(float Damaged)
 {
-	Health -= Damaged;
+	Health = Damaged;
 }
 
 
