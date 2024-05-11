@@ -58,7 +58,7 @@ void AShotGun::Fire(const FVector& HitTarget)
 				SocketTransform.GetLocation()
 			);
 		}
-		Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_ShotGun_packet(Cast<ACharacterBase>(GetOwner())->_SessionId,  SocketTransform.GetLocation(), SeverRots, SeverRots.Num());
+		//Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_ShotGun_packet(Cast<ACharacterBase>(GetOwner())->_SessionId,  SocketTransform.GetLocation(), SeverRots, SeverRots.Num());
 	}
 	
 }

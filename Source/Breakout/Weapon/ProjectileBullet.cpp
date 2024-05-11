@@ -49,7 +49,7 @@ void AProjectileBullet::BeginPlay()
 	CollisionBox->IgnoreActorWhenMoving(GetOwner(), true);
 	CollisionBox->OnComponentHit.AddDynamic(this, &AProjectileBullet::OnHit);
 
-	BeamNiagaraMesh->SetVectorParameter(FName("Start"), GetActorLocation());
+	//BeamNiagaraMesh->SetVectorParameter(FName("Start"), GetActorLocation());
 }
 
 void AProjectileBullet::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NomalImpulse, const FHitResult& Hit)
@@ -99,9 +99,9 @@ void AProjectileBullet::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	FVector BeamEnd = GetActorLocation();
-	if (BeamNiagaraMesh)
-	{
-		BeamNiagaraMesh->SetVectorParameter(FName("End"), BeamEnd);
-	}
+	//if (BeamNiagaraMesh)
+	//{
+	//	BeamNiagaraMesh->SetVectorParameter(FName("End"), BeamEnd);
+	//}
 }
 

@@ -98,24 +98,24 @@ void AWeaponBase::WeaponTraceHit(const FVector& TraceStart, const FVector& HitTa
 		{
 			BeamEnd = OutHit.ImpactPoint;
 		}
-		if (BeamNiagara)
-		{
-			StartBeam = TraceStart;
-			EndBeam = BeamEnd;
-			UNiagaraComponent* Beam = UNiagaraFunctionLibrary::SpawnSystemAtLocation(
-				World,
-				BeamNiagara,
-				TraceStart,
-				WeaponMesh->GetComponentRotation(),
-				FVector(1.f),
-				true
-			);
+		//if (BeamNiagara)
+		//{
+		//	StartBeam = TraceStart;
+		//	EndBeam = BeamEnd;
+		//	UNiagaraComponent* Beam = UNiagaraFunctionLibrary::SpawnSystemAtLocation(
+		//		World,
+		//		BeamNiagara,
+		//		TraceStart,
+		//		WeaponMesh->GetComponentRotation(),
+		//		FVector(1.f),
+		//		true
+		//	);
 
-			if (Beam)
-			{
-				Beam->SetVectorParameter(FName("End"), BeamEnd);
-			}
-		}
+		//	if (Beam)
+		//	{
+		//		Beam->SetVectorParameter(FName("End"), BeamEnd);
+		//	}
+		//}
 	}
 }
 
@@ -209,10 +209,10 @@ void AWeaponBase::Fire(const FVector& HitTarget)
 			if (World)
 			{
 				FiredBullet=World->SpawnActor<AProjectileBullet>(ProjectileBulletClass, SocketTransform.GetLocation(), ToTargetRot, SpawnParameters);
-				Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Fire_Effect(Cast<ACharacterBase>(GetOwner())->_SessionId, SocketTransform.GetLocation(), ToTargetRot, 0);
+				//Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Fire_Effect(Cast<ACharacterBase>(GetOwner())->_SessionId, SocketTransform.GetLocation(), ToTargetRot, 0);
 				FiredBullet->SetOwner(OwnerPawn);
 			}
-			if (ImpactNiagara)
+			/*if (ImpactNiagara)
 			{
 				UNiagaraFunctionLibrary::SpawnSystemAtLocation
 				(
@@ -220,7 +220,7 @@ void AWeaponBase::Fire(const FVector& HitTarget)
 					ImpactNiagara,
 					SocketTransform.GetLocation()
 				);
-			}
+			}*/
 			if (FireSound)
 			{
 				UGameplayStatics::PlaySoundAtLocation(
