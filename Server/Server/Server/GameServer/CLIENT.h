@@ -54,6 +54,7 @@ public:
 
     //COMBAT _combat;
     int num;
+    int itemAnimNum;
     atomic_int  _count;
     int      _type;
     //-------------

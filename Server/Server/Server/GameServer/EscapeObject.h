@@ -5,6 +5,7 @@ class EscapeObject
 {
 public:
     float x, y, z;
+    float pitch, yaw, roll;
     int ob_id;
 
 public:
