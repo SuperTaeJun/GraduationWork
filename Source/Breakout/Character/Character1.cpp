@@ -65,7 +65,7 @@ void ACharacter1::Tick(float DeltaTime)
 			//패킷 - id,캐릭터타입,CurLoc
 			NiagaraSpawnSavedTime = 0.f;
 			if (inst)
-				Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Niagara_packetch1(inst->GetPlayerID(), PlayerType::Character1, CurLoc, 0);
+				Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Niagara_packetch1(_SessionId, PlayerType::Character1, CurLoc, 0);
 		}
 	}
 }
@@ -105,7 +105,7 @@ void ACharacter1::Skill_E(const FInputActionValue& Value)
 	MainController->SetHUDCoolVisibility(true);
 	MainController->SetHUDSkillOpacity(0.3);
 	if (inst)
-		Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Niagara_cancel(true, inst->GetPlayerID(), 1);
+		Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Niagara_cancel(true, _SessionId, 1);
 }
 
 void ACharacter1::Skill_T(const FInputActionValue& Value)
