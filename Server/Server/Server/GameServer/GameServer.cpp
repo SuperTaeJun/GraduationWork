@@ -89,9 +89,9 @@ int main()
 	objects[1].z = -10.f;
 
 
-	objects[2].x = -5270.f;
-	objects[2].y = 1010.f;
-	objects[2].z = 1410.f;
+	objects[2].x = -1040.f;
+	objects[2].y = 1020.f;
+	objects[2].z = -130.f;
 
 	objects[3].x = -6030.f;
 	objects[3].y = 1380.f;
