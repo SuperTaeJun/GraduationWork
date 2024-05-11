@@ -23,6 +23,7 @@ enum WeaponType
 constexpr int BUFSIZE = 1048;
 const int  MAX_NAME_SIZE = 20;
 const int  MAX_USER = 10000;
+const int  MAX_OBJ = 11;
 
 
 const char CS_MOVE_Packet = 0;
@@ -265,9 +266,8 @@ struct CS_START_GAME_PACKET {
 struct SC_ITEM_PACKET {
 	unsigned char size;
 	unsigned char type;
-	float x;
-	float y;
-	float z;
+	float x, y, z;
+	float pitch, yaw, roll;
 	int id;
 };
 struct CS_END_GAME_PACKET {
