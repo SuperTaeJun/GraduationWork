@@ -201,18 +201,6 @@ bool ClientSocket::PacketProcess(char* ptr)
 		PlayerInfo.players[packet->attackid].sEshot4.Pitch = packet->pitch4;
 		PlayerInfo.players[packet->attackid].sEshot4.Yaw = packet->yaw4;
 		PlayerInfo.players[packet->attackid].sEshot4.Roll = packet->roll4;
-		PlayerInfo.players[packet->attackid].sEshot5.Pitch = packet->pitch5;
-		PlayerInfo.players[packet->attackid].sEshot5.Yaw = packet->yaw5;
-		PlayerInfo.players[packet->attackid].sEshot5.Roll = packet->roll5;
-		PlayerInfo.players[packet->attackid].sEshot6.Pitch = packet->pitch6;
-		PlayerInfo.players[packet->attackid].sEshot6.Yaw = packet->yaw6;
-		PlayerInfo.players[packet->attackid].sEshot6.Roll = packet->roll6;
-		PlayerInfo.players[packet->attackid].sEshot7.Pitch = packet->pitch7;
-		PlayerInfo.players[packet->attackid].sEshot7.Yaw = packet->yaw7;
-		PlayerInfo.players[packet->attackid].sEshot7.Roll = packet->roll7;
-		PlayerInfo.players[packet->attackid].sEshot8.Pitch = packet->pitch8;
-		PlayerInfo.players[packet->attackid].sEshot8.Yaw = packet->yaw8;
-		PlayerInfo.players[packet->attackid].sEshot8.Roll = packet->roll8;
 		PlayerInfo.players[packet->attackid].sfired = true;
 		break;
 	}
@@ -440,20 +428,6 @@ void ClientSocket::Send_ShotGun_packet(int attack_id, FVector ServerBeamStart, T
 	packet.pitch4 = ServerBeamEnd[4].Pitch;
 	packet.yaw4 = ServerBeamEnd[4].Yaw;
 	packet.roll4 = ServerBeamEnd[4].Roll;
-	packet.pitch5 = ServerBeamEnd[5].Pitch;
-	packet.yaw5 = ServerBeamEnd[5].Yaw;
-	packet.roll5 = ServerBeamEnd[5].Roll;
-	packet.pitch6 = ServerBeamEnd[6].Pitch;
-	packet.yaw6 = ServerBeamEnd[6].Yaw;
-	packet.roll6 = ServerBeamEnd[6].Roll;
-	packet.pitch7 = ServerBeamEnd[7].Pitch;
-	packet.yaw7 = ServerBeamEnd[7].Yaw;
-	packet.roll7 = ServerBeamEnd[7].Roll;
-
-	packet.pitch8 = ServerBeamEnd[8].Pitch;
-	packet.yaw8 = ServerBeamEnd[8].Yaw;
-	packet.roll8 = ServerBeamEnd[8].Roll;
-
 	SendPacket(&packet);
 }
 void ClientSocket::Send_Niagara_packet(int clientid, PlayerType type, int num)
