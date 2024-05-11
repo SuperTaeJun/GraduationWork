@@ -758,6 +758,27 @@ void process_packet(int s_id, char* p)
 		}
 		break;
 	}
+	case CS_ITEM_ANIM: {
+		CS_ITEM_ANIM_PACKET* packet = reinterpret_cast<CS_ITEM_ANIM_PACKET*>(p);
+		CLIENT& cl = clients[packet->id];
+		cl.itemAnimNum = packet->num;
+		for (auto& other : clients) {
+			if (other._s_id == cl._s_id) continue;
+			other.state_lock.lock();
+			if (ST_INGAME != other._state) {
+				other.state_lock.unlock();
+				continue;
+			}
+			else other.state_lock.unlock();
+			CS_ITEM_ANIM_PACKET packet;
+			packet.size = sizeof(packet);
+			packet.type = SC_ITEM_ANIM;
+			packet.id = cl._s_id;
+			packet.num = cl.itemAnimNum;
+			other.do_send(sizeof(packet), &packet);
+		}
+		break;
+	}
 	default:
 		cout << " 오류패킷타입 : " << p << endl;
 		break;

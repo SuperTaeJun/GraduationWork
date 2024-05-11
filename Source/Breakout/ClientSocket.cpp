@@ -315,6 +315,11 @@ bool ClientSocket::PacketProcess(char* ptr)
 		PlayerInfo.players[packet->id].bServerReload = packet->bReload;
 		break;
 	}
+	case SC_ITEM_ANIM: {
+		CS_ITEM_ANIM_PACKET* packet = reinterpret_cast<CS_ITEM_ANIM_PACKET*>(ptr);
+		PlayerInfo.players[packet->id].itemAnimtype = packet->num;
+		break;
+	}
 	default:
 		break;
 	}

@@ -706,7 +706,26 @@ bool ACharacterController::UpdateWorld()
 				OtherPlayer->PlayAnimMontage(SyncDeadMontage);
 				OtherPlayer->bDeadAnim = true;
 			}
-			
+			if (info->bServerReload == true)
+			{
+				OtherPlayer->PlayAnimMontage(SyncReloadMontageCh3);
+				info->bServerReload = false;
+			}
+			if (info->itemAnimtype == 0)
+			{
+				OtherPlayer->PlayAnimMontage(SyncInterMontage);
+				info->itemAnimtype = -1;
+			}
+			else if (info->itemAnimtype == 1)
+			{
+				OtherPlayer->StopAnimMontage(SyncInterMontage);
+				info->itemAnimtype = -1;
+			}
+			if (info->bServerReload == true)
+			{
+				OtherPlayer->PlayAnimMontage(SyncReloadMontageCh3);
+				info->bServerReload = false;
+			}
 			TArray<AActor*> EscapeTools;
 			UGameplayStatics::GetAllActorsOfClass(GetWorld(), AEscapeTool::StaticClass(), EscapeTools);
 			for (int i = 0; i < EscapeTools.Num(); i++)
@@ -715,11 +734,7 @@ bool ACharacterController::UpdateWorld()
 					if (Escapeid == Cast<AEscapeTool>(EscapeTools[i])->ItemID)
 						Cast<AEscapeTool>(EscapeTools[i])->Destroy();
 			}
-			if (info->bServerReload == true)
-			{
-					OtherPlayer->PlayAnimMontage(SyncReloadMontageCh3);
-					info->bServerReload = false;
-			}
+		
 		}
 	}
 	return true;

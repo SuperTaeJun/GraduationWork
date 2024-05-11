@@ -66,6 +66,10 @@ protected:
 	UPROPERTY(EditAnywhere, Category = Animation)
 	TObjectPtr<class UAnimMontage> SyncReloadMontageCh3;
 
+	//아이템 획득 애니메이션
+	UPROPERTY(EditAnywhere, Category = Animation)
+	TObjectPtr<class UAnimMontage> SyncInterMontage;
+
 	// 플레이어 동기화 용
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<UClass> Anim1;

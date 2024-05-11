@@ -74,6 +74,7 @@ public:
 	int weptype;
 	int damage;
 	int skilltype;
+	int itemAnimtype;
 	// 아이디 비번
 	FString    userId = {};
 	FString    userPw = {};
