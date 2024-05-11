@@ -75,20 +75,55 @@ int main()
 		clients[i]._s_id = i;
 
 
-	
+
 	for (int i = 0; i < MAX_OBJ; ++i) {
 		objects[i].ob_id = i;
 		//objects[i].setRandomPosition(gen, dis, disz); // 랜덤한 좌표 설정
 	}
+	objects[0].x = 1000.f;
+	objects[0].y = 1500.0f;
+	objects[0].z = 1500.f;
 
-	objects[1].x = -510.f;
-	objects[1].y = 670.f;
+	objects[1].x = 1090.f;
+	objects[1].y = 0.0f;
 	objects[1].z = -10.f;
 
 
-	objects[2].x = -510.f;
-	objects[2].y = -3100.f;
-	objects[2].z = 120.f;
+	objects[2].x = -5270.f;
+	objects[2].y = 1010.f;
+	objects[2].z = 1410.f;
+
+	objects[3].x = -6030.f;
+	objects[3].y = 1380.f;
+	objects[3].z = 1290.f;
+
+	objects[4].x = -6380.f;
+	objects[4].y = 490.f;
+	objects[4].z = 120.f;
+
+	objects[5].x = -5770.f;
+	objects[5].y = 2160.f;
+	objects[5].z = 90.f;
+
+	objects[6].x = -180.f;
+	objects[6].y = -5550.f;
+	objects[6].z = 80.f;
+
+	objects[7].x = 1890.f;
+	objects[7].y = -5480.f;
+	objects[7].z = 80.f;
+
+	objects[8].x = 2310.f;
+	objects[8].y = -4180.f;
+	objects[8].z = 80.f;
+
+	objects[9].x = -5060.f;
+	objects[9].y = 2040.f;
+	objects[9].z = 1240.f;
+
+	objects[10].x = -7680.f;
+	objects[10].y = -2670.f;
+	objects[10].z = 0.f;
 	for (int i = 0; i < MAX_OBJ; i++) {
 		cout << "pos : " << objects[i].x << ", " << objects[i].z << endl;
 	}
@@ -237,7 +272,7 @@ void process_packet(int s_id, char* p)
 
 		CS_SELECT_CHARACTER* packet = reinterpret_cast<CS_SELECT_CHARACTER*>(p);
 		CLIENT& cl = clients[packet->id];
-		cout << "cl.sid?= " <<packet->id << ", 00 , " << cl._s_id << endl;
+		cout << "cl.sid?= " << packet->id << ", 00 , " << cl._s_id << endl;
 		cl.x = packet->x;
 		cl.y = packet->y;
 		cl.z = packet->z;
@@ -364,7 +399,7 @@ void process_packet(int s_id, char* p)
 		}
 		break;
 	}
-	case CS_READY:{
+	case CS_READY: {
 		CS_READY_PACKET* packet = reinterpret_cast<CS_READY_PACKET*>(p);
 		CLIENT& cl = clients[s_id];
 		ready_count++;
@@ -733,7 +768,7 @@ void process_packet(int s_id, char* p)
 	case CS_ITEM_INFO: {
 		CS_ITEM_INFO_PACKET* packet = reinterpret_cast<CS_ITEM_INFO_PACKET*> (p);
 		CLIENT& cl = clients[s_id];
-		
+
 		send_item_packet(cl._s_id, packet->objid);
 		break;
 	}
