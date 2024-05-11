@@ -16,7 +16,7 @@ HANDLE g_timer;
 SOCKET sever_socket;
 LockQueue<timer_ev> timer_q;
 array <CLIENT, MAX_USER> clients;
-array<EscapeObject, MAX_OBJ> objects;
+array<EscapeObject, 20> objects;
 condition_variable cv;
 atomic<int> ready_count = 0;
 atomic<int> ingamecount = 0;

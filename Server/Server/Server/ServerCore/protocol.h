@@ -1,6 +1,6 @@
 #pragma once
 #define SERVER_PORT		8001
-#define SERVER_IP		"127.0.0.1"
+#define SERVER_IP		"192.168.213.28"
 #define MAX_INFO_SIZE   20
 #include <vector>
 #include <array>
@@ -21,12 +21,9 @@ enum WeaponType
 };
 
 constexpr int BUFSIZE = 1048;
-const int  ReZone_HEIGHT = 2000;
-const int  ReZone_WIDTH = 2000;
 const int  MAX_NAME_SIZE = 20;
-const int  MAX_CHAT_SIZE = 100;
 const int  MAX_USER = 10000;
-const int  MAX_OBJ = 10;
+
 
 const char CS_MOVE_Packet = 0;
 const char CS_LOGIN = 1;
@@ -47,6 +44,7 @@ const char CS_REMOVE_ITEM = 19;
 const char CS_INCREASE_COUNT = 20;
 const char CS_ITEM_INFO = 21;
 const char CS_RELOAD = 22;
+const char CS_ITEM_ANIM = 23;
 
 const char SC_LOGIN_OK = 1;
 const char SC_OTHER_PLAYER = 2;
@@ -71,6 +69,8 @@ const char SC_REMOVE_ITEM = 20;
 const char SC_MYITEM_COUNT = 21;
 const char SC_INCREASE_COUNT = 22;
 const char SC_RELOAD = 23;
+const char SC_ITEM_ANIM = 24;
+
 
 #pragma pack (push, 1)
 struct CS_LOGIN_PACKET
@@ -326,6 +326,12 @@ struct CS_RELOAD_PACKET {
 	unsigned char type;
 	int id;
 	bool bReload;
+};
+struct CS_ITEM_ANIM_PACKET {
+	unsigned char size;
+	unsigned char type;
+	int id;
+	int num;
 };
 #pragma pack(pop)
 

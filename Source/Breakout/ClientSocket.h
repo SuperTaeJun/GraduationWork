@@ -303,6 +303,7 @@ public:
 	void Send_Destroyed_item_packet(int id);
 	void Send_Increase_item_count_packet(int id, int itemcount);
 	void Send_Reload_packet(int id, bool bReload);
+	void Send_item_Anim_packet(int id, int num);
 	virtual bool Init() override;
 	virtual uint32 Run() override;
 	virtual void Stop() override;

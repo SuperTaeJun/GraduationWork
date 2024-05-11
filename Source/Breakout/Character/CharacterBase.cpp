@@ -419,10 +419,10 @@ void ACharacterBase::SetSpawnGrenade(TSubclassOf<AProjectileBase> Projectile)
 				switch (BojoMugiType)
 				{
 				case EBojoMugiType::E_Grenade:
-					Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Fire_Effect(_SessionId, StartLocation, ToHitTarget.Rotation(), 2);
+					Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Fire_Effect(inst->GetPlayerID(), StartLocation, ToHitTarget.Rotation(), 2);
 					break;
 				case EBojoMugiType::E_Wall:
-					Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Fire_Effect(_SessionId, StartLocation, ToHitTarget.Rotation(), 3);
+					Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Fire_Effect(inst->GetPlayerID(), StartLocation, ToHitTarget.Rotation(), 3);
 					break;
 
 				}
@@ -763,17 +763,22 @@ void ACharacterBase::Inter_Start(const FInputActionValue& Value)
 		{
 			UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 			Cast<UBOAnimInstance>(AnimInstance)->bUseLeftHand = false;
-			if(InterMontage)
+			if (InterMontage) {
 				PlayAnimMontage(InterMontage);
+				if (inst)
+					inst->m_Socket->Send_item_Anim_packet(inst->GetPlayerID(), 0);
+			}
 		}
 }
 void ACharacterBase::Inter_End(const FInputActionValue& Value)
 {
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 	Cast<UBOAnimInstance>(AnimInstance)->bUseLeftHand = true;
-	if (InterMontage)
+	if (InterMontage) {
 		StopAnimMontage(InterMontage);
-
+		if (inst)
+			inst->m_Socket->Send_item_Anim_packet(inst->GetPlayerID(), 1);
+	}
 
 }
 void ACharacterBase::EToolTranfrom(const FInputActionValue& Value)
@@ -841,7 +846,7 @@ void ACharacterBase::GrandeFire(const FInputActionValue& Value)
 				//여기 부비트랩
 				if (Cast<UBOGameInstance>(GetGameInstance()))
 				{
-					Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Fire_Effect(_SessionId, SWAimLastLoc, FRotator::ZeroRotator, 4);
+					Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Fire_Effect(inst->GetPlayerID(), SWAimLastLoc, FRotator::ZeroRotator, 4);
 				}
 			}
 		}
@@ -960,7 +965,7 @@ void ACharacterBase::Tick(float DeltaTime)
 	}
 
 
-	if (Cast<UBOGameInstance>(GetWorld()->GetGameInstance())->m_Socket->bAllReady == true && !bStarted)
+	if (/*Cast<UBOGameInstance>(GetWorld()->GetGameInstance())->m_Socket->bAllReady == true &&*/ !bStarted)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("StartGame"));
 		Cast<UBOGameInstance>(GetWorld()->GetGameInstance())->m_Socket->bAllReady = false;

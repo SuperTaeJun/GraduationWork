@@ -564,6 +564,16 @@ void ClientSocket::Send_Reload_packet(int id, bool bReload)
 	packet.bReload = bReload;
 	SendPacket(&packet);
 }
+void ClientSocket::Send_item_Anim_packet(int id, int num)
+{
+	CS_ITEM_ANIM_PACKET packet;
+	packet.size = sizeof(packet);
+	packet.type = CS_ITEM_ANIM;
+	packet.id = id;
+	packet.num = num;
+	SendPacket(&packet);
+
+}
 bool ClientSocket::Init()
 {
 	//UE_LOG(LogTemp, Warning, TEXT("Thread has been initialized"));
