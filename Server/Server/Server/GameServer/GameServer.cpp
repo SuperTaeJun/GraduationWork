@@ -438,20 +438,6 @@ void process_packet(int s_id, char* p)
 		cl.pitch4 = packet->pitch4;
 		cl.yaw4 = packet->yaw4;
 		cl.roll4 = packet->roll4;
-		cl.pitch5 = packet->pitch5;
-		cl.yaw5 = packet->yaw5;
-		cl.roll5 = packet->roll5;
-
-		cl.pitch6 = packet->pitch6;
-		cl.yaw6 = packet->yaw6;
-		cl.roll6 = packet->roll6;
-		cl.pitch7 = packet->pitch7;
-		cl.yaw7 = packet->yaw7;
-		cl.roll7 = packet->roll7;
-		cl.pitch8 = packet->pitch8;
-		cl.yaw8 = packet->yaw8;
-		cl.roll8 = packet->roll8;
-
 		//--------------------
 		for (auto& other : clients) {
 			if (other._s_id == cl._s_id) continue;
@@ -483,18 +469,7 @@ void process_packet(int s_id, char* p)
 			packet.pitch4 = cl.pitch4;
 			packet.yaw4 = cl.yaw4;
 			packet.roll4 = cl.roll4;
-			packet.pitch5 = cl.pitch5;
-			packet.yaw5 = cl.yaw5;
-			packet.roll5 = cl.roll5;
-			packet.pitch6 = cl.pitch6;
-			packet.yaw6 = cl.yaw6;
-			packet.roll6 = cl.roll6;
-			packet.pitch7 = cl.pitch7;
-			packet.yaw7 = cl.yaw7;
-			packet.roll7 = cl.roll7;
-			packet.pitch8 = cl.pitch8;
-			packet.yaw8 = cl.yaw8;
-			packet.roll8 = cl.roll8;
+	
 			cout << "이거 누구한테 감 :  ?" << other._s_id << endl;
 			other.do_send(sizeof(packet), &packet);
 
