@@ -721,6 +721,8 @@ bool ACharacterController::UpdateWorld()
 				OtherPlayer->StopAnimMontage(SyncInterMontage);
 				info->itemAnimtype = -1;
 			}
+
+
 			if (info->bServerReload == true)
 			{
 				OtherPlayer->PlayAnimMontage(SyncReloadMontageCh3);
