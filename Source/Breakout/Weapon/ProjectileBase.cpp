@@ -66,7 +66,7 @@ void AProjectileBase::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActo
 				1.f, // DamageFalloff
 				UDamageType::StaticClass(), // DamageTypeClass
 				TArray<AActor*>(), // IgnoreActors
-				this, // DamageCauser
+				GetOwner(), // DamageCauser
 				FiringController // InstigatorController
 			);
 
