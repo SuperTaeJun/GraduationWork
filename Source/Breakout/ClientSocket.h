@@ -91,7 +91,7 @@ public:
 	float VeloY = 0;
 	float VeloZ = 0;
 	float Max_Speed = 400;
-	//bool  bGetWeapon = true;
+	bool  bGetWeapon = false;
 	bool  IsAlive = true;
 	bool  fired = false;
 	bool  sfired = false;

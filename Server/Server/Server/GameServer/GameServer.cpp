@@ -379,7 +379,7 @@ void process_packet(int s_id, char* p)
 		CLIENT& cl = clients[packet->id];
 		cl.w_type = packet->weapon_type;
 		cl.selectweapon = packet->bselectwep;
-		cout << "무기 타입" << cl.w_type << endl;
+		cout << "플레이어 : " << cl._s_id << "무기 타입" << cl.w_type << endl;
 		for (auto& other : clients) {
 			if (other._s_id == cl._s_id) continue;
 			other.state_lock.lock();

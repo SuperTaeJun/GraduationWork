@@ -517,6 +517,12 @@ bool ACharacterController::UpdateWorld()
 			OtherPlayer->SetActorRotation(PlayerRotation);
 			OtherPlayer->SetActorLocation(PlayerLocation);
 			OtherPlayer->GetCharacterMovement()->MaxWalkSpeed = info->Max_Speed;
+			if (info->bGetWeapon == true)
+			{
+				OtherPlayer->CurWeapon->Destroy();
+				OtherPlayer->CurWeapon = nullptr;
+				info->bGetWeapon = false;
+			}
 
 			//È÷ÆÃ
 			if (OtherPlayer->GetCurWeapon() && info->hiteffect == true)
@@ -640,10 +646,10 @@ bool ACharacterController::UpdateWorld()
 				if (Cast<ACharacter3>(OtherPlayer)) {
 					ACharacter3* Niagaraplayer = Cast<ACharacter3>(OtherPlayer);
 					Niagaraplayer->GetMesh()->SetMaterial(0, Niagaraplayer->DynamicMaterial);
-					Niagaraplayer->DynamicMaterial->SetScalarParameterValue(FName("Alpha"), 0.f);
+					//Niagaraplayer->DynamicMaterial->SetScalarParameterValue(FName("Alpha"), 0.f);
 					Niagaraplayer->ServerGhostStart();
-					Niagaraplayer->DynamicMaterial->SetVectorParameterValue(FName("Loc"), Niagaraplayer->GetCapsuleComponent()->GetForwardVector() * -1.f);
-					Niagaraplayer->DynamicMaterial->SetScalarParameterValue(FName("Amount"), Niagaraplayer->GetCharacterMovement()->Velocity.Length() / 4);
+				/*	Niagaraplayer->DynamicMaterial->SetVectorParameterValue(FName("Loc"), Niagaraplayer->GetCapsuleComponent()->GetForwardVector() * -1.f);
+					Niagaraplayer->DynamicMaterial->SetScalarParameterValue(FName("Amount"), Niagaraplayer->GetCharacterMovement()->Velocity.Length() / 4);*/
 					info->skilltype = -1;
 				}
 			}

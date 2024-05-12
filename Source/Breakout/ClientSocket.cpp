@@ -310,7 +310,7 @@ bool ClientSocket::PacketProcess(char* ptr)
 	}
 	case SC_REMOVE_WEAPON: {
 		CS_REMOVE_WEAPON_PACKET* packet = reinterpret_cast<CS_REMOVE_WEAPON_PACKET*>(ptr);
-		PlayerInfo.players[packet->id].bselectweapon = packet->bWeapon;
+		PlayerInfo.players[packet->id].bGetWeapon = packet->bWeapon;
 		break;
 	}
 	default:

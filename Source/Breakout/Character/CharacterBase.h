@@ -116,6 +116,7 @@ public:
 	void Dead();
 	FTimerHandle DeadTimer;
 	//int p_id; // player own id
+	TObjectPtr<class AWeaponBase> CurWeapon;
 protected:
 
 	UPROPERTY(EditAnywhere, Category = Arrow)
@@ -133,7 +134,7 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Character, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UCharacterMovementComponent> Movement;
 
-	TObjectPtr<class AWeaponBase> CurWeapon;
+
 
 	TObjectPtr<class AMainHUD> MainHUD;
 	TObjectPtr<class ACharacterController> MainController;
