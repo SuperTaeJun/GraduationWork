@@ -330,7 +330,7 @@ void ACharacterBase::GrandeThrow()
 {
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 	Cast<UBOAnimInstance>(AnimInstance)->bUseLeftHand = false;
-	PlayAnimMontage(GrenadeMontage, 1.f, FName("Fire"));
+	PlayAnimMontage(GrenadeMontage, 2.f, FName("Fire"));
 	CurWeapon->SetActorHiddenInGame(true);
 	//CurWeapon->SetActorHiddenInGame(true);
 	//UE_LOG(LogTemp, Log, TEXT("FIRE"));

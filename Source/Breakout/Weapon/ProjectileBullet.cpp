@@ -14,6 +14,8 @@
 #include "Game/BOGameInstance.h"
 #include "ClientSocket.h"
 #include "TimerManager.h"
+#include "Weapon/ProjectileBoobyTrap.h"
+
 // Sets default values
 AProjectileBullet::AProjectileBullet()
 {
@@ -62,11 +64,16 @@ void AProjectileBullet::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherAc
 	{
 		ACharacterBase* DamagedCharacter=Cast<ACharacterBase>(OtherActor);
 		ABulletHoleWall* DamagedWall = Cast<ABulletHoleWall>(OtherActor);
+		AProjectileBoobyTrap* DamagedTrap = Cast<AProjectileBoobyTrap>(OtherActor);
 		if(DamagedCharacter)
 			UGameplayStatics::ApplyDamage(DamagedCharacter,Damage,FiringController,FiringPawn,UDamageType::StaticClass());
 		else if (DamagedWall)
 		{
 			DamagedWall->SetBulletHole(Hit.ImpactPoint);
+			UGameplayStatics::ApplyDamage(DamagedWall, Damage, FiringController, FiringPawn, UDamageType::StaticClass());
+		}
+		else if (DamagedTrap)
+		{
 			UGameplayStatics::ApplyDamage(DamagedWall, Damage, FiringController, FiringPawn, UDamageType::StaticClass());
 		}
 	}

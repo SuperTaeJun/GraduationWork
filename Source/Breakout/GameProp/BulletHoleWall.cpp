@@ -7,6 +7,7 @@
 #include "Operations/MeshBoolean.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Kismet/GameplayStatics.h"
+#include "Weapon/ProjectileBase.h"
 //using namespace UE::Geometry;
 
 ABulletHoleWall::ABulletHoleWall()
@@ -35,7 +36,12 @@ void ABulletHoleWall::BeginPlay()
 }
 void ABulletHoleWall::ReciveDamage(AActor* DamagedActor, float Damage, const UDamageType* DamageType, AController* InstigatorController, AActor* DamageCauser)
 {
+	//AProjectileBase* Causer = Cast<AProjectileBase>(DamageCauser);
+	//if (Causer)
+	//	Damage = 99999.f;
+
 	Hp -= Damage;
+
 	UE_LOG(LogTemp, Warning, TEXT("HP: %f"), Hp);
 	if (Hp <= 0.f && !bDestroyed)
 	{

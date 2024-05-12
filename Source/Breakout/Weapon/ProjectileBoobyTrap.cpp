@@ -6,11 +6,13 @@
 
 AProjectileBoobyTrap::AProjectileBoobyTrap()
 {
+	Hp = 15.f;
 }
 
 void AProjectileBoobyTrap::BeginPlay()
 {
 	Super::BeginPlay();
+	OnTakeAnyDamage.AddDynamic(this, &AProjectileBoobyTrap::ReciveDamage);
 }
 
 void AProjectileBoobyTrap::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NomalImpulse, const FHitResult& Hit)
@@ -43,6 +45,17 @@ void AProjectileBoobyTrap::OnHit(UPrimitiveComponent* HitComponent, AActor* Othe
 		}
 		//DrawDebugSphere(GetWorld(), GetActorLocation(), 200.f, 20, FColor::Black, false, 10, 0, 1);
 		//DrawDebugSphere(GetWorld(), GetActorLocation(), 500.f, 20, FColor::Purple, false, 10, 0, 1);
+		Destroy();
+	}
+}
+
+void AProjectileBoobyTrap::ReciveDamage(AActor* DamagedActor, float _Damage, const UDamageType* DamageType, AController* InstigatorController, AActor* DamageCauser)
+{
+
+	Hp -= _Damage;
+
+	if (Hp <= 0.f)
+	{
 		Destroy();
 	}
 }
