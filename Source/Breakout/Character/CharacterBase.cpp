@@ -687,7 +687,7 @@ void ACharacterBase::Look(const FInputActionValue& Value)
 
 void ACharacterBase::Sprint_S(const FInputActionValue& Value)
 {
-	if (!StaminaExhaustionState)
+	if (!StaminaExhaustionState && CurWeapon)
 	{
 		CharacterState = ECharacterState::ECS_SPRINT;
 		//Movement->bOrientRotationToMovement = true;
@@ -878,7 +878,7 @@ void ACharacterBase::SelectTrap(const FInputActionValue& Value)
 
 void ACharacterBase::StartJump(const FInputActionValue& Value)
 {
-	if (CanJump)
+	if (CanJump && CurWeapon)
 		Super::Jump();
 
 	CanJump = false;
