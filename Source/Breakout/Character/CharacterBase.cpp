@@ -466,8 +466,10 @@ void ACharacterBase::ReciveDamage(AActor* DamagedActor, float Damage, const UDam
 			{
 				DamageInsigatorCh->SetEscapeToolNum(DamageInsigatorCh->ObtainedEscapeToolNum + 4);
 				ObtainedEscapeToolNum -= 4;
-				if (inst)
+				if (inst) {
 					Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Increase_item_count_packet(DamageInsigatorCh->_SessionId, DamageInsigatorCh->GetEscapeToolNum());
+					Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Increase_item_count_packet(inst->GetPlayerID(), ObtainedEscapeToolNum);
+				}
 			}
 		}
 		CurWeapon->CurAmmo = 0;
@@ -977,7 +979,7 @@ void ACharacterBase::Tick(float DeltaTime)
 	}
 
 
-	if (/*Cast<UBOGameInstance>(GetWorld()->GetGameInstance())->m_Socket->bAllReady == true &&*/ !bStarted)
+	if (Cast<UBOGameInstance>(GetWorld()->GetGameInstance())->m_Socket->bAllReady == true && !bStarted)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("StartGame"));
 		Cast<UBOGameInstance>(GetWorld()->GetGameInstance())->m_Socket->bAllReady = false;
