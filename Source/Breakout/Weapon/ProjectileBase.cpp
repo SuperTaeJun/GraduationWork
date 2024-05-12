@@ -7,7 +7,9 @@
 #include "NiagaraFunctionLibrary.h"
 #include "NiagaraComponent.h"
 #include "Components/StaticMeshComponent.h"
-
+#include "GameProp/BulletHoleWall.h"
+#include "Weapon/ProjectileBoobyTrap.h"
+#include "Character/CharacterBase.h"
 AProjectileBase::AProjectileBase()
 {
 	PrimaryActorTick.bCanEverTick = true;
@@ -31,6 +33,8 @@ AProjectileBase::AProjectileBase()
 	ProjectileMovementComponent->bRotationFollowsVelocity = true;
 
 	ImpactNiagara = ConstructorHelpers::FObjectFinder<UNiagaraSystem>(TEXT("/Script/Niagara.NiagaraSystem'/Game/Niagara/Weapon/Lancher/NS_Explosion.NS_Explosion'")).Object;
+
+	Damage = 50.f;
 }
 
 void AProjectileBase::BeginPlay()
@@ -55,7 +59,7 @@ void AProjectileBase::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActo
 			UGameplayStatics::ApplyRadialDamageWithFalloff(
 				this, // World context object
 				Damage, // BaseDamage
-				10.f, // MinimumDamage
+				30.f, // MinimumDamage
 				GetActorLocation(), // Origin
 				100.f, // DamageInnerRadius
 				300.f, // DamageOuterRadius
@@ -65,7 +69,20 @@ void AProjectileBase::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActo
 				this, // DamageCauser
 				FiringController // InstigatorController
 			);
+
 		}
+		ABulletHoleWall* DamagedWall = Cast<ABulletHoleWall>(OtherActor);
+		AProjectileBoobyTrap* DamagedTrap = Cast<AProjectileBoobyTrap>(OtherActor);
+		if (DamagedWall)
+		{
+			UGameplayStatics::ApplyDamage(DamagedWall, 99999.f, FiringController, FiringPawn, UDamageType::StaticClass());
+		}
+		else if (DamagedTrap)
+		{
+			UGameplayStatics::ApplyDamage(DamagedWall, 99999.f, FiringController, FiringPawn, UDamageType::StaticClass());
+		}
+
+
 	//	DrawDebugSphere(GetWorld(), GetActorLocation(), 100.f, 20, FColor::Black, false, 10, 0, 1);
 	//	DrawDebugSphere(GetWorld(), GetActorLocation(), 300.f, 20, FColor::Purple, false, 10, 0, 1);
 		Destroy();

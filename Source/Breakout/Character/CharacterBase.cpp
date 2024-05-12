@@ -276,6 +276,10 @@ void ACharacterBase::SetResetState()
 	UpdateStaminaHUD();
 	CurWeapon->Destroy();
 	CurWeapon = nullptr;
+	//여기서 패킷
+	if (inst)
+		inst->m_Socket->Send_Remove_Weapon(inst->GetPlayerID(), true);
+
 }
 
 void ACharacterBase::SetWeapon(TSubclassOf<class AWeaponBase> Weapon, FName SocketName)
@@ -327,7 +331,9 @@ void ACharacterBase::PlayFireActionMontage()
 
 void ACharacterBase::GrandeThrow()
 {
-	PlayAnimMontage(GrenadeMontage, 1.f, FName("Fire"));
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+	Cast<UBOAnimInstance>(AnimInstance)->bUseLeftHand = false;
+	PlayAnimMontage(GrenadeMontage, 2.f, FName("Fire"));
 	CurWeapon->SetActorHiddenInGame(true);
 	//CurWeapon->SetActorHiddenInGame(true);
 	//UE_LOG(LogTemp, Log, TEXT("FIRE"));
@@ -348,6 +354,9 @@ void ACharacterBase::GrandeAim()
 }
 void ACharacterBase::GrandeThrowFinish()
 {
+
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+	Cast<UBOAnimInstance>(AnimInstance)->bUseLeftHand = true;
 	const USkeletalMeshSocket* WeaponSocket = GetMesh()->GetSocketByName(RightSocketName);
 
 	//CurWeapon->SetActorHiddenInGame(false);
@@ -409,7 +418,7 @@ void ACharacterBase::SetSpawnGrenade(TSubclassOf<AProjectileBase> Projectile)
 		FVector ToHitTarget = HitTarget - StartLocation;
 		FActorSpawnParameters SpawnParms;
 		SpawnParms.Owner = this;
-		//SpawnParms.Instigator = this;
+		SpawnParms.Instigator = this;
 		TObjectPtr<UWorld> World = GetWorld();
 		if (World)
 		{
@@ -437,33 +446,40 @@ void ACharacterBase::ReciveDamage(AActor* DamagedActor, float Damage, const UDam
 	
 	Health = FMath::Clamp(Health - Damage, 0.f, MaxHealth);
 	UpdateHpHUD();
-	ACharacterBase* DamageInsigatorCh= Cast<ACharacterBase>(DamageCauser);
-
+	ACharacterBase* DamageInsigatorCh= Cast<ACharacterBase>(InstigatorController->GetPawn());
 	if (Health <= 0.0f)
 	{
-		//서버
-		if (ObtainedEscapeToolNum > 0 && 10> ObtainedEscapeToolNum)
+		if (DamageInsigatorCh)
 		{
-			DamageInsigatorCh->SetEscapeToolNum(DamageInsigatorCh->ObtainedEscapeToolNum + 1);
-			ObtainedEscapeToolNum -= 1;
-			if (inst) {
-				Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Increase_item_count_packet(DamageInsigatorCh->_SessionId, DamageInsigatorCh->GetEscapeToolNum());
-				Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Increase_item_count_packet(inst->GetPlayerID(), ObtainedEscapeToolNum);
+			//서버
+			if (ObtainedEscapeToolNum > 0 && 10 > ObtainedEscapeToolNum)
+			{
+				DamageInsigatorCh->SetEscapeToolNum(DamageInsigatorCh->ObtainedEscapeToolNum + 1);
+				ObtainedEscapeToolNum -= 1;
+				if (inst) {
+					Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Increase_item_count_packet(DamageInsigatorCh->_SessionId, DamageInsigatorCh->GetEscapeToolNum());
+					Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Increase_item_count_packet(inst->GetPlayerID(), ObtainedEscapeToolNum);
+				}
+			}
+			else if (10 <= ObtainedEscapeToolNum)
+			{
+				DamageInsigatorCh->SetEscapeToolNum(DamageInsigatorCh->ObtainedEscapeToolNum + 4);
+				ObtainedEscapeToolNum -= 4;
+				if (inst) {
+					Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Increase_item_count_packet(DamageInsigatorCh->_SessionId, DamageInsigatorCh->GetEscapeToolNum());
+					Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Increase_item_count_packet(inst->GetPlayerID(), ObtainedEscapeToolNum);
+				}
 			}
 		}
-		else if ( 10 <= ObtainedEscapeToolNum)
-		{
-			DamageInsigatorCh->SetEscapeToolNum(DamageInsigatorCh->ObtainedEscapeToolNum + 4);
-			ObtainedEscapeToolNum -= 4;
-			if (inst)
-				Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Increase_item_count_packet(DamageInsigatorCh->_SessionId, DamageInsigatorCh->GetEscapeToolNum());
-		}
-		CurWeapon->CurAmmo = 0;
+		if(CurWeapon)
+			CurWeapon->CurAmmo = 0;
 		PlayAnimMontage(DeadMontage);
-		DisableInput(MainController);
 		GetWorld()->GetTimerManager().SetTimer(DeadTimer, this, &ACharacterBase::Dead, DeadTime, false);
-
+		if(MainController)
+			DisableInput(MainController);
 		UpdateObtainedEscapeTool();
+		if(MainController)//이거 죽었을때 다시 충돌 일어나서 애니메이션 재생되는거 막는용도
+			Health = 99999.f;
 	}
 }
 
@@ -474,11 +490,11 @@ void ACharacterBase::Dead()
 	//ABOGameMode* GameMode = GetWorld()->GetAuthGameMode<ABOGameMode>();
 	//if (GameMode)
 	//{
-	//	if (CurWeapon)
-	//	{
-	//		CurWeapon->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
-	//		CurWeapon->Destroy();
-	//	}
+	//if (CurWeapon)
+	//{
+	//	CurWeapon->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
+	//	CurWeapon->Destroy();
+	//}
 	//	GameMode->Respawn(this, MainController);
 	//}
 }
@@ -686,7 +702,7 @@ void ACharacterBase::Look(const FInputActionValue& Value)
 
 void ACharacterBase::Sprint_S(const FInputActionValue& Value)
 {
-	if (!StaminaExhaustionState)
+	if (!StaminaExhaustionState && CurWeapon)
 	{
 		CharacterState = ECharacterState::ECS_SPRINT;
 		//Movement->bOrientRotationToMovement = true;
@@ -877,7 +893,7 @@ void ACharacterBase::SelectTrap(const FInputActionValue& Value)
 
 void ACharacterBase::StartJump(const FInputActionValue& Value)
 {
-	if (CanJump)
+	if (CanJump && CurWeapon)
 		Super::Jump();
 
 	CanJump = false;
@@ -965,7 +981,7 @@ void ACharacterBase::Tick(float DeltaTime)
 	}
 
 
-	if (Cast<UBOGameInstance>(GetWorld()->GetGameInstance())->m_Socket->bAllReady == true && !bStarted)
+	if (/*Cast<UBOGameInstance>(GetWorld()->GetGameInstance())->m_Socket->bAllReady == true &&*/ !bStarted)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("StartGame"));
 		Cast<UBOGameInstance>(GetWorld()->GetGameInstance())->m_Socket->bAllReady = false;

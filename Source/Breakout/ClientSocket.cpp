@@ -308,6 +308,11 @@ bool ClientSocket::PacketProcess(char* ptr)
 		PlayerInfo.players[packet->id].itemAnimtype = packet->num;
 		break;
 	}
+	case SC_REMOVE_WEAPON: {
+		CS_REMOVE_WEAPON_PACKET* packet = reinterpret_cast<CS_REMOVE_WEAPON_PACKET*>(ptr);
+		PlayerInfo.players[packet->id].bGetWeapon = packet->bWeapon;
+		break;
+	}
 	default:
 		break;
 	}
@@ -552,6 +557,15 @@ void ClientSocket::Send_item_Anim_packet(int id, int num)
 	packet.num = num;
 	SendPacket(&packet);
 
+}
+void ClientSocket::Send_Remove_Weapon(int id, bool bWeapon)
+{
+	CS_REMOVE_WEAPON_PACKET packet;
+	packet.size = sizeof(packet);
+	packet.type = CS_REMOVE_WEAPON;
+	packet.id = id;
+	packet.bWeapon = bWeapon;
+	SendPacket(&packet);
 }
 bool ClientSocket::Init()
 {

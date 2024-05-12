@@ -23,5 +23,7 @@ protected:
 	(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent,
 		FVector NomalImpulse, const FHitResult& Hit);
 
-
+private:
+	void ReciveDamage(AActor* DamagedActor, float _Damage, const UDamageType* DamageType, class AController* InstigatorController, AActor* DamageCauser);
+	float Hp = 0.f;
 };

@@ -7,6 +7,7 @@
 #include "Operations/MeshBoolean.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Kismet/GameplayStatics.h"
+#include "Weapon/ProjectileBase.h"
 //using namespace UE::Geometry;
 
 ABulletHoleWall::ABulletHoleWall()
@@ -35,7 +36,12 @@ void ABulletHoleWall::BeginPlay()
 }
 void ABulletHoleWall::ReciveDamage(AActor* DamagedActor, float Damage, const UDamageType* DamageType, AController* InstigatorController, AActor* DamageCauser)
 {
+	//AProjectileBase* Causer = Cast<AProjectileBase>(DamageCauser);
+	//if (Causer)
+	//	Damage = 99999.f;
+
 	Hp -= Damage;
+
 	UE_LOG(LogTemp, Warning, TEXT("HP: %f"), Hp);
 	if (Hp <= 0.f && !bDestroyed)
 	{
@@ -88,6 +94,8 @@ void ABulletHoleWall::ReciveDamage(AActor* DamagedActor, float Damage, const UDa
 				);
 			}
 		}
+
+		Hp = 999999;
 	}
 }
 void ABulletHoleWall::Tick(float DeltaTime)
@@ -104,7 +112,7 @@ void ABulletHoleWall::SetBulletHole(const FVector SweepResult)
 	FTransform ATransform = ProceduralMesh->GetRelativeTransform();
 	FTransform BTransform;
 	BTransform.SetLocation(Sphere->GetRelativeTransform().GetLocation());
-	BTransform.SetRotation(GetActorRotation().Quaternion());
+	BTransform.SetRotation(ProceduralMesh->GetRelativeRotation().Quaternion());
 	BTransform.SetScale3D(FVector(60.f, 0.2f, 0.2f));
 
 	MeshDataA =MeshBoolean(MeshDataA, ATransform, SetRandomVertex(MeshDataB, -20.f, 20.f, 0.001), BTransform,true);

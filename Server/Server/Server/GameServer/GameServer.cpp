@@ -74,60 +74,6 @@ int main()
 	for (int i = 0; i < MAX_USER; ++i)
 		clients[i]._s_id = i;
 
-
-
-	for (int i = 0; i < MAX_OBJ; ++i) {
-		objects[i].ob_id = i;
-		//objects[i].setRandomPosition(gen, dis, disz); // 랜덤한 좌표 설정
-	}
-	objects[0].x = 1000.f;
-	objects[0].y = 1500.0f;
-	objects[0].z = 1500.f;
-
-	objects[1].x = 1090.f;
-	objects[1].y = 0.0f;
-	objects[1].z = -10.f;
-
-
-	objects[2].x = -1040.f;
-	objects[2].y = 1020.f;
-	objects[2].z = -130.f;
-
-	objects[3].x = -6030.f;
-	objects[3].y = 1380.f;
-	objects[3].z = 1290.f;
-
-	objects[4].x = -6380.f;
-	objects[4].y = 490.f;
-	objects[4].z = 120.f;
-
-	objects[5].x = -5770.f;
-	objects[5].y = 2160.f;
-	objects[5].z = 90.f;
-
-	objects[6].x = -180.f;
-	objects[6].y = -5550.f;
-	objects[6].z = 80.f;
-
-	objects[7].x = 1890.f;
-	objects[7].y = -5480.f;
-	objects[7].z = 80.f;
-
-	objects[8].x = 2310.f;
-	objects[8].y = -4180.f;
-	objects[8].z = 80.f;
-
-	objects[9].x = -5060.f;
-	objects[9].y = 2040.f;
-	objects[9].z = 1240.f;
-
-	objects[10].x = -7680.f;
-	objects[10].y = -2670.f;
-	objects[10].z = 0.f;
-	for (int i = 0; i < MAX_OBJ; i++) {
-		cout << "pos : " << objects[i].x << ", " << objects[i].z << endl;
-	}
-
 	g_timer = CreateEvent(NULL, FALSE, FALSE, NULL);
 	vector <thread> worker_threads;
 	thread servertherad{ ev_timer };
@@ -339,7 +285,7 @@ void process_packet(int s_id, char* p)
 		}
 		cout << "몇명 들어옴 : " << ingamecount << endl;
 
-		if (ingamecount >= 3)
+		if (ingamecount >= 2)
 		{
 			for (auto& player : clients) {
 				if (ST_INGAME != player._state)
@@ -379,7 +325,7 @@ void process_packet(int s_id, char* p)
 		CLIENT& cl = clients[packet->id];
 		cl.w_type = packet->weapon_type;
 		cl.selectweapon = packet->bselectwep;
-		cout << "무기 타입" << cl.w_type << endl;
+		cout << "플레이어 : " << cl._s_id << "무기 타입" << cl.w_type << endl;
 		for (auto& other : clients) {
 			if (other._s_id == cl._s_id) continue;
 			other.state_lock.lock();
@@ -744,7 +690,7 @@ void process_packet(int s_id, char* p)
 		CS_ITEM_INFO_PACKET* packet = reinterpret_cast<CS_ITEM_INFO_PACKET*> (p);
 		CLIENT& cl = clients[s_id];
 
-		send_item_packet(cl._s_id, packet->objid);
+		//send_item_packet(cl._s_id, packet->objid);
 		break;
 	}
 	case CS_RELOAD: {
@@ -785,6 +731,27 @@ void process_packet(int s_id, char* p)
 			packet.type = SC_ITEM_ANIM;
 			packet.id = cl._s_id;
 			packet.num = cl.itemAnimNum;
+			other.do_send(sizeof(packet), &packet);
+		}
+		break;
+	}
+	case CS_REMOVE_WEAPON: {
+		CS_REMOVE_WEAPON_PACKET* packet = reinterpret_cast<CS_REMOVE_WEAPON_PACKET*>(p);
+		CLIENT& cl = clients[packet->id];
+		cl.bGetWeapon = packet->bWeapon;
+		for (auto& other : clients) {
+			if (other._s_id == cl._s_id) continue;
+			other.state_lock.lock();
+			if (ST_INGAME != other._state) {
+				other.state_lock.unlock();
+				continue;
+			}
+			else other.state_lock.unlock();
+			CS_REMOVE_WEAPON_PACKET packet;
+			packet.size = sizeof(packet);
+			packet.type = SC_REMOVE_WEAPON;
+			packet.id = cl._s_id;
+			packet.bWeapon = cl.bGetWeapon;
 			other.do_send(sizeof(packet), &packet);
 		}
 		break;

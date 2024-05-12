@@ -91,6 +91,7 @@ public:
 	float VeloY = 0;
 	float VeloZ = 0;
 	float Max_Speed = 400;
+	bool  bGetWeapon = false;
 	bool  IsAlive = true;
 	bool  fired = false;
 	bool  sfired = false;
@@ -305,6 +306,7 @@ public:
 	void Send_Increase_item_count_packet(int id, int itemcount);
 	void Send_Reload_packet(int id, bool bReload);
 	void Send_item_Anim_packet(int id, int num);
+	void Send_Remove_Weapon(int id, bool bWeapon);
 	virtual bool Init() override;
 	virtual uint32 Run() override;
 	virtual void Stop() override;

@@ -31,7 +31,7 @@
 #include "../../Server/Server/Server/ServerCore/protocol.h"
 #include <string>
 #include "ClientSocket.h"
-
+#include"Animatiom/BOAnimInstance.h"
 
 ACharacterController::ACharacterController()
 {
@@ -282,6 +282,7 @@ void ACharacterController::showWeaponSelect()
 	if (MainHUD)
 	{
 		MainHUD->AddSelectWeapon();
+		//패킷 무기패킷 다시 보내기
 	}
 }
 
@@ -342,7 +343,8 @@ void ACharacterController::Tick(float DeltaTime)
 		//BaseCharacter->SetHealth(damaged);
 		damaged = 0;
 		//BaseCharacter->SetHealth(BaseCharacter->GetHealth());
-		SetHUDHealth(BaseCharacter->GetHealth(), BaseCharacter->MaxGetHealth());
+		if(BaseCharacter->GetHealth()<=9999)
+			SetHUDHealth(BaseCharacter->GetHealth(), BaseCharacter->MaxGetHealth());
 	}
 	if (MainHUD && inst->m_Socket->bAcquire) {
 		SetNum();
@@ -516,6 +518,12 @@ bool ACharacterController::UpdateWorld()
 			OtherPlayer->SetActorRotation(PlayerRotation);
 			OtherPlayer->SetActorLocation(PlayerLocation);
 			OtherPlayer->GetCharacterMovement()->MaxWalkSpeed = info->Max_Speed;
+			if (info->bGetWeapon == true)
+			{
+				OtherPlayer->CurWeapon->Destroy();
+				OtherPlayer->CurWeapon = nullptr;
+				info->bGetWeapon = false;
+			}
 
 			//히팅
 			if (OtherPlayer->GetCurWeapon() && info->hiteffect == true)
@@ -639,10 +647,10 @@ bool ACharacterController::UpdateWorld()
 				if (Cast<ACharacter3>(OtherPlayer)) {
 					ACharacter3* Niagaraplayer = Cast<ACharacter3>(OtherPlayer);
 					Niagaraplayer->GetMesh()->SetMaterial(0, Niagaraplayer->DynamicMaterial);
-					Niagaraplayer->DynamicMaterial->SetScalarParameterValue(FName("Alpha"), 0.f);
+					//Niagaraplayer->DynamicMaterial->SetScalarParameterValue(FName("Alpha"), 0.f);
 					Niagaraplayer->ServerGhostStart();
-					Niagaraplayer->DynamicMaterial->SetVectorParameterValue(FName("Loc"), Niagaraplayer->GetCapsuleComponent()->GetForwardVector() * -1.f);
-					Niagaraplayer->DynamicMaterial->SetScalarParameterValue(FName("Amount"), Niagaraplayer->GetCharacterMovement()->Velocity.Length() / 4);
+				/*	Niagaraplayer->DynamicMaterial->SetVectorParameterValue(FName("Loc"), Niagaraplayer->GetCapsuleComponent()->GetForwardVector() * -1.f);
+					Niagaraplayer->DynamicMaterial->SetScalarParameterValue(FName("Amount"), Niagaraplayer->GetCharacterMovement()->Velocity.Length() / 4);*/
 					info->skilltype = -1;
 				}
 			}
@@ -709,11 +717,15 @@ bool ACharacterController::UpdateWorld()
 			}
 			if (info->itemAnimtype == 0)
 			{
+				UAnimInstance* AnimInstance = OtherPlayer->GetMesh()->GetAnimInstance();
+				Cast<UBOAnimInstance>(AnimInstance)->bUseLeftHand = false;
 				OtherPlayer->PlayAnimMontage(SyncInterMontage);
 				info->itemAnimtype = -1;
 			}
 			else if (info->itemAnimtype == 1)
 			{
+				UAnimInstance* AnimInstance = OtherPlayer->GetMesh()->GetAnimInstance();
+				Cast<UBOAnimInstance>(AnimInstance)->bUseLeftHand = true;
 				OtherPlayer->StopAnimMontage(SyncInterMontage);
 				info->itemAnimtype = -1;
 			}

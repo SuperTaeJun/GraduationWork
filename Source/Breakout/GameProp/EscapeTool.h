@@ -22,6 +22,7 @@ public:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime);
 	virtual void Destroyed() override;
+	UFUNCTION(BlueprintCallable)
 	void TransformMesh(float DeltaTime, bool Clamp, bool TransformReverse);
 	void SetHideMesh();
 

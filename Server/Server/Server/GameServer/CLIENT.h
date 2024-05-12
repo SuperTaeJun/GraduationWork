@@ -27,13 +27,11 @@ public:
     float VY;
     float VZ;
     float Max_Speed;
-    int _max_hp; // 최대 체력
+
     int _hp; // 체력
     int damage;
-    int _atk; // 공격력
-    int _def;
     bool is_bone = false;
-
+    bool bGetWeapon = false;
     bool bCancel;
     bool bEndGame = false;
     WeaponType w_type;
@@ -63,10 +61,6 @@ public:
     float pitch2, yaw2, roll2;
     float pitch3, yaw3, roll3;
     float pitch4, yaw4, roll4;
-    float pitch5, yaw5, roll5;
-    float pitch6, yaw6, roll6;
-    float pitch7, yaw7, roll7;
-    float pitch8, yaw8, roll8;
     //-------------
     Overlap _recv_over;
     SOCKET  _socket;
