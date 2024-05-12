@@ -277,6 +277,9 @@ void ACharacterBase::SetResetState()
 	CurWeapon->Destroy();
 	CurWeapon = nullptr;
 	//여기서 패킷
+	if (inst)
+		inst->m_Socket->Send_Remove_Weapon(inst->GetPlayerID(), true);
+
 }
 
 void ACharacterBase::SetWeapon(TSubclassOf<class AWeaponBase> Weapon, FName SocketName)
