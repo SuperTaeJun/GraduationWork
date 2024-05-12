@@ -31,7 +31,7 @@
 #include "../../Server/Server/Server/ServerCore/protocol.h"
 #include <string>
 #include "ClientSocket.h"
-
+#include"Animatiom/BOAnimInstance.h"
 
 ACharacterController::ACharacterController()
 {
@@ -710,11 +710,15 @@ bool ACharacterController::UpdateWorld()
 			}
 			if (info->itemAnimtype == 0)
 			{
+				UAnimInstance* AnimInstance = OtherPlayer->GetMesh()->GetAnimInstance();
+				Cast<UBOAnimInstance>(AnimInstance)->bUseLeftHand = false;
 				OtherPlayer->PlayAnimMontage(SyncInterMontage);
 				info->itemAnimtype = -1;
 			}
 			else if (info->itemAnimtype == 1)
 			{
+				UAnimInstance* AnimInstance = OtherPlayer->GetMesh()->GetAnimInstance();
+				Cast<UBOAnimInstance>(AnimInstance)->bUseLeftHand = true;
 				OtherPlayer->StopAnimMontage(SyncInterMontage);
 				info->itemAnimtype = -1;
 			}

@@ -276,6 +276,7 @@ void ACharacterBase::SetResetState()
 	UpdateStaminaHUD();
 	CurWeapon->Destroy();
 	CurWeapon = nullptr;
+	//여기서 패킷
 }
 
 void ACharacterBase::SetWeapon(TSubclassOf<class AWeaponBase> Weapon, FName SocketName)
@@ -474,11 +475,11 @@ void ACharacterBase::Dead()
 	//ABOGameMode* GameMode = GetWorld()->GetAuthGameMode<ABOGameMode>();
 	//if (GameMode)
 	//{
-	//	if (CurWeapon)
-	//	{
-	//		CurWeapon->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
-	//		CurWeapon->Destroy();
-	//	}
+	//if (CurWeapon)
+	//{
+	//	CurWeapon->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
+	//	CurWeapon->Destroy();
+	//}
 	//	GameMode->Respawn(this, MainController);
 	//}
 }
@@ -965,7 +966,7 @@ void ACharacterBase::Tick(float DeltaTime)
 	}
 
 
-	if (Cast<UBOGameInstance>(GetWorld()->GetGameInstance())->m_Socket->bAllReady == true && !bStarted)
+	if (/*Cast<UBOGameInstance>(GetWorld()->GetGameInstance())->m_Socket->bAllReady == true &&*/ !bStarted)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("StartGame"));
 		Cast<UBOGameInstance>(GetWorld()->GetGameInstance())->m_Socket->bAllReady = false;
