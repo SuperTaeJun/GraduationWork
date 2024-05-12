@@ -112,7 +112,7 @@ void ABulletHoleWall::SetBulletHole(const FVector SweepResult)
 	FTransform ATransform = ProceduralMesh->GetRelativeTransform();
 	FTransform BTransform;
 	BTransform.SetLocation(Sphere->GetRelativeTransform().GetLocation());
-	BTransform.SetRotation(GetActorRotation().Quaternion());
+	BTransform.SetRotation(ProceduralMesh->GetRelativeRotation().Quaternion());
 	BTransform.SetScale3D(FVector(60.f, 0.2f, 0.2f));
 
 	MeshDataA =MeshBoolean(MeshDataA, ATransform, SetRandomVertex(MeshDataB, -20.f, 20.f, 0.001), BTransform,true);

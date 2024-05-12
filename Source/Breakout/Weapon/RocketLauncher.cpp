@@ -30,9 +30,11 @@ void ARocketLauncher::Fire(const FVector& HitTarget)
 			SpawnParameters.Instigator = InstigatorPawn;
 			SpawnParm = SpawnParameters;
 			UWorld* World = GetWorld();
+			AProjectileBase* Projectile = nullptr;
 			if (World)
 			{
-				World->SpawnActor<AProjectileBase>(ProjectileLancherClass, SocketTransform.GetLocation(), TargetRotation, SpawnParameters);
+				Projectile=World->SpawnActor<AProjectileBase>(ProjectileLancherClass, SocketTransform.GetLocation(), TargetRotation, SpawnParameters);
+				Projectile->SetOwner(GetOwner());
 				if (Cast<UBOGameInstance>(GetGameInstance()))
 					Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Fire_Effect(Cast<ACharacterBase>(GetOwner())->_SessionId, SocketTransform.GetLocation(), TargetRotation, 1);
 			}

@@ -343,7 +343,8 @@ void ACharacterController::Tick(float DeltaTime)
 		//BaseCharacter->SetHealth(damaged);
 		damaged = 0;
 		//BaseCharacter->SetHealth(BaseCharacter->GetHealth());
-		SetHUDHealth(BaseCharacter->GetHealth(), BaseCharacter->MaxGetHealth());
+		if(BaseCharacter->GetHealth()<=9999)
+			SetHUDHealth(BaseCharacter->GetHealth(), BaseCharacter->MaxGetHealth());
 	}
 	if (MainHUD && inst->m_Socket->bAcquire) {
 		SetNum();

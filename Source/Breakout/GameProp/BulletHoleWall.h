@@ -46,6 +46,7 @@ protected:
 	FMeshData SculptureData;
 	FVector HitLoc;
 	FVector HitNomal;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FVector DirWorld;
 
 private:
