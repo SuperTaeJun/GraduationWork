@@ -88,6 +88,8 @@ void ABulletHoleWall::ReciveDamage(AActor* DamagedActor, float Damage, const UDa
 				);
 			}
 		}
+
+		Hp = 999999;
 	}
 }
 void ABulletHoleWall::Tick(float DeltaTime)

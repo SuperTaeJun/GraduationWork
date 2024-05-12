@@ -328,6 +328,8 @@ void ACharacterBase::PlayFireActionMontage()
 
 void ACharacterBase::GrandeThrow()
 {
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+	Cast<UBOAnimInstance>(AnimInstance)->bUseLeftHand = false;
 	PlayAnimMontage(GrenadeMontage, 1.f, FName("Fire"));
 	CurWeapon->SetActorHiddenInGame(true);
 	//CurWeapon->SetActorHiddenInGame(true);
@@ -349,6 +351,9 @@ void ACharacterBase::GrandeAim()
 }
 void ACharacterBase::GrandeThrowFinish()
 {
+
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+	Cast<UBOAnimInstance>(AnimInstance)->bUseLeftHand = true;
 	const USkeletalMeshSocket* WeaponSocket = GetMesh()->GetSocketByName(RightSocketName);
 
 	//CurWeapon->SetActorHiddenInGame(false);
