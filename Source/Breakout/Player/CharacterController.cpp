@@ -282,6 +282,7 @@ void ACharacterController::showWeaponSelect()
 	if (MainHUD)
 	{
 		MainHUD->AddSelectWeapon();
+		//패킷 무기패킷 다시 보내기
 	}
 }
 

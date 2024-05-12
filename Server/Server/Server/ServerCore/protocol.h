@@ -46,6 +46,7 @@ const char CS_INCREASE_COUNT = 20;
 const char CS_ITEM_INFO = 21;
 const char CS_RELOAD = 22;
 const char CS_ITEM_ANIM = 23;
+const char CS_REMOVE_WEAPON = 24;
 
 const char SC_LOGIN_OK = 1;
 const char SC_OTHER_PLAYER = 2;
@@ -71,7 +72,7 @@ const char SC_MYITEM_COUNT = 21;
 const char SC_INCREASE_COUNT = 22;
 const char SC_RELOAD = 23;
 const char SC_ITEM_ANIM = 24;
-
+const char SC_REMOVE_WEAPON = 25;
 
 #pragma pack (push, 1)
 struct CS_LOGIN_PACKET
@@ -332,6 +333,12 @@ struct CS_ITEM_ANIM_PACKET {
 	unsigned char type;
 	int id;
 	int num;
+};
+struct CS_REMOVE_WEAPON_PACKET {
+	unsigned char size;
+	unsigned char type;
+	int id;
+	bool bWeapon;
 };
 #pragma pack(pop)
 

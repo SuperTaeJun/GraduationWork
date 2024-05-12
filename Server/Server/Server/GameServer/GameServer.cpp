@@ -339,7 +339,7 @@ void process_packet(int s_id, char* p)
 		}
 		cout << "몇명 들어옴 : " << ingamecount << endl;
 
-		if (ingamecount >= 3)
+		if (ingamecount >= 2)
 		{
 			for (auto& player : clients) {
 				if (ST_INGAME != player._state)
@@ -785,6 +785,27 @@ void process_packet(int s_id, char* p)
 			packet.type = SC_ITEM_ANIM;
 			packet.id = cl._s_id;
 			packet.num = cl.itemAnimNum;
+			other.do_send(sizeof(packet), &packet);
+		}
+		break;
+	}
+	case CS_REMOVE_WEAPON: {
+		CS_REMOVE_WEAPON_PACKET* packet = reinterpret_cast<CS_REMOVE_WEAPON_PACKET*>(p);
+		CLIENT& cl = clients[packet->id];
+		cl.bGetWeapon = packet->bWeapon;
+		for (auto& other : clients) {
+			if (other._s_id == cl._s_id) continue;
+			other.state_lock.lock();
+			if (ST_INGAME != other._state) {
+				other.state_lock.unlock();
+				continue;
+			}
+			else other.state_lock.unlock();
+			CS_REMOVE_WEAPON_PACKET packet;
+			packet.size = sizeof(packet);
+			packet.type = SC_REMOVE_WEAPON;
+			packet.id = cl._s_id;
+			packet.bWeapon = cl.bGetWeapon;
 			other.do_send(sizeof(packet), &packet);
 		}
 		break;
