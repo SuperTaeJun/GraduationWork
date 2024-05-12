@@ -646,7 +646,8 @@ bool ACharacterController::UpdateWorld()
 			{
 				if (Cast<ACharacter3>(OtherPlayer)) {
 					ACharacter3* Niagaraplayer = Cast<ACharacter3>(OtherPlayer);
-					Niagaraplayer->GetMesh()->SetMaterial(0, Niagaraplayer->DynamicMaterial);
+					if(Niagaraplayer->DynamicMaterial)
+						Niagaraplayer->GetMesh()->SetMaterial(0, Niagaraplayer->DynamicMaterial);
 					//Niagaraplayer->DynamicMaterial->SetScalarParameterValue(FName("Alpha"), 0.f);
 					Niagaraplayer->ServerGhostStart();
 				/*	Niagaraplayer->DynamicMaterial->SetVectorParameterValue(FName("Loc"), Niagaraplayer->GetCapsuleComponent()->GetForwardVector() * -1.f);

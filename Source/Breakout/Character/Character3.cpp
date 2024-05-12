@@ -159,7 +159,7 @@ void ACharacter3::GhostEnd()
 void ACharacter3::ServerGhostStart()
 {
 	bGhost = true;
-	GetCapsuleComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Visibility, ECollisionResponse::ECR_Ignore);
+	GetCapsuleComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_WorldDynamic, ECollisionResponse::ECR_Ignore);
 	MovementComp->MaxWalkSpeed = 1500;
 	MovementComp->MaxAcceleration = 10000000.f;
 	NiagaraComp->Activate();
@@ -178,7 +178,7 @@ void ACharacter3::ServerGhostEnd()
 {
 	if (bGhost)
 	{
-		GetCapsuleComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Visibility, ECollisionResponse::ECR_Block);
+		GetCapsuleComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_WorldDynamic, ECollisionResponse::ECR_Block);
 		MovementComp->MaxWalkSpeed = OldMaxWalkSpeed;
 		MovementComp->MaxAcceleration = OldMaxAcceleration;
 		NiagaraComp->Deactivate();
