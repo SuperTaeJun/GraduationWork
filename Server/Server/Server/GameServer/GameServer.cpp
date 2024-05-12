@@ -35,6 +35,7 @@ void send_put_object(int _s_id, int target);
 void Disconnect(int _s_id);
 void send_ready_packet(int _s_id);
 void send_endgame_packet(int _s_id);
+void send_myitem_count_packet(int _s_id);
 void send_item_packet(int _s_id, int item_index);
 void send_myitem_packet(int _s_id);
 void worker_thread();
@@ -668,6 +669,30 @@ void process_packet(int s_id, char* p)
 		CS_INCREASE_ITEM_PACKET* packet = reinterpret_cast<CS_INCREASE_ITEM_PACKET*>(p);
 		CLIENT& cl = clients[packet->Increaseid];
 		cl.myItemCount = packet->itemCount;
+		send_myitem_count_packet(cl._s_id);
+
+		for (auto& other : clients) {
+			if (other._s_id == cl._s_id) continue;
+			other.state_lock.lock();
+			if (ST_INGAME != other._state) {
+				other.state_lock.unlock();
+				continue;
+			}
+			else other.state_lock.unlock();
+			CS_INCREASE_ITEM_PACKET packet;
+			packet.Increaseid = cl._s_id;
+			strcpy_s(packet.cid, cl.name);
+			packet.itemCount = cl.myItemCount;
+			packet.size = sizeof(packet);
+			packet.type = SC_INCREASE_COUNT;
+			other.do_send(sizeof(packet), &packet);
+		}
+		break;
+	}
+	case CS_DECREASE_COUNT: {
+		CS_INCREASE_ITEM_PACKET* packet = reinterpret_cast<CS_INCREASE_ITEM_PACKET*>(p);
+		CLIENT& cl = clients[packet->Increaseid];
+		cl.myItemCount = packet->itemCount;
 		for (auto& other : clients) {
 			if (other._s_id == cl._s_id) continue;
 			other.state_lock.lock();
@@ -914,6 +939,15 @@ void send_myitem_packet(int _s_id)
 	SC_MY_ITEM_COUNT packet;
 	packet.size = sizeof(packet);
 	packet.type = SC_MYITEM_COUNT;
+	packet.id = _s_id;
+	packet.MyITEMCount = clients[_s_id].myItemCount;
+	clients[_s_id].do_send(sizeof(packet), &packet);
+}
+void send_myitem_count_packet(int _s_id)
+{
+	SC_MYNEW_ITEM_COUNT packet;
+	packet.size = sizeof(packet);
+	packet.type = SC_MYNEW_COUNT;
 	packet.id = _s_id;
 	packet.MyITEMCount = clients[_s_id].myItemCount;
 	clients[_s_id].do_send(sizeof(packet), &packet);

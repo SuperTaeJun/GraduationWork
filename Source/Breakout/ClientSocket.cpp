@@ -313,6 +313,11 @@ bool ClientSocket::PacketProcess(char* ptr)
 		PlayerInfo.players[packet->id].bGetWeapon = packet->bWeapon;
 		break;
 	}
+	case SC_MYNEW_COUNT: {
+		SC_MYNEW_ITEM_COUNT* packet = reinterpret_cast<SC_MYNEW_ITEM_COUNT*>(ptr);
+		UE_LOG(LogTemp, Warning, TEXT("packet->mynewcount  : %d"), packet->MyITEMCount);
+		break;
+	}
 	default:
 		break;
 	}
@@ -535,6 +540,15 @@ void ClientSocket::Send_Increase_item_count_packet(int id, int itemcount)
 	CS_INCREASE_ITEM_PACKET packet;
 	packet.size = sizeof(packet);
 	packet.type = CS_INCREASE_COUNT;
+	packet.Increaseid = id;
+	packet.itemCount = itemcount;
+	SendPacket(&packet);
+}
+void ClientSocket::Send_Decrease_item_count_packet(int id, int itemcount)
+{
+	CS_INCREASE_ITEM_PACKET packet;
+	packet.size = sizeof(packet);
+	packet.type = CS_DECREASE_COUNT;
 	packet.Increaseid = id;
 	packet.itemCount = itemcount;
 	SendPacket(&packet);

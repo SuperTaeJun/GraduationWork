@@ -1,6 +1,6 @@
 #pragma once
 #define SERVER_PORT		8001
-#define SERVER_IP		"127.0.0.1"
+#define SERVER_IP		"192.168.219.102"
 #define MAX_INFO_SIZE   20
 #include <vector>
 #include <array>
@@ -47,6 +47,7 @@ const char CS_ITEM_INFO = 21;
 const char CS_RELOAD = 22;
 const char CS_ITEM_ANIM = 23;
 const char CS_REMOVE_WEAPON = 24;
+const char CS_DECREASE_COUNT = 25;
 
 const char SC_LOGIN_OK = 1;
 const char SC_OTHER_PLAYER = 2;
@@ -73,6 +74,7 @@ const char SC_INCREASE_COUNT = 22;
 const char SC_RELOAD = 23;
 const char SC_ITEM_ANIM = 24;
 const char SC_REMOVE_WEAPON = 25;
+const char SC_MYNEW_COUNT = 26;
 
 #pragma pack (push, 1)
 struct CS_LOGIN_PACKET
@@ -340,99 +342,10 @@ struct CS_REMOVE_WEAPON_PACKET {
 	int id;
 	bool bWeapon;
 };
+struct SC_MYNEW_ITEM_COUNT {
+	unsigned char size;
+	unsigned char type;
+	int id;
+	int MyITEMCount;
+};
 #pragma pack(pop)
-
-
-
-
-
-
-
-
-//
-//struct cs_packet_start { // 게임 레디 요청
-//	unsigned char size;
-//	char	type;
-//	bool	ready;
-//};
-//struct sc_packet_ready { // 타 플레이어 레디
-//	unsigned char size;
-//	char	type;
-//	char	name[MAX_NAME_SIZE];
-//};
-//
-//struct sc_packet_start_ok { // 스폰
-//	unsigned char size;
-//	char type;
-//	char	name[MAX_NAME_SIZE];
-//	float x, y, z;
-//	char image_num;
-//};
-//
-//struct cs_packet_attack {
-//	unsigned char size;
-//	char	type;
-//	int s_id;
-//};
-//
-//struct cs_packet_damage {
-//	unsigned char size;
-//	char	type;
-//};
-//
-//struct cs_packet_get_item {
-//	unsigned char size;
-//	char	type;
-//	int s_id;
-//	char    item_num;
-//};
-//
-//struct cs_packet_chat {
-//	unsigned char size;
-//	char	type;
-//	int s_id;
-//	float x, y, z;
-//	char	message[MAX_CHAT_SIZE];
-//};
-//
-//struct cs_packet_teleport {
-//	// 서버에서 장애물이 없는 랜덤 좌표로 텔레포트 시킨다.
-//	// 더미 클라이언트에서 동접 테스트용으로 사용.
-//	unsigned char size;
-//	char	type;
-//};
-//
-//struct sc_packet_remove_object {
-//	unsigned char size;
-//	char type;
-//	int id;
-//};
-//
-//struct sc_packet_chat {
-//	unsigned char size;
-//	char type;
-//	int id;
-//	char message[MAX_CHAT_SIZE];
-//};
-//
-//struct sc_packet_login_fail {
-//	unsigned char size;
-//	char type;
-//	int	 reason;		// 0: 중복 ID,  1:사용자 Full
-//};
-//
-//struct sc_packet_status_change {
-//	unsigned char size;
-//	char type;
-//	short   state;
-//	short	hp, maxhp;
-//	bool ice[4]; // 사지분해
-//};
-//
-//
-//struct sc_packet_hp_change {
-//	unsigned char size;
-//	char type;
-//	int target;
-//	int	hp;
-//};
