@@ -350,6 +350,11 @@ void ACharacterController::Tick(float DeltaTime)
 		SetNum();
 		inst->m_Socket->bAcquire = false;
 	}
+	if (MainHUD && inst->m_Socket->itemflag) {
+		BaseCharacter->SetEscapeToolNum(inst->m_Socket->MyItemCount);
+		BaseCharacter->UpdateObtainedEscapeTool();
+		inst->m_Socket->itemflag = false;
+	}
 	
 }
 

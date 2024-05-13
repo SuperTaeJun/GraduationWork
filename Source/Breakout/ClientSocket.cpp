@@ -316,6 +316,8 @@ bool ClientSocket::PacketProcess(char* ptr)
 	case SC_MYNEW_COUNT: {
 		SC_MYNEW_ITEM_COUNT* packet = reinterpret_cast<SC_MYNEW_ITEM_COUNT*>(ptr);
 		UE_LOG(LogTemp, Warning, TEXT("packet->mynewcount  : %d"), packet->MyITEMCount);
+		MyItemCount = packet->MyITEMCount;
+		itemflag = true;
 		break;
 	}
 	default:

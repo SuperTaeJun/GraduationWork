@@ -28,7 +28,7 @@ public:
 	FORCEINLINE float GetAO_Yaw() const { return AO_Yaw; }
 	FORCEINLINE float GetAO_Pitch() const { return AO_Pitch; }
 	class AWeaponBase* GetCurWeapon() const { return CurWeapon; }
-
+	void UpdateObtainedEscapeTool();
 	/*float GetAO_Yaw();
 	float GetAO_Pitch();*/
 	int		_SessionId;
@@ -42,7 +42,7 @@ protected:
 	void SetHUDCrosshair(float DeltaTime);
 	void UpdateHpHUD();
 	void UpdateStaminaHUD();
-	void UpdateObtainedEscapeTool();
+	//void UpdateObtainedEscapeTool();
 
 	//캐릭터 상태
 	UPROPERTY(EditAnywhere, Category = "Player Stats")

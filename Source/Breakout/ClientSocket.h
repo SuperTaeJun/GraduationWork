@@ -334,6 +334,8 @@ public:
 	int local_id = -1;
 	bool login_cond = false;
 	bool bAllReady = false;
+	bool itemflag = false;
+	int MyItemCount;
 	std::queue<std::shared_ptr<CItem>> ItemQueue;
 	queue<FString>Tempname;
 	int tempid;
