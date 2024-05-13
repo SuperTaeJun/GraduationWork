@@ -1,10 +1,10 @@
 #pragma once
 #define SERVER_PORT		8001
-#define SERVER_IP		"192.168.219.102"
+#define SERVER_IP		"192.168.213.28"
 #define MAX_INFO_SIZE   20
 #include <vector>
 #include <array>
-//const char CS_PACKET_ATTACK = 3;
+
 enum PlayerType
 {
 	Character1,
