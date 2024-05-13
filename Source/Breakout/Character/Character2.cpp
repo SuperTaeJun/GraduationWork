@@ -167,8 +167,10 @@ void ACharacter2::ServerNiagaraSync()
 		//bDash = true;
 		//DashStart();
 		//GetCamera()->bCameraMeshHiddenInGame = true;
-		GetMesh()->SetVisibility(false);
-		GetCurWeapon()->GetWeaponMesh()->SetVisibility(false);
+		GetMesh()->SetVisibility(true, true);
+		CurWeapon->GetWeaponMesh()->SetVisibility(false);
+		//GetMesh()->SetVisibility(false);
+		//GetCurWeapon()->GetWeaponMesh()->SetVisibility(false);
 
 		GetWorld()->GetTimerManager().SetTimer(DashTimer, this, &ACharacter2::ServerDashFinish, 0.2, false);
 
