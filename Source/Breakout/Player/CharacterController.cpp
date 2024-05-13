@@ -650,7 +650,7 @@ bool ACharacterController::UpdateWorld()
 			else if (info->p_type == PlayerType::Character2 &&info->bFinishSkill) 
 			{
 				ACharacter2* Niagaraplayer = Cast<ACharacter2>(OtherPlayer);
-				Niagaraplayer->GetMesh()->SetVisibility(true, true);
+				Niagaraplayer->GetMesh()->SetVisibility(false, false);
 				Niagaraplayer->GetCurWeapon()->GetWeaponMesh()->SetVisibility(true);
 				//Niagaraplayer->GetMesh()->SetVisibility(true);
 				//Niagaraplayer->GetCurWeapon()->GetWeaponMesh()->SetVisibility(true);
