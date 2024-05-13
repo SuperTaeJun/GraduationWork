@@ -320,6 +320,12 @@ bool ClientSocket::PacketProcess(char* ptr)
 		itemflag = true;
 		break;
 	}
+	case SC_CH2_SKILL: {
+		SC_CH2_SKILL_PACKET* packet = reinterpret_cast<SC_CH2_SKILL_PACKET*>(ptr);
+		PlayerInfo.players[packet->id].p_type = packet->p_type;
+		PlayerInfo.players[packet->id].bFinishSkill = packet->bfinish;
+		break;
+	}
 	default:
 		break;
 	}

@@ -76,7 +76,7 @@ const char SC_RELOAD = 23;
 const char SC_ITEM_ANIM = 24;
 const char SC_REMOVE_WEAPON = 25;
 const char SC_MYNEW_COUNT = 26;
-const char CS_CH2_SKILL = 27;
+const char SC_CH2_SKILL = 27;
 
 #pragma pack (push, 1)
 struct CS_LOGIN_PACKET

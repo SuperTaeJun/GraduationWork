@@ -104,6 +104,7 @@ public:
 	bool  bEndGame = false;
 	bool  bStopAnim = false;
 	bool  bServerReload = false;
+	bool  bFinishSkill = false;
 	// 나이아가라 슛 이팩트
 	FVector Sshot;
 	FVector Eshot;

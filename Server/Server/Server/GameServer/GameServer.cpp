@@ -781,6 +781,29 @@ void process_packet(int s_id, char* p)
 		}
 		break;
 	}
+	case CS_CH2_SKILL: {
+		SC_CH2_SKILL_PACKET* packet = reinterpret_cast<SC_CH2_SKILL_PACKET*>(p);
+		CLIENT& cl = clients[packet->id];
+		cl.p_type = packet->p_type;
+		
+		for (auto& other : clients) {
+			if (other._s_id == cl._s_id) continue;
+			other.state_lock.lock();
+			if (ST_INGAME != other._state) {
+				other.state_lock.unlock();
+				continue;
+			}
+			else other.state_lock.unlock();
+			SC_CH2_SKILL_PACKET packet;
+			packet.size = sizeof(packet);
+			packet.type = SC_CH2_SKILL;
+			packet.id = cl._s_id;
+			packet.p_type = cl.p_type;
+			packet.bfinish = true;
+			other.do_send(sizeof(packet), &packet);
+		}
+		break;
+	}
 	default:
 		cout << " 오류패킷타입 : " << p << endl;
 		break;
