@@ -308,6 +308,7 @@ public:
 	void Send_Reload_packet(int id, bool bReload);
 	void Send_item_Anim_packet(int id, int num);
 	void Send_Remove_Weapon(int id, bool bWeapon);
+	void Send_CH2_SKILL_PACKET(int id, PlayerType type, bool bSkill);
 	virtual bool Init() override;
 	virtual uint32 Run() override;
 	virtual void Stop() override;

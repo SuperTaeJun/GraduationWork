@@ -175,9 +175,11 @@ void ACharacter2::ServerNiagaraSync()
 
 void ACharacter2::ServerDashFinish()
 {
-	MovementComp->MaxAcceleration = OldMaxAcceleration;
+	if (inst)
+		Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_CH2_SKILL_PACKET(_SessionId, PlayerType::Character2, true);
+	/*MovementComp->MaxAcceleration = OldMaxAcceleration;
 	MovementComp->MaxWalkSpeed = OldMaxWalkSpeed;
 	MovementComp->RotationRate = OldRotationRate;
-	GetMesh()->SetHiddenInGame(false, false);
+	GetMesh()->SetHiddenInGame(false, false);*/
 
 }

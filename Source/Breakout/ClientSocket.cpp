@@ -583,6 +583,16 @@ void ClientSocket::Send_Remove_Weapon(int id, bool bWeapon)
 	packet.bWeapon = bWeapon;
 	SendPacket(&packet);
 }
+void ClientSocket::Send_CH2_SKILL_PACKET(int id, PlayerType type, bool bSkill)
+{
+	SC_CH2_SKILL_PACKET packet;
+	packet.size = sizeof(packet);
+	packet.type = CS_CH2_SKILL;
+	packet.id = id;
+	packet.p_type = type;
+	packet.bfinish = bSkill;
+	SendPacket(&packet);
+}
 bool ClientSocket::Init()
 {
 	//UE_LOG(LogTemp, Warning, TEXT("Thread has been initialized"));
