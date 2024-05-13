@@ -647,15 +647,15 @@ bool ACharacterController::UpdateWorld()
 					info->skilltype = -1;
 				}
 			}
-			else if (info->p_type == PlayerType::Character2 &&info->bFinishSkill) 
-			{
-				ACharacter2* Niagaraplayer = Cast<ACharacter2>(OtherPlayer);
-				Niagaraplayer->GetMesh()->SetVisibility(false, false);
-				Niagaraplayer->GetCurWeapon()->GetWeaponMesh()->SetVisibility(true);
-				//Niagaraplayer->GetMesh()->SetVisibility(true);
-				//Niagaraplayer->GetCurWeapon()->GetWeaponMesh()->SetVisibility(true);
-				info->bFinishSkill = false;
-			}
+			//else if (info->p_type == PlayerType::Character2 &&info->bFinishSkill) 
+			//{
+			//	ACharacter2* Niagaraplayer = Cast<ACharacter2>(OtherPlayer);
+			//	Niagaraplayer->GetMesh()->SetVisibility(false, false);
+			//	Niagaraplayer->GetCurWeapon()->GetWeaponMesh()->SetVisibility(true);
+			//	//Niagaraplayer->GetMesh()->SetVisibility(true);
+			//	//Niagaraplayer->GetCurWeapon()->GetWeaponMesh()->SetVisibility(true);
+			//	info->bFinishSkill = false;
+			//}
 			else if (info->p_type == PlayerType::Character3 && info->skilltype == 0)
 			{
 				if (Cast<ACharacter3>(OtherPlayer)) {

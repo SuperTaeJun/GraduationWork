@@ -167,8 +167,8 @@ void ACharacter2::ServerNiagaraSync()
 		//bDash = true;
 		//DashStart();
 		//GetCamera()->bCameraMeshHiddenInGame = true;
-		GetMesh()->SetVisibility(true, true);
-		CurWeapon->GetWeaponMesh()->SetVisibility(false);
+		//GetMesh()->SetVisibility(true, true);
+		//CurWeapon->GetWeaponMesh()->SetVisibility(false);
 		//GetMesh()->SetVisibility(false);
 		//GetCurWeapon()->GetWeaponMesh()->SetVisibility(false);
 
@@ -183,9 +183,9 @@ void ACharacter2::ServerDashFinish()
 {
 	if (inst)
 		Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_CH2_SKILL_PACKET(_SessionId, PlayerType::Character2, true);
-	/*MovementComp->MaxAcceleration = OldMaxAcceleration;
+	MovementComp->MaxAcceleration = OldMaxAcceleration;
 	MovementComp->MaxWalkSpeed = OldMaxWalkSpeed;
 	MovementComp->RotationRate = OldRotationRate;
-	GetMesh()->SetHiddenInGame(false, false);*/
+	GetMesh()->SetHiddenInGame(false, false);
 
 }
