@@ -647,6 +647,13 @@ bool ACharacterController::UpdateWorld()
 					info->skilltype = -1;
 				}
 			}
+			else if (info->p_type == PlayerType::Character2 &&info->bFinishSkill) 
+			{
+				ACharacter2* Niagaraplayer = Cast<ACharacter2>(OtherPlayer);
+				Niagaraplayer->GetMesh()->SetVisibility(true);
+				Niagaraplayer->GetCurWeapon()->GetWeaponMesh()->SetVisibility(true);
+				info->bFinishSkill = false;
+			}
 			else if (info->p_type == PlayerType::Character3 && info->skilltype == 0)
 			{
 				if (Cast<ACharacter3>(OtherPlayer)) {
@@ -689,7 +696,7 @@ bool ACharacterController::UpdateWorld()
 					Niagaraplayer->GetMesh()->SetVisibility(false, false);
 					Niagaraplayer->GetCurWeapon()->GetWeaponMesh()->SetVisibility(false);
 					info->skilltype = -1;
-					Cast<ASkill4Actor>(ServerTemp)->bTimerStart = true;
+					//Cast<ASkill4Actor>(ServerTemp)->bTimerStart = true;
 				}
 			}
 			if(info->p_type == PlayerType::Character4 && info->skilltype == 2){
@@ -701,6 +708,8 @@ bool ACharacterController::UpdateWorld()
 				bool Test = Niagaraplayer->GetMesh()->IsVisible();
 				UE_LOG(LogTemp, Warning, TEXT("hahah : %d"), Test);
 				info->skilltype = -1;
+				if (ServerTemp)
+					ServerTemp->Destroy();
 			}
 			/*UE_LOG(LogTemp, Warning, TEXT("otherplayer hp : %f"), OtherPlayer->GetHealth());*/
 			UE_LOG(LogTemp, Warning, TEXT("my hp : %f"), Cast<ACharacterBase>(GetPawn())->GetHealth());

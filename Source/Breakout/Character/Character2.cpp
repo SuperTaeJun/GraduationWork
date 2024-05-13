@@ -14,6 +14,7 @@
 #include "../../Server/Server/Server/ServerCore/protocol.h"
 #include "EnhancedInputSubsystems.h"
 #include "Camera/CameraComponent.h"
+#include "Weapon/WeaponBase.h"
 ACharacter2::ACharacter2()
 {
 	FXroc = CreateDefaultSubobject<UArrowComponent>(TEXT("FXroc"));
@@ -166,6 +167,9 @@ void ACharacter2::ServerNiagaraSync()
 		//bDash = true;
 		//DashStart();
 		//GetCamera()->bCameraMeshHiddenInGame = true;
+		GetMesh()->SetVisibility(false);
+		GetCurWeapon()->GetWeaponMesh()->SetVisibility(false);
+
 		GetWorld()->GetTimerManager().SetTimer(DashTimer, this, &ACharacter2::ServerDashFinish, 0.2, false);
 
 		//스킬 패킷
