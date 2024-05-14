@@ -118,6 +118,7 @@ protected:
 	FVector CustomLerp(FVector& A, FVector& B, float& Alpha);
 
 	FVector WaveCustomLerp(FVector& A, FVector& B, float& Alpha, float Amplitude, float Frequency);
+	FVector SpiralCustomLerp(FVector& A, FVector& B, float& Alpha, float SpiralTurns, float Radius);
 	//float Amplitude = 20.0f;
 	//float Frequency = 3.0f;
 };
