@@ -3,7 +3,7 @@
 #include "GameProp/PropBase.h"
 #include "ProceduralMeshComponent.h"
 #include "Components/SphereComponent.h"
-
+#include "Kismet/KismetMathLibrary.h"
 APropBase::APropBase()
 {
 	PrimaryActorTick.bCanEverTick = true;
@@ -139,7 +139,14 @@ void APropBase::InterpMeshData(FMeshData& Data, FMeshData& DataA, FMeshData& Dat
 		{
 			y = (y % bl) / 3; 
 		}
-		Data.Verts[x] = FMath::Lerp(DataA.Verts[x], DataB.Verts[y], Alpha);
+		//기본버전
+		//Data.Verts[x] = FMath::Lerp(DataA.Verts[x], DataB.Verts[y], Alpha);
+		//버전2
+		//Data.Verts[x] = CustomLerp(DataA.Verts[x], DataB.Verts[y], Alpha);
+		//버전3
+		//Data.Verts[x] = WaveCustomLerp(DataA.Verts[x], DataB.Verts[y], Alpha,20.f,3.f);
+		//버전4
+		Data.Verts[x] = SpiralCustomLerp(DataA.Verts[x], DataB.Verts[y], Alpha, 3.f, 20.f);
 		if (hasNormals) 
 		{
 			Data.Normals[x] = FMath::Lerp(DataA.Normals[x], DataB.Normals[y], Alpha);
@@ -234,6 +241,59 @@ void APropBase::SetColorData(UPARAM(ref) FMeshData& Data, FLinearColor Color)
 	{
 		Data.Colors[x] = Color;
 	}
+}
+
+FVector APropBase::CustomLerp(FVector& A, FVector& B, float& Alpha)
+{
+	FVector PointA = A.GetSafeNormal();
+	FVector PointB = B.GetSafeNormal();
+
+	FQuat QuatA = FQuat::FindBetweenNormals(FVector::ForwardVector, PointA);
+	FQuat QuatB = FQuat::FindBetweenNormals(FVector::ForwardVector, PointB);
+
+	FQuat InterpolatedQuat = FQuat::Slerp(QuatA, QuatB, Alpha);
+	FVector InterpolatedPoint = InterpolatedQuat.GetRotationAxis();
+
+	FVector SlerpedVector = InterpolatedQuat.RotateVector(FVector::ForwardVector);
+	float Length = FMath::Lerp(A.Size(), B.Size(), Alpha);
+
+
+	return SlerpedVector * Length;
+}
+
+FVector APropBase::WaveCustomLerp(FVector& A, FVector& B, float& Alpha, float Amplitude, float Frequency)
+{
+	FVector LinearInterpolatedPoint = FMath::Lerp(A, B, Alpha);
+
+	FVector Direction = (A - B).GetSafeNormal();
+
+	FVector OrthogonalVector = FVector::CrossProduct(Direction, FVector::LeftVector).GetSafeNormal();
+
+	float WaveOffset = FMath::Sin(Alpha * Frequency * 2.0f * PI) * Amplitude;
+
+	FVector WaveInterpolatedPoint = LinearInterpolatedPoint + (OrthogonalVector * WaveOffset);
+
+	return WaveInterpolatedPoint;
+
+
+}
+
+FVector APropBase::SpiralCustomLerp(FVector& A, FVector& B, float& Alpha, float SpiralTurns, float Radius)
+{
+	FVector LinearInterpolatedPoint = FMath::Lerp(A, B, Alpha);
+
+	FVector Direction = (B - A).GetSafeNormal();
+
+	FVector OrthogonalVector1 = FVector::CrossProduct(Direction, FVector::UpVector).GetSafeNormal();
+	FVector OrthogonalVector2 = FVector::CrossProduct(Direction, OrthogonalVector1).GetSafeNormal();
+
+	float Angle = Alpha * SpiralTurns * 2.0f * PI;
+
+	FVector SpiralOffset = (OrthogonalVector1 * FMath::Cos(Angle) + OrthogonalVector2 * FMath::Sin(Angle)) * Radius * (1.0f - Alpha);
+
+	FVector SpiralInterpolatedPoint = LinearInterpolatedPoint + SpiralOffset;
+
+	return SpiralInterpolatedPoint;
 }
 
 double APropBase::DegSin(double A)
