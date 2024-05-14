@@ -3,7 +3,7 @@
 #include "GameProp/PropBase.h"
 #include "ProceduralMeshComponent.h"
 #include "Components/SphereComponent.h"
-
+#include "Kismet/KismetMathLibrary.h"
 APropBase::APropBase()
 {
 	PrimaryActorTick.bCanEverTick = true;
@@ -139,7 +139,12 @@ void APropBase::InterpMeshData(FMeshData& Data, FMeshData& DataA, FMeshData& Dat
 		{
 			y = (y % bl) / 3; 
 		}
-		Data.Verts[x] = FMath::Lerp(DataA.Verts[x], DataB.Verts[y], Alpha);
+		//기본버전
+		//Data.Verts[x] = FMath::Lerp(DataA.Verts[x], DataB.Verts[y], Alpha);
+		//버전2
+		//Data.Verts[x] = CustomLerp(DataA.Verts[x], DataB.Verts[y], Alpha);
+		//버전3
+		Data.Verts[x] = WaveCustomLerp(DataA.Verts[x], DataB.Verts[y], Alpha,20.f,3.f);
 		if (hasNormals) 
 		{
 			Data.Normals[x] = FMath::Lerp(DataA.Normals[x], DataB.Normals[y], Alpha);
@@ -234,6 +239,46 @@ void APropBase::SetColorData(UPARAM(ref) FMeshData& Data, FLinearColor Color)
 	{
 		Data.Colors[x] = Color;
 	}
+}
+
+FVector APropBase::CustomLerp(FVector& A, FVector& B, float& Alpha)
+{
+	FVector PointA = A.GetSafeNormal();
+	FVector PointB = B.GetSafeNormal();
+
+	FQuat QuatA = FQuat::FindBetweenNormals(FVector::ForwardVector, PointA);
+	FQuat QuatB = FQuat::FindBetweenNormals(FVector::ForwardVector, PointB);
+
+	FQuat InterpolatedQuat = FQuat::Slerp(QuatA, QuatB, Alpha);
+	FVector InterpolatedPoint = InterpolatedQuat.GetRotationAxis();
+
+	FVector SlerpedVector = InterpolatedQuat.RotateVector(FVector::ForwardVector);
+	float Length = FMath::Lerp(A.Size(), B.Size(), Alpha);
+
+
+	return SlerpedVector * Length;
+}
+
+FVector APropBase::WaveCustomLerp(FVector& A, FVector& B, float& Alpha, float Amplitude, float Frequency)
+{
+	// Calculate the linear interpolation between PointA and PointB
+	FVector LinearInterpolatedPoint = FMath::Lerp(A, B, Alpha);
+
+	// Calculate the direction vector from PointA to PointB
+	FVector Direction = (A - B).GetSafeNormal();
+
+	// Calculate the orthogonal vector to create a wave pattern
+	FVector OrthogonalVector = FVector::CrossProduct(Direction, FVector::LeftVector).GetSafeNormal();
+
+	// Calculate the wave offset using a sine wave
+	float WaveOffset = FMath::Sin(Alpha * Frequency * 2.0f * PI) * Amplitude;
+
+	// Apply the wave offset to the linear interpolated point
+	FVector WaveInterpolatedPoint = LinearInterpolatedPoint + (OrthogonalVector * WaveOffset);
+
+	return WaveInterpolatedPoint;
+
+
 }
 
 double APropBase::DegSin(double A)

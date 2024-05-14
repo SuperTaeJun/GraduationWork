@@ -114,4 +114,10 @@ protected:
 	void GetMeshDataFromStaticMesh(UStaticMesh* Mesh, UPARAM(ref) FMeshData& Data, int32 LODIndex, int32 SectionIndex, bool GetAllSections);
 	UFUNCTION(BlueprintCallable)
 	void SetColorData(UPARAM(ref) FMeshData& Data, FLinearColor Color);
+
+	FVector CustomLerp(FVector& A, FVector& B, float& Alpha);
+
+	FVector WaveCustomLerp(FVector& A, FVector& B, float& Alpha, float Amplitude, float Frequency);
+	//float Amplitude = 20.0f;
+	//float Frequency = 3.0f;
 };
