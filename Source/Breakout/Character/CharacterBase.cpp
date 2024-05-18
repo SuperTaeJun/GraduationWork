@@ -28,7 +28,8 @@
 #include "NiagaraComponent.h"
 #include "NiagaraDataInterfaceArrayFunctionLibrary.h"
 #include "Animatiom/BOAnimInstance.h"
-
+#include "Materials/MaterialInstance.h"
+#include "Materials/MaterialInstanceDynamic.h"
 
 ACharacterBase::ACharacterBase()
 {
@@ -449,6 +450,7 @@ void ACharacterBase::ReciveDamage(AActor* DamagedActor, float Damage, const UDam
 	ACharacterBase* DamageInsigatorCh= Cast<ACharacterBase>(InstigatorController->GetPawn());
 	if (Health <= 0.0f)
 	{
+		bDissolve = true;
 		if (DamageInsigatorCh)
 		{
 			//¼­¹ö
@@ -982,6 +984,28 @@ void ACharacterBase::Tick(float DeltaTime)
 	if (!PathSorce->bHiddenInGame)
 	{
 		PathSorce->SetHiddenInGame(true);
+	}
+
+	if (bDissolve)
+	{
+		if (MDissolveInst)
+		{
+			MDynamicDissolveInst = UMaterialInstanceDynamic::Create(MDissolveInst, this);
+			if (MDynamicDissolveInst)
+			{
+				DissolvePercent += DeltaTime/10;
+				GetMesh()->SetMaterial(0, MDynamicDissolveInst);
+				MDynamicDissolveInst->SetScalarParameterValue(FName("Dissolve"), DissolvePercent);
+
+			/*	if (DissolvePercent >= 0.5)
+				{
+					bDissolve = false;
+					DissolvePercent = 0.f;
+					GetMesh()->SetMaterial(0, MDynamicDissolveInst);
+					MDynamicDissolveInst->SetScalarParameterValue(FName("Dissolve"), DissolvePercent);
+				}*/
+			}
+		}
 	}
 
 
