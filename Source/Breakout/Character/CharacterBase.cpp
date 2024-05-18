@@ -277,6 +277,11 @@ void ACharacterBase::SetResetState()
 	UpdateStaminaHUD();
 	CurWeapon->Destroy();
 	CurWeapon = nullptr;
+	bDissolve = false;
+	DissolvePercent = -1.f;
+	GetMesh()->SetMaterial(0, MDynamicDissolveInst);
+	MDynamicDissolveInst->SetScalarParameterValue(FName("Dissolve"), DissolvePercent);
+
 	//여기서 패킷
 	if (inst)
 		inst->m_Socket->Send_Remove_Weapon(inst->GetPlayerID(), true);
@@ -986,6 +991,7 @@ void ACharacterBase::Tick(float DeltaTime)
 		PathSorce->SetHiddenInGame(true);
 	}
 
+	//캐릭터 디졸브
 	if (bDissolve)
 	{
 		if (MDissolveInst)
@@ -993,17 +999,9 @@ void ACharacterBase::Tick(float DeltaTime)
 			MDynamicDissolveInst = UMaterialInstanceDynamic::Create(MDissolveInst, this);
 			if (MDynamicDissolveInst)
 			{
-				DissolvePercent += DeltaTime/10;
+				DissolvePercent += DeltaTime/4;
 				GetMesh()->SetMaterial(0, MDynamicDissolveInst);
 				MDynamicDissolveInst->SetScalarParameterValue(FName("Dissolve"), DissolvePercent);
-
-			/*	if (DissolvePercent >= 0.5)
-				{
-					bDissolve = false;
-					DissolvePercent = 0.f;
-					GetMesh()->SetMaterial(0, MDynamicDissolveInst);
-					MDynamicDissolveInst->SetScalarParameterValue(FName("Dissolve"), DissolvePercent);
-				}*/
 			}
 		}
 	}

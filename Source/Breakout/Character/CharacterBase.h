@@ -135,8 +135,8 @@ protected:
 	TObjectPtr<class UCharacterMovementComponent> Movement;
 
 	//µðÁ¹ºê
-	bool bDissolve = false;;
-	float DissolvePercent = 0.f;
+	bool bDissolve = false;
+	float DissolvePercent = -1.f;
 	TObjectPtr<class UMaterialInstanceDynamic> MDynamicDissolveInst;
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<class UMaterialInstance> MDissolveInst;
