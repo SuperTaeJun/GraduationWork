@@ -14,10 +14,6 @@
 #pragma region Main Thread Code
 ClientSocket::ClientSocket() :StopTaskCounter(0)
 {
-	/*gameinst = inst;*/
-
-
-
 }
 
 ClientSocket::~ClientSocket() {
@@ -86,9 +82,6 @@ bool ClientSocket::PacketProcess(char* ptr)
 		SC_LOGIN_BACK* packet = reinterpret_cast<SC_LOGIN_BACK*>(ptr);
 		//to_do
 		gameinst->SetPlayerID(packet->id);
-		UE_LOG(LogClass, Warning, TEXT("aaaaa"));
-	/*	TempName = packet->cid;
-		tempid = packet->id;*/
 		break;
 	}
 	case SC_ITEM: {
@@ -103,7 +96,6 @@ bool ClientSocket::PacketProcess(char* ptr)
 	}
 	case SC_OTHER_PLAYER:
 	{
-		//UE_LOG(LogClass, Warning, TEXT("other ROGIN?"));
 		SC_PLAYER_SYNC* packet = reinterpret_cast<SC_PLAYER_SYNC*>(ptr);
 		auto info = make_shared<CPlayer>();
 		info->Id = packet->id;
@@ -114,13 +106,11 @@ bool ClientSocket::PacketProcess(char* ptr)
 		info->p_type = packet->p_type;
 		info->userId =  packet->name;
 		Tempname.push(packet->name);
-		UE_LOG(LogClass, Warning, TEXT("recv - iinfo->userId: %s"), *info->userId);
 		MyCharacterController->SetNewCharacterInfo(info);
 		break;
 	}
 	case SC_MOVE_PLAYER:
 	{
-		//UE_LOG(LogClass, Warning, TEXT("recv move?"));
 		CS_MOVE_PACKET* packet = reinterpret_cast<CS_MOVE_PACKET*>(ptr);
 		PlayerInfo.players[packet->id].X = packet->x;
 		PlayerInfo.players[packet->id].Y = packet->y;
@@ -130,8 +120,6 @@ bool ClientSocket::PacketProcess(char* ptr)
 		PlayerInfo.players[packet->id].VeloY = packet->vy;
 		PlayerInfo.players[packet->id].VeloZ = packet->vz;
 		PlayerInfo.players[packet->id].Max_Speed = packet->Max_speed;
-
-		UE_LOG(LogClass, Warning, TEXT("recv - move player id : %d,"), packet->id);
 		break;
 	}
 	case SC_CHAR_BACK: {
@@ -143,7 +131,6 @@ bool ClientSocket::PacketProcess(char* ptr)
 		player.Z = packet->z;
 		player.p_type = packet->p_type;
 		PlayerInfo.players[player.Id] = player;
-		//MyCharacterController->SetPlayerID(player.Id);
 		MyCharacterController->SetPlayerInfo(&PlayerInfo);
 		MyCharacterController->SetInitPlayerInfo(player);
 		break;
@@ -151,23 +138,17 @@ bool ClientSocket::PacketProcess(char* ptr)
 	case SC_OTHER_WEAPO: {
 		SC_SYNC_WEAPO* packet = reinterpret_cast<SC_SYNC_WEAPO*>(ptr);
 		PlayerInfo.players[packet->id].w_type = packet->weapon_type;
-		//float z = packet->z;
+
 		PlayerInfo.players[packet->id].bselectweapon = true;
-		UE_LOG(LogClass, Warning, TEXT("weapondata"));
-		UE_LOG(LogClass, Warning, TEXT("weapondata : %d"), PlayerInfo.players[packet->id].w_type);
 		break;
 	}
 	case SC_ALL_READY: {
 		SC_ACCEPT_READY* packet = reinterpret_cast<SC_ACCEPT_READY*>(ptr);
-		UE_LOG(LogTemp, Warning, TEXT("recv - all ready packet"));
 		bAllReady = packet->ingame;
-		UE_LOG(LogClass, Warning, TEXT("ingmae %d"), bAllReady);
-		UE_LOG(LogClass, Warning, TEXT("ingmae"));
 		break;
 	}
   // 공격 나이아가라 이팩트 효과
 	case SC_ATTACK: {
-		UE_LOG(LogTemp, Warning, TEXT("chong"));
 		SC_ATTACK_PLAYER* packet = reinterpret_cast<SC_ATTACK_PLAYER*>(ptr);
 		PlayerInfo.players[packet->clientid].Sshot.X = packet->sx;
 		PlayerInfo.players[packet->clientid].Sshot.Y = packet->sy;
@@ -175,10 +156,7 @@ bool ClientSocket::PacketProcess(char* ptr)
 		PlayerInfo.players[packet->clientid].Eshot.X = packet->ex;
 		PlayerInfo.players[packet->clientid].Eshot.Y = packet->ey;
 		PlayerInfo.players[packet->clientid].Eshot.Z = packet->ez;
-		//UE_LOG(LogTemp, Warning, TEXT("%f, %f"), packet->sx, packet->ex);
 		MyCharacterController->SetAttack(packet->clientid);
-		// = packet->hp;1
-		//PlayerInfo.players[packet].w_type = packet->weapon_type;	}
 		break;
 	}
 	case SC_SHOTGUN_BEAM: {
@@ -234,7 +212,6 @@ bool ClientSocket::PacketProcess(char* ptr)
 		PlayerInfo.players[packet->id].p_type = packet->playertype;
 		PlayerInfo.players[packet->id].bniagara = true;
 		PlayerInfo.players[packet->id].skilltype = packet->num;
-		UE_LOG(LogClass, Warning, TEXT("BNIAGAR : %d"), PlayerInfo.players[packet->id].bniagara);
 		break;
 	}
 	case SC_NiAGARA_CANCEL: {
@@ -258,7 +235,6 @@ bool ClientSocket::PacketProcess(char* ptr)
 		break;
 	}
 	case SC_END_GAME: {
-		UE_LOG(LogClass, Warning, TEXT("endgamegagagagagaga"));
 		CS_END_GAME_PACKET* packet = reinterpret_cast<CS_END_GAME_PACKET*>(ptr);
 		PlayerInfo.players[packet->id].bEndGame = true;
 		PlayerInfo.players[packet->id].WinnerID = packet->winnerid;
@@ -272,8 +248,6 @@ bool ClientSocket::PacketProcess(char* ptr)
 	}
 	case SC_ITEM_ACQUIRE: {
 		SC_ITEM_ACQUIRE_PACKET* packet = reinterpret_cast<SC_ITEM_ACQUIRE_PACKET*>(ptr);
-		UE_LOG(LogTemp, Warning, TEXT("GETITEMid : %d, GetItemCount : %d"), packet->acquireid, packet->itemCount);
-		//tempid = packet->acquireid;
 		TempPlayerName = packet->cid;
 		Tempcnt2 = packet->itemCount;
 		bAcquire = true;
@@ -285,9 +259,7 @@ bool ClientSocket::PacketProcess(char* ptr)
 		break;
 	}
 	case SC_REMOVE_ITEM: {
-		UE_LOG(LogTemp, Warning, TEXT("paZVZV"));
 		CS_REMOVE_ITEM_PACKET* packet = reinterpret_cast<CS_REMOVE_ITEM_PACKET*>(ptr);
-		UE_LOG(LogTemp, Warning, TEXT("packet->id item destroy : %d"), packet->itemid);
 		MyCharacterController->SetDestroyItemid(packet->itemid);
 		break;
 	}
