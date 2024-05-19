@@ -50,7 +50,6 @@ protected:
 	FVector DirWorld;
 
 private:
-
 	UFUNCTION(BlueprintCallable)
 	void GetMeshDataFromStaticMesh(UStaticMesh* Mesh, UPARAM(ref) FMeshData& Data, int32 LODIndex, int32 SectionIndex, bool GetAllSections);
 	UFUNCTION(BlueprintCallable)
@@ -66,6 +65,16 @@ private:
 	bool bDestroyed = false;
 	TArray<FMeshData> MeshDataStorage;
 	FTimerHandle DestroyTimer;
+
+	//µðÁ¹ºê
+	bool bDissolve = false;
+	float DissolvePercent = -3.f;
+	TObjectPtr<class UMaterialInstanceDynamic> MDynamicDissolveInst;
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<class UMaterialInstance> MDissolveInst;
+
+	TArray<class UProceduralMeshComponent*> MeshSculptures;
+	//
 
 	void AllDestroy();
 };

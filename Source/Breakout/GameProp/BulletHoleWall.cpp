@@ -62,45 +62,50 @@ void ABulletHoleWall::ReciveDamage(AActor* DamagedActor, float Damage, const UDa
 				}
 			}
 		}
-
+		MeshSculptures.SetNum(MeshDataStorage.Num());
 		//각각 조각들 설정
 		for (int i = 0; i < MeshDataStorage.Num(); ++i)
 		{
 			FTransform AddTransform;
-			UProceduralMeshComponent* TempComponent;
-			TempComponent = Cast<UProceduralMeshComponent>(AddComponentByClass(UProceduralMeshComponent::StaticClass(), false, AddTransform, false));
-			AddInstanceComponent(TempComponent);
-			if (TempComponent)
+			MeshSculptures[i] = Cast<UProceduralMeshComponent>(AddComponentByClass(UProceduralMeshComponent::StaticClass(), false, AddTransform, false));
+			AddInstanceComponent(MeshSculptures[i]);
+			if ( MeshSculptures[i])
 			{
 				TArray<FProcMeshTangent> Tangents = {};
-				//부셔진 조각들이 물리 시뮬 가능하게 변경해줌 bUseComplexAsSimpleCollision를 false로 바꿔서 AddCollisionConvexMesh로 컬리션을 다시 만들어줌
-				TempComponent->bUseComplexAsSimpleCollision = false;
-				TempComponent->SetSimulatePhysics(true);
-				TempComponent->AddCollisionConvexMesh(MeshDataStorage[i].Verts);
-				TempComponent->CreateMeshSection_LinearColor(0, MeshDataStorage[i].Verts, MeshDataStorage[i].Tris, MeshDataStorage[i].Normals, MeshDataStorage[i].UVs, MeshDataStorage[i].Colors, Tangents, true);
-				if (CurMaterial)
-				{
-					DynamicMaterial = UMaterialInstanceDynamic::Create(CurMaterial, this);
-					if (DynamicMaterial)
-						TempComponent->SetMaterial(0, DynamicMaterial);
-				}
+
+				MeshSculptures[i]->bUseComplexAsSimpleCollision = false;
+				MeshSculptures[i]->SetSimulatePhysics(true);
+				MeshSculptures[i]->AddCollisionConvexMesh(MeshDataStorage[i].Verts);
+				MeshSculptures[i]->CreateMeshSection_LinearColor(0, MeshDataStorage[i].Verts, MeshDataStorage[i].Tris, MeshDataStorage[i].Normals, MeshDataStorage[i].UVs, MeshDataStorage[i].Colors, Tangents, true);
+
 				ProceduralMesh->DestroyComponent();
 
 				GetWorldTimerManager().SetTimer(
 					DestroyTimer,
 					this,
 					&ABulletHoleWall::AllDestroy,
-					3.f
+					4.f
 				);
 			}
 		}
-
+		bDissolve = true;
 		Hp = 999999;
 	}
 }
 void ABulletHoleWall::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	if (bDissolve)
+	{
+		for (int i = 0; i < MeshSculptures.Num(); ++i)
+		{
+			MDynamicDissolveInst = UMaterialInstanceDynamic::Create(MDissolveInst, this);
+			MeshSculptures[i]->SetMaterial(0, MDynamicDissolveInst);
+			DissolvePercent += DeltaTime / 10;
+			MDynamicDissolveInst->SetScalarParameterValue(FName("Dissolve"), DissolvePercent);
+		}
+	}
 }
 
 void ABulletHoleWall::SetBulletHole(const FVector SweepResult)
@@ -116,11 +121,6 @@ void ABulletHoleWall::SetBulletHole(const FVector SweepResult)
 	BTransform.SetScale3D(FVector(60.f, 0.2f, 0.2f));
 
 	MeshDataA =MeshBoolean(MeshDataA, ATransform, SetRandomVertex(MeshDataB, -20.f, 20.f, 0.001), BTransform,true);
-	//FTransform Temp;
-	//Temp.SetLocation(FVector(0.f, 0.f, 0.f) - ProceduralMesh->GetComponentLocation());
-	//Temp.SetRotation(ProceduralMesh->GetComponentQuat());
-	//Temp.SetScale3D(FVector(1.f, 1.f, 1.f) / ProceduralMesh->GetRelativeScale3D());
-	//TransformMeshData(MeshDataA, Temp, true, FVector(0.f, 0.f, 0.f));
 
 	TArray<FProcMeshTangent> Tangents = {};
 	ProceduralMesh->CreateMeshSection_LinearColor(0, MeshDataA.Verts, MeshDataA.Tris, MeshDataA.Normals, MeshDataA.UVs, MeshDataA.Colors,Tangents, true);

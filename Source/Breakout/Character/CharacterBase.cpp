@@ -28,7 +28,8 @@
 #include "NiagaraComponent.h"
 #include "NiagaraDataInterfaceArrayFunctionLibrary.h"
 #include "Animatiom/BOAnimInstance.h"
-
+#include "Materials/MaterialInstance.h"
+#include "Materials/MaterialInstanceDynamic.h"
 
 ACharacterBase::ACharacterBase()
 {
@@ -276,6 +277,11 @@ void ACharacterBase::SetResetState()
 	UpdateStaminaHUD();
 	CurWeapon->Destroy();
 	CurWeapon = nullptr;
+	bDissolve = false;
+	DissolvePercent = -1.f;
+	GetMesh()->SetMaterial(0, MDynamicDissolveInst);
+	MDynamicDissolveInst->SetScalarParameterValue(FName("Dissolve"), DissolvePercent);
+
 	//여기서 패킷
 	if (inst)
 		inst->m_Socket->Send_Remove_Weapon(inst->GetPlayerID(), true);
@@ -449,6 +455,7 @@ void ACharacterBase::ReciveDamage(AActor* DamagedActor, float Damage, const UDam
 	ACharacterBase* DamageInsigatorCh= Cast<ACharacterBase>(InstigatorController->GetPawn());
 	if (Health <= 0.0f)
 	{
+		bDissolve = true;
 		if (DamageInsigatorCh)
 		{
 			//서버
@@ -982,6 +989,21 @@ void ACharacterBase::Tick(float DeltaTime)
 	if (!PathSorce->bHiddenInGame)
 	{
 		PathSorce->SetHiddenInGame(true);
+	}
+
+	//캐릭터 디졸브
+	if (bDissolve)
+	{
+		if (MDissolveInst)
+		{
+			MDynamicDissolveInst = UMaterialInstanceDynamic::Create(MDissolveInst, this);
+			if (MDynamicDissolveInst)
+			{
+				DissolvePercent += DeltaTime/4;
+				GetMesh()->SetMaterial(0, MDynamicDissolveInst);
+				MDynamicDissolveInst->SetScalarParameterValue(FName("Dissolve"), DissolvePercent);
+			}
+		}
 	}
 
 

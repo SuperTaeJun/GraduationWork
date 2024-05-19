@@ -134,7 +134,13 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Character, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UCharacterMovementComponent> Movement;
 
-
+	//µðÁ¹ºê
+	bool bDissolve = false;
+	float DissolvePercent = -1.f;
+	TObjectPtr<class UMaterialInstanceDynamic> MDynamicDissolveInst;
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<class UMaterialInstance> MDissolveInst;
+	//
 
 	TObjectPtr<class AMainHUD> MainHUD;
 	TObjectPtr<class ACharacterController> MainController;
