@@ -50,7 +50,6 @@ public:
     CL_STATE _state;
     atomic_bool  _is_active = false;
 
-    //COMBAT _combat;
     int num;
     int itemAnimNum;
     atomic_int  _count;
