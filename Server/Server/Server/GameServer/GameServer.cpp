@@ -39,11 +39,7 @@ void send_myitem_count_packet(int _s_id);
 void send_item_packet(int _s_id, int item_index);
 void send_myitem_packet(int _s_id);
 void worker_thread();
-// 랜덤 넘버 생성기 초기화
-std::random_device rd;
-std::mt19937 gen(rd());
-std::uniform_real_distribution<float> dis(-5000.0f, 5000.0f);
-std::uniform_real_distribution<float> disz(82.15f, 100.0f);
+
 
 int main()
 {
@@ -922,9 +918,6 @@ void send_move_packet(int _id, int target)
 	packet.vy = clients[target].VY;
 	packet.vz = clients[target].VZ;
 	packet.Max_speed = clients[target].Max_Speed;
-	//packet.move_time = clients[target].last_move_time;
-
-	//printf_s("[Send move] id : %d, location : (%f,%f,%f), yaw : %f,  v : (%f,%f,%f)\n", packet.sessionID, packet.x, packet.y, packet.z, packet.yaw, packet.vx, packet.vy, packet.vz);
 	clients[_id].do_send(sizeof(packet), &packet);
 }
 
@@ -993,22 +986,6 @@ void send_item_packet(int _s_id, int item_index)
 	clients[_s_id].do_send(sizeof(packet), &packet);
 
 }
-
-
-//void send_damage_packet(int _s_id)
-//{
-//	SC_ATTACK_PLAYER packet;
-//	packet.size = sizeof(packet);
-//	packet.type = SC_DAMAGED;
-//	packet.clientid = _s_id;
-//	packet.sx = clients[_s_id].s_x;
-//	packet.sy = clients[_s_id].s_y;
-//	packet.sz = clients[_s_id].s_z;
-//	packet.ex = clients[_s_id].e_x;
-//	packet.ey = clients[_s_id].e_y;
-//	packet.ez = clients[_s_id].e_z;
-//	clients[_s_id].do_send(sizeof(packet), &packet);
-//}
 
 void ev_timer()
 {
