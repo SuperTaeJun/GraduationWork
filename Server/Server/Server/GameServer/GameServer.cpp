@@ -31,10 +31,11 @@ void send_select_character_type_packet(int _s_id);
 void send_login_ok_packet(int _s_id);
 void send_move_packet(int _id, int target);
 void send_change_hp(int _s_id);
-void send_put_object(int _s_id, int target);
 void Disconnect(int _s_id);
 void send_ready_packet(int _s_id);
 void send_endgame_packet(int _s_id);
+void player_heal(int s_id);
+void player_reload_weapon(int s_id);
 void send_myitem_count_packet(int _s_id);
 void send_item_packet(int _s_id, int item_index);
 void send_myitem_packet(int _s_id);
@@ -154,28 +155,6 @@ void send_select_character_type_packet(int _s_id)
 	clients[_s_id].do_send(sizeof(packet), &packet);
 }
 
-
-//로그인 실패
-
-
-//오브젝트 생성
-void send_put_object(int _s_id, int target)
-{
-	SC_PLAYER_SYNC packet;
-	packet.id = target;
-	packet.size = sizeof(packet);
-	packet.type = SC_OTHER_PLAYER;
-	packet.x = clients[target].x;
-	packet.y = clients[target].y;
-	packet.z = clients[target].z;
-
-	strcpy_s(packet.name, clients[target].name);
-	//packet.object_type = 0;
-	clients[_s_id].do_send(sizeof(packet), &packet);
-}
-
-
-//해제
 void Disconnect(int _s_id)
 {
 	CLIENT& cl = clients[_s_id];
@@ -186,13 +165,9 @@ void Disconnect(int _s_id)
 	cout << "------------연결 종료------------" << endl;
 }
 
-
-//패킷 판별
 void process_packet(int s_id, char* p)
 {
 	unsigned char packet_type = p[1];
-	//CLIENT& cl = clients[s_id];
-	//cout << "packet type :" << to_string(packet_type) << endl;
 	switch (packet_type) {
 	case CS_LOGIN: {
 		CS_LOGIN_PACKET* packet = reinterpret_cast<CS_LOGIN_PACKET*>(p);
@@ -322,6 +297,7 @@ void process_packet(int s_id, char* p)
 		CLIENT& cl = clients[packet->id];
 		cl.w_type = packet->weapon_type;
 		cl.selectweapon = packet->bselectwep;
+		//if(weapon type에 따라서 bullet 개수 적용)
 		cout << "플레이어 : " << cl._s_id << "무기 타입" << cl.w_type << endl;
 		for (auto& other : clients) {
 			if (other._s_id == cl._s_id) continue;
@@ -503,11 +479,7 @@ void process_packet(int s_id, char* p)
 			packet.type = SC_NiAGARA_CANCEL;
 			packet.cancel = cl.bCancel;
 			packet.num = cl.num;
-			//packet.weapon_type = cl.w_type;
-		//printf_s("[Send put object] id : %d, location : (%f,%f,%f), yaw : %f\n", packet.id, packet.x, packet.y, packet.z, packet.yaw);
 			cout << "이거 누구한테 감 :  ?" << other._s_id << endl;
-			//	cout << "나이아가라" << endl;
-
 			other.do_send(sizeof(packet), &packet);
 
 		}
@@ -899,6 +871,13 @@ void worker_thread()
 
 			break;
 		}
+		case IO_RELOAD_WEAPON: {
+			// 플레이어의 탄창을 늘려주고
+			// if(탄창이 max count 보다 작다면) 
+				//player_reload_weapon(_s_id);
+			// send_packet(_S_id);
+			break;
+		}
 		}
 	}
 }
@@ -920,7 +899,18 @@ void send_move_packet(int _id, int target)
 	packet.Max_speed = clients[target].Max_Speed;
 	clients[_id].do_send(sizeof(packet), &packet);
 }
+void player_heal(int s_id)
+{
+	if (clients[s_id]._hp < clients[s_id]._max_hp) 
+		Timer_Event(s_id, s_id, ET_HEAL, 1s);
+	
+}
+void player_reload_weapon(int s_id)
+{
+	if (clients[s_id]._bulletcount < clients[s_id]._max_bulletcount)
+		Timer_Event(s_id, s_id, ET_RELOAD, 100ms);
 
+}
 //데미지 깍는 곳
 void send_change_hp(int _s_id)
 {
@@ -1001,6 +991,14 @@ void ev_timer()
 		if (clients[s_id]._state != ST_INGAME) continue;
 		if (clients[s_id]._is_active == false) continue;
 		if (order.start_t <= chrono::system_clock::now()) {
+			if (order.order == ET_HEAL) {
+				Player_Event(s_id, order.target_id, IO_HEAL_HP);
+				this_thread::sleep_for(100ms);
+			}
+			else if (order.order == ET_RELOAD) {
+				Player_Event(s_id, order.target_id, IO_RELOAD_WEAPON);
+				this_thread::sleep_for(100ms);
+			}
 		}
 		else {
 			timer_q.Push(order);

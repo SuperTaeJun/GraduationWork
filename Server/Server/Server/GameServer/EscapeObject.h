@@ -18,12 +18,6 @@ public:
         z = z_val;
     }
 
-    void setRandomPosition(std::mt19937& gen, std::uniform_real_distribution<float>& dis, std::uniform_real_distribution<float>& disz) {
-        x = dis(gen);
-        y = dis(gen);
-        z = disz(gen);
-    }
-
     void removeOBJ() {
         //삭제되었을 때 배열을 밀지말고 돌려야함 삭제된 아이템 정보를 상대들에게 동기화
     }

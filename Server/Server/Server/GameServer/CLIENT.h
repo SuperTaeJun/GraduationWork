@@ -28,8 +28,11 @@ public:
     float VZ;
     float Max_Speed;
 
-    int _hp; // 체력
+    float _hp; // 체력
+    float _max_hp; // 체력
     int damage;
+    int _bulletcount;
+    int _max_bulletcount;
     bool is_bone = false;
     bool bGetWeapon = false;
     bool bCancel;
@@ -69,7 +72,8 @@ public:
 public:
     CLIENT() : _state(ST_FREE), _prev_size(0)
     {
-        _hp = 100;
+        _max_hp = 100.f;
+        _hp = 100.f;
         myItemCount = 0;
     }
 
