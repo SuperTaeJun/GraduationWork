@@ -71,6 +71,20 @@ int main()
 
 	for (int i = 0; i < MAX_USER; ++i)
 		clients[i]._s_id = i;
+	for (int i = 0; i < MAX_OBJ; ++i)
+		objects[i].ob_id = i;
+	objects[0].x = 1000.f;
+	objects[0].y = 1500.0f;
+	objects[0].z = 1500.f;
+
+	objects[1].x = 1090.f;
+	objects[1].y = 0.0f;
+	objects[1].z = -10.f;
+
+
+	objects[2].x = -5270.f;
+	objects[2].y = 1010.f;
+	objects[2].z = 1410.f;
 
 	g_timer = CreateEvent(NULL, FALSE, FALSE, NULL);
 	vector <thread> worker_threads;
@@ -683,7 +697,7 @@ void process_packet(int s_id, char* p)
 		CS_ITEM_INFO_PACKET* packet = reinterpret_cast<CS_ITEM_INFO_PACKET*> (p);
 		CLIENT& cl = clients[s_id];
 
-		//send_item_packet(cl._s_id, packet->objid);
+		send_item_packet(cl._s_id, packet->objid);
 		break;
 	}
 	case CS_RELOAD: {
@@ -964,7 +978,6 @@ void send_item_packet(int _s_id, int item_index)
 {
 	SC_ITEM_PACKET packet;
 
-	cout << "_s_id, packetsize" << _s_id << sizeof(packet) << endl;
 	packet.type = SC_ITEM;
 	packet.size = sizeof(packet);
 
