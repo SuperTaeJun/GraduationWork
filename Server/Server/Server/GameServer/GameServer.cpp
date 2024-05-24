@@ -788,13 +788,13 @@ void process_packet(int s_id, char* p)
 	}
 	case CS_MOPP:
 	{
-		cout << "dadada" << endl;
 		CS_MOPP_PACKET* packet = reinterpret_cast<CS_MOPP_PACKET*>(p);
 		CLIENT& cl = clients[s_id];
 		cout << "itemid : " << packet->itemid << endl;
 		int itemid = packet->itemid;
 		float delta = packet->DeltaTime;
 		int mopptype =  packet->mopptype;
+		cout << "delat : " << delta << endl;
 		for (auto& other : clients) {
 			if (other._s_id == cl._s_id) continue;
 			other.state_lock.lock();

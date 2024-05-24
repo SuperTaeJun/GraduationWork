@@ -268,6 +268,7 @@ bool ClientSocket::PacketProcess(char* ptr)
 		CS_MOPP_PACKET* packet = reinterpret_cast<CS_MOPP_PACKET*>(ptr);
 		MyCharacterController->SetMoppItemID(packet->itemid);
 		MoppType = packet->DeltaTime;
+		UE_LOG(LogTemp, Warning, TEXT("DELTATIME %f"), packet->DeltaTime);
 		TempMoppTime = packet->mopptype;
 		break;
 	}
