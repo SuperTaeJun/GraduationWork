@@ -63,4 +63,6 @@ private:
 	//2 = b->a로 다시 돌아가는 상태
 	//이넘클래스로 다시 만들기 
 	int32 bOverlap=0;
+
+	bool bServerMorph = false;
 };

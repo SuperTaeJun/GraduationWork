@@ -51,7 +51,10 @@ void AEscapeTool::Tick(float DeltaTime)
 		TransformMesh(DeltaTime, false,true);
 		UpdatePercent(Cur);
 	}
-
+	if (bServerMorph)
+	{
+		TransformMesh(DeltaTime, false, false);
+	}
 
 
 }
