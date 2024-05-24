@@ -12,7 +12,7 @@ AProjectileWall::AProjectileWall()
 void AProjectileWall::BeginPlay()
 {
 	Super::BeginPlay();
-	SetAllowHitEventTimer();
+	//SetAllowHitEventTimer();
 }
 
 void AProjectileWall::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NomalImpulse, const FHitResult& Hit)
