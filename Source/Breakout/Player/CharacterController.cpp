@@ -544,7 +544,7 @@ bool ACharacterController::UpdateWorld()
 					GetWorld()->SpawnActor<AProjectileBase>(LauncherRef, HEloc, EffectRot, SpawnParameters);
 					info->hiteffect = false;
 				}
-				else if (info->weptype == 2) {
+			/*	else if (info->weptype == 2) {
 					OtherPlayer->PlayAnimMontage(GrenadeMontage, 1.f, FName("Fire"));
 					GetWorld()->SpawnActor<AProjectileBase>(GrenadeRef, HEloc, EffectRot, SpawnParameters);
 
@@ -555,7 +555,7 @@ bool ACharacterController::UpdateWorld()
 					GetWorld()->SpawnActor<AProjectileBase>(WallRef, HEloc, EffectRot, SpawnParameters);
 					info->hiteffect = false;
 				}
-				else if (info->weptype == 4) {
+			*/	else if (info->weptype == 4) {
 					GetWorld()->SpawnActor<AProjectileBase>(BoobyTrapRef, HEloc, EffectRot, SpawnParameters);
 					info->hiteffect = false;
 				}
