@@ -768,6 +768,10 @@ bool ACharacterController::UpdateWorld()
 					Cast<AEscapeTool>(m_GameMode->EscapeTools[MoppID])->bServerMorph = true;
 					inst->m_Socket->MoppType = -1;
 				}
+				else if (inst->m_Socket->MoppType == 1) {
+					Cast<AEscapeTool>(m_GameMode->EscapeTools[MoppID])->bServerMorph = false;
+					inst->m_Socket->MoppType = -1;
+				}
 			}
 		
 		}

@@ -108,8 +108,7 @@ void AEscapeTool::TransformMesh(float DeltaTime, bool Clamp, bool TransformRever
 	}
 
 	UpdatePercent(Cur);
-	if (inst)
-		inst->m_Socket->Send_Mopp_Sync_packet(ItemID, 0, false, DeltaTime);
+	
 	
 }
 void AEscapeTool::SetHideMesh()
@@ -145,7 +144,8 @@ void AEscapeTool::OnSphereEndOverlap(UPrimitiveComponent* OverlappedComponent, A
 		characterbase->SetbCanObtainEscapeTool(false);
 		characterbase->OverlappingEscapeTool = nullptr;
 		bOverlap = 2;
-
+		if (inst)
+			inst->m_Socket->Send_Mopp_Sync_packet(ItemID, 1, false, 0.f);
 	}
 }
 

@@ -777,6 +777,7 @@ void ACharacterBase::Inter(const FInputActionValue& Value)
 	{
 		//UE_LOG(LogTemp, Log, TEXT("TEST"));
 		EToolTranfrom(Value);
+		
 	}
 
 	if (bCanEscape)
@@ -808,13 +809,16 @@ void ACharacterBase::Inter_End(const FInputActionValue& Value)
 		if (inst)
 			inst->m_Socket->Send_item_Anim_packet(inst->GetPlayerID(), 1);
 	}
-
+	if (inst)
+		inst->m_Socket->Send_Mopp_Sync_packet(OverlappingEscapeTool->ItemID, 1, false, 0.f);
 }
 void ACharacterBase::EToolTranfrom(const FInputActionValue& Value)
 {
 	//if (OverlappingEscapeTool)
 	//{
 	OverlappingEscapeTool->TransformMesh(GetWorld()->GetDeltaSeconds(),false,false);
+	if (inst)
+		inst->m_Socket->Send_Mopp_Sync_packet(OverlappingEscapeTool->ItemID, 0, false, 0.f);
 }
 void ACharacterBase::Reroad(const FInputActionValue& Value)
 {
