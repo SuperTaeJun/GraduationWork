@@ -534,8 +534,8 @@ bool ACharacterController::UpdateWorld()
 			if (OtherPlayer->GetCurWeapon() && info->hiteffect == true)
 			{
 				FActorSpawnParameters SpawnParameters;
-				SpawnParameters.Owner = OtherPlayer;
-				SpawnParameters.Instigator = OtherPlayer;
+				//SpawnParameters.Owner = OtherPlayer;
+				//SpawnParameters.Instigator = OtherPlayer;
 				if (info->weptype == 0) {
 					GetWorld()->SpawnActor<AProjectileBullet>(BulletRef, HEloc, EffectRot, SpawnParameters);
 					info->hiteffect = false;
