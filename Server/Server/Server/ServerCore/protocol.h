@@ -51,6 +51,7 @@ const char CS_DECREASE_COUNT = 25;
 const char CS_CH2_SKILL = 26;
 const char CS_PLAYER_HEAL = 27;
 const char CS_PLAYER_RELOAD = 28;
+const char CS_MOPP = 29;
 
 const char SC_LOGIN_OK = 1;
 const char SC_OTHER_PLAYER = 2;
@@ -81,7 +82,7 @@ const char SC_MYNEW_COUNT = 26;
 const char SC_CH2_SKILL = 27;
 const char SC_PLAYER_HEAL = 28;
 const char SC_PLAYER_RELOAD = 29;
-
+const char SC_MOPP = 30;
 #pragma pack (push, 1)
 struct CS_LOGIN_PACKET
 {
@@ -372,5 +373,12 @@ struct CS_RELOAD_TIMER_PACKET {
 	unsigned char type;
 	int id;
 	int bulletcount;
+};
+struct CS_MOPP_PACKET {
+	unsigned char size;
+	unsigned char type;
+	int itemid;
+	int mopptype;
+	float DeltaTime;
 };
 #pragma pack(pop)

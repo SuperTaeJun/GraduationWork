@@ -786,6 +786,33 @@ void process_packet(int s_id, char* p)
 		}
 		break;
 	}
+	case CS_MOPP:
+	{
+		cout << "dadada" << endl;
+		CS_MOPP_PACKET* packet = reinterpret_cast<CS_MOPP_PACKET*>(p);
+		CLIENT& cl = clients[s_id];
+		cout << "itemid : " << packet->itemid << endl;
+		int itemid = packet->itemid;
+		float delta = packet->DeltaTime;
+		int mopptype =  packet->mopptype;
+		for (auto& other : clients) {
+			if (other._s_id == cl._s_id) continue;
+			other.state_lock.lock();
+			if (ST_INGAME != other._state) {
+				other.state_lock.unlock();
+				continue;
+			}
+			else other.state_lock.unlock();
+			CS_MOPP_PACKET packet;
+			packet.itemid = itemid;
+			packet.size = sizeof(packet);
+			packet.type = SC_MOPP;
+			packet.DeltaTime = delta;
+			packet.mopptype = mopptype;
+			other.do_send(sizeof(packet), &packet);
+		}
+		break;
+	}
 	default:
 		cout << " 오류패킷타입 : " << p << endl;
 		break;

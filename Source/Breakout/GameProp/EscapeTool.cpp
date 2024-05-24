@@ -105,8 +105,10 @@ void AEscapeTool::TransformMesh(float DeltaTime, bool Clamp, bool TransformRever
 	}
 
 	UpdatePercent(Cur);
+	if (inst)
+		inst->m_Socket->Send_Mopp_Sync_packet(ItemID, 0, false, DeltaTime);
+	
 }
-
 void AEscapeTool::SetHideMesh()
 {
 	UE_LOG(LogTemp, Log, TEXT("TEST"));

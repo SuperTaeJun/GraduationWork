@@ -263,6 +263,14 @@ bool ClientSocket::PacketProcess(char* ptr)
 		MyCharacterController->SetDestroyItemid(packet->itemid);
 		break;
 	}
+	case SC_MOPP:
+	{
+		CS_MOPP_PACKET* packet = reinterpret_cast<CS_MOPP_PACKET*>(ptr);
+		MyCharacterController->SetMoppItemID(packet->itemid);
+		MoppType = packet->DeltaTime;
+		TempMoppTime = packet->mopptype;
+		break;
+	}
 	case SC_INCREASE_COUNT: {
 		CS_INCREASE_ITEM_PACKET* packet = reinterpret_cast<CS_INCREASE_ITEM_PACKET*>(ptr);
 		TempPlayerName = packet->cid;
@@ -569,6 +577,16 @@ void ClientSocket::Send_CH2_SKILL_PACKET(int id, PlayerType type, bool bSkill)
 	packet.id = id;
 	packet.p_type = type;
 	packet.bfinish = bSkill;
+	SendPacket(&packet);
+}
+void ClientSocket::Send_Mopp_Sync_packet(int itemid, int mopptype, bool bMopp, float DeltaTime)
+{
+	CS_MOPP_PACKET packet;
+	packet.size = sizeof(packet);
+	packet.type = CS_MOPP;
+	packet.itemid = itemid;
+	packet.mopptype = mopptype;
+	packet.DeltaTime = DeltaTime;
 	SendPacket(&packet);
 }
 bool ClientSocket::Init()

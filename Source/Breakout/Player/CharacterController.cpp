@@ -32,6 +32,7 @@
 #include <string>
 #include "ClientSocket.h"
 #include"Animatiom/BOAnimInstance.h"
+#include "Game/BOGameMode.h"
 
 ACharacterController::ACharacterController()
 {
@@ -48,12 +49,14 @@ ACharacterController::ACharacterController()
 
 void ACharacterController::BeginPlay()
 {
-	//FInputModeGameOnly GameOnlyInput;
-	//SetInputMode(GameOnlyInput);
+	
 	MainHUD = Cast<AMainHUD>(GetHUD());
-	//inst = Cast<UBOGameInstance>(GetGameInstance());
+	// 현재 월드 세팅
+	m_GameMode = Cast<ABOGameMode>(GetWorld()->GetAuthGameMode());
+
 	inst = Cast<UBOGameInstance>(GetGameInstance());
 	inst->m_Socket->SetPlayerController(this);
+	
 	UE_LOG(LogTemp, Warning, TEXT("BEGIN"));
 	if (inst)
 	{
@@ -751,13 +754,19 @@ bool ACharacterController::UpdateWorld()
 				OtherPlayer->PlayAnimMontage(SyncReloadMontageCh3);
 				info->bServerReload = false;
 			}
-			TArray<AActor*> EscapeTools;
-			UGameplayStatics::GetAllActorsOfClass(GetWorld(), AEscapeTool::StaticClass(), EscapeTools);
-			for (int i = 0; i < EscapeTools.Num(); i++)
-			{
-				if(Cast<AEscapeTool>(EscapeTools[i]))
-					if (Escapeid == Cast<AEscapeTool>(EscapeTools[i])->ItemID)
-						Cast<AEscapeTool>(EscapeTools[i])->Destroy();
+			if (m_GameMode) {
+				for (int i = 0; i < m_GameMode->EscapeTools.Num(); i++)
+				{
+					if (Cast<AEscapeTool>(m_GameMode->EscapeTools[i]))
+						if (Escapeid == Cast<AEscapeTool>(m_GameMode->EscapeTools[i])->ItemID)
+							Cast<AEscapeTool>(m_GameMode->EscapeTools[i])->Destroy();
+				}
+			}
+			if (inst) {
+				if (inst->m_Socket->MoppType == 0) {
+					Cast<AEscapeTool>(m_GameMode->EscapeTools[MoppID])->TransformMesh(inst->m_Socket->TempMoppTime, false, false);
+					inst->m_Socket->MoppType = -1;
+				}
 			}
 		
 		}

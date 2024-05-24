@@ -162,6 +162,7 @@ public:
 	void UpdateSyncItem();
 	void SetHp(float DamagedHp);
 	void SetDestroyItemid(int itemid) { Escapeid = itemid; };
+	void SetMoppItemID(int moppID) { MoppID = moppID; };
 	bool UpdateWorld();
 	float damaged = 0;
 	//초기 컨트롤러 세팅
@@ -186,6 +187,7 @@ public:
 	TObjectPtr<class AMainHUD> MainHUD;
 	int id;
 	int Escapeid;
+	int MoppID;
 	bool bNewPlayerEntered = false;
 	bool bNewWeaponEntered = false;
 	bool bInitPlayerSetting = false;
@@ -201,4 +203,6 @@ public:
 	class ANiagaraActor* ServerTemp;
 	UBOGameInstance* inst;
 	bool bSync = false;
+	class ABOGameMode* m_GameMode;
+		
 };

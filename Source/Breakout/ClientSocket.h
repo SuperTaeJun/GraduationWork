@@ -310,6 +310,7 @@ public:
 	void Send_item_Anim_packet(int id, int num);
 	void Send_Remove_Weapon(int id, bool bWeapon);
 	void Send_CH2_SKILL_PACKET(int id, PlayerType type, bool bSkill);
+	void Send_Mopp_Sync_packet(int itemid, int mopptype, bool bMopp, float DeltaTime);
 	virtual bool Init() override;
 	virtual uint32 Run() override;
 	virtual void Stop() override;
@@ -346,6 +347,8 @@ public:
 	int Tempcnt2;
 	FString TempPlayerName;
 	bool bAcquire = false;
+	int MoppType = -1;
+	float TempMoppTime = 0.f;
 private:
 	ACharacterController* MyCharacterController;
 	CPlayerInfo PlayerInfo;
