@@ -46,7 +46,7 @@ void AProjectileBullet::BeginPlay()
 {
 	Super::BeginPlay();
 
-	GetWorldTimerManager().SetTimer(DistanceTimerHandle, this,&AProjectileBullet::DistanceTimer, Distance);
+	//GetWorldTimerManager().SetTimer(DistanceTimerHandle, this,&AProjectileBullet::DistanceTimer, Distance);
 
 	CollisionBox->IgnoreActorWhenMoving(GetOwner(), true);
 	CollisionBox->OnComponentHit.AddDynamic(this, &AProjectileBullet::OnHit);
