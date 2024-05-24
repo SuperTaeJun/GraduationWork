@@ -601,7 +601,7 @@ void ACharacterBase::Fire()
 		PlayFireActionMontage();
 
 		//카메라쉐이크
-		//UGameplayStatics::GetPlayerCameraManager(GetWorld(), 0)->StartCameraShake(UShoot::StaticClass());
+		UGameplayStatics::GetPlayerCameraManager(GetWorld(), 0)->StartCameraShake(UShoot::StaticClass());
 
 		CurWeapon->CurAmmo -= 1;
 		MainController->SetHUDAmmo(CurWeapon->CurAmmo );
