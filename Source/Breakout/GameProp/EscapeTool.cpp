@@ -46,16 +46,16 @@ void AEscapeTool::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if (bOverlap==2)
+	if (CurState ==2 && Cur>0.f)
 	{
 		TransformMesh(DeltaTime, false,true);
 		UpdatePercent(Cur);
 	}
-	if (bServerMorph)
+	else 	if (CurState == 1)
 	{
 		TransformMesh(DeltaTime, false, false);
+		UpdatePercent(Cur);
 	}
-
 
 }
 
@@ -77,21 +77,19 @@ void AEscapeTool::TransformMesh(float DeltaTime, bool Clamp, bool TransformRever
 			//UE_LOG(LogTemp, Log, TEXT("CUR 1.F"));
 			OverlapedCharacter->SetbCanObtainEscapeTool(true);
 			PercentBar->SetVisibility(false);
-			bOverlap = 0;
+			CurState = 0;
 		}
 		else if (Cur <= 0.f)
 		{
-			bOverlap = 0;
+			CurState = 0;
 		}
 	}
 
-	Cur = FMath::Clamp
-	(
-		Time/*(((DegSin(Time * 180.f) * 1.1) + 1.0) / 2.f)*/,
-		0.f,
-		1.f
-	);
+	Cur = FMath::Clamp(Time,0.f,1.f);
 
+	if (Cur > 1.f) Cur = 1.f;
+	else if (Cur < 0.f) Cur = 0.f;
+	DynamicMaterial->SetScalarParameterValue(FName("Alpha"), Cur);
 	InterpMeshData(InterpData, Data1, Data2, Cur, Clamp);
 
 	ProceduralMesh->UpdateMeshSection_LinearColor(0, InterpData.Verts, InterpData.Normals, InterpData.UVs, InterpData.Colors, TArray<FProcMeshTangent>());
@@ -99,17 +97,13 @@ void AEscapeTool::TransformMesh(float DeltaTime, bool Clamp, bool TransformRever
 	if (TransformReverse)
 	{
 		Time = Time - (DeltaTime * MorphingSpeed);
-		DynamicMaterial->SetScalarParameterValue(FName("Alpha"), Time);
 	}
 	else
 	{
 		Time = Time + (DeltaTime * MorphingSpeed);
-		DynamicMaterial->SetScalarParameterValue(FName("Alpha"), Time);
 	}
 
 	UpdatePercent(Cur);
-	
-	
 }
 void AEscapeTool::SetHideMesh()
 {
@@ -129,7 +123,7 @@ void AEscapeTool::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AAct
 		}
 		PercentBar->SetVisibility(true);
 
-		bOverlap = 1;
+		//bOverlap = 1;
 	}
 
 }
@@ -143,9 +137,11 @@ void AEscapeTool::OnSphereEndOverlap(UPrimitiveComponent* OverlappedComponent, A
 	{
 		characterbase->SetbCanObtainEscapeTool(false);
 		characterbase->OverlappingEscapeTool = nullptr;
-		bOverlap = 2;
+		CurState = 2;
 		if (inst)
 			inst->m_Socket->Send_Mopp_Sync_packet(ItemID, 1, false, 0.f);
+
+		PercentBar->SetVisibility(false);
 	}
 }
 

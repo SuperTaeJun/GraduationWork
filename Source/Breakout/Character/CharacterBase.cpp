@@ -766,25 +766,21 @@ void ACharacterBase::Inter(const FInputActionValue& Value)
 	if (bCanObtainEscapeTool && OverlappingEscapeTool)
 	{
 		ObtainedEscapeToolNum += 1;
-		//패킷(id, num)
-		if (inst)
-			Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Item_packet(inst->GetPlayerID(), ObtainedEscapeToolNum);
 		UpdateObtainedEscapeTool();
 		OverlappingEscapeTool->SetHideMesh();
 		OverlappingEscapeTool = nullptr;
 	}
 	else if (!bCanObtainEscapeTool && OverlappingEscapeTool)
 	{
-		//UE_LOG(LogTemp, Log, TEXT("TEST"));
-		EToolTranfrom(Value);
-		
+		//EToolTranfrom(Value);
+		OverlappingEscapeTool->CurState = 1;
 	}
 
+	//게임종료 부분
 	if (bCanEscape)
 	{
 		if (inst)
 			Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_End_Game_packet(inst->GetPlayerID());
-		//GetWorld()->ServerTravel(FString("/Game/Maps/GameRoom"), false,true);
 	}
 }
 void ACharacterBase::Inter_Start(const FInputActionValue& Value)
@@ -804,21 +800,18 @@ void ACharacterBase::Inter_End(const FInputActionValue& Value)
 {
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 	Cast<UBOAnimInstance>(AnimInstance)->bUseLeftHand = true;
-	if (InterMontage) {
+	if (InterMontage) 
 		StopAnimMontage(InterMontage);
-		if (inst)
-			inst->m_Socket->Send_item_Anim_packet(inst->GetPlayerID(), 1);
-	}
-	if (inst)
-		inst->m_Socket->Send_Mopp_Sync_packet(OverlappingEscapeTool->ItemID, 1, false, 0.f);
+
+	if (OverlappingEscapeTool)
+		OverlappingEscapeTool->CurState = 0;
+
 }
 void ACharacterBase::EToolTranfrom(const FInputActionValue& Value)
 {
-	//if (OverlappingEscapeTool)
-	//{
+
 	OverlappingEscapeTool->TransformMesh(GetWorld()->GetDeltaSeconds(),false,false);
-	if (inst)
-		inst->m_Socket->Send_Mopp_Sync_packet(OverlappingEscapeTool->ItemID, 0, false, 0.f);
+
 }
 void ACharacterBase::Reroad(const FInputActionValue& Value)
 {
@@ -1011,7 +1004,7 @@ void ACharacterBase::Tick(float DeltaTime)
 	}
 
 
-	if (Cast<UBOGameInstance>(GetWorld()->GetGameInstance())->m_Socket->bAllReady == true && !bStarted)
+	if (/*Cast<UBOGameInstance>(GetWorld()->GetGameInstance())->m_Socket->bAllReady == true &&*/ !bStarted)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("StartGame"));
 		Cast<UBOGameInstance>(GetWorld()->GetGameInstance())->m_Socket->bAllReady = false;

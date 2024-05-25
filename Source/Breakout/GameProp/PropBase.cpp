@@ -15,7 +15,7 @@ APropBase::APropBase()
 
 	ProceduralMesh = CreateDefaultSubobject<UProceduralMeshComponent>(TEXT("ProceduralMesh"));
 	ProceduralMesh->SetupAttachment(RootComponent);
-
+	ProceduralMesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 }
 
 void APropBase::BeginPlay()
@@ -146,7 +146,7 @@ void APropBase::InterpMeshData(FMeshData& Data, FMeshData& DataA, FMeshData& Dat
 		//버전3
 		//Data.Verts[x] = WaveCustomLerp(DataA.Verts[x], DataB.Verts[y], Alpha,20.f,3.f);
 		//버전4
-		Data.Verts[x] = SpiralCustomLerp(DataA.Verts[x], DataB.Verts[y], Alpha, 3.f, 20.f);
+		Data.Verts[x] = SpiralCustomLerp(DataA.Verts[x], DataB.Verts[y], Alpha, 1.f, 20.f);
 		if (hasNormals) 
 		{
 			Data.Normals[x] = FMath::Lerp(DataA.Normals[x], DataB.Normals[y], Alpha);
@@ -160,6 +160,11 @@ void APropBase::InterpMeshData(FMeshData& Data, FMeshData& DataA, FMeshData& Dat
 		{
 			Data.Colors[x] = FMath::Lerp(DataA.Colors[x], DataB.Colors[y], Alpha);
 		}
+	}
+
+	if (Alpha <= 0.f)
+	{
+		Data = DataA;
 	}
 }
 
