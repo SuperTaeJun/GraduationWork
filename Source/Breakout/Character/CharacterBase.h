@@ -86,6 +86,7 @@ public:
 	void SetHealth(float DamagedHp);
 
 	class AWeaponBase* GetWeapon() { return CurWeapon; }
+	class ACharacterController* GetChController() { return MainController; }
 
 	FORCEINLINE float GetHealth() const { return Health; }
 	FORCEINLINE bool GetbFfirePressed() const { return bFirePressed; }
@@ -144,7 +145,6 @@ protected:
 
 	TObjectPtr<class AMainHUD> MainHUD;
 	TObjectPtr<class ACharacterController> MainController;
-
 	UPROPERTY(EditAnywhere, Category = Animation)
 	TObjectPtr<class UAnimMontage> FireActionMontage;
 	UPROPERTY(EditAnywhere, Category = Animation)

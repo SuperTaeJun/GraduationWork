@@ -1,6 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "GameProp/EscapeTool.h"
 #include "Character/CharacterBase.h"
 #include "ProceduralMeshComponent.h"
