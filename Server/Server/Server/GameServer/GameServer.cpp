@@ -794,7 +794,7 @@ void process_packet(int s_id, char* p)
 		int itemid = packet->itemid;
 		float delta = packet->DeltaTime;
 		int mopptype =  packet->mopptype;
-		cout << "delat : " << delta << endl;
+		cout << "mopptype : " << mopptype << endl;
 		for (auto& other : clients) {
 			if (other._s_id == cl._s_id) continue;
 			other.state_lock.lock();
