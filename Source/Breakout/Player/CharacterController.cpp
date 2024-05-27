@@ -762,18 +762,16 @@ bool ACharacterController::UpdateWorld()
 							Cast<AEscapeTool>(m_GameMode->EscapeTools[i])->Destroy();
 				}
 			}
-			if (inst) {
-				if (inst->m_Socket->MoppType == 0) {
-					//Cast<AEscapeTool>(m_GameMode->EscapeTools[MoppID])->TransformMesh(inst->m_Socket->TempMoppTime, false, false);
-					Cast<AEscapeTool>(m_GameMode->EscapeTools[MoppID])->bServerMorph = true;
-					inst->m_Socket->MoppType = -1;
-				}
-				else if (inst->m_Socket->MoppType == 1) {
-					Cast<AEscapeTool>(m_GameMode->EscapeTools[MoppID])->bServerMorph = false;
-					inst->m_Socket->MoppType = -1;
-				}
+			if (inst->m_Socket->MoppType == 0) {
+				//Cast<AEscapeTool>(m_GameMode->EscapeTools[MoppID])->TransformMesh(inst->m_Socket->TempMoppTime, false, false);
+				Cast<AEscapeTool>(m_GameMode->EscapeTools[MoppID])->bServerMorph = true;
+				inst->m_Socket->MoppType = -1;
 			}
-		
+			else if (inst->m_Socket->MoppType == 1) {
+				Cast<AEscapeTool>(m_GameMode->EscapeTools[MoppID])->bServerMorph = false;
+				inst->m_Socket->MoppType = -1;
+			}
+
 		}
 	}
 	return true;
