@@ -197,13 +197,9 @@ bool ClientSocket::PacketProcess(char* ptr)
 		break;
 	}
 	//HP동기화 처리
-	case SC_PLAYER_DAMAGE: {
+	case SC_HP: {
 		SC_DAMAGE_CHANGE* packet = reinterpret_cast<SC_DAMAGE_CHANGE*>(ptr);
-		CPlayer player;
-		player.Id = packet->damaged_id;
-		player.damage = packet->damage;
-
-		MyCharacterController->SetHp(player.damage);
+		PlayerInfo.players[packet->id].hp = packet->hp;
 		break;
 	}
 	case SC_NiAGARA: {
@@ -267,9 +263,7 @@ bool ClientSocket::PacketProcess(char* ptr)
 	{
 		CS_MOPP_PACKET* packet = reinterpret_cast<CS_MOPP_PACKET*>(ptr);
 		MyCharacterController->SetMoppItemID(packet->itemid);
-		MoppType = packet->DeltaTime;
-		UE_LOG(LogTemp, Warning, TEXT("DELTATIME %f"), packet->DeltaTime);
-		TempMoppTime = packet->mopptype;
+		MoppType = packet->mopptype;
 		break;
 	}
 	case SC_INCREASE_COUNT: {
@@ -580,14 +574,22 @@ void ClientSocket::Send_CH2_SKILL_PACKET(int id, PlayerType type, bool bSkill)
 	packet.bfinish = bSkill;
 	SendPacket(&packet);
 }
-void ClientSocket::Send_Mopp_Sync_packet(int itemid, int mopptype, bool bMopp, float DeltaTime)
+void ClientSocket::Send_Mopp_Sync_packet(int itemid, int mopptype)
 {
 	CS_MOPP_PACKET packet;
 	packet.size = sizeof(packet);
 	packet.type = CS_MOPP;
 	packet.itemid = itemid;
 	packet.mopptype = mopptype;
-	packet.DeltaTime = DeltaTime;
+	SendPacket(&packet);
+}
+void ClientSocket::Send_HP_packet(int id, float HP)
+{
+	CS_DAMAGE_PACKET packet;
+	packet.size = sizeof(packet);
+	packet.type = CS_HP;
+	packet.id = id;
+	packet.hp = HP;
 	SendPacket(&packet);
 }
 bool ClientSocket::Init()

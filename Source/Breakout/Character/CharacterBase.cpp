@@ -774,6 +774,7 @@ void ACharacterBase::Inter(const FInputActionValue& Value)
 	{
 		//EToolTranfrom(Value);
 		OverlappingEscapeTool->CurState = 1;
+		
 	}
 
 	//게임종료 부분
@@ -791,8 +792,11 @@ void ACharacterBase::Inter_Start(const FInputActionValue& Value)
 			Cast<UBOAnimInstance>(AnimInstance)->bUseLeftHand = false;
 			if (InterMontage) {
 				PlayAnimMontage(InterMontage);
-				if (inst)
+				if (inst) {
 					inst->m_Socket->Send_item_Anim_packet(inst->GetPlayerID(), 0);
+					UE_LOG(LogTemp, Warning, TEXT("HAH %d"), OverlappingEscapeTool->ItemID);
+					inst->m_Socket->Send_Mopp_Sync_packet(OverlappingEscapeTool->ItemID, 1);
+				}
 			}
 		}
 }
@@ -803,9 +807,16 @@ void ACharacterBase::Inter_End(const FInputActionValue& Value)
 	if (InterMontage) 
 		StopAnimMontage(InterMontage);
 
-	if (OverlappingEscapeTool)
+	if (OverlappingEscapeTool) 
+	{
 		OverlappingEscapeTool->CurState = 0;
-
+		if (inst) 
+		{
+			inst->m_Socket->Send_Mopp_Sync_packet(OverlappingEscapeTool->ItemID, 0);
+			inst->m_Socket->Send_item_Anim_packet(inst->GetPlayerID(), 1);
+		}
+	}
+	
 }
 void ACharacterBase::EToolTranfrom(const FInputActionValue& Value)
 {
@@ -1004,7 +1015,7 @@ void ACharacterBase::Tick(float DeltaTime)
 	}
 
 
-	if (/*Cast<UBOGameInstance>(GetWorld()->GetGameInstance())->m_Socket->bAllReady == true &&*/ !bStarted)
+	if (Cast<UBOGameInstance>(GetWorld()->GetGameInstance())->m_Socket->bAllReady == true && !bStarted)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("StartGame"));
 		Cast<UBOGameInstance>(GetWorld()->GetGameInstance())->m_Socket->bAllReady = false;
@@ -1012,8 +1023,6 @@ void ACharacterBase::Tick(float DeltaTime)
 		//DisableInput(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 		GetWorldTimerManager().SetTimer(StartHandle, this, &ACharacterBase::StartGame, 5.f);
 	}
-
-
 }
 
 void ACharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)

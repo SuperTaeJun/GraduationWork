@@ -59,9 +59,11 @@ void AEscapeTool::Tick(float DeltaTime)
 void AEscapeTool::Destroyed()
 {
 	Super::Destroyed();
-	if (inst)
+	if (inst) 
+	{
 		inst->m_Socket->Send_Destroyed_item_packet(ItemID);
-	
+		inst->m_Socket->Send_item_Anim_packet(inst->GetPlayerID(), 1);
+	}
 }
 
 void AEscapeTool::TransformMesh(float DeltaTime, bool Clamp, bool TransformReverse)
@@ -136,8 +138,7 @@ void AEscapeTool::OnSphereEndOverlap(UPrimitiveComponent* OverlappedComponent, A
 		characterbase->OverlappingEscapeTool = nullptr;
 		CurState = 2;
 		if (inst)
-			inst->m_Socket->Send_Mopp_Sync_packet(ItemID, 1, false, 0.f);
-
+			inst->m_Socket->Send_Mopp_Sync_packet(ItemID, 2);
 		PercentBar->SetVisibility(false);
 	}
 }

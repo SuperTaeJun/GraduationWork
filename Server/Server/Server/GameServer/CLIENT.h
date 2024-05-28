@@ -30,7 +30,6 @@ public:
 
     float _hp; // 체력
     float _max_hp; // 체력
-    int damage;
     int _bulletcount;
     int _max_bulletcount;
     bool is_bone = false;

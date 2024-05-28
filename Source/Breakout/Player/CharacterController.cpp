@@ -331,24 +331,24 @@ void ACharacterController::Tick(float DeltaTime)
 	UpdatePlayer();
 	//SleepEx(0, true);
 	ACharacterBase* BaseCharacter = Cast<ACharacterBase>(GetPawn());
-	if (BaseCharacter)
-	{
-		//UE_LOG(LogClass, Warning, TEXT("hp : %f"), DamagedHp);
-		//BaseCharacter->SetHealth(DamgeHp);
-		//UE_LOG(LogTemp, Warning, TEXT("my health : %f"), BaseCharacter->GetHealth());
-		UGameplayStatics::ApplyDamage(
-			GetOwner(),
-			damaged,
-			this,
-			this,
-			UDamageType::StaticClass()
-		);
-		//BaseCharacter->SetHealth(damaged);
-		damaged = 0;
-		//BaseCharacter->SetHealth(BaseCharacter->GetHealth());
-		if(BaseCharacter->GetHealth()<=9999)
-			SetHUDHealth(BaseCharacter->GetHealth(), BaseCharacter->MaxGetHealth());
-	}
+	//if (BaseCharacter)
+	//{
+	//	//UE_LOG(LogClass, Warning, TEXT("hp : %f"), DamagedHp);
+	//	//BaseCharacter->SetHealth(DamgeHp);
+	//	//UE_LOG(LogTemp, Warning, TEXT("my health : %f"), BaseCharacter->GetHealth());
+	//	/*UGameplayStatics::ApplyDamage(
+	//		GetOwner(),
+	//		damaged,
+	//		this,
+	//		this,
+	//		UDamageType::StaticClass()
+	//	);*/
+	//	//BaseCharacter->SetHealth(damaged);
+	//	//damaged = 0;
+	//	//BaseCharacter->SetHealth(BaseCharacter->GetHealth());
+	//	/*if(BaseCharacter->GetHealth()<=9999)
+	//		SetHUDHealth(BaseCharacter->GetHealth(), BaseCharacter->MaxGetHealth());*/
+	//}
 	if (MainHUD && inst->m_Socket->bAcquire) {
 		SetNum();
 		inst->m_Socket->bAcquire = false;
@@ -358,7 +358,11 @@ void ACharacterController::Tick(float DeltaTime)
 		BaseCharacter->UpdateObtainedEscapeTool();
 		inst->m_Socket->itemflag = false;
 	}
-	
+	if (Cast<ACharacterBase>(UGameplayStatics::GetPlayerCharacter(this, 0)))
+	{
+		inst->m_Socket->Send_HP_packet(inst->GetPlayerID(),
+			Cast<ACharacterBase>(UGameplayStatics::GetPlayerCharacter(this, 0))->GetHealth());
+	}
 }
 
 void ACharacterController::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -764,11 +768,15 @@ bool ACharacterController::UpdateWorld()
 			}
 			if (inst->m_Socket->MoppType == 0) {
 				//Cast<AEscapeTool>(m_GameMode->EscapeTools[MoppID])->TransformMesh(inst->m_Socket->TempMoppTime, false, false);
-				Cast<AEscapeTool>(m_GameMode->EscapeTools[MoppID])->bServerMorph = true;
+				Cast<AEscapeTool>(m_GameMode->EscapeTools[MoppID])->CurState = 0;
 				inst->m_Socket->MoppType = -1;
 			}
 			else if (inst->m_Socket->MoppType == 1) {
-				Cast<AEscapeTool>(m_GameMode->EscapeTools[MoppID])->bServerMorph = false;
+				Cast<AEscapeTool>(m_GameMode->EscapeTools[MoppID])->CurState = 1;
+				inst->m_Socket->MoppType = -1;
+			}
+			else if (inst->m_Socket->MoppType == 2) {
+				Cast<AEscapeTool>(m_GameMode->EscapeTools[MoppID])->CurState = 2;
 				inst->m_Socket->MoppType = -1;
 			}
 
