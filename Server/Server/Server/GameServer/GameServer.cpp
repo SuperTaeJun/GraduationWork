@@ -416,6 +416,27 @@ void process_packet(int s_id, char* p)
 	case CS_START_GAME: {
 		break;
 	}
+	case CS_HP: {
+		CS_DAMAGE_PACKET* packet = reinterpret_cast<CS_DAMAGE_PACKET*>(p);
+		CLIENT& cl = clients[packet->id];
+		cl._hp = packet->hp;
+		for (auto& other : clients) {
+			if (other._s_id == cl._s_id) continue;
+			other.state_lock.lock();
+			if (ST_INGAME != other._state) {
+				other.state_lock.unlock();
+				continue;
+			}
+			else other.state_lock.unlock();
+			SC_DAMAGE_CHANGE packet;
+			packet.size = sizeof(packet);
+			packet.type = SC_HP;
+			packet.id = cl._s_id;
+			packet.hp = cl._hp;
+			other.do_send(sizeof(packet), &packet);
+		}
+		break;
+	}
 	case CS_HIT_EFFECT: {
 		CS_EFFECT_PACKET* packet = reinterpret_cast<CS_EFFECT_PACKET*>(p);
 		CLIENT& cl = clients[packet->attack_id];
@@ -959,9 +980,9 @@ void send_change_hp(int _s_id)
 {
 	SC_DAMAGE_CHANGE packet;
 	packet.size = sizeof(packet);
-	packet.type = SC_PLAYER_DAMAGE;
-	packet.damaged_id = _s_id;
-	packet.damage = clients[_s_id].damage;
+	packet.type = SC_HP;
+	packet.id = _s_id;
+	packet.hp = clients[_s_id]._hp;
 	clients[_s_id].do_send(sizeof(packet), &packet);
 }
 

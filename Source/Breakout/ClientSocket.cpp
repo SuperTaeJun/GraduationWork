@@ -197,13 +197,9 @@ bool ClientSocket::PacketProcess(char* ptr)
 		break;
 	}
 	//HP동기화 처리
-	case SC_PLAYER_DAMAGE: {
+	case SC_HP: {
 		SC_DAMAGE_CHANGE* packet = reinterpret_cast<SC_DAMAGE_CHANGE*>(ptr);
-		CPlayer player;
-		player.Id = packet->damaged_id;
-		player.damage = packet->damage;
-
-		MyCharacterController->SetHp(player.damage);
+		PlayerInfo.players[packet->id].hp = packet->hp;
 		break;
 	}
 	case SC_NiAGARA: {
@@ -585,6 +581,15 @@ void ClientSocket::Send_Mopp_Sync_packet(int itemid, int mopptype)
 	packet.type = CS_MOPP;
 	packet.itemid = itemid;
 	packet.mopptype = mopptype;
+	SendPacket(&packet);
+}
+void ClientSocket::Send_HP_packet(int id, float HP)
+{
+	CS_DAMAGE_PACKET packet;
+	packet.size = sizeof(packet);
+	packet.type = CS_HP;
+	packet.id = id;
+	packet.hp = HP;
 	SendPacket(&packet);
 }
 bool ClientSocket::Init()

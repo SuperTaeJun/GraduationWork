@@ -52,6 +52,7 @@ const char CS_CH2_SKILL = 26;
 const char CS_PLAYER_HEAL = 27;
 const char CS_PLAYER_RELOAD = 28;
 const char CS_MOPP = 29;
+const char CS_HP = 30;
 
 const char SC_LOGIN_OK = 1;
 const char SC_OTHER_PLAYER = 2;
@@ -61,7 +62,6 @@ const char SC_OTHER_WEAPO = 5;
 const char SC_ALL_READY = 6;
 const char SC_ATTACK = 7;
 const char SC_EFFECT = 8;
-const char SC_PLAYER_DAMAGE = 9;
 const char SC_SHOTGUN_BEAM = 10;
 const char SC_SHOTGUN_DAMAGED = 11;
 const char SC_NiAGARA = 12;
@@ -83,6 +83,8 @@ const char SC_CH2_SKILL = 27;
 const char SC_PLAYER_HEAL = 28;
 const char SC_PLAYER_RELOAD = 29;
 const char SC_MOPP = 30;
+const char SC_HP = 31;
+
 #pragma pack (push, 1)
 struct CS_LOGIN_PACKET
 {
@@ -189,15 +191,15 @@ struct CS_EFFECT_PACKET {
 struct CS_DAMAGE_PACKET {
 	unsigned char size;
 	unsigned char type;
-	int damaged_id;
-	float damage;
+	int id;
+	float hp;
 };
 struct SC_DAMAGE_CHANGE
 {
 	unsigned char size;
 	unsigned char type;
-	int damaged_id;
-	int damage;
+	int id;
+	float hp;
 };
 struct CS_SIGNAL_PACKET
 {
