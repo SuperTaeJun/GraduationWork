@@ -290,6 +290,7 @@ void process_packet(int s_id, char* p)
 	}
 	case CS_MOVE_Packet: {
 		CS_MOVE_PACKET* packet = reinterpret_cast<CS_MOVE_PACKET*>(p);
+		cout << "packet_size = movepacket" << sizeof(packet) << endl;
 		CLIENT& cl = clients[packet->id];
 		cl.x = packet->x;
 		cl.y = packet->y;
@@ -299,7 +300,8 @@ void process_packet(int s_id, char* p)
 		cl.VY = packet->vy;
 		cl.VZ = packet->vz;
 		cl.Max_Speed = packet->Max_speed;
-
+		cl._hp = packet->hp;
+		cout << "hp : " << cl._hp << endl;
 		for (auto& other : clients) {
 			if (other._s_id == s_id)
 				continue;
@@ -939,6 +941,7 @@ void send_move_packet(int _id, int target)
 	packet.vy = clients[target].VY;
 	packet.vz = clients[target].VZ;
 	packet.Max_speed = clients[target].Max_Speed;
+	packet.hp = clients[target]._hp;
 	clients[_id].do_send(sizeof(packet), &packet);
 }
 void player_heal(int s_id)

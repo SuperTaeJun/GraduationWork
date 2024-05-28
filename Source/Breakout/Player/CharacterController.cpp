@@ -466,6 +466,8 @@ bool ACharacterController::UpdateWorld()
 			PlayerVelocity.X = info->VeloX;
 			PlayerVelocity.Y = info->VeloY;
 			PlayerVelocity.Z = info->VeloZ;
+
+			float SyncHP = info->hp;
 			// 나이아가라 레이저
 			FVector Firegun;
 			FRotator EFiregun;
@@ -525,6 +527,7 @@ bool ACharacterController::UpdateWorld()
 			OtherPlayer->SetActorRotation(PlayerRotation);
 			OtherPlayer->SetActorLocation(PlayerLocation);
 			OtherPlayer->GetCharacterMovement()->MaxWalkSpeed = info->Max_Speed;
+			OtherPlayer->SetHealth(SyncHP);
 			if (info->bGetWeapon == true)
 			{
 				OtherPlayer->CurWeapon->Destroy();
@@ -993,10 +996,11 @@ void ACharacterController::UpdatePlayer()
 	auto MyRotation = m_Player->GetActorRotation();
 	auto MyVelocity = m_Player->GetVelocity();
 	auto max_speed = m_Player->GetCharacterMovement()->MaxWalkSpeed;
+	auto MyHP = m_Player->GetHealth();
 	FVector MyCameraLocation;
 	FRotator MyCameraRotation;
 	m_Player->GetActorEyesViewPoint(MyCameraLocation, MyCameraRotation);
-	inst->m_Socket->Send_Move_Packet(id, MyLocation, MyRotation, MyVelocity, max_speed);
+	inst->m_Socket->Send_Move_Packet(id, MyLocation, MyRotation, MyVelocity, max_speed, MyHP);
 	//UE_LOG(LogClass, Warning, TEXT("send move packet"));
 }
 

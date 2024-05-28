@@ -119,6 +119,7 @@ bool ClientSocket::PacketProcess(char* ptr)
 		PlayerInfo.players[packet->id].VeloY = packet->vy;
 		PlayerInfo.players[packet->id].VeloZ = packet->vz;
 		PlayerInfo.players[packet->id].Max_Speed = packet->Max_speed;
+		PlayerInfo.players[packet->id].hp = packet->hp;
 		break;
 	}
 	case SC_CHAR_BACK: {
@@ -316,7 +317,7 @@ void ClientSocket::Send_Login_Info(char* id, char* pw)
 
 }
 
-void ClientSocket::Send_Move_Packet(int sessionID, FVector Location, FRotator Rotation, FVector Velocity, float Max_speed)
+void ClientSocket::Send_Move_Packet(int sessionID, FVector Location, FRotator Rotation, FVector Velocity, float Max_speed, float hp)
 {
 	//if (login_cond == true) {
 	CS_MOVE_PACKET packet;
@@ -331,6 +332,7 @@ void ClientSocket::Send_Move_Packet(int sessionID, FVector Location, FRotator Ro
 	packet.vy = Velocity.Y;
 	packet.vz = Velocity.Z;
 	packet.Max_speed = Max_speed;
+	packet.hp = hp;
 	//Send(packet.size, &packet);
 	SendPacket(&packet);
 	//UE_LOG(LogClass, Warning, TEXT("send move"));
@@ -574,15 +576,6 @@ void ClientSocket::Send_Mopp_Sync_packet(int itemid, int mopptype)
 	packet.type = CS_MOPP;
 	packet.itemid = itemid;
 	packet.mopptype = mopptype;
-	SendPacket(&packet);
-}
-void ClientSocket::Send_HP_packet(int id, float HP)
-{
-	CS_DAMAGE_PACKET packet;
-	packet.size = sizeof(packet);
-	packet.type = CS_HP;
-	packet.id = id;
-	packet.hp = HP;
 	SendPacket(&packet);
 }
 bool ClientSocket::Init()
