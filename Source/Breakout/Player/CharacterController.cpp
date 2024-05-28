@@ -757,9 +757,9 @@ bool ACharacterController::UpdateWorld()
 			if (m_GameMode) {
 				for (int i = 0; i < m_GameMode->EscapeTools.Num(); i++)
 				{
-					//if (Cast<AEscapeTool>(m_GameMode->EscapeTools[i]))
-					//	if (Escapeid == Cast<AEscapeTool>(m_GameMode->EscapeTools[i])->ItemID)
-					//		Cast<AEscapeTool>(m_GameMode->EscapeTools[i])->Destroy();
+					if (Cast<AEscapeTool>(m_GameMode->EscapeTools[i]))
+						if (Escapeid == Cast<AEscapeTool>(m_GameMode->EscapeTools[i])->ItemID)
+							Cast<AEscapeTool>(m_GameMode->EscapeTools[i])->Destroy();
 				}
 			}
 			if (inst->m_Socket->MoppType == 0) {
@@ -769,6 +769,10 @@ bool ACharacterController::UpdateWorld()
 			}
 			else if (inst->m_Socket->MoppType == 1) {
 				Cast<AEscapeTool>(m_GameMode->EscapeTools[MoppID])->CurState = 1;
+				inst->m_Socket->MoppType = -1;
+			}
+			else if (inst->m_Socket->MoppType == 2) {
+				Cast<AEscapeTool>(m_GameMode->EscapeTools[MoppID])->CurState = 2;
 				inst->m_Socket->MoppType = -1;
 			}
 

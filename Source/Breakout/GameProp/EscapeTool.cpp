@@ -135,7 +135,8 @@ void AEscapeTool::OnSphereEndOverlap(UPrimitiveComponent* OverlappedComponent, A
 		characterbase->SetbCanObtainEscapeTool(false);
 		characterbase->OverlappingEscapeTool = nullptr;
 		CurState = 2;
-
+		if (inst)
+			inst->m_Socket->Send_Mopp_Sync_packet(ItemID, 2);
 		PercentBar->SetVisibility(false);
 	}
 }
