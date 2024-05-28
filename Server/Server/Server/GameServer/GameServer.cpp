@@ -73,22 +73,22 @@ int main()
 		clients[i]._s_id = i;
 	for (int i = 0; i < MAX_OBJ; ++i)
 		objects[i].ob_id = i;
-	objects[0].x = 1000.f;
-	objects[0].y = 1500.0f;
-	objects[0].z = 1500.f;
+	objects[0].x = 1710.f;
+	objects[0].y = -1080.f;
+	objects[0].z = 120.f;
 
-	objects[1].x = 1800.0;
-	objects[1].y = -570.0;
-	objects[1].z = 80.0;
+	objects[1].x = 1800.f;
+	objects[1].y = -570.f;
+	objects[1].z = 80.f;
 
 	
-	objects[2].x = 2280.0;
-	objects[2].y = -630.0;
-	objects[2].z = 100.0;
+	objects[2].x = 2280.f;
+	objects[2].y = -630.f;
+	objects[2].z = 100.f;
 
-	objects[3].x = 2110.0;
-	objects[3].y = -10800.0;
-	objects[3].z = 120.0;
+	objects[3].x = 2110.f;
+	objects[3].y = -1080.f;
+	objects[3].z = 120.f;
 
 	g_timer = CreateEvent(NULL, FALSE, FALSE, NULL);
 	vector <thread> worker_threads;

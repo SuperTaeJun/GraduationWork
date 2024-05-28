@@ -267,7 +267,7 @@ bool ClientSocket::PacketProcess(char* ptr)
 	{
 		CS_MOPP_PACKET* packet = reinterpret_cast<CS_MOPP_PACKET*>(ptr);
 		MyCharacterController->SetMoppItemID(packet->itemid);
-		TempMoppTime = packet->mopptype;
+		MoppType = packet->mopptype;
 		break;
 	}
 	case SC_INCREASE_COUNT: {
