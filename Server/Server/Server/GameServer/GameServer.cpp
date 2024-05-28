@@ -416,7 +416,6 @@ void process_packet(int s_id, char* p)
 	case CS_START_GAME: {
 		break;
 	}
-
 	case CS_HIT_EFFECT: {
 		CS_EFFECT_PACKET* packet = reinterpret_cast<CS_EFFECT_PACKET*>(p);
 		CLIENT& cl = clients[packet->attack_id];
@@ -791,8 +790,7 @@ void process_packet(int s_id, char* p)
 		}
 		break;
 	}
-	case CS_MOPP:
-	{
+	case CS_MOPP:{
 		CS_MOPP_PACKET* packet = reinterpret_cast<CS_MOPP_PACKET*>(p);
 		CLIENT& cl = clients[s_id];
 		cout << "itemid : " << packet->itemid << endl;

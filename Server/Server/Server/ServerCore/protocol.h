@@ -194,15 +194,13 @@ struct CS_DAMAGE_PACKET {
 	int id;
 	float hp;
 };
-struct SC_DAMAGE_CHANGE
-{
+struct SC_DAMAGE_CHANGE{
 	unsigned char size;
 	unsigned char type;
 	int id;
 	float hp;
 };
-struct CS_SIGNAL_PACKET
-{
+struct CS_SIGNAL_PACKET{
 	unsigned char size;
 	unsigned char type;
 	int id;
