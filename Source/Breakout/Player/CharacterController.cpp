@@ -331,24 +331,24 @@ void ACharacterController::Tick(float DeltaTime)
 	UpdatePlayer();
 	//SleepEx(0, true);
 	ACharacterBase* BaseCharacter = Cast<ACharacterBase>(GetPawn());
-	//if (BaseCharacter)
-	//{
-	//	//UE_LOG(LogClass, Warning, TEXT("hp : %f"), DamagedHp);
-	//	//BaseCharacter->SetHealth(DamgeHp);
-	//	//UE_LOG(LogTemp, Warning, TEXT("my health : %f"), BaseCharacter->GetHealth());
-	//	/*UGameplayStatics::ApplyDamage(
-	//		GetOwner(),
-	//		damaged,
-	//		this,
-	//		this,
-	//		UDamageType::StaticClass()
-	//	);*/
-	//	//BaseCharacter->SetHealth(damaged);
-	//	//damaged = 0;
-	//	//BaseCharacter->SetHealth(BaseCharacter->GetHealth());
-	//	/*if(BaseCharacter->GetHealth()<=9999)
-	//		SetHUDHealth(BaseCharacter->GetHealth(), BaseCharacter->MaxGetHealth());*/
-	//}
+	if (BaseCharacter)
+	{
+		//UE_LOG(LogClass, Warning, TEXT("hp : %f"), DamagedHp);
+		//BaseCharacter->SetHealth(DamgeHp);
+		//UE_LOG(LogTemp, Warning, TEXT("my health : %f"), BaseCharacter->GetHealth());
+		/*UGameplayStatics::ApplyDamage(
+			GetOwner(),
+			damaged,
+			this,
+			this,
+			UDamageType::StaticClass()
+		);*/
+		//BaseCharacter->SetHealth(damaged);
+		//damaged = 0;
+		//BaseCharacter->SetHealth(BaseCharacter->GetHealth());
+		if(BaseCharacter->GetHealth()<=9999)
+			SetHUDHealth(BaseCharacter->GetHealth(), BaseCharacter->MaxGetHealth());
+	}
 	if (MainHUD && inst->m_Socket->bAcquire) {
 		SetNum();
 		inst->m_Socket->bAcquire = false;
@@ -357,11 +357,6 @@ void ACharacterController::Tick(float DeltaTime)
 		BaseCharacter->SetEscapeToolNum(inst->m_Socket->MyItemCount);
 		BaseCharacter->UpdateObtainedEscapeTool();
 		inst->m_Socket->itemflag = false;
-	}
-	if (Cast<ACharacterBase>(UGameplayStatics::GetPlayerCharacter(this, 0)))
-	{
-		inst->m_Socket->Send_HP_packet(inst->GetPlayerID(),
-			Cast<ACharacterBase>(UGameplayStatics::GetPlayerCharacter(this, 0))->GetHealth());
 	}
 }
 
@@ -487,7 +482,7 @@ bool ACharacterController::UpdateWorld()
 			HEloc.X = info->Hshot.X;
 			HEloc.Y = info->Hshot.Y;
 			HEloc.Z = info->Hshot.Z;
-
+			
 			FRotator EffectRot;
 			EffectRot.Pitch = info->FEffect.Pitch;
 			EffectRot.Yaw = info->FEffect.Yaw;

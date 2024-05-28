@@ -80,7 +80,6 @@ bool ClientSocket::PacketProcess(char* ptr)
 	{
 	case SC_LOGIN_OK: {
 		SC_LOGIN_BACK* packet = reinterpret_cast<SC_LOGIN_BACK*>(ptr);
-		//to_do
 		gameinst->SetPlayerID(packet->id);
 		break;
 	}
@@ -194,12 +193,6 @@ bool ClientSocket::PacketProcess(char* ptr)
 		PlayerInfo.players[packet->attack_id].weptype = packet->wep_type;
 		MyCharacterController->SetHitEffect(packet->attack_id);
 	
-		break;
-	}
-	//HP동기화 처리
-	case SC_HP: {
-		SC_DAMAGE_CHANGE* packet = reinterpret_cast<SC_DAMAGE_CHANGE*>(ptr);
-		PlayerInfo.players[packet->id].hp = packet->hp;
 		break;
 	}
 	case SC_NiAGARA: {
