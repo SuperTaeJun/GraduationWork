@@ -813,7 +813,7 @@ void ACharacterBase::Inter_End(const FInputActionValue& Value)
 		if (inst) 
 		{
 			inst->m_Socket->Send_Mopp_Sync_packet(OverlappingEscapeTool->ItemID, 0);
-			inst->m_Socket->Send_item_Anim_packet(inst->GetPlayerID(), 0);
+			inst->m_Socket->Send_item_Anim_packet(inst->GetPlayerID(), 1);
 		}
 	}
 	
