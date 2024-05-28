@@ -791,8 +791,10 @@ void ACharacterBase::Inter_Start(const FInputActionValue& Value)
 			Cast<UBOAnimInstance>(AnimInstance)->bUseLeftHand = false;
 			if (InterMontage) {
 				PlayAnimMontage(InterMontage);
-				if (inst)
+				if (inst) {
 					inst->m_Socket->Send_item_Anim_packet(inst->GetPlayerID(), 0);
+					inst->m_Socket->Send_Mopp_Sync_packet(OverlappingEscapeTool->ItemID, 1);
+				}
 			}
 		}
 }
@@ -803,9 +805,13 @@ void ACharacterBase::Inter_End(const FInputActionValue& Value)
 	if (InterMontage) 
 		StopAnimMontage(InterMontage);
 
-	if (OverlappingEscapeTool)
+	if (OverlappingEscapeTool) 
+	{
 		OverlappingEscapeTool->CurState = 0;
-
+		if (inst)
+			inst->m_Socket->Send_Mopp_Sync_packet(OverlappingEscapeTool->ItemID, 0);
+	}
+	
 }
 void ACharacterBase::EToolTranfrom(const FInputActionValue& Value)
 {

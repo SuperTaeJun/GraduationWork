@@ -764,11 +764,11 @@ bool ACharacterController::UpdateWorld()
 			}
 			if (inst->m_Socket->MoppType == 0) {
 				//Cast<AEscapeTool>(m_GameMode->EscapeTools[MoppID])->TransformMesh(inst->m_Socket->TempMoppTime, false, false);
-				Cast<AEscapeTool>(m_GameMode->EscapeTools[MoppID])->bServerMorph = true;
+				Cast<AEscapeTool>(m_GameMode->EscapeTools[MoppID])->CurState = 0;
 				inst->m_Socket->MoppType = -1;
 			}
 			else if (inst->m_Socket->MoppType == 1) {
-				Cast<AEscapeTool>(m_GameMode->EscapeTools[MoppID])->bServerMorph = false;
+				Cast<AEscapeTool>(m_GameMode->EscapeTools[MoppID])->CurState = 1;
 				inst->m_Socket->MoppType = -1;
 			}
 

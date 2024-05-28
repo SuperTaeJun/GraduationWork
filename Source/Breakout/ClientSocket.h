@@ -310,7 +310,7 @@ public:
 	void Send_item_Anim_packet(int id, int num);
 	void Send_Remove_Weapon(int id, bool bWeapon);
 	void Send_CH2_SKILL_PACKET(int id, PlayerType type, bool bSkill);
-	void Send_Mopp_Sync_packet(int itemid, int mopptype, bool bMopp, float DeltaTime);
+	void Send_Mopp_Sync_packet(int itemid, int mopptype);
 	virtual bool Init() override;
 	virtual uint32 Run() override;
 	virtual void Stop() override;

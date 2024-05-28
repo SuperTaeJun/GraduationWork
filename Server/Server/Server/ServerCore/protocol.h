@@ -1,6 +1,6 @@
 #pragma once
 #define SERVER_PORT		8001
-#define SERVER_IP		"192.168.213.28"
+#define SERVER_IP		"192.168.103.45"
 #define MAX_INFO_SIZE   20
 #include <vector>
 #include <array>
@@ -379,6 +379,5 @@ struct CS_MOPP_PACKET {
 	unsigned char type;
 	int itemid;
 	int mopptype;
-	float DeltaTime;
 };
 #pragma pack(pop)

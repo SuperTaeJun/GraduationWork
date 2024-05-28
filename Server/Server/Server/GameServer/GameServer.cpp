@@ -792,7 +792,6 @@ void process_packet(int s_id, char* p)
 		CLIENT& cl = clients[s_id];
 		cout << "itemid : " << packet->itemid << endl;
 		int itemid = packet->itemid;
-		float delta = packet->DeltaTime;
 		int mopptype =  packet->mopptype;
 		cout << "mopptype : " << mopptype << endl;
 		for (auto& other : clients) {
@@ -807,7 +806,6 @@ void process_packet(int s_id, char* p)
 			packet.itemid = itemid;
 			packet.size = sizeof(packet);
 			packet.type = SC_MOPP;
-			packet.DeltaTime = delta;
 			packet.mopptype = mopptype;
 			other.do_send(sizeof(packet), &packet);
 		}

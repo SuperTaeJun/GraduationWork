@@ -267,8 +267,6 @@ bool ClientSocket::PacketProcess(char* ptr)
 	{
 		CS_MOPP_PACKET* packet = reinterpret_cast<CS_MOPP_PACKET*>(ptr);
 		MyCharacterController->SetMoppItemID(packet->itemid);
-		MoppType = packet->DeltaTime;
-		UE_LOG(LogTemp, Warning, TEXT("DELTATIME %f"), packet->DeltaTime);
 		TempMoppTime = packet->mopptype;
 		break;
 	}
@@ -580,14 +578,13 @@ void ClientSocket::Send_CH2_SKILL_PACKET(int id, PlayerType type, bool bSkill)
 	packet.bfinish = bSkill;
 	SendPacket(&packet);
 }
-void ClientSocket::Send_Mopp_Sync_packet(int itemid, int mopptype, bool bMopp, float DeltaTime)
+void ClientSocket::Send_Mopp_Sync_packet(int itemid, int mopptype)
 {
 	CS_MOPP_PACKET packet;
 	packet.size = sizeof(packet);
 	packet.type = CS_MOPP;
 	packet.itemid = itemid;
 	packet.mopptype = mopptype;
-	packet.DeltaTime = DeltaTime;
 	SendPacket(&packet);
 }
 bool ClientSocket::Init()
