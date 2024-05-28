@@ -77,14 +77,18 @@ int main()
 	objects[0].y = 1500.0f;
 	objects[0].z = 1500.f;
 
-	objects[1].x = 1090.f;
-	objects[1].y = 0.0f;
-	objects[1].z = -10.f;
+	objects[1].x = 1800.0;
+	objects[1].y = -570.0;
+	objects[1].z = 80.0;
 
+	
+	objects[2].x = 2280.0;
+	objects[2].y = -630.0;
+	objects[2].z = 100.0;
 
-	objects[2].x = -5270.f;
-	objects[2].y = 1010.f;
-	objects[2].z = 1410.f;
+	objects[3].x = 2110.0;
+	objects[3].y = -10800.0;
+	objects[3].z = 120.0;
 
 	g_timer = CreateEvent(NULL, FALSE, FALSE, NULL);
 	vector <thread> worker_threads;
