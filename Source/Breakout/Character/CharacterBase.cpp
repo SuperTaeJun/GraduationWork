@@ -774,6 +774,8 @@ void ACharacterBase::Inter(const FInputActionValue& Value)
 	{
 		//EToolTranfrom(Value);
 		OverlappingEscapeTool->CurState = 1;
+		if(inst)
+			inst->m_Socket->Send_Mopp_Sync_packet(OverlappingEscapeTool->ItemID, 1);
 	}
 
 	//게임종료 부분
@@ -793,7 +795,8 @@ void ACharacterBase::Inter_Start(const FInputActionValue& Value)
 				PlayAnimMontage(InterMontage);
 				if (inst) {
 					inst->m_Socket->Send_item_Anim_packet(inst->GetPlayerID(), 0);
-					inst->m_Socket->Send_Mopp_Sync_packet(OverlappingEscapeTool->ItemID, 1);
+					UE_LOG(LogTemp, Warning, TEXT("HAH %d"), OverlappingEscapeTool->ItemID);
+				//	inst->m_Socket->Send_Mopp_Sync_packet(OverlappingEscapeTool->ItemID, 1);
 				}
 			}
 		}
