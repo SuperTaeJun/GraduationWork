@@ -217,62 +217,6 @@ void process_packet(int s_id, char* p)
 		ingamecount++;
 		send_select_character_type_packet(cl._s_id);
 
-
-
-		cout << "cl._s_id : " << cl._s_id << ", 131 ,, " << cl.p_type << endl;
-		for (auto& other : clients) {
-			if (other._s_id == cl._s_id) continue;
-			other.state_lock.lock();
-			if (ST_INGAME != other._state) {
-				other.state_lock.unlock();
-				continue;
-			}
-			else other.state_lock.unlock();
-
-			SC_PLAYER_SYNC packet;
-			packet.id = cl._s_id;
-			strcpy_s(packet.name, cl.name);
-			packet.size = sizeof(packet);
-			packet.type = SC_OTHER_PLAYER;
-			packet.x = cl.x;
-			packet.y = cl.y;
-			packet.z = cl.z;
-			packet.yaw = cl.Yaw;
-			packet.Max_speed = cl.Max_Speed;
-			packet.p_type = cl.p_type;
-			printf_s("[Send put object] id : %d, location : (%f,%f,%f), yaw : %f\n", packet.id, packet.x, packet.y, packet.z, packet.yaw);
-			cout << "이거 누구한테 감 :  ?" << other._s_id << endl;
-			other.do_send(sizeof(packet), &packet);
-		}
-
-		// 새로 접속한 플레이어에게 주위 객체 정보를 보낸다
-		for (auto& other : clients) {
-			if (other._s_id == cl._s_id) continue;
-			other.state_lock.lock();
-			if (ST_INGAME != other._state) {
-				other.state_lock.unlock();
-				continue;
-			}
-			else other.state_lock.unlock();
-
-
-			SC_PLAYER_SYNC packet;
-			packet.id = other._s_id;
-			strcpy_s(packet.name, other.name);
-
-			packet.size = sizeof(packet);
-			packet.type = SC_OTHER_PLAYER;
-			packet.x = other.x;
-			packet.y = other.y;
-			packet.z = other.z;
-			packet.yaw = other.Yaw;
-			packet.Max_speed = other.Max_Speed;
-			packet.p_type = other.p_type;
-			printf_s("[어떤 클라의 Send put object] id : %d, location : (%f,%f,%f), yaw : %f\n", packet.id, packet.x, packet.y, packet.z, packet.yaw);
-
-			cl.do_send(sizeof(packet), &packet);
-
-		}
 		cout << "몇명 들어옴 : " << ingamecount << endl;
 
 		if (ingamecount >= 2)
@@ -285,12 +229,14 @@ void process_packet(int s_id, char* p)
 				cout << "보낼 플레이어" << player._s_id << endl;
 
 			}
+			cout << "cl._s_id : " << cl._s_id << ", 131 ,, " << cl.p_type << endl;
+			
 		}
 		break;
 	}
 	case CS_MOVE_Packet: {
 		CS_MOVE_PACKET* packet = reinterpret_cast<CS_MOVE_PACKET*>(p);
-		cout << "packet_size = movepacket" << sizeof(packet) << endl;
+	//	cout << "packet_size = movepacket" << sizeof(packet) << endl;
 		CLIENT& cl = clients[packet->id];
 		cl.x = packet->x;
 		cl.y = packet->y;
@@ -301,7 +247,7 @@ void process_packet(int s_id, char* p)
 		cl.VZ = packet->vz;
 		cl.Max_Speed = packet->Max_speed;
 		cl._hp = packet->hp;
-		cout << "hp : " << cl._hp << endl;
+//		cout << "hp : " << cl._hp << endl;
 		for (auto& other : clients) {
 			if (other._s_id == s_id)
 				continue;
@@ -343,7 +289,7 @@ void process_packet(int s_id, char* p)
 		CLIENT& cl = clients[s_id];
 		ready_count++;
 		cout << "ready_count" << ready_count << endl;
-		if (ready_count >= 3)
+		if (ready_count >= 2)
 		{
 			for (auto& player : clients) {
 				if (ST_INGAME != player._state)
@@ -416,6 +362,61 @@ void process_packet(int s_id, char* p)
 		break;
 	}
 	case CS_START_GAME: {
+		CS_START_GAME_PACKET* packet = reinterpret_cast<CS_START_GAME_PACKET*>(p);
+		CLIENT& cl = clients[packet->id];
+		for (auto& other : clients) {
+			if (other._s_id == cl._s_id) continue;
+			other.state_lock.lock();
+			if (ST_INGAME != other._state) {
+				other.state_lock.unlock();
+				continue;
+			}
+			else other.state_lock.unlock();
+
+			SC_PLAYER_SYNC packet;
+			packet.id = cl._s_id;
+			strcpy_s(packet.name, cl.name);
+			packet.size = sizeof(packet);
+			packet.type = SC_OTHER_PLAYER;
+			packet.x = cl.x;
+			packet.y = cl.y;
+			packet.z = cl.z;
+			packet.yaw = cl.Yaw;
+			packet.Max_speed = cl.Max_Speed;
+			packet.p_type = cl.p_type;
+			printf_s("[Send put object] id : %d, location : (%f,%f,%f), yaw : %f\n", packet.id, packet.x, packet.y, packet.z, packet.yaw);
+			cout << "이거 누구한테 감 :  ?" << other._s_id << endl;
+			other.do_send(sizeof(packet), &packet);
+		}
+
+		// 새로 접속한 플레이어에게 주위 객체 정보를 보낸다
+		for (auto& other : clients) {
+			if (other._s_id == cl._s_id) continue;
+			other.state_lock.lock();
+			if (ST_INGAME != other._state) {
+				other.state_lock.unlock();
+				continue;
+			}
+			else other.state_lock.unlock();
+
+
+			SC_PLAYER_SYNC packet;
+			packet.id = other._s_id;
+			strcpy_s(packet.name, other.name);
+
+			packet.size = sizeof(packet);
+			packet.type = SC_OTHER_PLAYER;
+			packet.x = other.x;
+			packet.y = other.y;
+			packet.z = other.z;
+			packet.yaw = other.Yaw;
+			packet.Max_speed = other.Max_Speed;
+			packet.p_type = other.p_type;
+			printf_s("[어떤 클라의 Send put object] id : %d, location : (%f,%f,%f), yaw : %f\n", packet.id, packet.x, packet.y, packet.z, packet.yaw);
+
+			cl.do_send(sizeof(packet), &packet);
+
+		}
 		break;
 	}
 	case CS_HIT_EFFECT: {
