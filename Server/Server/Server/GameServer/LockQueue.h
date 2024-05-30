@@ -45,7 +45,11 @@ public:
 			swap(_queue, _empty);
 		}
 	}
-
+	bool Empty() 
+	{
+		lock_guard<mutex> lock(_mutex);
+		return _queue.empty();
+	}
 private:
 	queue<T> _queue;
 	mutex _mutex;
