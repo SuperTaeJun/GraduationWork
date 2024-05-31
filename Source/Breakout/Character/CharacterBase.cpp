@@ -1030,7 +1030,7 @@ void ACharacterBase::Tick(float DeltaTime)
 	if (bWait)
 	{
 		StartTime += inst->GetDeltaTime();
-		UE_LOG(LogTemp, Warning, TEXT("STARTTIME %d"), StartTime);
+		UE_LOG(LogTemp, Warning, TEXT("STARTTIME %f"), StartTime);
 		if (StartTime >= 5.f)
 		{
 			bWait = false;
