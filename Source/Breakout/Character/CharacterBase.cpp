@@ -494,8 +494,8 @@ void ACharacterBase::ReciveDamage(AActor* DamagedActor, float Damage, const UDam
 			if (MainController)
 				DisableInput(MainController);
 			UpdateObtainedEscapeTool();
-			if (MainController)//이거 죽었을때 다시 충돌 일어나서 애니메이션 재생되는거 막는용도
-				Health = 99999.f;
+			//if (MainController)//이거 죽었을때 다시 충돌 일어나서 애니메이션 재생되는거 막는용도
+			//	Health = 99999.f;
 		}
 	}
 }
