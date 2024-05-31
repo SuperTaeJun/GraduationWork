@@ -295,7 +295,7 @@ void process_packet(int s_id, char* p)
 		cl.VY = packet->vy;
 		cl.VZ = packet->vz;
 		cl.Max_Speed = packet->Max_speed;
-		cl._hp = packet->hp;
+		
 //		cout << "hp : " << cl._hp << endl;
 		for (auto& other : clients) {
 			if (other._s_id == s_id)
@@ -815,6 +815,27 @@ void process_packet(int s_id, char* p)
 		}
 		break;
 	}
+	case CS_HP: {
+		CS_DAMAGE_PACKET* packet = reinterpret_cast<CS_DAMAGE_PACKET*>(p);
+		CLIENT& cl = clients[packet->id];
+		cl._hp = packet->hp;
+		for (auto& other : clients) {
+			if (other._s_id == cl._s_id) continue;
+			other.state_lock.lock();
+			if (ST_INGAME != other._state) {
+				other.state_lock.unlock();
+				continue;
+			}
+			else other.state_lock.unlock();
+			SC_DAMAGE_CHANGE packet;
+			packet.size = sizeof(packet);
+			packet.type = SC_HP;
+			packet.id = cl._s_id;
+			packet.hp = cl._hp;
+			other.do_send(sizeof(packet), &packet);
+		}
+		break;
+	}
 	default:
 		cout << " 오류패킷타입 : " << p << endl;
 		break;
@@ -940,7 +961,6 @@ void send_move_packet(int _id, int target)
 	packet.vy = clients[target].VY;
 	packet.vz = clients[target].VZ;
 	packet.Max_speed = clients[target].Max_Speed;
-	packet.hp = clients[target]._hp;
 	clients[_id].do_send(sizeof(packet), &packet);
 }
 void player_heal(int s_id)
@@ -1078,7 +1098,7 @@ void send_delta_time_to_clients(double deltaTime) {
 		client.state_lock.lock();
 		if (client._state == ST_INGAME) {
 			client.do_send(packet.size, &packet);
-			std::cout << "Send delta time " << deltaTime << " to client " << client._s_id << std::endl;
+			//std::cout << "Send delta time " << deltaTime << " to client " << client._s_id << std::endl;
 		}
 		client.state_lock.unlock();
 	}
