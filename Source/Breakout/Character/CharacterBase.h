@@ -278,6 +278,7 @@ public:
 	bool bStarted;
 	FTimerHandle StartHandle;
 	void StartGame();
+	float StartTime = 0.f;
 	float StartedCnt;
 	bool bDeadAnim = false;
 	class UBOGameInstance* inst;
