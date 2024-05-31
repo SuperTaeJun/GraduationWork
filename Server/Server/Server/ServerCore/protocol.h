@@ -114,7 +114,6 @@ struct CS_MOVE_PACKET
 	float x, y, z;
 	float vx, vy, vz;
 	float yaw;
-	float hp;
 };
 struct SC_PLAYER_SYNC {
 	unsigned char size;

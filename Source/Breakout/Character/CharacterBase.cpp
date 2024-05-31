@@ -454,6 +454,8 @@ void ACharacterBase::ReciveDamage(AActor* DamagedActor, float Damage, const UDam
 	if (MainController)
 	{
 		Health = FMath::Clamp(Health - Damage, 0.f, MaxHealth);
+		if (inst)
+			inst->m_Socket->Send_HP_packet(inst->GetPlayerID(), Health);
 		UpdateHpHUD();
 		ACharacterBase* DamageInsigatorCh = Cast<ACharacterBase>(InstigatorController->GetPawn());
 		if (Health <= 0.0f)
@@ -1030,7 +1032,7 @@ void ACharacterBase::Tick(float DeltaTime)
 	if (bWait)
 	{
 		StartTime += inst->GetDeltaTime();
-		UE_LOG(LogTemp, Warning, TEXT("STARTTIME %d"), StartTime);
+		UE_LOG(LogTemp, Warning, TEXT("STARTTIME %f"), StartTime);
 		if (StartTime >= 5.f)
 		{
 			bWait = false;

@@ -467,7 +467,7 @@ bool ACharacterController::UpdateWorld()
 			PlayerVelocity.Y = info->VeloY;
 			PlayerVelocity.Z = info->VeloZ;
 
-			//float SyncHP = info->hp;
+			float SyncHP = info->hp;
 			// 나이아가라 레이저
 			FVector Firegun;
 			FRotator EFiregun;
@@ -527,7 +527,7 @@ bool ACharacterController::UpdateWorld()
 			OtherPlayer->SetActorRotation(PlayerRotation);
 			OtherPlayer->SetActorLocation(PlayerLocation);
 			OtherPlayer->GetCharacterMovement()->MaxWalkSpeed = info->Max_Speed;
-			/*OtherPlayer->SetHealth(SyncHP);*/
+			OtherPlayer->SetHealth(SyncHP);
 			if (info->bGetWeapon == true)
 			{
 				OtherPlayer->CurWeapon->Destroy();
