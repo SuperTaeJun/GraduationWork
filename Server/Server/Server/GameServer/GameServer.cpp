@@ -38,6 +38,7 @@ void send_item_packet(int _s_id, int item_index);
 void send_myitem_packet(int _s_id);
 void worker_thread();
 void timer();
+void send_delta_time_to_clients(double deltaTime);
 
 int main()
 {
@@ -1060,9 +1061,26 @@ void timer()
 		duration<double> delta = current_time - prev_time;
 		prev_time = current_time;
 		double delta_time = delta.count();
-		cout << "dt" << delta_time << endl;
-		//send_delta_time_to_clients(delta_time);
+		
+		send_delta_time_to_clients(delta_time);
 
 		this_thread::sleep_for(milliseconds(1000 / 60));
 	}
 }
+
+void send_delta_time_to_clients(double deltaTime) {
+	SC_DELTA_TIME_PACKET packet;
+	packet.time = deltaTime;
+	packet.size = sizeof(packet);
+	packet.type = SC_DELTA;
+	//cout << "dt" << packet.time << endl;
+	for (auto& client : clients) {
+		client.state_lock.lock();
+		if (client._state == ST_INGAME) {
+			client.do_send(packet.size, &packet);
+			std::cout << "Send delta time " << deltaTime << " to client " << client._s_id << std::endl;
+		}
+		client.state_lock.unlock();
+	}
+}
+
