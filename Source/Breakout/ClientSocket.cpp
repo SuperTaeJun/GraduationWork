@@ -295,6 +295,12 @@ bool ClientSocket::PacketProcess(char* ptr)
 		PlayerInfo.players[packet->id].bFinishSkill = packet->bfinish;
 		break;
 	}
+	case SC_DELTA: {
+		SC_DELTA_TIME_PACKET* packet = reinterpret_cast<SC_DELTA_TIME_PACKET*>(ptr);
+		UE_LOG(LogTemp, Warning, TEXT("delta : %f"), packet->time);
+		gameinst->SetDeltaTime(packet->time);
+		break;
+	}
 	default:
 		break;
 	}

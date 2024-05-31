@@ -30,9 +30,12 @@ public:
 	ECharacterType GetCharacterType() { return CharacterType; }
 	inline void SetPlayerID(int id) { playerID = id; }
 	inline int GetPlayerID() { return playerID; }
+	inline void SetDeltaTime(double time) { s_deltatime = time; }
+	inline int GetDeltaTime() { return s_deltatime; }
 
 public:
 	class ClientSocket* m_Socket;
 	bool connect;
 	int playerID;
+	double s_deltatime;
 };

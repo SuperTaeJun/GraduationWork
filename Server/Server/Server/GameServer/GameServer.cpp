@@ -20,10 +20,7 @@ array<EscapeObject, 11> objects;
 condition_variable cv;
 atomic<int> ready_count = 0;
 atomic<int> ingamecount = 0;
-using std::chrono::duration_cast;
-using std::chrono::milliseconds;
-using std::chrono::seconds;
-using std::chrono::system_clock;
+using namespace chrono;
 
 void ev_timer();
 int get_id();
@@ -40,7 +37,8 @@ void send_myitem_count_packet(int _s_id);
 void send_item_packet(int _s_id, int item_index);
 void send_myitem_packet(int _s_id);
 void worker_thread();
-
+void timer();
+void send_delta_time_to_clients(double deltaTime);
 
 int main()
 {
@@ -90,10 +88,9 @@ int main()
 	objects[3].y = -1080.f;
 	objects[3].z = 120.f;
 
-	g_timer = CreateEvent(NULL, FALSE, FALSE, NULL);
 	vector <thread> worker_threads;
 	thread servertherad{ ev_timer };
-
+	thread TimerThread{ timer };
 	for (int i = 0; i < 16; ++i)
 		worker_threads.emplace_back(worker_thread);
 
@@ -101,6 +98,7 @@ int main()
 		th.join();
 	if (servertherad.joinable())
 		servertherad.join();
+	TimerThread.join();
 	for (auto& cl : clients) {
 		if (ST_INGAME == cl._state)
 			Disconnect(cl._s_id);
@@ -217,62 +215,6 @@ void process_packet(int s_id, char* p)
 		ingamecount++;
 		send_select_character_type_packet(cl._s_id);
 
-
-
-		cout << "cl._s_id : " << cl._s_id << ", 131 ,, " << cl.p_type << endl;
-		for (auto& other : clients) {
-			if (other._s_id == cl._s_id) continue;
-			other.state_lock.lock();
-			if (ST_INGAME != other._state) {
-				other.state_lock.unlock();
-				continue;
-			}
-			else other.state_lock.unlock();
-
-			SC_PLAYER_SYNC packet;
-			packet.id = cl._s_id;
-			strcpy_s(packet.name, cl.name);
-			packet.size = sizeof(packet);
-			packet.type = SC_OTHER_PLAYER;
-			packet.x = cl.x;
-			packet.y = cl.y;
-			packet.z = cl.z;
-			packet.yaw = cl.Yaw;
-			packet.Max_speed = cl.Max_Speed;
-			packet.p_type = cl.p_type;
-			printf_s("[Send put object] id : %d, location : (%f,%f,%f), yaw : %f\n", packet.id, packet.x, packet.y, packet.z, packet.yaw);
-			cout << "이거 누구한테 감 :  ?" << other._s_id << endl;
-			other.do_send(sizeof(packet), &packet);
-		}
-
-		// 새로 접속한 플레이어에게 주위 객체 정보를 보낸다
-		for (auto& other : clients) {
-			if (other._s_id == cl._s_id) continue;
-			other.state_lock.lock();
-			if (ST_INGAME != other._state) {
-				other.state_lock.unlock();
-				continue;
-			}
-			else other.state_lock.unlock();
-
-
-			SC_PLAYER_SYNC packet;
-			packet.id = other._s_id;
-			strcpy_s(packet.name, other.name);
-
-			packet.size = sizeof(packet);
-			packet.type = SC_OTHER_PLAYER;
-			packet.x = other.x;
-			packet.y = other.y;
-			packet.z = other.z;
-			packet.yaw = other.Yaw;
-			packet.Max_speed = other.Max_Speed;
-			packet.p_type = other.p_type;
-			printf_s("[어떤 클라의 Send put object] id : %d, location : (%f,%f,%f), yaw : %f\n", packet.id, packet.x, packet.y, packet.z, packet.yaw);
-
-			cl.do_send(sizeof(packet), &packet);
-
-		}
 		cout << "몇명 들어옴 : " << ingamecount << endl;
 
 		if (ingamecount >= 2)
@@ -285,12 +227,14 @@ void process_packet(int s_id, char* p)
 				cout << "보낼 플레이어" << player._s_id << endl;
 
 			}
+			cout << "cl._s_id : " << cl._s_id << ", 131 ,, " << cl.p_type << endl;
+			
 		}
 		break;
 	}
 	case CS_MOVE_Packet: {
 		CS_MOVE_PACKET* packet = reinterpret_cast<CS_MOVE_PACKET*>(p);
-		cout << "packet_size = movepacket" << sizeof(packet) << endl;
+	//	cout << "packet_size = movepacket" << sizeof(packet) << endl;
 		CLIENT& cl = clients[packet->id];
 		cl.x = packet->x;
 		cl.y = packet->y;
@@ -301,7 +245,7 @@ void process_packet(int s_id, char* p)
 		cl.VZ = packet->vz;
 		cl.Max_Speed = packet->Max_speed;
 		cl._hp = packet->hp;
-		cout << "hp : " << cl._hp << endl;
+//		cout << "hp : " << cl._hp << endl;
 		for (auto& other : clients) {
 			if (other._s_id == s_id)
 				continue;
@@ -343,7 +287,7 @@ void process_packet(int s_id, char* p)
 		CLIENT& cl = clients[s_id];
 		ready_count++;
 		cout << "ready_count" << ready_count << endl;
-		if (ready_count >= 3)
+		if (ready_count >= 2)
 		{
 			for (auto& player : clients) {
 				if (ST_INGAME != player._state)
@@ -416,6 +360,61 @@ void process_packet(int s_id, char* p)
 		break;
 	}
 	case CS_START_GAME: {
+		CS_START_GAME_PACKET* packet = reinterpret_cast<CS_START_GAME_PACKET*>(p);
+		CLIENT& cl = clients[packet->id];
+		for (auto& other : clients) {
+			if (other._s_id == cl._s_id) continue;
+			other.state_lock.lock();
+			if (ST_INGAME != other._state) {
+				other.state_lock.unlock();
+				continue;
+			}
+			else other.state_lock.unlock();
+
+			SC_PLAYER_SYNC packet;
+			packet.id = cl._s_id;
+			strcpy_s(packet.name, cl.name);
+			packet.size = sizeof(packet);
+			packet.type = SC_OTHER_PLAYER;
+			packet.x = cl.x;
+			packet.y = cl.y;
+			packet.z = cl.z;
+			packet.yaw = cl.Yaw;
+			packet.Max_speed = cl.Max_Speed;
+			packet.p_type = cl.p_type;
+			printf_s("[Send put object] id : %d, location : (%f,%f,%f), yaw : %f\n", packet.id, packet.x, packet.y, packet.z, packet.yaw);
+			cout << "이거 누구한테 감 :  ?" << other._s_id << endl;
+			other.do_send(sizeof(packet), &packet);
+		}
+
+		// 새로 접속한 플레이어에게 주위 객체 정보를 보낸다
+		for (auto& other : clients) {
+			if (other._s_id == cl._s_id) continue;
+			other.state_lock.lock();
+			if (ST_INGAME != other._state) {
+				other.state_lock.unlock();
+				continue;
+			}
+			else other.state_lock.unlock();
+
+
+			SC_PLAYER_SYNC packet;
+			packet.id = other._s_id;
+			strcpy_s(packet.name, other.name);
+
+			packet.size = sizeof(packet);
+			packet.type = SC_OTHER_PLAYER;
+			packet.x = other.x;
+			packet.y = other.y;
+			packet.z = other.z;
+			packet.yaw = other.Yaw;
+			packet.Max_speed = other.Max_Speed;
+			packet.p_type = other.p_type;
+			printf_s("[어떤 클라의 Send put object] id : %d, location : (%f,%f,%f), yaw : %f\n", packet.id, packet.x, packet.y, packet.z, packet.yaw);
+
+			cl.do_send(sizeof(packet), &packet);
+
+		}
 		break;
 	}
 	case CS_HIT_EFFECT: {
@@ -1023,31 +1022,65 @@ void send_item_packet(int _s_id, int item_index)
 
 void ev_timer()
 {
-	WaitForSingleObject(g_timer, INFINITE);
+	while (true)
 	{
-		timer_q.Clear();
-	}
-	while (true) {
-		timer_ev order;
-		timer_q.WaitPop(order);
-		auto t = order.start_t - chrono::system_clock::now();
-		int s_id = order.this_id;
-		if (clients[s_id]._state != ST_INGAME) continue;
-		if (clients[s_id]._is_active == false) continue;
-		if (order.start_t <= chrono::system_clock::now()) {
-			if (order.order == ET_HEAL) {
-				Player_Event(s_id, order.target_id, IO_HEAL_HP);
-				this_thread::sleep_for(100ms);
+		//cout << "adad" << endl;
+		while (!timer_q.Empty()) {
+			
+			timer_ev order;
+			timer_q.WaitPop(order);
+			auto t = order.start_t - chrono::system_clock::now();
+			int s_id = order.this_id;
+			if (clients[s_id]._state != ST_INGAME) continue;
+			if (clients[s_id]._is_active == false) continue;
+			if (order.start_t <= chrono::system_clock::now()) {
+				if (order.order == ET_HEAL) {
+					Player_Event(s_id, order.target_id, IO_HEAL_HP);
+					this_thread::sleep_for(100ms);
+				}
+				else if (order.order == ET_RELOAD) {
+					Player_Event(s_id, order.target_id, IO_RELOAD_WEAPON);
+					this_thread::sleep_for(100ms);
+				}
 			}
-			else if (order.order == ET_RELOAD) {
-				Player_Event(s_id, order.target_id, IO_RELOAD_WEAPON);
-				this_thread::sleep_for(100ms);
+			else {
+				timer_q.Push(order);
+				this_thread::sleep_for(10ms);
 			}
 		}
-		else {
-			timer_q.Push(order);
-			this_thread::sleep_for(10ms);
-		}
 	}
+	
 
 }
+
+void timer()
+{
+	auto prev_time = high_resolution_clock::now();
+	while (true) {
+		auto current_time = high_resolution_clock::now();
+		duration<double> delta = current_time - prev_time;
+		prev_time = current_time;
+		double delta_time = delta.count();
+		
+		send_delta_time_to_clients(delta_time);
+
+		this_thread::sleep_for(milliseconds(1000 / 60));
+	}
+}
+
+void send_delta_time_to_clients(double deltaTime) {
+	SC_DELTA_TIME_PACKET packet;
+	packet.time = deltaTime;
+	packet.size = sizeof(packet);
+	packet.type = SC_DELTA;
+	//cout << "dt" << packet.time << endl;
+	for (auto& client : clients) {
+		client.state_lock.lock();
+		if (client._state == ST_INGAME) {
+			client.do_send(packet.size, &packet);
+			std::cout << "Send delta time " << deltaTime << " to client " << client._s_id << std::endl;
+		}
+		client.state_lock.unlock();
+	}
+}
+

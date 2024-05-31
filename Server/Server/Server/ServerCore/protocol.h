@@ -1,6 +1,6 @@
 #pragma once
 #define SERVER_PORT		8001
-#define SERVER_IP		"192.168.103.45"
+#define SERVER_IP		"127.0.0.1"
 #define MAX_INFO_SIZE   20
 #include <vector>
 #include <array>
@@ -84,6 +84,7 @@ const char SC_PLAYER_HEAL = 28;
 const char SC_PLAYER_RELOAD = 29;
 const char SC_MOPP = 30;
 const char SC_HP = 31;
+const char SC_DELTA = 32;
 
 #pragma pack (push, 1)
 struct CS_LOGIN_PACKET
@@ -380,5 +381,11 @@ struct CS_MOPP_PACKET {
 	unsigned char type;
 	int itemid;
 	int mopptype;
+};
+struct SC_DELTA_TIME_PACKET {
+	unsigned char size;
+	unsigned char type;
+	int id;
+	double time;
 };
 #pragma pack(pop)
