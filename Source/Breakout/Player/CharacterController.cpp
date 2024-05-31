@@ -717,14 +717,15 @@ bool ACharacterController::UpdateWorld()
 					ServerTemp->Destroy();
 			}
 			/*UE_LOG(LogTemp, Warning, TEXT("otherplayer hp : %f"), OtherPlayer->GetHealth());*/
-			UE_LOG(LogTemp, Warning, TEXT("my hp : %f"), Cast<ACharacterBase>(GetPawn())->GetHealth());
+			//UE_LOG(LogTemp, Warning, TEXT("my hp : %f"), Cast<ACharacterBase>(GetPawn())->GetHealth());
 			if (info->bStopAnim == true) { //Ã³¸®
 				OtherPlayer->StopAnimMontage(SyncDeadMontage);
 				info->bStopAnim = false;
 				OtherPlayer->bDeadAnim = false;
 				OtherPlayer->SetHealth(100.f);
+				UE_LOG(LogTemp, Warning, TEXT("OtherPlayer->GetHealth() : %f"), OtherPlayer->GetHealth());
 			}
-			if (OtherPlayer->GetHealth() <= 0&& OtherPlayer->bDeadAnim == false) {
+			else if (OtherPlayer->GetHealth() <= 0&& OtherPlayer->bDeadAnim == false) {
 				UE_LOG(LogTemp, Warning, TEXT("otherplayer hp : %f"), OtherPlayer->GetHealth());
 				UE_LOG(LogTemp, Warning, TEXT("my hp : %f"), Cast<ACharacterBase>(GetPawn())->GetHealth());
 				OtherPlayer->PlayAnimMontage(SyncDeadMontage);
