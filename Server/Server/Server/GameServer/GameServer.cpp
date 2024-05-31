@@ -20,10 +20,7 @@ array<EscapeObject, 11> objects;
 condition_variable cv;
 atomic<int> ready_count = 0;
 atomic<int> ingamecount = 0;
-using std::chrono::duration_cast;
-using std::chrono::milliseconds;
-using std::chrono::seconds;
-using std::chrono::system_clock;
+using namespace chrono;
 
 void ev_timer();
 int get_id();
@@ -40,7 +37,7 @@ void send_myitem_count_packet(int _s_id);
 void send_item_packet(int _s_id, int item_index);
 void send_myitem_packet(int _s_id);
 void worker_thread();
-
+void timer();
 
 int main()
 {
@@ -90,10 +87,9 @@ int main()
 	objects[3].y = -1080.f;
 	objects[3].z = 120.f;
 
-	g_timer = CreateEvent(NULL, FALSE, FALSE, NULL);
 	vector <thread> worker_threads;
 	thread servertherad{ ev_timer };
-
+	thread TimerThread{ timer };
 	for (int i = 0; i < 16; ++i)
 		worker_threads.emplace_back(worker_thread);
 
@@ -101,6 +97,7 @@ int main()
 		th.join();
 	if (servertherad.joinable())
 		servertherad.join();
+	TimerThread.join();
 	for (auto& cl : clients) {
 		if (ST_INGAME == cl._state)
 			Disconnect(cl._s_id);
@@ -1024,31 +1021,48 @@ void send_item_packet(int _s_id, int item_index)
 
 void ev_timer()
 {
-	WaitForSingleObject(g_timer, INFINITE);
+	while (true)
 	{
-		timer_q.Clear();
-	}
-	while (true) {
-		timer_ev order;
-		timer_q.WaitPop(order);
-		auto t = order.start_t - chrono::system_clock::now();
-		int s_id = order.this_id;
-		if (clients[s_id]._state != ST_INGAME) continue;
-		if (clients[s_id]._is_active == false) continue;
-		if (order.start_t <= chrono::system_clock::now()) {
-			if (order.order == ET_HEAL) {
-				Player_Event(s_id, order.target_id, IO_HEAL_HP);
-				this_thread::sleep_for(100ms);
+		//cout << "adad" << endl;
+		while (!timer_q.Empty()) {
+			
+			timer_ev order;
+			timer_q.WaitPop(order);
+			auto t = order.start_t - chrono::system_clock::now();
+			int s_id = order.this_id;
+			if (clients[s_id]._state != ST_INGAME) continue;
+			if (clients[s_id]._is_active == false) continue;
+			if (order.start_t <= chrono::system_clock::now()) {
+				if (order.order == ET_HEAL) {
+					Player_Event(s_id, order.target_id, IO_HEAL_HP);
+					this_thread::sleep_for(100ms);
+				}
+				else if (order.order == ET_RELOAD) {
+					Player_Event(s_id, order.target_id, IO_RELOAD_WEAPON);
+					this_thread::sleep_for(100ms);
+				}
 			}
-			else if (order.order == ET_RELOAD) {
-				Player_Event(s_id, order.target_id, IO_RELOAD_WEAPON);
-				this_thread::sleep_for(100ms);
+			else {
+				timer_q.Push(order);
+				this_thread::sleep_for(10ms);
 			}
 		}
-		else {
-			timer_q.Push(order);
-			this_thread::sleep_for(10ms);
-		}
 	}
+	
 
+}
+
+void timer()
+{
+	auto prev_time = high_resolution_clock::now();
+	while (true) {
+		auto current_time = high_resolution_clock::now();
+		duration<double> delta = current_time - prev_time;
+		prev_time = current_time;
+		double delta_time = delta.count();
+		cout << "dt" << delta_time << endl;
+		//send_delta_time_to_clients(delta_time);
+
+		this_thread::sleep_for(milliseconds(1000 / 60));
+	}
 }
