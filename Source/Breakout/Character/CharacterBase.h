@@ -284,6 +284,7 @@ public:
 	class UBOGameInstance* inst;
 	class UCameraComponent* GetCamera() { return FollowCamera; }
 	void Server_PlayDeadAnim();
+	bool bWait = false;
 };
 
 UENUM(BlueprintType)

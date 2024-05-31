@@ -1024,12 +1024,18 @@ void ACharacterBase::Tick(float DeltaTime)
 		Cast<UBOGameInstance>(GetWorld()->GetGameInstance())->m_Socket->bAllReady = false;
 		bStarted = true;
 		//DisableInput(UGameplayStatics::GetPlayerController(GetWorld(), 0));
-		StartTime+=inst->GetDeltaTime();
+		bWait = true;
+		//GetWorldTimerManager().SetTimer(StartHandle, this, &ACharacterBase::StartGame, 5.f);
+	}
+	if (bWait)
+	{
+		StartTime += inst->GetDeltaTime();
+		UE_LOG(LogTemp, Warning, TEXT("STARTTIME %d"), StartTime);
 		if (StartTime >= 5.f)
 		{
+			bWait = false;
 			StartGame();
 		}
-		//GetWorldTimerManager().SetTimer(StartHandle, this, &ACharacterBase::StartGame, 5.f);
 	}
 }
 
