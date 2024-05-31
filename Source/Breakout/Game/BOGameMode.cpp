@@ -108,7 +108,10 @@ void ABOGameMode::Respawn(ACharacter* RespawnedCh, AController* RespawnedControl
 		MyCharacter->SetActorTransform(PlayerStarts->GetActorTransform());
 		//ÆÐÅ¶ BOOL °ª
 		if (inst)
+		{
 			Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Stop_Anim_packet(inst->GetPlayerID());
+			Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_HP_packet(inst->GetPlayerID(), MyCharacter->GetHealth());
+		}
 		MyCharacter->StopAnimMontage(MyCharacter->GetDeadMontage());
 		Cast<ACharacterController>(RespawnedController)->OnPossess(MyCharacter);
 		//RestartPlayerAtPlayerStart(RespawnedController, PlayerStarts);

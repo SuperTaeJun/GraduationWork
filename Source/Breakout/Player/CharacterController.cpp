@@ -722,8 +722,8 @@ bool ACharacterController::UpdateWorld()
 				OtherPlayer->StopAnimMontage(SyncDeadMontage);
 				info->bStopAnim = false;
 				OtherPlayer->bDeadAnim = false;
-				OtherPlayer->SetHealth(100.f);
 				UE_LOG(LogTemp, Warning, TEXT("OtherPlayer->GetHealth() : %f"), OtherPlayer->GetHealth());
+				//OtherPlayer->SetHealth(100.f);
 			}
 			else if (OtherPlayer->GetHealth() <= 0&& OtherPlayer->bDeadAnim == false) {
 				UE_LOG(LogTemp, Warning, TEXT("otherplayer hp : %f"), OtherPlayer->GetHealth());
