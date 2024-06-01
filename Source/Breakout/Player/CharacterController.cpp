@@ -723,7 +723,7 @@ bool ACharacterController::UpdateWorld()
 				info->bStopAnim = false;
 				OtherPlayer->bDeadAnim = false;
 				UE_LOG(LogTemp, Warning, TEXT("OtherPlayer->GetHealth() : %f"), OtherPlayer->GetHealth());
-				//OtherPlayer->SetHealth(100.f);
+				OtherPlayer->SetHealth(100.f);
 			}
 			else if (OtherPlayer->GetHealth() <= 0&& OtherPlayer->bDeadAnim == false) {
 				UE_LOG(LogTemp, Warning, TEXT("otherplayer hp : %f"), OtherPlayer->GetHealth());
@@ -866,19 +866,24 @@ void ACharacterController::UpdateSyncPlayer()
 				SpawnActor.Instigator = GetInstigator();
 				SpawnActor.Name = FName(*FString(to_string(NewPlayer.front()->Id).c_str()));
 				ToSpawn = ACharacter3::StaticClass();
-				ACharacter3* SpawnCharacter = world->SpawnActor<ACharacter3>(ToSpawn,
-					S_LOCATION, S_ROTATOR, SpawnActor);
-				SpawnCharacter->SpawnDefaultController();
-				SpawnCharacter->_SessionId = NewPlayer.front()->Id;
-				SpawnCharacter->GetMesh()->SetSkeletalMesh(SkMeshAsset3);
-				DynamicMaterial = UMaterialInstanceDynamic::Create(OldMaterial, this);
-				if (DynamicMaterial)
-				{
-					SpawnCharacter->GetMesh()->SetMaterial(0, DynamicMaterial);
-					DynamicMaterial->SetScalarParameterValue(FName("Alpha"), 0.f);
+				if (world) {
+					ACharacter3* SpawnCharacter = world->SpawnActor<ACharacter3>(ToSpawn,
+						FVector::ZeroVector, FRotator::ZeroRotator, SpawnActor);
+					if (SpawnCharacter) {
+						SpawnCharacter->SpawnDefaultController();
+						SpawnCharacter->_SessionId = NewPlayer.front()->Id;
+						SpawnCharacter->GetMesh()->SetSkeletalMesh(SkMeshAsset3);
+					}
+
+					DynamicMaterial = UMaterialInstanceDynamic::Create(OldMaterial, this);
+					if (DynamicMaterial)
+					{
+						SpawnCharacter->GetMesh()->SetMaterial(0, DynamicMaterial);
+						DynamicMaterial->SetScalarParameterValue(FName("Alpha"), 0.f);
+					}
+					if (Anim3)
+						SpawnCharacter->GetMesh()->SetAnimClass(Anim3);
 				}
-				if (Anim3)
-					SpawnCharacter->GetMesh()->SetAnimClass(Anim3);
 			}
 			break;
 		case  PlayerType::Character4:
