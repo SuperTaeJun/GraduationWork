@@ -723,7 +723,7 @@ bool ACharacterController::UpdateWorld()
 				info->bStopAnim = false;
 				OtherPlayer->bDeadAnim = false;
 				UE_LOG(LogTemp, Warning, TEXT("OtherPlayer->GetHealth() : %f"), OtherPlayer->GetHealth());
-				OtherPlayer->SetHealth(100.f);
+				//OtherPlayer->SetHealth(100.f);
 			}
 			else if (OtherPlayer->GetHealth() <= 0&& OtherPlayer->bDeadAnim == false) {
 				UE_LOG(LogTemp, Warning, TEXT("otherplayer hp : %f"), OtherPlayer->GetHealth());
@@ -839,16 +839,21 @@ void ACharacterController::UpdateSyncPlayer()
 				S_ROTATOR.Roll = 0.0f;
 				FActorSpawnParameters SpawnActor;
 				SpawnActor.Owner = this;
-				SpawnActor.Instigator = GetInstigator();
-				SpawnActor.Name = FName(*FString(to_string(NewPlayer.front()->Id).c_str()));
+				SpawnActor.Instigator = GetInstigator();  
+				//SpawnActor.Name = FName(*FString(to_string(NewPlayer.front()->Id).c_str()));
 				ToSpawn = ACharacter2::StaticClass();
-				ACharacter2* SpawnCharacter = world->SpawnActor<ACharacter2>(ToSpawn,
-					S_LOCATION, S_ROTATOR, SpawnActor);
-				SpawnCharacter->SpawnDefaultController();
-				SpawnCharacter->_SessionId = NewPlayer.front()->Id;
-				SpawnCharacter->GetMesh()->SetSkeletalMesh(SkMeshAsset2);
-				if (Anim2)
-					SpawnCharacter->GetMesh()->SetAnimClass(Anim2);
+				if (world)
+				{
+					ACharacter2* SpawnCharacter = world->SpawnActor<ACharacter2>(ToSpawn,
+						FVector::ZeroVector, FRotator::ZeroRotator, SpawnActor);
+					if (SpawnCharacter) {
+						SpawnCharacter->SpawnDefaultController();
+						SpawnCharacter->_SessionId = NewPlayer.front()->Id;
+						SpawnCharacter->GetMesh()->SetSkeletalMesh(SkMeshAsset2);
+					}
+					if (Anim2)
+						SpawnCharacter->GetMesh()->SetAnimClass(Anim2);
+				}
 			}
 			break;
 		case  PlayerType::Character3:
@@ -864,7 +869,7 @@ void ACharacterController::UpdateSyncPlayer()
 				FActorSpawnParameters SpawnActor;
 				SpawnActor.Owner = this;
 				SpawnActor.Instigator = GetInstigator();
-				SpawnActor.Name = FName(*FString(to_string(NewPlayer.front()->Id).c_str()));
+				//SpawnActor.Name = FName(*FString(to_string(NewPlayer.front()->Id).c_str()));
 				ToSpawn = ACharacter3::StaticClass();
 				if (world) {
 					ACharacter3* SpawnCharacter = world->SpawnActor<ACharacter3>(ToSpawn,
