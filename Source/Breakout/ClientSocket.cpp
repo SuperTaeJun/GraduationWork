@@ -119,7 +119,6 @@ bool ClientSocket::PacketProcess(char* ptr)
 		PlayerInfo.players[packet->id].VeloY = packet->vy;
 		PlayerInfo.players[packet->id].VeloZ = packet->vz;
 		PlayerInfo.players[packet->id].Max_Speed = packet->Max_speed;
-		PlayerInfo.players[packet->id].hp = packet->hp;
 		break;
 	}
 	case SC_CHAR_BACK: {
@@ -230,6 +229,11 @@ bool ClientSocket::PacketProcess(char* ptr)
 		PlayerInfo.players[packet->id].WinnerID = packet->winnerid;
 		break;
 	}
+	case SC_HP: {
+		SC_DAMAGE_CHANGE* packet = reinterpret_cast<SC_DAMAGE_CHANGE*>(ptr);
+		PlayerInfo.players[packet->id].hp = packet->hp;
+		break;
+	}
 	case SC_MYITEM_COUNT:{
 		SC_MY_ITEM_COUNT* packet = reinterpret_cast<SC_MY_ITEM_COUNT*>(ptr);
 		Tempcnt = packet->MyITEMCount;
@@ -295,6 +299,11 @@ bool ClientSocket::PacketProcess(char* ptr)
 		PlayerInfo.players[packet->id].bFinishSkill = packet->bfinish;
 		break;
 	}
+	case SC_DELTA: {
+		SC_DELTA_TIME_PACKET* packet = reinterpret_cast<SC_DELTA_TIME_PACKET*>(ptr);
+		gameinst->SetDeltaTime(packet->time);
+		break;
+	}
 	default:
 		break;
 	}
@@ -317,7 +326,7 @@ void ClientSocket::Send_Login_Info(char* id, char* pw)
 
 }
 
-void ClientSocket::Send_Move_Packet(int sessionID, FVector Location, FRotator Rotation, FVector Velocity, float Max_speed, float hp)
+void ClientSocket::Send_Move_Packet(int sessionID, FVector Location, FRotator Rotation, FVector Velocity, float Max_speed)
 {
 	//if (login_cond == true) {
 	CS_MOVE_PACKET packet;
@@ -332,7 +341,7 @@ void ClientSocket::Send_Move_Packet(int sessionID, FVector Location, FRotator Ro
 	packet.vy = Velocity.Y;
 	packet.vz = Velocity.Z;
 	packet.Max_speed = Max_speed;
-	packet.hp = hp;
+
 	//Send(packet.size, &packet);
 	SendPacket(&packet);
 	//UE_LOG(LogClass, Warning, TEXT("send move"));
@@ -576,6 +585,15 @@ void ClientSocket::Send_Mopp_Sync_packet(int itemid, int mopptype)
 	packet.type = CS_MOPP;
 	packet.itemid = itemid;
 	packet.mopptype = mopptype;
+	SendPacket(&packet);
+}
+void ClientSocket::Send_HP_packet(int id, float hp)
+{
+	CS_DAMAGE_PACKET packet;
+	packet.size = sizeof(packet);
+	packet.type = CS_HP;
+	packet.id = id;
+	packet.hp = hp;
 	SendPacket(&packet);
 }
 bool ClientSocket::Init()

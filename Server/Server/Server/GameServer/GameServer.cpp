@@ -38,6 +38,7 @@ void send_item_packet(int _s_id, int item_index);
 void send_myitem_packet(int _s_id);
 void worker_thread();
 void timer();
+void send_delta_time_to_clients(double deltaTime);
 
 int main()
 {
@@ -214,8 +215,7 @@ void process_packet(int s_id, char* p)
 		ingamecount++;
 		send_select_character_type_packet(cl._s_id);
 
-		cout << "몇명 들어옴 : " << ingamecount << endl;
-
+		
 		if (ingamecount >= 2)
 		{
 			for (auto& player : clients) {
@@ -243,7 +243,7 @@ void process_packet(int s_id, char* p)
 		cl.VY = packet->vy;
 		cl.VZ = packet->vz;
 		cl.Max_Speed = packet->Max_speed;
-		cl._hp = packet->hp;
+		
 //		cout << "hp : " << cl._hp << endl;
 		for (auto& other : clients) {
 			if (other._s_id == s_id)
@@ -361,6 +361,7 @@ void process_packet(int s_id, char* p)
 	case CS_START_GAME: {
 		CS_START_GAME_PACKET* packet = reinterpret_cast<CS_START_GAME_PACKET*>(p);
 		CLIENT& cl = clients[packet->id];
+		cout << "몇명 들어옴 : " << ingamecount << endl;
 		for (auto& other : clients) {
 			if (other._s_id == cl._s_id) continue;
 			other.state_lock.lock();
@@ -412,8 +413,8 @@ void process_packet(int s_id, char* p)
 			printf_s("[어떤 클라의 Send put object] id : %d, location : (%f,%f,%f), yaw : %f\n", packet.id, packet.x, packet.y, packet.z, packet.yaw);
 
 			cl.do_send(sizeof(packet), &packet);
-
 		}
+		
 		break;
 	}
 	case CS_HIT_EFFECT: {
@@ -608,10 +609,11 @@ void process_packet(int s_id, char* p)
 	}
 	case CS_STOP_ANIM: {
 		CS_STOP_ANIM_PACKET* packet = reinterpret_cast<CS_STOP_ANIM_PACKET*>(p);
-		cout << "packet->id : " << packet->id << endl;
+		cout << "들어옴 : " << packet->id << endl;
 		CLIENT& cl = clients[packet->id];
 		cl.bStopAnim = true;
 		for (auto& other : clients) {
+			if (other._s_id == cl._s_id) continue;
 			other.state_lock.lock();
 			if (ST_INGAME != other._state) {
 				other.state_lock.unlock();
@@ -814,6 +816,28 @@ void process_packet(int s_id, char* p)
 		}
 		break;
 	}
+	case CS_HP: {
+		CS_DAMAGE_PACKET* packet = reinterpret_cast<CS_DAMAGE_PACKET*>(p);
+		CLIENT& cl = clients[packet->id];
+		cl._hp = packet->hp;
+		cout << "hp : " << cl._hp << endl;
+		for (auto& other : clients) {
+			if (other._s_id == cl._s_id) continue;
+			other.state_lock.lock();
+			if (ST_INGAME != other._state) {
+				other.state_lock.unlock();
+				continue;
+			}
+			else other.state_lock.unlock();
+			SC_DAMAGE_CHANGE packet;
+			packet.size = sizeof(packet);
+			packet.type = SC_HP;
+			packet.id = cl._s_id;
+			packet.hp = cl._hp;
+			other.do_send(sizeof(packet), &packet);
+		}
+		break;
+	}
 	default:
 		cout << " 오류패킷타입 : " << p << endl;
 		break;
@@ -939,7 +963,6 @@ void send_move_packet(int _id, int target)
 	packet.vy = clients[target].VY;
 	packet.vz = clients[target].VZ;
 	packet.Max_speed = clients[target].Max_Speed;
-	packet.hp = clients[target]._hp;
 	clients[_id].do_send(sizeof(packet), &packet);
 }
 void player_heal(int s_id)
@@ -1060,9 +1083,26 @@ void timer()
 		duration<double> delta = current_time - prev_time;
 		prev_time = current_time;
 		double delta_time = delta.count();
-		cout << "dt" << delta_time << endl;
-		//send_delta_time_to_clients(delta_time);
+		
+		send_delta_time_to_clients(delta_time);
 
 		this_thread::sleep_for(milliseconds(1000 / 60));
 	}
 }
+
+void send_delta_time_to_clients(double deltaTime) {
+	SC_DELTA_TIME_PACKET packet;
+	packet.time = deltaTime;
+	packet.size = sizeof(packet);
+	packet.type = SC_DELTA;
+	//cout << "dt" << packet.time << endl;
+	for (auto& client : clients) {
+		client.state_lock.lock();
+		if (client._state == ST_INGAME) {
+			client.do_send(packet.size, &packet);
+			//std::cout << "Send delta time " << deltaTime << " to client " << client._s_id << std::endl;
+		}
+		client.state_lock.unlock();
+	}
+}
+

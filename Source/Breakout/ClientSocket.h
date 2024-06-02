@@ -288,7 +288,7 @@ public:
 	void CloseSocket();
 	bool PacketProcess(char* ptr);
 	void Send_Login_Info(char* id, char* pw);
-	void Send_Move_Packet(int sessionID, FVector Location, FRotator Rotation, FVector Velocity, float Max_speed, float hp);
+	void Send_Move_Packet(int sessionID, FVector Location, FRotator Rotation, FVector Velocity, float Max_speed);
 	void Send_Character_Type(PlayerType type, int id);
 	void Send_Weapon_Type(WeaponType type, int id);
 	void Send_Ready_Packet(bool ready);
@@ -311,7 +311,7 @@ public:
 	void Send_Remove_Weapon(int id, bool bWeapon);
 	void Send_CH2_SKILL_PACKET(int id, PlayerType type, bool bSkill);
 	void Send_Mopp_Sync_packet(int itemid, int mopptype);
-
+	void Send_HP_packet(int id, float hp);
 	virtual bool Init() override;
 	virtual uint32 Run() override;
 	virtual void Stop() override;

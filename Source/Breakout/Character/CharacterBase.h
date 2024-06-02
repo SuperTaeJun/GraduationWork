@@ -278,11 +278,13 @@ public:
 	bool bStarted;
 	FTimerHandle StartHandle;
 	void StartGame();
+	float StartTime = 0.f;
 	float StartedCnt;
 	bool bDeadAnim = false;
 	class UBOGameInstance* inst;
 	class UCameraComponent* GetCamera() { return FollowCamera; }
 	void Server_PlayDeadAnim();
+	bool bWait = false;
 };
 
 UENUM(BlueprintType)

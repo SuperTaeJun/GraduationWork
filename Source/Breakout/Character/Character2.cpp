@@ -88,7 +88,7 @@ void ACharacter2::Skill_S(const FInputActionValue& Value)
 {
 	if (DashPoint > 0 && !GetMovementComponent()->IsFalling())
 	{
-		DashSetup(DashSpeed, 100000000.f, FRotator(0.f, 0.f, 10000000.f), true);
+		DashSetup(DashSpeed, 100000000.f, FRotator(0.f, 0.f, 10000000.f), false);
 		NiagaraComp->Activate();
 		//bDash = true;
 		//DashStart();
@@ -110,8 +110,8 @@ void ACharacter2::DashSetup(float _MaxWalk, float _MaxAcc, FRotator _Rotation ,b
 	MovementComp->MaxAcceleration = _MaxAcc;
 	MovementComp->MaxWalkSpeed = _MaxWalk;
 	MovementComp->RotationRate = _Rotation;
-	//GetMesh()->SetHiddenInGame(_Visibillity, true);
-
+	GetMesh()->SetVisibility(_Visibillity);
+	CurWeapon->GetWeaponMesh()->SetVisibility(_Visibillity);
 	CanJump = false;
 	NiagaraComp->Deactivate();
 	//DisableInput(UGameplayStatics::GetPlayerController(GetWorld(),0));
@@ -126,7 +126,8 @@ void ACharacter2::DashFinishSetup()
 	MovementComp->MaxAcceleration = OldMaxAcceleration;
 	MovementComp->MaxWalkSpeed = OldMaxWalkSpeed;
 	MovementComp->RotationRate = OldRotationRate;
-	GetMesh()->SetHiddenInGame(false, true);
+	GetMesh()->SetVisibility(true);
+	CurWeapon->GetWeaponMesh()->SetVisibility(true);
 	CanJump = true;
 	//EnableInput(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 }

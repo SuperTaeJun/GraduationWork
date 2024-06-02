@@ -450,48 +450,53 @@ void ACharacterBase::SetSpawnGrenade(TSubclassOf<AProjectileBase> Projectile)
 
 void ACharacterBase::ReciveDamage(AActor* DamagedActor, float Damage, const UDamageType* DamageType, class AController* InstigatorController, AActor* DamageCauser)
 {
-	
-	Health = FMath::Clamp(Health - Damage, 0.f, MaxHealth);
-	UpdateHpHUD();
-	ACharacterBase* DamageInsigatorCh= Cast<ACharacterBase>(InstigatorController->GetPawn());
-	if (Health <= 0.0f)
+
+	if (MainController)
 	{
-		bDissolve = true;
-		if (DamageInsigatorCh)
+		Health = FMath::Clamp(Health - Damage, 0.f, MaxHealth);
+		if (inst)
+			inst->m_Socket->Send_HP_packet(inst->GetPlayerID(), Health);
+		UpdateHpHUD();
+		ACharacterBase* DamageInsigatorCh = Cast<ACharacterBase>(InstigatorController->GetPawn());
+		if (Health <= 0.0f)
 		{
-			//서버
-			if (ObtainedEscapeToolNum > 0 && 10 > ObtainedEscapeToolNum)
+			bDissolve = true;
+			if (DamageInsigatorCh)
 			{
-				DamageInsigatorCh->SetEscapeToolNum(DamageInsigatorCh->ObtainedEscapeToolNum + 1);
-				ObtainedEscapeToolNum -= 1;
-				if (inst) {
-					//ui에서 상대방의 아이템 개수 늘려주고
-					Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Increase_item_count_packet(DamageInsigatorCh->_SessionId, DamageInsigatorCh->GetEscapeToolNum());
-					// 내꺼는 줄여줌 
-					Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Decrease_item_count_packet(inst->GetPlayerID(), ObtainedEscapeToolNum);
-					
+				//서버
+				if (ObtainedEscapeToolNum > 0 && 10 > ObtainedEscapeToolNum)
+				{
+					DamageInsigatorCh->SetEscapeToolNum(DamageInsigatorCh->ObtainedEscapeToolNum + 1);
+					ObtainedEscapeToolNum -= 1;
+					if (inst) {
+						//ui에서 상대방의 아이템 개수 늘려주고
+						Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Increase_item_count_packet(DamageInsigatorCh->_SessionId, DamageInsigatorCh->GetEscapeToolNum());
+						// 내꺼는 줄여줌 
+						Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Decrease_item_count_packet(inst->GetPlayerID(), ObtainedEscapeToolNum);
+
+					}
+
 				}
-			
-			}
-			else if (10 <= ObtainedEscapeToolNum)
-			{
-				DamageInsigatorCh->SetEscapeToolNum(DamageInsigatorCh->ObtainedEscapeToolNum + 4);
-				ObtainedEscapeToolNum -= 4;
-				if (inst) {
-					Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Increase_item_count_packet(DamageInsigatorCh->_SessionId, DamageInsigatorCh->GetEscapeToolNum());
-					Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Decrease_item_count_packet(inst->GetPlayerID(), ObtainedEscapeToolNum);
+				else if (10 <= ObtainedEscapeToolNum)
+				{
+					DamageInsigatorCh->SetEscapeToolNum(DamageInsigatorCh->ObtainedEscapeToolNum + 4);
+					ObtainedEscapeToolNum -= 4;
+					if (inst) {
+						Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Increase_item_count_packet(DamageInsigatorCh->_SessionId, DamageInsigatorCh->GetEscapeToolNum());
+						Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Decrease_item_count_packet(inst->GetPlayerID(), ObtainedEscapeToolNum);
+					}
 				}
 			}
+			if (CurWeapon)
+				CurWeapon->CurAmmo = 0;
+			PlayAnimMontage(DeadMontage);
+			GetWorld()->GetTimerManager().SetTimer(DeadTimer, this, &ACharacterBase::Dead, DeadTime, false);
+			if (MainController)
+				DisableInput(MainController);
+			UpdateObtainedEscapeTool();
+			//if (MainController)//이거 죽었을때 다시 충돌 일어나서 애니메이션 재생되는거 막는용도
+			//	Health = 99999.f;
 		}
-		if(CurWeapon)
-			CurWeapon->CurAmmo = 0;
-		PlayAnimMontage(DeadMontage);
-		GetWorld()->GetTimerManager().SetTimer(DeadTimer, this, &ACharacterBase::Dead, DeadTime, false);
-		if(MainController)
-			DisableInput(MainController);
-		UpdateObtainedEscapeTool();
-		if(MainController)//이거 죽었을때 다시 충돌 일어나서 애니메이션 재생되는거 막는용도
-			Health = 99999.f;
 	}
 }
 
@@ -1021,8 +1026,19 @@ void ACharacterBase::Tick(float DeltaTime)
 		Cast<UBOGameInstance>(GetWorld()->GetGameInstance())->m_Socket->bAllReady = false;
 		bStarted = true;
 		//DisableInput(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+		bWait = true;
 		GetWorldTimerManager().SetTimer(StartHandle, this, &ACharacterBase::StartGame, 5.f);
 	}
+	//if (bWait)
+	//{
+	//	StartTime += inst->GetDeltaTime();
+	//	UE_LOG(LogTemp, Warning, TEXT("STARTTIME %f"), StartTime);
+	//	if (StartTime >= 5.f)
+	//	{
+	//		bWait = false;
+	//		StartGame();
+	//	}
+	//}
 }
 
 void ACharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -1087,6 +1103,8 @@ void ACharacterBase::StartGame()
 		//	UE_LOG(LogTemp, Warning, TEXT("ADDTOOLNUM"));
 		//	MainHUD->AddToolNumUi();
 		//}
+		if (inst)
+			inst->m_Socket->Send_Start_game_packet(inst->GetPlayerID());
 		MainController->MainHUD->AddToolNumUi();
 		// num 계수, name 처리 
 		MainController->SetNum();
