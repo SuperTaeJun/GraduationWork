@@ -904,15 +904,20 @@ void ACharacterController::UpdateSyncPlayer()
 				FActorSpawnParameters SpawnActor;
 				SpawnActor.Owner = this;
 				SpawnActor.Instigator = GetInstigator();
-				SpawnActor.Name = FName(*FString(to_string(NewPlayer.front()->Id).c_str()));
+				//SpawnActor.Name = FName(*FString(to_string(NewPlayer.front()->Id).c_str()));
 				ToSpawn = ACharacter4::StaticClass();
-				ACharacter4* SpawnCharacter = world->SpawnActor<ACharacter4>(ToSpawn,
-					S_LOCATION, S_ROTATOR, SpawnActor);
-				SpawnCharacter->SpawnDefaultController();
-				SpawnCharacter->_SessionId = NewPlayer.front()->Id;
-				SpawnCharacter->GetMesh()->SetSkeletalMesh(SkMeshAsset4);
-				if (Anim4)
-					SpawnCharacter->GetMesh()->SetAnimClass(Anim4);
+				if (world)
+				{
+					ACharacter4* SpawnCharacter = world->SpawnActor<ACharacter4>(ToSpawn,
+						FVector::ZeroVector, FRotator::ZeroRotator, SpawnActor);
+					if (SpawnCharacter) {
+						SpawnCharacter->SpawnDefaultController();
+						SpawnCharacter->_SessionId = NewPlayer.front()->Id;
+						SpawnCharacter->GetMesh()->SetSkeletalMesh(SkMeshAsset4);
+					}
+					if (Anim4)
+						SpawnCharacter->GetMesh()->SetAnimClass(Anim4);
+				}
 			}
 			break;
 		default:

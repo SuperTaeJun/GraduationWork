@@ -39,7 +39,7 @@ void send_myitem_packet(int _s_id);
 void worker_thread();
 void timer();
 void send_delta_time_to_clients(double deltaTime);
-
+void send_travel_ready_packet(int _s_id);
 int main()
 {
 	wcout.imbue(locale("korean"));
@@ -285,13 +285,13 @@ void process_packet(int s_id, char* p)
 		CS_READY_PACKET* packet = reinterpret_cast<CS_READY_PACKET*>(p);
 		CLIENT& cl = clients[s_id];
 		ready_count++;
-		cout << "ready_count" << ready_count << endl;
+		cout << "ready_count : " << ready_count << endl;
 		if (ready_count >= 2)
 		{
 			for (auto& player : clients) {
 				if (ST_INGAME != player._state)
 					continue;
-				send_ready_packet(player._s_id);
+				send_travel_ready_packet(player._s_id);
 				cout << "보낼 플레이어" << player._s_id << endl;
 			}
 		}
@@ -993,6 +993,14 @@ void send_ready_packet(int _s_id)
 	SC_ACCEPT_READY packet;
 	packet.size = sizeof(packet);
 	packet.type = SC_ALL_READY;
+	packet.ingame = true;
+	clients[_s_id].do_send(sizeof(packet), &packet);
+}
+void send_travel_ready_packet(int _s_id)
+{
+	SC_TRAVEL_PACKET packet;
+	packet.size = sizeof(packet);
+	packet.type = SC_TRAVLE;
 	packet.ingame = true;
 	clients[_s_id].do_send(sizeof(packet), &packet);
 }

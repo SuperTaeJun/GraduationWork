@@ -338,6 +338,7 @@ public:
 	int local_id = -1;
 	bool login_cond = false;
 	bool bAllReady = false;
+	bool bTravel = false;
 	bool itemflag = false;
 	int MyItemCount;
 	std::queue<std::shared_ptr<CItem>> ItemQueue;

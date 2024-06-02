@@ -85,6 +85,7 @@ const char SC_PLAYER_RELOAD = 29;
 const char SC_MOPP = 30;
 const char SC_HP = 31;
 const char SC_DELTA = 32;
+const char SC_TRAVLE = 33;
 
 #pragma pack (push, 1)
 struct CS_LOGIN_PACKET
@@ -160,6 +161,11 @@ struct SC_SYNC_WEAPO
 struct CS_READY_PACKET {
 	unsigned char size;
 	unsigned type;
+};
+struct SC_TRAVEL_PACKET {
+	unsigned char size;
+	unsigned type;
+	bool ingame;
 };
 struct SC_ACCEPT_READY {
 	unsigned char size;
