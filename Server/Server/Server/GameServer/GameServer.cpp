@@ -8,6 +8,7 @@
 #include "Overlap.h"
 #include "LockQueue.h"
 #include "EscapeObject.h"
+#include "DB.h"
 
 ;
 
@@ -42,6 +43,7 @@ void send_delta_time_to_clients(double deltaTime);
 void send_travel_ready_packet(int _s_id);
 int main()
 {
+
 	wcout.imbue(locale("korean"));
 	WSADATA WSAData;
 	::WSAStartup(MAKEWORD(2, 2), &WSAData);
@@ -87,7 +89,7 @@ int main()
 	objects[3].x = 2110.f;
 	objects[3].y = -1080.f;
 	objects[3].z = 120.f;
-
+	save_data();
 	vector <thread> worker_threads;
 	thread servertherad{ ev_timer };
 	thread TimerThread{ timer };
