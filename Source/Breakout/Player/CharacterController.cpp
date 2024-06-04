@@ -818,13 +818,18 @@ void ACharacterController::UpdateSyncPlayer()
 				SpawnActor.Instigator = GetInstigator();
 				SpawnActor.Name = FName(*FString(to_string(NewPlayer.front()->Id).c_str()));
 				ToSpawn = ACharacter1::StaticClass();
-				ACharacter1* SpawnCharacter = world->SpawnActor<ACharacter1>(ToSpawn,
-					S_LOCATION, S_ROTATOR, SpawnActor);
-				SpawnCharacter->SpawnDefaultController();
-				SpawnCharacter->_SessionId = NewPlayer.front()->Id;
-				SpawnCharacter->GetMesh()->SetSkeletalMesh(SkMeshAsset1);
-				if (Anim1)
-					SpawnCharacter->GetMesh()->SetAnimClass(Anim1);
+				if (world) {
+					ACharacter1* SpawnCharacter = world->SpawnActor<ACharacter1>(ToSpawn,
+						S_LOCATION, S_ROTATOR, SpawnActor);
+					if (SpawnCharacter) {
+						SpawnCharacter->SpawnDefaultController();
+						SpawnCharacter->_SessionId = NewPlayer.front()->Id;
+						SpawnCharacter->GetMesh()->SetSkeletalMesh(SkMeshAsset1);
+					}
+					if (Anim1)
+						SpawnCharacter->GetMesh()->SetAnimClass(Anim1);
+					SpawnCharacter->SetHealth(NewPlayer.front()->hp);
+				}
 			}
 			break;
 		case  PlayerType::Character2:
@@ -840,7 +845,7 @@ void ACharacterController::UpdateSyncPlayer()
 				FActorSpawnParameters SpawnActor;
 				SpawnActor.Owner = this;
 				SpawnActor.Instigator = GetInstigator();  
-				//SpawnActor.Name = FName(*FString(to_string(NewPlayer.front()->Id).c_str()));
+				SpawnActor.Name = FName(*FString(to_string(NewPlayer.front()->Id).c_str()));
 				ToSpawn = ACharacter2::StaticClass();
 				if (world)
 				{
@@ -853,6 +858,7 @@ void ACharacterController::UpdateSyncPlayer()
 					}
 					if (Anim2)
 						SpawnCharacter->GetMesh()->SetAnimClass(Anim2);
+					SpawnCharacter->SetHealth(NewPlayer.front()->hp);
 				}
 			}
 			break;
@@ -869,7 +875,7 @@ void ACharacterController::UpdateSyncPlayer()
 				FActorSpawnParameters SpawnActor;
 				SpawnActor.Owner = this;
 				SpawnActor.Instigator = GetInstigator();
-				//SpawnActor.Name = FName(*FString(to_string(NewPlayer.front()->Id).c_str()));
+				SpawnActor.Name = FName(*FString(to_string(NewPlayer.front()->Id).c_str()));
 				ToSpawn = ACharacter3::StaticClass();
 				if (world) {
 					ACharacter3* SpawnCharacter = world->SpawnActor<ACharacter3>(ToSpawn,
@@ -888,6 +894,7 @@ void ACharacterController::UpdateSyncPlayer()
 					}
 					if (Anim3)
 						SpawnCharacter->GetMesh()->SetAnimClass(Anim3);
+					SpawnCharacter->SetHealth(NewPlayer.front()->hp);
 				}
 			}
 			break;
@@ -904,7 +911,7 @@ void ACharacterController::UpdateSyncPlayer()
 				FActorSpawnParameters SpawnActor;
 				SpawnActor.Owner = this;
 				SpawnActor.Instigator = GetInstigator();
-				//SpawnActor.Name = FName(*FString(to_string(NewPlayer.front()->Id).c_str()));
+				SpawnActor.Name = FName(*FString(to_string(NewPlayer.front()->Id).c_str()));
 				ToSpawn = ACharacter4::StaticClass();
 				if (world)
 				{
@@ -917,6 +924,7 @@ void ACharacterController::UpdateSyncPlayer()
 					}
 					if (Anim4)
 						SpawnCharacter->GetMesh()->SetAnimClass(Anim4);
+					SpawnCharacter->SetHealth(NewPlayer.front()->hp);
 				}
 			}
 			break;

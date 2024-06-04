@@ -1,6 +1,6 @@
 #pragma once
 #define SERVER_PORT		8001
-#define SERVER_IP		"192.168.219.101"
+#define SERVER_IP		"127.0.0.1"
 #define MAX_INFO_SIZE   20
 #include <vector>
 #include <array>
@@ -123,6 +123,7 @@ struct SC_PLAYER_SYNC {
 	float Max_speed;
 	float x, y, z;
 	float yaw;
+	float hp;
 	//char object_type;
 	char name[MAX_INFO_SIZE];
 	PlayerType p_type;
