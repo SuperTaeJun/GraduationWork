@@ -1027,18 +1027,18 @@ void ACharacterBase::Tick(float DeltaTime)
 		bStarted = true;
 		//DisableInput(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 		bWait = true;
-		GetWorldTimerManager().SetTimer(StartHandle, this, &ACharacterBase::StartGame, 5.f);
+		//GetWorldTimerManager().SetTimer(StartHandle, this, &ACharacterBase::StartGame, 5.f);
 	}
-	//if (bWait)
-	//{
-	//	StartTime += inst->GetDeltaTime();
-	//	UE_LOG(LogTemp, Warning, TEXT("STARTTIME %f"), StartTime);
-	//	if (StartTime >= 5.f)
-	//	{
-	//		bWait = false;
-	//		StartGame();
-	//	}
-	//}
+	if (bWait)
+	{
+		StartTime += inst->GetDeltaTime();
+		UE_LOG(LogTemp, Warning, TEXT("STARTTIME %f"), StartTime);
+		if (StartTime >= 5.f)
+		{
+			bWait = false;
+			StartGame();
+		}
+	}
 }
 
 void ACharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
