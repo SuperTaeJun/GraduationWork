@@ -63,6 +63,7 @@ void AEscapeTool::Destroyed()
 	{
 		inst->m_Socket->Send_Destroyed_item_packet(ItemID);
 		inst->m_Socket->Send_item_Anim_packet(inst->GetPlayerID(), 1);
+		Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Increase_item_count_packet(inst->GetPlayerID(), OverlapedCharacter->GetEscapeToolNum());
 	}
 }
 
