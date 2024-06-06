@@ -161,6 +161,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="CLIENT.cpp" />
+    <ClCompile Include="DB.cpp" />
     <ClCompile Include="EscapeObject.cpp" />
     <ClCompile Include="GameServer.cpp" />
     <ClCompile Include="LockQueue.cpp" />
@@ -174,6 +175,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CLIENT.h" />
+    <ClInclude Include="DB.h" />
     <ClInclude Include="Enum.h" />
     <ClInclude Include="EscapeObject.h" />
     <ClInclude Include="LockQueue.h" />

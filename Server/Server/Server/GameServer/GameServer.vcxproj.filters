@@ -22,6 +22,9 @@
     <Filter Include="LockQueue">
       <UniqueIdentifier>{38f14496-62ea-4677-8939-6724c5adb247}</UniqueIdentifier>
     </Filter>
+    <Filter Include="DB">
+      <UniqueIdentifier>{2343ac47-3ae3-4c05-9072-a5f214ca0bc7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GameServer.cpp">
@@ -42,6 +45,9 @@
     <ClCompile Include="LockQueue.cpp">
       <Filter>LockQueue</Filter>
     </ClCompile>
+    <ClCompile Include="DB.cpp">
+      <Filter>DB</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -59,6 +65,11 @@
     <ClInclude Include="EscapeObject.h">
       <Filter>EscapeTool</Filter>
     </ClInclude>
-    <ClInclude Include="LockQueue.h" />
+    <ClInclude Include="LockQueue.h">
+      <Filter>LockQueue</Filter>
+    </ClInclude>
+    <ClInclude Include="DB.h">
+      <Filter>DB</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
