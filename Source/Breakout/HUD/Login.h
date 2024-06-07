@@ -20,6 +20,9 @@ public:
 	TObjectPtr<class UButton>Login;
 
 	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<class UButton>SignUp;
+
+	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<class UEditableText>ID;
 
 	UPROPERTY(meta = (BindWidget))
@@ -27,6 +30,9 @@ public:
 
 	UFUNCTION()
 	void PressLogin();
+
+	UFUNCTION()
+	void PressSignUp();
 private:
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<class USoundCue> ClickSound;

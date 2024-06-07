@@ -13,6 +13,8 @@ void ULogin::NativeConstruct()
 
 	if (Login)
 		Login->OnClicked.AddDynamic(this, &ULogin::PressLogin);
+	if (Login)
+		SignUp->OnClicked.AddDynamic(this, &ULogin::PressSignUp);
 
 }
 
@@ -32,6 +34,13 @@ void ULogin::PressLogin()
 		PlaySound(ClickSound);
 	}
 
-	RemoveFromParent();
+	//RemoveFromParent();
+}
+
+void ULogin::PressSignUp()
+{
+	FString IDToString = ID->GetText().ToString();
+	FString PasswordToString = Password->GetText().ToString();
+
 }
 
