@@ -100,7 +100,7 @@ struct SC_LOGIN_BACK {
 	unsigned type;
 	int id;
 	char cid[MAX_INFO_SIZE];
-
+	bool bLogin;
 };
 #pragma pack(pop)
 

@@ -81,6 +81,7 @@ bool ClientSocket::PacketProcess(char* ptr)
 	case SC_LOGIN_OK: {
 		SC_LOGIN_BACK* packet = reinterpret_cast<SC_LOGIN_BACK*>(ptr);
 		gameinst->SetPlayerID(packet->id);
+		bLoginConnect = packet->bLogin;
 		break;
 	}
 	case SC_ITEM: {

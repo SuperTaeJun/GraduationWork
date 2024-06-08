@@ -33,8 +33,8 @@ void ULogin::PressLogin()
 	{
 		PlaySound(ClickSound);
 	}
-
-	//RemoveFromParent();
+	if (Cast<UBOGameInstance>(GetGameInstance())->m_Socket->bLoginConnect)
+		RemoveFromParent();
 }
 
 void ULogin::PressSignUp()

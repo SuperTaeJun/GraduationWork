@@ -43,6 +43,7 @@ public:
     int wtype;
     //--------------------
     bool bStopAnim;
+    bool bLogin = false;
     unordered_set   <int>  viewlist; // 시야 안 오브젝트
     mutex vl;
     mutex hp_lock;
