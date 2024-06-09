@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "NiagaraFunctionLibrary.h"
 #include "InterActorBase.generated.h"
 
 UCLASS()
@@ -26,14 +27,8 @@ protected:
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<class UBoxComponent> CollisionBox;
 
-	UFUNCTION()
-	virtual void OnBoxOverlap
-	(
-		UPrimitiveComponent* OverlappedComponent,
-		AActor* OtherActor,
-		UPrimitiveComponent* OtherComp,
-		int32 OtherBodyIndex,
-		bool bFromSweep,
-		const FHitResult& SweepResult
-	);
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<class UNiagaraSystem> ImpactNiagara;
+
+	float HP;
 };
