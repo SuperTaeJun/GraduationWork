@@ -5,6 +5,7 @@
 #include "Kismet/GameplayStatics.h"
 void AExplosiveObject::BeginPlay()
 {
+	Super::BeginPlay();
 	OnTakeAnyDamage.AddDynamic(this, &AExplosiveObject::ReciveDamage);
 	HP = 30.f;
 }
@@ -32,9 +33,6 @@ void AExplosiveObject::ReciveDamage(AActor* DamagedActor, float Damage, const UD
 			);
 		}
 
-		if (ImpactNiagara)
-			UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), ImpactNiagara, GetActorLocation());
-
 		Destroy();
 	}
 }
@@ -42,5 +40,7 @@ void AExplosiveObject::ReciveDamage(AActor* DamagedActor, float Damage, const UD
 void AExplosiveObject::Destroyed()
 {
 	Super::Destroyed();
+	if (ImpactNiagara)
+		UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), ImpactNiagara, GetActorLocation());
 
 }
