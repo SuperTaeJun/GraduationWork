@@ -450,6 +450,8 @@ void ACharacterBase::SetSpawnGrenade(TSubclassOf<AProjectileBase> Projectile)
 
 void ACharacterBase::ReciveDamage(AActor* DamagedActor, float Damage, const UDamageType* DamageType, class AController* InstigatorController, AActor* DamageCauser)
 {
+	if (HitMontage && Health > 0.0f)
+		PlayAnimMontage(HitMontage);
 
 	if (MainController)
 	{
