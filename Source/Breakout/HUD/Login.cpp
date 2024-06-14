@@ -20,9 +20,7 @@ void ULogin::NativeConstruct()
 
 void ULogin::PressLogin()
 {
-	//UE_LOG(LogTemp, Warning, TEXT("ID : %s"), ID->GetText().ToString());
-	//UE_LOG(LogTemp, Warning, TEXT("Password : %s"), Password->GetText().ToString());
-
+	
 	FString IDToString = ID->GetText().ToString();
 	FString PasswordToString = Password->GetText().ToString();
 
