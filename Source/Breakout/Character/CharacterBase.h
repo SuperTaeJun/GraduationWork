@@ -155,6 +155,8 @@ protected:
 	TObjectPtr<class UAnimMontage> ReloadMontage;
 	UPROPERTY(EditAnywhere, Category = Animation)
 	TObjectPtr<class UAnimMontage> InterMontage;
+	UPROPERTY(EditAnywhere, Category = Animation)
+	TObjectPtr<class UAnimMontage> HitMontage;
 
 	FName RightSocketName;
 
