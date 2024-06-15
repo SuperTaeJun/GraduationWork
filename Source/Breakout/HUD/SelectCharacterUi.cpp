@@ -69,7 +69,7 @@ void USelectCharacterUi::Matching()
 		//GetWorld()->ServerTravel(FString("/Game/Maps/TestMap"), true);
 
 	}
-		//GetWorld()->ServerTravel(FString("/Game/Maps/MainMap"), true);
+	GetWorld()->ServerTravel(FString("/Game/Maps/MainMap"), true);
 }
 
 // 캐릭터 선택 패킷 보내는 곳
