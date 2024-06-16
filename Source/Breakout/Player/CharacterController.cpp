@@ -125,17 +125,7 @@ void ACharacterController::SetNum()
 	}
 }
 
-//void ACharacterController::OnPossess(APawn* InPawn)
-//{
-//	Super::OnPossess(InPawn);
-//
-//	ACharacterBase* Ch = Cast<ACharacterBase>(InPawn);
-//	if (Ch)
-//	{
-//		Ch->SetWeaponUi();
-//	}
-//
-//}
+
 void ACharacterController::SetHUDHealth(float Health, float MaxHealth)
 {
 	if (MainHUD)
@@ -362,8 +352,8 @@ void ACharacterController::Tick(float DeltaTime)
 
 void ACharacterController::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
-	/*c_socket->CloseSocket();
-	c_socket->StopListen();*/
+	inst->m_Socket->CloseSocket();
+	//inst->m_Socket->StopListen();
 }
 
 
