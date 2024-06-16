@@ -348,10 +348,8 @@ void ClientSocket::Send_Move_Packet(int sessionID, FVector Location, FRotator Ro
 	packet.vz = Velocity.Z;
 	packet.Max_speed = Max_speed;
 
-	//Send(packet.size, &packet);
 	SendPacket(&packet);
-	//UE_LOG(LogClass, Warning, TEXT("send move"));
-//}
+	
 }
 
 void ClientSocket::Send_Character_Type(PlayerType type, int id)
@@ -361,12 +359,12 @@ void ClientSocket::Send_Character_Type(PlayerType type, int id)
 	packet.size = sizeof(packet);
 	packet.type = CS_SELECT_CHAR;
 	packet.id = id;
-	//Send(packet.size, &packet);
+
 	auto location = player->GetActorLocation();
 	packet.x = location.X;
 	packet.y = location.Y;
 	packet.z = location.Z;
-	//packet.p_type = character_type;
+
 	packet.p_type = type;
 	SendPacket(&packet);
 }

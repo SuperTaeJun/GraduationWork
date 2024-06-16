@@ -168,8 +168,6 @@ public:
 	//Tick함수
 	virtual void Tick(float DeltaTime);
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
-	//void RecvNewPlayer(int sessionID, float x, float y, float z);
-	//void SendPlayerPos(int id);
 
 	// 스폰시킬 다른 캐릭터
 	UPROPERTY(EditAnywhere, Category = "Spawning")
