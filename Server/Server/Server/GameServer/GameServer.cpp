@@ -41,6 +41,7 @@ void worker_thread();
 void timer();
 void send_delta_time_to_clients(double deltaTime);
 void send_travel_ready_packet(int _s_id);
+void send_login_fail_packet(int _s_id);
 int main()
 {
 
@@ -89,7 +90,7 @@ int main()
 	objects[3].x = 2110.f;
 	objects[3].y = -1080.f;
 	objects[3].z = 120.f;
-	save_data();
+
 	vector <thread> worker_threads;
 	thread servertherad{ ev_timer };
 	thread TimerThread{ timer };
@@ -161,6 +162,16 @@ void send_login_ok_packet(int _s_id)
 
 	clients[_s_id].do_send(sizeof(packet), &packet);
 }
+void send_login_fail_packet(int _s_id)
+{
+	SC_LOGIN_FAIL_PACKET packet;
+	packet.size = sizeof(packet);
+	packet.type = SC_LOGIN_FAIL;
+	packet.id = _s_id;
+	strcpy_s(packet.failreason,"fail");
+
+	clients[_s_id].do_send(sizeof(packet), &packet);
+}
 void send_select_character_type_packet(int _s_id)
 {
 	SC_SELECT_CHARACTER_BACK packet;
@@ -196,15 +207,26 @@ void process_packet(int s_id, char* p)
 		cl.state_lock.lock();
 		cl._state = ST_INGAME;
 		cl.state_lock.unlock();
-		cout << "cl.sid : " << cl._s_id << endl;
-		strcpy_s(cl.name, packet->id);
-		cl.bLogin = true;
-		cout << "czc : " << cl.name << endl;
-		send_login_ok_packet(cl._s_id);
-		cout << "플레이어[" << s_id << "]" << " 로그인 성공" << endl;
-
+		//save_data(packet->id, packet->pw);
+		if (DB_odbc(packet->id, packet->pw))
+		{
+			strcpy_s(cl.name, packet->id);
+			strcpy_s(cl._pw, packet->pw);
+			cl.bLogin = true;
+			send_login_ok_packet(cl._s_id);
+			cout << "플레이어[" << s_id << "]" << " 로그인 성공" << endl;
+		}
+		else
+			send_login_fail_packet(s_id);
 		break;
 
+	}
+	case CS_ACCOUNT: {
+		CS_ACCOUNT_PACKET* packet = reinterpret_cast<CS_ACCOUNT_PACKET*>(p);
+		CLIENT& cl = clients[s_id];
+		save_data(packet->id, packet->pw);
+		cout << "계정 생성 완료" << endl;
+		break;
 	}
 	case CS_SELECT_CHAR: {
 

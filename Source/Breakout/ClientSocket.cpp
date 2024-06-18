@@ -81,7 +81,13 @@ bool ClientSocket::PacketProcess(char* ptr)
 	case SC_LOGIN_OK: {
 		SC_LOGIN_BACK* packet = reinterpret_cast<SC_LOGIN_BACK*>(ptr);
 		gameinst->SetPlayerID(packet->id);
+		UE_LOG(LogTemp, Warning, TEXT("true ?%d"), packet->bLogin);
 		bLoginConnect = packet->bLogin;
+		break;
+	}
+	case SC_LOGIN_FAIL : {
+		SC_LOGIN_FAIL_PACKET* packet = reinterpret_cast<SC_LOGIN_FAIL_PACKET*>(ptr);
+		UE_LOG(LogTemp, Warning, TEXT("FAIL_LOGIN -> CREATE ACCOUNT"));
 		break;
 	}
 	case SC_ITEM: {
@@ -331,7 +337,19 @@ void ClientSocket::Send_Login_Info(char* id, char* pw)
 	UE_LOG(LogClass, Warning, TEXT("Sending login info - id: %s, pw: %s"), ANSI_TO_TCHAR(id), ANSI_TO_TCHAR(pw));
 
 }
+void ClientSocket::Send_Account_PACKET(char* id, char* pw)
+{
+	//패킷 조립
+	CS_ACCOUNT_PACKET packet;
+	packet.size = sizeof(packet);
+	packet.type = CS_ACCOUNT;
+	strcpy_s(packet.id, id);
+	strcpy_s(packet.pw, pw);
 
+	SendPacket(&packet);
+
+
+}
 void ClientSocket::Send_Move_Packet(int sessionID, FVector Location, FRotator Rotation, FVector Velocity, float Max_speed)
 {
 	//if (login_cond == true) {

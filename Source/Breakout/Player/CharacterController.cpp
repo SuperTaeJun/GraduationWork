@@ -352,7 +352,7 @@ void ACharacterController::Tick(float DeltaTime)
 
 void ACharacterController::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
-	inst->m_Socket->CloseSocket();
+	//inst->m_Socket->CloseSocket();
 	//inst->m_Socket->StopListen();
 }
 

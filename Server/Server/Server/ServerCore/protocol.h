@@ -1,6 +1,6 @@
 #pragma once
 #define SERVER_PORT		8001
-#define SERVER_IP		"192.168.219.102"
+#define SERVER_IP		"127.0.0.1"
 #define MAX_INFO_SIZE   20
 #include <vector>
 #include <array>
@@ -53,6 +53,7 @@ const char CS_PLAYER_HEAL = 27;
 const char CS_PLAYER_RELOAD = 28;
 const char CS_MOPP = 29;
 const char CS_HP = 30;
+const char CS_ACCOUNT = 31;
 
 const char SC_LOGIN_OK = 1;
 const char SC_OTHER_PLAYER = 2;
@@ -86,6 +87,7 @@ const char SC_MOPP = 30;
 const char SC_HP = 31;
 const char SC_DELTA = 32;
 const char SC_TRAVLE = 33;
+const char SC_LOGIN_FAIL = 34;
 
 #pragma pack (push, 1)
 struct CS_LOGIN_PACKET
@@ -101,6 +103,18 @@ struct SC_LOGIN_BACK {
 	int id;
 	char cid[MAX_INFO_SIZE];
 	bool bLogin;
+};
+struct SC_LOGIN_FAIL_PACKET {
+	unsigned char size;
+	unsigned type;
+	int id;
+	char failreason[MAX_INFO_SIZE];
+};
+struct CS_ACCOUNT_PACKET {
+	unsigned char size;
+	unsigned type;
+	char id[MAX_INFO_SIZE];
+	char pw[MAX_INFO_SIZE];
 };
 #pragma pack(pop)
 
