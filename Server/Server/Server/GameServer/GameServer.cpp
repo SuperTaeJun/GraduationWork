@@ -207,7 +207,12 @@ void process_packet(int s_id, char* p)
 		cl.state_lock.lock();
 		cl._state = ST_INGAME;
 		cl.state_lock.unlock();
-		//save_data(packet->id, packet->pw);
+		for (int i = 0; i < MAX_USER; ++i)
+		{
+			if (strcmp(packet->id, clients[i].name) == 0)
+				send_login_fail_packet(s_id);
+		}
+		
 		if (DB_odbc(packet->id, packet->pw))
 		{
 			strcpy_s(cl.name, packet->id);
@@ -259,7 +264,7 @@ void process_packet(int s_id, char* p)
 	}
 	case CS_MOVE_Packet: {
 		CS_MOVE_PACKET* packet = reinterpret_cast<CS_MOVE_PACKET*>(p);
-	//	cout << "packet_size = movepacket" << sizeof(packet) << endl;
+	
 		CLIENT& cl = clients[packet->id];
 		cl.x = packet->x;
 		cl.y = packet->y;
@@ -270,7 +275,7 @@ void process_packet(int s_id, char* p)
 		cl.VZ = packet->vz;
 		cl.Max_Speed = packet->Max_speed;
 		
-//		cout << "hp : " << cl._hp << endl;
+
 		for (auto& other : clients) {
 			if (other._s_id == s_id)
 				continue;
