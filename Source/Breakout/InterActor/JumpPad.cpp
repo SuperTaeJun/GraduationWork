@@ -5,7 +5,7 @@
 #include "Components/BoxComponent.h"
 #include "Character/CharacterBase.h"
 #include "GameFramework/CharacterMovementComponent.h"
-
+#include"Animatiom/BOAnimInstance.h"
 void AJumpPad::BeginPlay()
 {
 	Super::BeginPlay();
@@ -20,7 +20,8 @@ void AJumpPad::OnBoxOverlap(UPrimitiveComponent* OverlappedComponent, AActor* Ot
 	{
 		FVector Impulse = (InCh->GetActorForwardVector() + FVector(0.f, 0.f, 1.f)) * FVector(10.f, 10.f, 1300.f);
 		InCh->GetCharacterMovement()->AddImpulse(Impulse, true);
-		UE_LOG(LogTemp, Warning, TEXT("JUMP"));
+		//점프 falling상태로 변경해줘야함
+		InCh->GetCharacterMovement()->SetMovementMode(MOVE_Falling);
 	}
 	if(ImpactNiagara)
 		UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), ImpactNiagara, GetActorLocation());

@@ -54,6 +54,8 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Weapon Properties")
 	float Firerate=0.15;
 
+public:
+	float Range = 500.f;
 protected:
 	virtual void BeginPlay() override;
 
