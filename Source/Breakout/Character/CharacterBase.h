@@ -10,6 +10,8 @@
 class UInputAction;
 #define DEFAULTCAMERALENGTH 200
 #define SPRINTCAMERALENGTH 100
+#define AIMCAMERALAENGTH 50
+
 
 UCLASS()
 class BREAKOUT_API ACharacterBase : public ACharacter
@@ -37,7 +39,7 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
-	void UpdateSprintCamera(float DeltaTime);
+	void UpdateCameraBoom(float DeltaTime);
 	void UpdateStamina(float DeltaTime);
 	void SetHUDCrosshair(float DeltaTime);
 	void UpdateHpHUD();
@@ -210,8 +212,10 @@ protected:
 	//크로스헤어기준으로 사거리만큼 조준했을때 마지막 충돌위치
 	FVector HitTarget;
 
+	//카메라 설정
 	void SetSprint();
 	void SetRun();
+	void SetAiming();
 
 
 	//입력값
@@ -272,6 +276,8 @@ protected:
 	virtual void Skill_E(const FInputActionValue& Value);
 	void Detect_S(const FInputActionValue& Value);
 	void Detect_E(const FInputActionValue& Value);
+	void Aiming_S(const FInputActionValue& Value);
+	void Aiming_E(const FInputActionValue& Value);
 
 public:
 	//서버랑 연동하는 함수들
@@ -295,7 +301,7 @@ enum class ECharacterState : uint8
 	ECS_IDLE UMETA(DisplayName = "Idle"),
 	ECS_RUN UMETA(DisplayName = "Run"),
 	ECS_SPRINT UMETA(DisplayName = "Sprint"),
-	ECS_FALLING UMETA(DisplayName = "Falling"),
+	ECS_AIMING UMETA(DisplayName = "Aiming"),
 
 	ECS_DEFAULT UMETA(DisplayName = "Default")
 };

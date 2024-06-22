@@ -24,6 +24,7 @@ protected:
 		FVector NomalImpulse, const FHitResult& Hit);
 
 private:
+	UFUNCTION()
 	void ReciveDamage(AActor* DamagedActor, float _Damage, const UDamageType* DamageType, class AController* InstigatorController, AActor* DamageCauser);
 	float Hp = 0.f;
 };
