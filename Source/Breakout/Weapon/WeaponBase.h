@@ -28,6 +28,8 @@ public:
 
 	FVector StartBeam;
 	FVector EndBeam;
+
+	void SetSphereRadius(float Radius) { SphereRadius = Radius; }
 protected:
 	UPROPERTY(EditAnywhere, Category = "Weapon Properties")
 	TObjectPtr<class USkeletalMeshComponent> WeaponMesh;
@@ -43,7 +45,7 @@ protected:
 	float DistanceToSphere = 800.f;
 
 	UPROPERTY(EditAnywhere, Category = "Weapon Scatter")
-	float SphereRadius = 100.f;
+	float SphereRadius = 15.f;
 
 	//ÃÑ¾Ë ÈåÅÍÁü »ç¿ë ÇÒÁö¸»Áö
 	UPROPERTY(EditAnywhere, Category = "Weapon Scatter")
@@ -52,9 +54,6 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Weapon Properties")
 	float Firerate=0.15;
 
-public:
-	UPROPERTY(EditAnywhere, Category = "Weapon Properties")
-	float Range = 1500.f;
 protected:
 	virtual void BeginPlay() override;
 

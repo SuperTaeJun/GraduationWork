@@ -159,15 +159,14 @@ void ACharacterBase::BeginPlay()
 
 void ACharacterBase::UpdateCameraBoom(float DeltaTime)
 {
-	if (CameraBoom->TargetArmLength >= SPRINTCAMERALENGTH &&CharacterState == ECharacterState::ECS_SPRINT)
-	{
-		CameraBoom->TargetArmLength -= DeltaTime * 400;
-	}
-	else if (CameraBoom->TargetArmLength <= DEFAULTCAMERALENGTH && CharacterState == ECharacterState::ECS_RUN)
+	if (CameraBoom->TargetArmLength <= DEFAULTCAMERALENGTH && (CharacterState == ECharacterState::ECS_RUN || CharacterState == ECharacterState::ECS_IDLE))
 	{
 		CameraBoom->TargetArmLength += DeltaTime * 400;
 	}
-
+	else if (CameraBoom->TargetArmLength >= SPRINTCAMERALENGTH && CharacterState == ECharacterState::ECS_SPRINT)
+	{
+		CameraBoom->TargetArmLength -= DeltaTime * 400;
+	}
 }
 void ACharacterBase::UpdateStamina(float DeltaTime)
 {
@@ -953,15 +952,22 @@ void ACharacterBase::Aiming_S(const FInputActionValue& Value)
 {
 	CharacterState = ECharacterState::ECS_AIMING;
 
-	CameraBoom->TargetArmLength = 50;
-
+	CameraBoom->TargetArmLength = 50.f;
+	if (CurWeapon)
+	{
+		CurWeapon->SetSphereRadius(10.f);
+	}
 }
 
 void ACharacterBase::Aiming_E(const FInputActionValue& Value)
 {
+	UE_LOG(LogTemp, Log, TEXT("AIM END"));
 	CharacterState = ECharacterState::ECS_RUN;
-	CameraBoom->TargetArmLength = 200;
-
+	//CameraBoom->TargetArmLength = 200;
+	if (CurWeapon)
+	{
+		CurWeapon->SetSphereRadius(15.f);
+	}
 }
 
 void ACharacterBase::Detect_S(const FInputActionValue& Value)
@@ -982,10 +988,12 @@ void ACharacterBase::Tick(float DeltaTime)
 	switch (CharacterState)
 	{
 	case ECharacterState::ECS_IDLE:
+		UpdateCameraBoom(DeltaTime);
 		break;
 	case ECharacterState::ECS_RUN:
 		Movement->MaxWalkSpeed = 400.f;
 		UGameplayStatics::GetPlayerCameraManager(GetWorld(), 0)->StartCameraShake(UJog::StaticClass());
+		UpdateCameraBoom(DeltaTime);
 		break;
 	case ECharacterState::ECS_SPRINT:
 		if (!StaminaExhaustionState)
@@ -993,6 +1001,7 @@ void ACharacterBase::Tick(float DeltaTime)
 			Movement->MaxWalkSpeed = 600.f;
 			UGameplayStatics::GetPlayerCameraManager(GetWorld(), 0)->StartCameraShake(USprint::StaticClass());
 		}
+		UpdateCameraBoom(DeltaTime);
 		break;
 	case ECharacterState::ECS_AIMING:
 	{
@@ -1001,6 +1010,7 @@ void ACharacterBase::Tick(float DeltaTime)
 		break;
 	case ECharacterState::ECS_DEFAULT:
 		Movement->MaxWalkSpeed = 400.f;
+		UpdateCameraBoom(DeltaTime);
 		break;
 	}
 
@@ -1012,7 +1022,6 @@ void ACharacterBase::Tick(float DeltaTime)
 	//UE_LOG(LogTemp, Warning, TEXT("HHHHHH : %s"),*GetVelocity().ToString());
 
 	UpdateStamina(DeltaTime);
-	UpdateCameraBoom(DeltaTime);
 	AimOffset(DeltaTime);
 
 	SetHUDCrosshair(DeltaTime);
@@ -1087,7 +1096,7 @@ void ACharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 		EnhancedInputComponent->BindAction(SelectTrapAction, ETriggerEvent::Triggered, this, &ACharacterBase::SelectTrap);
 		EnhancedInputComponent->BindAction(DetectAction, ETriggerEvent::Triggered, this, &ACharacterBase::Detect_S);
 		EnhancedInputComponent->BindAction(DetectAction, ETriggerEvent::Completed, this, &ACharacterBase::Detect_E);
-		EnhancedInputComponent->BindAction(AimAction, ETriggerEvent::Started, this, &ACharacterBase::Aiming_S);
+		EnhancedInputComponent->BindAction(AimAction, ETriggerEvent::Triggered, this, &ACharacterBase::Aiming_S);
 		EnhancedInputComponent->BindAction(AimAction, ETriggerEvent::Completed, this, &ACharacterBase::Aiming_E);
 	}
 }
