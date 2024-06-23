@@ -90,10 +90,10 @@ void ACharacter2::Skill_S(const FInputActionValue& Value)
 	{
 		DashSetup(DashSpeed, 100000000.f, FRotator(0.f, 0.f, 10000000.f), false);
 		NiagaraComp->Activate();
+		bSkillUsing = true;
 		//bDash = true;
 		//DashStart();
 		GetWorld()->GetTimerManager().SetTimer(DashTimer, this, &ACharacter2::DashFinishSetup, 0.2, false);
-
 		//스킬 패킷
 		if(inst)
 			Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Niagara_packet(_SessionId, PlayerType::Character2, 0);
@@ -129,6 +129,7 @@ void ACharacter2::DashFinishSetup()
 	GetMesh()->SetVisibility(true);
 	CurWeapon->GetWeaponMesh()->SetVisibility(true);
 	CanJump = true;
+	bSkillUsing = false;
 	//EnableInput(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 }
 
