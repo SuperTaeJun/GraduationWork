@@ -998,8 +998,11 @@ void ACharacterBase::Tick(float DeltaTime)
 	case ECharacterState::ECS_SPRINT:
 		if (!StaminaExhaustionState)
 		{
-			Movement->MaxWalkSpeed = 600.f;
-			UGameplayStatics::GetPlayerCameraManager(GetWorld(), 0)->StartCameraShake(USprint::StaticClass());
+			if (!bSkillUsing)
+			{
+				Movement->MaxWalkSpeed = 600.f;
+				UGameplayStatics::GetPlayerCameraManager(GetWorld(), 0)->StartCameraShake(USprint::StaticClass());
+			}
 		}
 		UpdateCameraBoom(DeltaTime);
 		break;
