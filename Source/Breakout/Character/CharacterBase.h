@@ -60,7 +60,7 @@ protected:
 
 	bool bCanEscape;
 	bool StaminaExhaustionState;
-
+	bool bSkillUsing = false;
 	int32 GrendeNum;
 	int32 WallGrendeNum;
 	int32 BoobyTrapNum;
@@ -71,6 +71,7 @@ protected:
 
 	FVector SWAimLastLoc;
 	FTransform StartTransform;
+
 public:
 	void SetResetState();
 

@@ -66,7 +66,7 @@ void AProjectileBullet::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherAc
 		ABulletHoleWall* DamagedWall = Cast<ABulletHoleWall>(OtherActor);
 		AProjectileBoobyTrap* DamagedTrap = Cast<AProjectileBoobyTrap>(OtherActor);
 		AInterActorBase* InterActor = Cast<AInterActorBase>(OtherActor);
-		if(DamagedCharacter)
+		if(DamagedCharacter && DamagedCharacter!= GetOwner())
 			UGameplayStatics::ApplyDamage(DamagedCharacter,Damage,FiringController,FiringPawn,UDamageType::StaticClass());
 		else if (DamagedWall)
 		{
