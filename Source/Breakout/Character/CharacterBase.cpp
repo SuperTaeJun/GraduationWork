@@ -557,9 +557,8 @@ void ACharacterBase::AimOffset(float DeltaTime)
 
 	if (!IsFalling && Speed == 0.f) //점프 아니고 서있을때
 	{
-		//UE_LOG(LogTemp, Log, TEXT("%f"), Speed);
 		FRotator CurAimRotation = FRotator(0.f, GetBaseAimRotation().Yaw, 0.f);
-		FRotator DeltaRotation = UKismetMathLibrary::NormalizedDeltaRotator(CurAimRotation, StartingAimRotation);
+		FRotator DeltaRotation = UKismetMathLibrary::NormalizedDeltaRotator(CurAimRotation,StartingAimRotation);
 		AO_Yaw = DeltaRotation.Yaw;
 		if (TurningType == ETurningInPlace::ETIP_NotTurning)
 		{
@@ -575,7 +574,8 @@ void ACharacterBase::AimOffset(float DeltaTime)
 		bUseControllerRotationYaw = true;
 		TurningType = ETurningInPlace::ETIP_NotTurning;
 	}
-	AO_Pitch = GetBaseAimRotation().Pitch;
+	//초기 카메라 위치 +20.f
+	AO_Pitch = GetBaseAimRotation().Pitch + 20.f;
 	if (AO_Pitch > 90.f && !IsLocallyControlled())
 	{
 		FVector2D InRange(270.f, 360.f);
