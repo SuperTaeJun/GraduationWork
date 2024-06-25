@@ -23,6 +23,10 @@ atomic<int> ready_count = 0;
 atomic<int> ingamecount = 0;
 using namespace chrono;
 
+vector<vector<int>> gameRooms; // 게임룸 컨테이너
+
+mutex mtx;  
+
 void ev_timer();
 int get_id();
 void send_select_character_type_packet(int _s_id);
@@ -194,6 +198,63 @@ void Disconnect(int _s_id)
 	closesocket(clients[_s_id]._socket);
 	cout << "------------연결 종료------------" << endl;
 }
+void createGameRoom() {
+	gameRooms.emplace_back();  // 새로운 게임룸 생성
+}
+
+void moveClientsToNewRoom() {
+	unique_lock<mutex> lock(mtx);
+
+	// 현재 생성된 게임룸들 중에서 빈 자리가 있는 곳에 클라이언트 매칭
+	for (auto it = gameRooms.begin(); it != gameRooms.end(); ++it) {
+		if (it->size() < 3) {  // 방의 최대 인원 3명
+			continue;  // 아직 자리가 있는 경우
+		}
+
+		vector<int> clientsToMove;
+		for (auto& clientId : *it) {
+			clientsToMove.push_back(clientId);
+			// 여기서 로비 맵으로 이동하는 패킷을 만들 예정			
+		}
+
+		// 이동할 클라이언트들을 새로운 게임룸에 추가합니다
+		createGameRoom();  // 새로운 게임룸 생성
+		auto& newRoom = gameRooms.back();
+		for (auto clientId : clientsToMove) {
+			newRoom.push_back(clientId);
+			cout << "Client " << clientId << " moved to new room " << (gameRooms.size() - 1) << endl;
+
+		}
+
+		// 게임룸으로 이동했으니 삭제
+		it->clear();
+	}
+}
+
+
+void matchClientToGameRoom(int clientId) {
+	unique_lock<mutex> lock(mtx);
+
+	// 현재 생성된 게임룸들 중에서 빈 자리가 있는 곳에 클라이언트 매칭
+	for (auto& room : gameRooms) {
+		if (room.size() < 3) {  // 방의 최대 인원수는 3명
+			room.push_back(clientId);
+			cout << "Client " << clientId << " matched to room " << (&room - &gameRooms[0]) << endl;
+
+			// 만약 최대 인원에 도달했다면 기존 클라이언트들을 다른 게임룸으로
+			if (room.size() == 3) {
+				moveClientsToNewRoom();
+			}
+
+			return;
+		}
+	}
+
+	// 모든 게임룸이 가득 찬 경우
+	createGameRoom();
+	gameRooms.back().push_back(clientId);
+	cout << "Client " << clientId << " matched to new room " << (gameRooms.size() - 1) << endl;
+}
 
 void process_packet(int s_id, char* p)
 {
@@ -220,6 +281,7 @@ void process_packet(int s_id, char* p)
 			cl.bLogin = true;
 			send_login_ok_packet(cl._s_id);
 			cout << "플레이어[" << s_id << "]" << " 로그인 성공" << endl;
+			matchClientToGameRoom(cl._s_id);
 		}
 		else
 			send_login_fail_packet(s_id);
