@@ -198,39 +198,11 @@ void Disconnect(int _s_id)
 	closesocket(clients[_s_id]._socket);
 	cout << "------------연결 종료------------" << endl;
 }
-void createGameRoom() {
+void createGameRoom(int clientId) {
 	gameRooms.emplace_back();  // 새로운 게임룸 생성
+	gameRooms.back().push_back(clientId);  // 첫 번째 클라이언트 추가
+	cout << "Client " << clientId << " created and joined room " << (gameRooms.size() - 1) << endl;
 }
-
-void moveClientsToNewRoom() {
-	unique_lock<mutex> lock(mtx);
-
-	// 현재 생성된 게임룸들 중에서 빈 자리가 있는 곳에 클라이언트 매칭
-	for (auto it = gameRooms.begin(); it != gameRooms.end(); ++it) {
-		if (it->size() < 3) {  // 방의 최대 인원 3명
-			continue;  // 아직 자리가 있는 경우
-		}
-
-		vector<int> clientsToMove;
-		for (auto& clientId : *it) {
-			clientsToMove.push_back(clientId);
-			// 여기서 로비 맵으로 이동하는 패킷을 만들 예정			
-		}
-
-		// 이동할 클라이언트들을 새로운 게임룸에 추가합니다
-		createGameRoom();  // 새로운 게임룸 생성
-		auto& newRoom = gameRooms.back();
-		for (auto clientId : clientsToMove) {
-			newRoom.push_back(clientId);
-			cout << "Client " << clientId << " moved to new room " << (gameRooms.size() - 1) << endl;
-
-		}
-
-		// 게임룸으로 이동했으니 삭제
-		it->clear();
-	}
-}
-
 
 void matchClientToGameRoom(int clientId) {
 	unique_lock<mutex> lock(mtx);
@@ -241,21 +213,18 @@ void matchClientToGameRoom(int clientId) {
 			room.push_back(clientId);
 			cout << "Client " << clientId << " matched to room " << (&room - &gameRooms[0]) << endl;
 
-			// 만약 최대 인원에 도달했다면 기존 클라이언트들을 다른 게임룸으로
+			// 만약 최대 인원에 도달했다면 게임 시작
 			if (room.size() == 3) {
-				moveClientsToNewRoom();
+				cout << "Room " << (&room - &gameRooms[0]) << " is full. Game starting!" << endl;
 			}
 
-			return;
+			return;  // 클라이언트 매칭 후 함수 종료
 		}
 	}
 
 	// 모든 게임룸이 가득 찬 경우
-	createGameRoom();
-	gameRooms.back().push_back(clientId);
-	cout << "Client " << clientId << " matched to new room " << (gameRooms.size() - 1) << endl;
+	createGameRoom(clientId);
 }
-
 void process_packet(int s_id, char* p)
 {
 	unsigned char packet_type = p[1];
@@ -268,13 +237,18 @@ void process_packet(int s_id, char* p)
 		cl.state_lock.lock();
 		cl._state = ST_INGAME;
 		cl.state_lock.unlock();
-		for (int i = 0; i < MAX_USER; ++i)
-		{
-			if (strcmp(packet->id, clients[i].name) == 0)
-				send_login_fail_packet(s_id);
-		}
-		
-		if (DB_odbc(packet->id, packet->pw))
+		//for (int i = 0; i < MAX_USER; ++i)
+		//{
+		//	if (strcmp(packet->id, clients[i].name) == 0)
+		//		send_login_fail_packet(s_id);
+		//}
+		strcpy_s(cl.name, packet->id);
+		strcpy_s(cl._pw, packet->pw);
+		cl.bLogin = true;
+		send_login_ok_packet(cl._s_id);
+		cout << "플레이어[" << s_id << "]" << " 로그인 성공" << endl;
+		matchClientToGameRoom(cl._s_id);
+		/*if (DB_odbc(packet->id, packet->pw))
 		{
 			strcpy_s(cl.name, packet->id);
 			strcpy_s(cl._pw, packet->pw);
@@ -284,7 +258,7 @@ void process_packet(int s_id, char* p)
 			matchClientToGameRoom(cl._s_id);
 		}
 		else
-			send_login_fail_packet(s_id);
+			send_login_fail_packet(s_id);*/
 		break;
 
 	}
@@ -309,7 +283,7 @@ void process_packet(int s_id, char* p)
 		send_select_character_type_packet(cl._s_id);
 
 		
-		if (ingamecount >= 2)
+		if (ingamecount >= 3)
 		{
 			for (auto& player : clients) {
 				if (ST_INGAME != player._state)
