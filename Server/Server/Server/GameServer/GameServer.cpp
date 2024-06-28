@@ -225,8 +225,13 @@ void matchClientToGameRoom(int clientId) {
 	// 모든 게임룸이 가득 찬 경우
 	createGameRoom(clientId);
 }
+// 우선 로그인 ok 패킷을 보내면서 게임룸 등록
+// 게임룸에 들어가면서 current_game 변수 추가
+// 3명이 다 찼을 경우 같은 게임룸에 있는 플레이어에게 게임 시작 패킷 전송 -> 클라에서는 이걸 받으면 한번에 이동하도록
+// 모든 패킷에는 같은 게임룸에 있는 플레이어인지 체크 
 void process_packet(int s_id, char* p)
 {
+	
 	unsigned char packet_type = p[1];
 	switch (packet_type) {
 	case CS_LOGIN: {
