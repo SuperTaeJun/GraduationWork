@@ -211,10 +211,12 @@ void matchClientToGameRoom(int clientId) {
 	for (auto& room : gameRooms) {
 		if (room.size() < 3) {  // 방의 최대 인원수는 3명
 			room.push_back(clientId);
+			clients[clientId].currentRoom = (&room - &gameRooms[0]);
 			cout << "Client " << clientId << " matched to room " << (&room - &gameRooms[0]) << endl;
 
 			// 만약 최대 인원에 도달했다면 게임 시작
 			if (room.size() == 3) {
+				//게임 넘어가도록 패킷 보내기 <- 여기서
 				cout << "Room " << (&room - &gameRooms[0]) << " is full. Game starting!" << endl;
 			}
 
@@ -315,12 +317,14 @@ void process_packet(int s_id, char* p)
 		cl.VY = packet->vy;
 		cl.VZ = packet->vz;
 		cl.Max_Speed = packet->Max_speed;
-		
+		int currentRoom = cl.currentRoom;
 
 		for (auto& other : clients) {
 			if (other._s_id == s_id)
 				continue;
 			if (ST_INGAME != other._state)
+				continue;
+			if (other.currentRoom != currentRoom)
 				continue;
 			send_move_packet(other._s_id, cl._s_id);
 		}

@@ -68,6 +68,7 @@ bool ClientSocket::Connect()
 
 void ClientSocket::CloseSocket()
 {
+	StopTaskCounter.Decrement();
 	closesocket(ServerSocket);
 	WSACleanup();
 }
@@ -701,6 +702,7 @@ void ClientSocket::Stop()
 {
 	// thread safety 변수를 조작해 while loop 가 돌지 못하게 함
 	StopTaskCounter.Increment();
+	
 }
 
 void ClientSocket::Exit()

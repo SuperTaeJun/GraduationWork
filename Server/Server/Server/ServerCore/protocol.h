@@ -54,6 +54,7 @@ const char CS_PLAYER_RELOAD = 28;
 const char CS_MOPP = 29;
 const char CS_HP = 30;
 const char CS_ACCOUNT = 31;
+const char CS_LOGOUT = 32; // 이때 delete 되게 할 용도
 
 const char SC_LOGIN_OK = 1;
 const char SC_OTHER_PLAYER = 2;

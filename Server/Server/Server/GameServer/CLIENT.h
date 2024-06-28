@@ -68,7 +68,7 @@ public:
     SOCKET  _socket;
     int      _prev_size;
     int      last_move_time;
-
+    int currentRoom;  // 클라이언트가 속한 게임룸 ID를 저장
 public:
     CLIENT() : _state(ST_FREE), _prev_size(0)
     {
