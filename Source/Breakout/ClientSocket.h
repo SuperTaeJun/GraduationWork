@@ -353,6 +353,7 @@ public:
 	int MoppType = -1;
 	float TempMoppTime = 0.f;
 	bool bLoginConnect = false;
+	bool bLobby = false;
 private:
 	ACharacterController* MyCharacterController;
 	CPlayerInfo PlayerInfo;

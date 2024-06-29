@@ -89,7 +89,7 @@ const char SC_HP = 31;
 const char SC_DELTA = 32;
 const char SC_TRAVLE = 33;
 const char SC_LOGIN_FAIL = 34;
-
+const char SC_LOBBY_ROOM = 35;
 #pragma pack (push, 1)
 struct CS_LOGIN_PACKET
 {
@@ -408,5 +408,11 @@ struct SC_DELTA_TIME_PACKET {
 	unsigned char type;
 	int id;
 	double time;
+};
+struct SC_LOBBY_PACKET {
+	unsigned char size;
+	unsigned char type;
+	int id;
+	bool bLobby;
 };
 #pragma pack(pop)

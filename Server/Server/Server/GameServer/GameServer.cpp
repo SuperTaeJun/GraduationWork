@@ -46,6 +46,7 @@ void timer();
 void send_delta_time_to_clients(double deltaTime);
 void send_travel_ready_packet(int _s_id);
 void send_login_fail_packet(int _s_id);
+void SendLobbyPacket(int clientId);
 int main()
 {
 
@@ -176,6 +177,15 @@ void send_login_fail_packet(int _s_id)
 
 	clients[_s_id].do_send(sizeof(packet), &packet);
 }
+void SendLobbyPacket(int clientId)
+{
+	SC_LOBBY_PACKET packet;
+	packet.size = sizeof(packet);
+	packet.type = SC_LOBBY_ROOM;
+	packet.id = clientId;
+	packet.bLobby = true;
+	clients[clientId].do_send(sizeof(packet), &packet);
+}
 void send_select_character_type_packet(int _s_id)
 {
 	SC_SELECT_CHARACTER_BACK packet;
@@ -217,6 +227,7 @@ void matchClientToGameRoom(int clientId) {
 			// 만약 최대 인원에 도달했다면 게임 시작
 			if (room.size() == 3) {
 				//게임 넘어가도록 패킷 보내기 <- 여기서
+				SendLobbyPacket(clientId);
 				cout << "Room " << (&room - &gameRooms[0]) << " is full. Game starting!" << endl;
 			}
 
