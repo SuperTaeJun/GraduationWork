@@ -18,6 +18,7 @@
 #include "ClientSocket.h"
 #include "Weapon/ProjectileBullet.h"
 #include "Sound/SoundCue.h"
+#include "Components/SpotLightComponent.h"
 //#define TRACE_LENGTH 1000.f
 
 AWeaponBase::AWeaponBase()
@@ -37,6 +38,8 @@ AWeaponBase::AWeaponBase()
 	DetectNiagara->SetWorldRotation(FRotator(90.f, 90.f, 0).Quaternion());
 	DetectNiagara->SetWorldLocation(FVector(0.f, 580.f, 0.f));
 
+	SpotLight = CreateDefaultSubobject<USpotLightComponent>(TEXT("SpotLight"));
+	SpotLight->SetupAttachment(RootComponent);
 }
 
 // Called when the game starts or when spawned

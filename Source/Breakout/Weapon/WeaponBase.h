@@ -38,6 +38,9 @@ protected:
 	TSubclassOf<class AProjectileBullet> ProjectileBulletClass;
 
 	UPROPERTY(EditAnywhere)
+	TObjectPtr<class USpotLightComponent> SpotLight;
+
+	UPROPERTY(EditAnywhere)
 	TObjectPtr<class USoundCue> FireSound;
 
 	//√—æÀ »Â≈Õ¡¸ ø‰º“µÈ
@@ -73,5 +76,5 @@ public:
 public:
 	FORCEINLINE USkeletalMeshComponent* GetWeaponMesh() const { return WeaponMesh; }
 	void SetDetectNiagara(bool bUse);
-
+	class USpotLightComponent* GetSpotLight() { return SpotLight; }
 };

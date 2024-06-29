@@ -31,7 +31,7 @@
 #include "Animatiom/BOAnimInstance.h"
 #include "Materials/MaterialInstance.h"
 #include "Materials/MaterialInstanceDynamic.h"
-
+#include "Components/SpotLightComponent.h"
 ACharacterBase::ACharacterBase()
 {
 	PrimaryActorTick.bCanEverTick = true;
@@ -970,6 +970,19 @@ void ACharacterBase::Aiming_E(const FInputActionValue& Value)
 	}
 }
 
+void ACharacterBase::LightOnOff(const FInputActionValue& Value)
+{
+	if (CurWeapon && CurWeapon->GetSpotLight())
+	{
+		UE_LOG(LogTemp, Log, TEXT("ONOFF"));
+
+		if (CurWeapon->GetSpotLight()->IsVisible())
+			CurWeapon->GetSpotLight()->SetVisibility(false);
+		else
+			CurWeapon->GetSpotLight()->SetVisibility(true);
+	}
+}
+
 void ACharacterBase::Detect_S(const FInputActionValue& Value)
 {
 	if (CurWeapon)
@@ -1053,7 +1066,7 @@ void ACharacterBase::Tick(float DeltaTime)
 	}
 
 
-	if (Cast<UBOGameInstance>(GetWorld()->GetGameInstance())->m_Socket->bAllReady == true && !bStarted)
+	if (/*Cast<UBOGameInstance>(GetWorld()->GetGameInstance())->m_Socket->bAllReady == true &&*/ !bStarted)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("StartGame"));
 		Cast<UBOGameInstance>(GetWorld()->GetGameInstance())->m_Socket->bAllReady = false;
@@ -1101,6 +1114,7 @@ void ACharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 		EnhancedInputComponent->BindAction(DetectAction, ETriggerEvent::Completed, this, &ACharacterBase::Detect_E);
 		EnhancedInputComponent->BindAction(AimAction, ETriggerEvent::Triggered, this, &ACharacterBase::Aiming_S);
 		EnhancedInputComponent->BindAction(AimAction, ETriggerEvent::Completed, this, &ACharacterBase::Aiming_E);
+		EnhancedInputComponent->BindAction(LightAction, ETriggerEvent::Started, this, &ACharacterBase::LightOnOff);
 	}
 }
 

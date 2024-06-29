@@ -31,11 +31,13 @@ void ULogin::PressLogin()
 	{
 		PlaySound(ClickSound);
 	}
-	if (Cast<UBOGameInstance>(GetGameInstance())->m_Socket->bLoginConnect)
-	{
-		RemoveFromParent();
-		Cast<UBOGameInstance>(GetGameInstance())->m_Socket->bLoginConnect = false;
-	}
+	//if (Cast<UBOGameInstance>(GetGameInstance())->m_Socket->bLoginConnect)
+	//{
+	//	RemoveFromParent();
+	//	Cast<UBOGameInstance>(GetGameInstance())->m_Socket->bLoginConnect = false;
+	//}
+
+	RemoveFromParent();
 }
 
 void ULogin::PressSignUp()

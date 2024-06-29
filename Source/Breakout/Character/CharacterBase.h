@@ -254,7 +254,8 @@ protected:
 	TObjectPtr<UInputAction> SelectTrapAction;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
 	TObjectPtr<UInputAction> DetectAction;
-
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
+	TObjectPtr<UInputAction> LightAction;
 	void Move(const FInputActionValue& Value);
 	void Look(const FInputActionValue& Value);
 	void Sprint_S(const FInputActionValue& Value);
@@ -279,6 +280,7 @@ protected:
 	void Detect_E(const FInputActionValue& Value);
 	void Aiming_S(const FInputActionValue& Value);
 	void Aiming_E(const FInputActionValue& Value);
+	void LightOnOff(const FInputActionValue& Value);
 
 public:
 	//서버랑 연동하는 함수들
