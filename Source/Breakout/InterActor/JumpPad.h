@@ -27,4 +27,7 @@ public:
 		bool bFromSweep,
 		const FHitResult& SweepResult
 	);
+
+	UPROPERTY(EditAnywhere)
+	float JumpPowerZ=1500.f;
 };

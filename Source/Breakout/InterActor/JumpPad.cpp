@@ -18,7 +18,7 @@ void AJumpPad::OnBoxOverlap(UPrimitiveComponent* OverlappedComponent, AActor* Ot
 	ACharacterBase* InCh = Cast<ACharacterBase>(OtherActor);
 	if (InCh)
 	{
-		FVector Impulse = (InCh->GetActorForwardVector() + FVector(0.f, 0.f, 1.f)) * FVector(10.f, 10.f, 1300.f);
+		FVector Impulse = (InCh->GetActorForwardVector() + FVector(0.f, 0.f, 1.f)) * FVector(10.f, 10.f, JumpPowerZ);
 		InCh->GetCharacterMovement()->AddImpulse(Impulse, true);
 		//점프 falling상태로 변경해줘야함
 		InCh->GetCharacterMovement()->SetMovementMode(MOVE_Falling);
