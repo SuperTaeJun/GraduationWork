@@ -62,16 +62,16 @@ void USelectCharacterUi::Matching()
 	}
 	if(bClicked)
 	{
-		//Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Ready_Packet(bClicked);
-		if (bClicked) 
-		{
+		////Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Ready_Packet(bClicked);
+		//if (bClicked) 
+		//{
 			Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Ready_Packet(bClicked);
-		}
+		//}
 	}
 		//GetWorld()->ServerTravel(FString("/Game/Maps/MainMap"), true);
 		//GetWorld()->ServerTravel(FString("/Game/Maps/TestMap"), true);
 
-	GetWorld()->ServerTravel(FString("/Game/Maps/MainMap"), true);
+	//GetWorld()->ServerTravel(FString("/Game/Maps/MainMap"), true);
 }
 
 // 캐릭터 선택 패킷 보내는 곳

@@ -94,6 +94,7 @@ bool ClientSocket::PacketProcess(char* ptr)
 	case SC_LOBBY_ROOM: {
 		SC_LOBBY_PACKET* packet = reinterpret_cast<SC_LOBBY_PACKET*>(ptr);
 		bLobby = packet->bLobby;
+		UE_LOG(LogTemp, Warning, TEXT("LOBBY"));
 		break;
 	}
 	case SC_ITEM: {

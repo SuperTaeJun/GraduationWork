@@ -211,6 +211,7 @@ void Disconnect(int _s_id)
 void createGameRoom(int clientId) {
 	gameRooms.emplace_back();  // 새로운 게임룸 생성
 	gameRooms.back().push_back(clientId);  // 첫 번째 클라이언트 추가
+	clients[clientId].currentRoom = gameRooms.size() - 1;
 	cout << "Client " << clientId << " created and joined room " << (gameRooms.size() - 1) << endl;
 }
 
@@ -219,16 +220,17 @@ void matchClientToGameRoom(int clientId) {
 
 	// 현재 생성된 게임룸들 중에서 빈 자리가 있는 곳에 클라이언트 매칭
 	for (auto& room : gameRooms) {
-		if (room.size() < 3) {  // 방의 최대 인원수는 3명
+		if (room.size() < 2) {  // 방의 최대 인원수는 3명
 			room.push_back(clientId);
 			clients[clientId].currentRoom = (&room - &gameRooms[0]);
 			cout << "Client " << clientId << " matched to room " << (&room - &gameRooms[0]) << endl;
 
 			// 만약 최대 인원에 도달했다면 게임 시작
-			if (room.size() == 3) {
+			if (room.size() == 2) {
 				//게임 넘어가도록 패킷 보내기 <- 여기서
-				SendLobbyPacket(clientId);
 				cout << "Room " << (&room - &gameRooms[0]) << " is full. Game starting!" << endl;
+				for(int id : room)
+					SendLobbyPacket(id);
 			}
 
 			return;  // 클라이언트 매칭 후 함수 종료
@@ -301,7 +303,7 @@ void process_packet(int s_id, char* p)
 		send_select_character_type_packet(cl._s_id);
 
 		
-		if (ingamecount >= 3)
+		if (ingamecount >= 2)
 		{
 			for (auto& player : clients) {
 				if (ST_INGAME != player._state)
