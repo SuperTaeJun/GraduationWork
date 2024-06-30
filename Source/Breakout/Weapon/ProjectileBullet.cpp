@@ -46,11 +46,10 @@ void AProjectileBullet::BeginPlay()
 {
 	Super::BeginPlay();
 
-	GetWorldTimerManager().SetTimer(DistanceTimerHandle, this,&AProjectileBullet::DistanceTimer, Distance);
-
 	CollisionBox->IgnoreActorWhenMoving(GetOwner(), true);
 	CollisionBox->OnComponentHit.AddDynamic(this, &AProjectileBullet::OnHit);
 
+	GetWorldTimerManager().SetTimer(DistanceTimerHandle, this, &AProjectileBullet::DistanceTimer, Distance);
 	//BeamNiagaraMesh->SetVectorParameter(FName("Start"), GetActorLocation());
 }
 
@@ -102,6 +101,7 @@ void AProjectileBullet::Destroyed()
 
 void AProjectileBullet::DistanceTimer()
 {
+	UE_LOG(LogTemp, Log, TEXT("ENDTIME"));
 	Destroy();
 }
 
@@ -110,7 +110,7 @@ void AProjectileBullet::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	FVector BeamEnd = GetActorLocation();
+	//FVector BeamEnd = GetActorLocation();
 	//if (BeamNiagaraMesh)
 	//{
 	//	BeamNiagaraMesh->SetVectorParameter(FName("End"), BeamEnd);

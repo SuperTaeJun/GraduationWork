@@ -57,10 +57,10 @@ FVector AWeaponBase::TraceEndWithScatter(const FVector& TraceStart, const FVecto
 	FVector EndLoc = SphereCenter + RandVector;// 구의 중심에 무작위 벡터를 더해 최종 지점
 	FVector ToEndLoc = EndLoc - TraceStart;// 시작 지점에서 최종 지점으로의 벡터
 
-	//시각화
-	DrawDebugSphere(GetWorld(), SphereCenter, SphereRadius, 12, FColor::Red, true, 0.5f);//구의 중심
-	DrawDebugSphere(GetWorld(), EndLoc, 4.f, 12, FColor::Orange, true, 0.5f); //최종 지점
-	DrawDebugLine(	GetWorld(),TraceStart,FVector(TraceStart + ToEndLoc * 1000.f / ToEndLoc.Size()),FColor::Cyan,true,0.5f); // 시작 지점과 최종지점 선
+	//디버그용 시각화
+	//DrawDebugSphere(GetWorld(), SphereCenter, SphereRadius, 12, FColor::Red, true, 0.5f);//구의 중심
+	//DrawDebugSphere(GetWorld(), EndLoc, 4.f, 12, FColor::Orange, true, 0.5f); //최종 지점
+	//DrawDebugLine(	GetWorld(),TraceStart,FVector(TraceStart + ToEndLoc * 1000.f / ToEndLoc.Size()),FColor::Cyan,true,0.5f); // 시작 지점과 최종지점 선
 
 	return FVector(TraceStart + ToEndLoc / ToEndLoc.Size());
 }
