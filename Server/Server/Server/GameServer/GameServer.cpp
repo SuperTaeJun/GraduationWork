@@ -224,7 +224,7 @@ void matchClientToGameRoom(int clientId) {
 			room.push_back(clientId);
 			clients[clientId].currentRoom = (&room - &gameRooms[0]);
 			cout << "Client " << clientId << " matched to room " << (&room - &gameRooms[0]) << endl;
-
+			cout << "clients[clientId].currentRoom : " << clients[clientId].currentRoom << endl;
 			// 만약 최대 인원에 도달했다면 게임 시작
 			if (room.size() == 2) {
 				//게임 넘어가도록 패킷 보내기 <- 여기서
@@ -302,13 +302,14 @@ void process_packet(int s_id, char* p)
 		ingamecount++;
 		send_select_character_type_packet(cl._s_id);
 
-		
+		int currentRoom = cl.currentRoom;
 		if (ingamecount >= 2)
 		{
 			for (auto& player : clients) {
 				if (ST_INGAME != player._state)
 					continue;
-
+				if (player.currentRoom != currentRoom)
+					continue;
 				send_ready_packet(player._s_id);
 				cout << "보낼 플레이어" << player._s_id << endl;
 
@@ -351,6 +352,7 @@ void process_packet(int s_id, char* p)
 		cl.selectweapon = packet->bselectwep;
 		//if(weapon type에 따라서 bullet 개수 적용)
 		cout << "플레이어 : " << cl._s_id << "무기 타입" << cl.w_type << endl;
+		int currentRoom = cl.currentRoom;
 		for (auto& other : clients) {
 			if (other._s_id == cl._s_id) continue;
 			other.state_lock.lock();
@@ -359,6 +361,8 @@ void process_packet(int s_id, char* p)
 				continue;
 			}
 			else other.state_lock.unlock();
+			if (other.currentRoom != currentRoom)
+				continue;
 			SC_SYNC_WEAPO packet;
 			packet.id = cl._s_id;
 			packet.size = sizeof(packet);
@@ -375,10 +379,13 @@ void process_packet(int s_id, char* p)
 		CLIENT& cl = clients[s_id];
 		ready_count++;
 		cout << "ready_count : " << ready_count << endl;
+		int currentRoom = cl.currentRoom;
 		if (ready_count >= 2)
 		{
 			for (auto& player : clients) {
 				if (ST_INGAME != player._state)
+					continue;
+				if (player.currentRoom != currentRoom)
 					continue;
 				send_travel_ready_packet(player._s_id);
 				cout << "보낼 플레이어" << player._s_id << endl;
@@ -451,6 +458,7 @@ void process_packet(int s_id, char* p)
 		CS_START_GAME_PACKET* packet = reinterpret_cast<CS_START_GAME_PACKET*>(p);
 		CLIENT& cl = clients[packet->id];
 		cout << "몇명 들어옴 : " << ingamecount << endl;
+		int currentRoom = cl.currentRoom;
 		for (auto& other : clients) {
 			if (other._s_id == cl._s_id) continue;
 			other.state_lock.lock();
@@ -459,7 +467,8 @@ void process_packet(int s_id, char* p)
 				continue;
 			}
 			else other.state_lock.unlock();
-
+			if (other.currentRoom != currentRoom)
+				continue;
 			SC_PLAYER_SYNC packet;
 			packet.id = cl._s_id;
 			strcpy_s(packet.name, cl.name);
