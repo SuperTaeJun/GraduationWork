@@ -58,7 +58,7 @@ protected:
 	float Firerate=0.15;
 
 public:
-	float Range = 500.f;
+	float Range = 10000.f;
 protected:
 	virtual void BeginPlay() override;
 
