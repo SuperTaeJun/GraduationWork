@@ -49,6 +49,8 @@ ACharacterBase::ACharacterBase()
 	Movement = GetCharacterMovement();
 	Movement->MaxWalkSpeed = 400.f;
 	Movement->bOrientRotationToMovement = true;
+	Movement->JumpZVelocity = 480.f;
+	Movement->AirControl = 0.2f;
 	bUseControllerRotationYaw = false;
 
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
@@ -91,19 +93,6 @@ ACharacterBase::ACharacterBase()
 	bCanEscape = false;
 
 }
-
-//float ACharacterBase::GetAO_Yaw()
-//{
-//	AO_Yaw = UKismetMathLibrary::NormalizedDeltaRotator(GetControlRotation(), GetActorRotation()).Yaw;
-//
-//	return AO_Yaw;
-//}
-//
-//float ACharacterBase::GetAO_Pitch()
-//{
-//	AO_Pitch = UKismetMathLibrary::NormalizedDeltaRotator(GetControlRotation(), GetActorRotation()).Pitch;
-//	return AO_Pitch;
-//}
 
 void ACharacterBase::BeginPlay()
 {
