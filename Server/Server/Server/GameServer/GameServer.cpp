@@ -390,6 +390,7 @@ void process_packet(int s_id, char* p)
 				send_travel_ready_packet(player._s_id);
 				cout << "보낼 플레이어" << player._s_id << endl;
 			}
+			ready_count = 0;
 		}
 		break;
 	}

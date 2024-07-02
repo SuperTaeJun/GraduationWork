@@ -7,7 +7,7 @@ public:
     float x, y, z;
     float pitch, yaw, roll;
     int ob_id;
-
+    int currentGameRoom;
 public:
     EscapeObject() {}
     ~EscapeObject() {}
