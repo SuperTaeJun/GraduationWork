@@ -30,6 +30,7 @@ public:
 	FVector EndBeam;
 
 	void SetSphereRadius(float Radius) { SphereRadius = Radius; }
+	class USoundCue* GetReloadSound() {return ReloadSound;}
 protected:
 	UPROPERTY(EditAnywhere, Category = "Weapon Properties")
 	TObjectPtr<class USkeletalMeshComponent> WeaponMesh;
@@ -42,6 +43,8 @@ protected:
 
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<class USoundCue> FireSound;
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<class USoundCue> ReloadSound;
 
 	//√—æÀ »Â≈Õ¡¸ ø‰º“µÈ
 	UPROPERTY(EditAnywhere, Category = "Weapon Scatter")

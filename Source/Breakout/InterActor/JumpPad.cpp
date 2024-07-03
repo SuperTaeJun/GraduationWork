@@ -6,6 +6,8 @@
 #include "Character/CharacterBase.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include"Animatiom/BOAnimInstance.h"
+#include "Kismet/GameplayStatics.h"
+#include "Sound/SoundCue.h"
 void AJumpPad::BeginPlay()
 {
 	Super::BeginPlay();
@@ -25,5 +27,9 @@ void AJumpPad::OnBoxOverlap(UPrimitiveComponent* OverlappedComponent, AActor* Ot
 	}
 	if(ImpactNiagara)
 		UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), ImpactNiagara, GetActorLocation());
+	if (JumpSound)
+	{
+		UGameplayStatics::PlaySoundAtLocation(this, JumpSound, GetActorLocation());
+	}
 }
 

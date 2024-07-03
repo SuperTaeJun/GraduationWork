@@ -30,4 +30,7 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	float JumpPowerZ=1500.f;
+
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<class USoundCue> JumpSound;
 };

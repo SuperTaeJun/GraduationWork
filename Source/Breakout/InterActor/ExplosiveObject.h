@@ -21,4 +21,8 @@ protected:
 public:
 	UFUNCTION()
 	void ReciveDamage(AActor* DamagedActor, float Damage, const UDamageType* DamageType, class AController* InstigatorController, AActor* DamageCauser);
+
+private:
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<class USoundCue> ExplosionSound;
 };

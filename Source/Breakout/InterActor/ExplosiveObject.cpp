@@ -3,6 +3,7 @@
 
 #include "InterActor/ExplosiveObject.h"
 #include "Kismet/GameplayStatics.h"
+#include "Sound/SoundCue.h"
 void AExplosiveObject::BeginPlay()
 {
 	Super::BeginPlay();
@@ -32,7 +33,10 @@ void AExplosiveObject::ReciveDamage(AActor* DamagedActor, float Damage, const UD
 				FiringController // InstigatorController
 			);
 		}
-
+		if (ExplosionSound)
+		{
+			UGameplayStatics::PlaySoundAtLocation(this,ExplosionSound, GetActorLocation());
+		}
 		Destroy();
 	}
 }

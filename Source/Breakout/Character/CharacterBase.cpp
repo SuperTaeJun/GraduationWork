@@ -32,7 +32,7 @@
 #include "Materials/MaterialInstance.h"
 #include "Materials/MaterialInstanceDynamic.h"
 #include "Components/SpotLightComponent.h"
-
+#include "Sound/SoundCue.h"
 ACharacterBase::ACharacterBase()
 {
 	PrimaryActorTick.bCanEverTick = true;
@@ -831,6 +831,10 @@ void ACharacterBase::Reroad(const FInputActionValue& Value)
 			if (inst)
 				inst->m_Socket->Send_Reload_packet(inst->GetPlayerID(), true);
 			bCanFire = false;
+		}
+		if (CurWeapon->GetReloadSound())
+		{
+			UGameplayStatics::PlaySoundAtLocation(this, CurWeapon->GetReloadSound(),GetActorLocation());
 		}
 	}
 }
