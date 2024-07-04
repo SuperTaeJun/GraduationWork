@@ -1,4 +1,7 @@
-C:\Users\sejin\Downloads\GraduationWork\Server\Server\GameServer\CLIENT.cpp;C:\Users\sejin\Downloads\GraduationWork\Server\Server\GameServer\x64\Debug\CLIENT.obj
-C:\Users\sejin\Downloads\GraduationWork\Server\Server\GameServer\GameServer.cpp;C:\Users\sejin\Downloads\GraduationWork\Server\Server\GameServer\x64\Debug\GameServer.obj
-C:\Users\sejin\Downloads\GraduationWork\Server\Server\GameServer\Overlap.cpp;C:\Users\sejin\Downloads\GraduationWork\Server\Server\GameServer\x64\Debug\Overlap.obj
-C:\Users\sejin\Downloads\GraduationWork\Server\Server\GameServer\pch.cpp;C:\Users\sejin\Downloads\GraduationWork\Server\Server\GameServer\x64\Debug\pch.obj
+C:\Users\sejin\Downloads\GraduationWork\Server\Server\Server\GameServer\CLIENT.cpp;C:\Users\sejin\Downloads\GraduationWork\Server\Server\Server\GameServer\x64\Debug\CLIENT.obj
+C:\Users\sejin\Downloads\GraduationWork\Server\Server\Server\GameServer\DB.cpp;C:\Users\sejin\Downloads\GraduationWork\Server\Server\Server\GameServer\x64\Debug\DB.obj
+C:\Users\sejin\Downloads\GraduationWork\Server\Server\Server\GameServer\EscapeObject.cpp;C:\Users\sejin\Downloads\GraduationWork\Server\Server\Server\GameServer\x64\Debug\EscapeObject.obj
+C:\Users\sejin\Downloads\GraduationWork\Server\Server\Server\GameServer\GameServer.cpp;C:\Users\sejin\Downloads\GraduationWork\Server\Server\Server\GameServer\x64\Debug\GameServer.obj
+C:\Users\sejin\Downloads\GraduationWork\Server\Server\Server\GameServer\LockQueue.cpp;C:\Users\sejin\Downloads\GraduationWork\Server\Server\Server\GameServer\x64\Debug\LockQueue.obj
+C:\Users\sejin\Downloads\GraduationWork\Server\Server\Server\GameServer\Overlap.cpp;C:\Users\sejin\Downloads\GraduationWork\Server\Server\Server\GameServer\x64\Debug\Overlap.obj
+C:\Users\sejin\Downloads\GraduationWork\Server\Server\Server\GameServer\pch.cpp;C:\Users\sejin\Downloads\GraduationWork\Server\Server\Server\GameServer\x64\Debug\pch.obj

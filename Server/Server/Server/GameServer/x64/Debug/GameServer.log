@@ -1,7 +1,4 @@
-﻿  pch.cpp
-  CLIENT.cpp
-  GameServer.cpp
-C:\Users\sejin\Downloads\GraduationWork\Server\Server\GameServer\GameServer.cpp(130,9): warning C4476: 'printf' : 서식 지정자에 알 수 없는 형식 필드 문자 ')'이(가) 있습니다.
-  Overlap.cpp
-  코드를 생성하고 있습니다...
-  GameServer.vcxproj -> C:\Users\sejin\Downloads\GraduationWork\Server\Server\Binary\Debug\GameServer.exe
+﻿  GameServer.cpp
+C:\Users\sejin\Downloads\GraduationWork\Server\Server\Server\GameServer\GameServer.cpp(209,51): warning C4267: '=': 'size_t'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\sejin\Downloads\GraduationWork\Server\Server\Server\GameServer\GameServer.cpp(220,43): warning C4244: '=': '__int64'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  GameServer.vcxproj -> C:\Users\sejin\Downloads\GraduationWork\Server\Server\Server\Binary\Debug\GameServer.exe

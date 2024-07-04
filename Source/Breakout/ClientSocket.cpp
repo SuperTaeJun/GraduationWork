@@ -123,12 +123,6 @@ bool ClientSocket::PacketProcess(char* ptr)
 		MyCharacterController->SetNewCharacterInfo(info);
 		break;
 	}
-	case SC_SYNC_UI:
-	{
-		SC_SYNC_UI_PACKET* packet = reinterpret_cast<SC_SYNC_UI_PACKET*>(ptr);
-		Tempname.push(packet->name);
-		break;
-	}
 	case SC_MOVE_PLAYER:
 	{
 		CS_MOVE_PACKET* packet = reinterpret_cast<CS_MOVE_PACKET*>(ptr);
@@ -160,7 +154,12 @@ bool ClientSocket::PacketProcess(char* ptr)
 		PlayerInfo.players[packet->id].w_type = packet->weapon_type;
 
 		PlayerInfo.players[packet->id].bselectweapon = true;
-		Tempname.push(packet->cid);
+		//Tempname.push(packet->cid);
+		break;
+	}
+	case SC_SYNC_UI: {
+		SC_SYNC_UI_PACKET* packet = reinterpret_cast<SC_SYNC_UI_PACKET*>(ptr);
+		Tempname.push(packet->name);
 		break;
 	}
 	case SC_ALL_READY: {

@@ -1,8 +1,4 @@
-﻿﻿//----------------------------------------------------------------------------------------------------------------------------------------------
-// GameServer.cpp 파일
-//----------------------------------------------------------------------------------------------------------------------------------------------
-
-#include "pch.h"
+﻿#include "pch.h"
 #include "CorePch.h"
 #include "CLIENT.h"
 #include "Overlap.h"
@@ -50,7 +46,8 @@ void SendLobbyPacket(int clientId);
 int main()
 {
 
-	wcout.imbue(locale("korean"));
+	
+	wcout.imbue(locale("kor"));
 	WSADATA WSAData;
 	::WSAStartup(MAKEWORD(2, 2), &WSAData);
 	sever_socket = WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, 0, 0, WSA_FLAG_OVERLAPPED);
@@ -61,7 +58,7 @@ int main()
 	server_addr.sin_addr.s_addr = htonl(INADDR_ANY);
 	bind(sever_socket, reinterpret_cast<sockaddr*>(&server_addr), sizeof(server_addr));
 	listen(sever_socket, SOMAXCONN);
-	cout << "서버 시작" << endl;
+	cout << "서버 시nvnvn작" << endl;
 	g_h_iocp = CreateIoCompletionPort(INVALID_HANDLE_VALUE, NULL, NULL, 0);
 	CreateIoCompletionPort(reinterpret_cast<HANDLE>(sever_socket), g_h_iocp, 0, 0);
 
@@ -163,8 +160,6 @@ void send_login_ok_packet(int _s_id)
 	packet.id = _s_id;
 	packet.bLogin = clients[_s_id].bLogin;
 	strcpy_s(packet.cid, clients[_s_id].name);
-	cout << "_s_id" << _s_id << endl;
-
 	clients[_s_id].do_send(sizeof(packet), &packet);
 }
 void send_login_fail_packet(int _s_id)
@@ -253,6 +248,7 @@ void process_packet(int s_id, char* p)
 		CS_LOGIN_PACKET* packet = reinterpret_cast<CS_LOGIN_PACKET*>(p);
 
 		CLIENT& cl = clients[s_id];
+		cout << "Adazbzhxlkjbnzlkvnlk" << endl;
 		cout << "[Recv login] ID :" << packet->id << ", PASSWORD : " << packet->pw << endl;
 		cl.state_lock.lock();
 		cl._state = ST_INGAME;
@@ -280,7 +276,6 @@ void process_packet(int s_id, char* p)
 		else
 			send_login_fail_packet(s_id);*/
 		break;
-
 	}
 	case CS_ACCOUNT: {
 		CS_ACCOUNT_PACKET* packet = reinterpret_cast<CS_ACCOUNT_PACKET*>(p);

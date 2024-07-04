@@ -91,6 +91,7 @@ const char SC_TRAVLE = 33;
 const char SC_LOGIN_FAIL = 34;
 const char SC_LOBBY_ROOM = 35;
 const char SC_SYNC_UI = 36;
+
 #pragma pack (push, 1)
 struct CS_LOGIN_PACKET
 {
