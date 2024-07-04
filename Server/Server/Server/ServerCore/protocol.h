@@ -90,6 +90,7 @@ const char SC_DELTA = 32;
 const char SC_TRAVLE = 33;
 const char SC_LOGIN_FAIL = 34;
 const char SC_LOBBY_ROOM = 35;
+const char SC_SYNC_UI = 36;
 #pragma pack (push, 1)
 struct CS_LOGIN_PACKET
 {
@@ -143,6 +144,12 @@ struct SC_PLAYER_SYNC {
 	char name[MAX_INFO_SIZE];
 	PlayerType p_type;
 };
+struct SC_SYNC_UI_PACKET {
+	unsigned char size;
+	unsigned type;
+	int id;
+	char name[MAX_INFO_SIZE];
+};
 struct CS_SELECT_CHARACTER
 {
 	unsigned char size;
@@ -172,6 +179,7 @@ struct SC_SYNC_WEAPO
 	unsigned type;
 	int id;
 	bool bselectwep;
+	char cid[MAX_INFO_SIZE];
 	WeaponType weapon_type;
 };
 struct CS_READY_PACKET {
