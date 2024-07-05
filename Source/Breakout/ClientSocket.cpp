@@ -117,7 +117,6 @@ bool ClientSocket::PacketProcess(char* ptr)
 		info->Z = packet->z;
 		info->Yaw = packet->yaw;
 		info->p_type = packet->p_type;
-		info->userId =  packet->name;
 		info->hp = packet->hp;
 		//Tempname.push(packet->name);
 		MyCharacterController->SetNewCharacterInfo(info);

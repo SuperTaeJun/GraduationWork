@@ -141,8 +141,6 @@ struct SC_PLAYER_SYNC {
 	float x, y, z;
 	float yaw;
 	float hp;
-	//char object_type;
-	char name[MAX_INFO_SIZE];
 	PlayerType p_type;
 };
 struct SC_SYNC_UI_PACKET {
@@ -180,7 +178,6 @@ struct SC_SYNC_WEAPO
 	unsigned type;
 	int id;
 	bool bselectwep;
-	char cid[MAX_INFO_SIZE];
 	WeaponType weapon_type;
 };
 struct CS_READY_PACKET {
@@ -226,13 +223,13 @@ struct CS_DAMAGE_PACKET {
 	int id;
 	float hp;
 };
-struct SC_DAMAGE_CHANGE{
+struct SC_DAMAGE_CHANGE {
 	unsigned char size;
 	unsigned char type;
 	int id;
 	float hp;
 };
-struct CS_SIGNAL_PACKET{
+struct CS_SIGNAL_PACKET {
 	unsigned char size;
 	unsigned char type;
 	int id;
