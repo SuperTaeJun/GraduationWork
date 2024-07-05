@@ -159,7 +159,7 @@ bool ClientSocket::PacketProcess(char* ptr)
 	}
 	case SC_SYNC_UI: {
 		SC_SYNC_UI_PACKET* packet = reinterpret_cast<SC_SYNC_UI_PACKET*>(ptr);
-		Tempname.push(packet->name);
+		//Tempname.push(packet->name);
 		break;
 	}
 	case SC_ALL_READY: {
