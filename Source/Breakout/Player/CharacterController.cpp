@@ -28,7 +28,7 @@
 #include "TimerManager.h"
 #include "FX/Skill4Actor.h"
 #include "GameProp/EscapeTool.h"
-#include "../../Server/Server/Server/ServerCore/protocol.h"
+#include "../../Server/Server/protocol.h"
 #include <string>
 #include "ClientSocket.h"
 #include"Animatiom/BOAnimInstance.h"
