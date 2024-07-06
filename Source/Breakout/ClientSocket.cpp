@@ -68,7 +68,6 @@ bool ClientSocket::Connect()
 
 void ClientSocket::CloseSocket()
 {
-	StopTaskCounter.Decrement();
 	closesocket(ServerSocket);
 	WSACleanup();
 }
@@ -81,20 +80,8 @@ bool ClientSocket::PacketProcess(char* ptr)
 	{
 	case SC_LOGIN_OK: {
 		SC_LOGIN_BACK* packet = reinterpret_cast<SC_LOGIN_BACK*>(ptr);
+		//to_do
 		gameinst->SetPlayerID(packet->id);
-		UE_LOG(LogTemp, Warning, TEXT("true ?%d"), packet->bLogin);
-		bLoginConnect = packet->bLogin;
-		break;
-	}
-	case SC_LOGIN_FAIL : {
-		SC_LOGIN_FAIL_PACKET* packet = reinterpret_cast<SC_LOGIN_FAIL_PACKET*>(ptr);
-		UE_LOG(LogTemp, Warning, TEXT("FAIL_LOGIN -> CREATE ACCOUNT"));
-		break;
-	}
-	case SC_LOBBY_ROOM: {
-		SC_LOBBY_PACKET* packet = reinterpret_cast<SC_LOBBY_PACKET*>(ptr);
-		bLobby = packet->bLobby;
-		UE_LOG(LogTemp, Warning, TEXT("LOBBY"));
 		break;
 	}
 	case SC_ITEM: {
@@ -117,8 +104,8 @@ bool ClientSocket::PacketProcess(char* ptr)
 		info->Z = packet->z;
 		info->Yaw = packet->yaw;
 		info->p_type = packet->p_type;
-		info->hp = packet->hp;
-		//Tempname.push(packet->name);
+		info->userId =  packet->name;
+		Tempname.push(packet->name);
 		MyCharacterController->SetNewCharacterInfo(info);
 		break;
 	}
@@ -153,22 +140,11 @@ bool ClientSocket::PacketProcess(char* ptr)
 		PlayerInfo.players[packet->id].w_type = packet->weapon_type;
 
 		PlayerInfo.players[packet->id].bselectweapon = true;
-		//Tempname.push(packet->cid);
-		break;
-	}
-	case SC_SYNC_UI: {
-		SC_SYNC_UI_PACKET* packet = reinterpret_cast<SC_SYNC_UI_PACKET*>(ptr);
-		//Tempname.push(packet->name);
 		break;
 	}
 	case SC_ALL_READY: {
 		SC_ACCEPT_READY* packet = reinterpret_cast<SC_ACCEPT_READY*>(ptr);
 		bAllReady = packet->ingame;
-		break;
-	}
-	case SC_TRAVLE: {
-		SC_TRAVEL_PACKET* packet = reinterpret_cast<SC_TRAVEL_PACKET*>(ptr);
-		bTravel = packet->ingame;
 		break;
 	}
   // 공격 나이아가라 이팩트 효과
@@ -220,6 +196,16 @@ bool ClientSocket::PacketProcess(char* ptr)
 	
 		break;
 	}
+	//HP동기화 처리
+	case SC_PLAYER_DAMAGE: {
+		SC_DAMAGE_CHANGE* packet = reinterpret_cast<SC_DAMAGE_CHANGE*>(ptr);
+		CPlayer player;
+		player.Id = packet->damaged_id;
+		player.damage = packet->damage;
+
+		MyCharacterController->SetHp(player.damage);
+		break;
+	}
 	case SC_NiAGARA: {
 	
 		CS_NIAGARA_SYNC_PACKET* packet = reinterpret_cast<CS_NIAGARA_SYNC_PACKET*>(ptr);
@@ -254,11 +240,6 @@ bool ClientSocket::PacketProcess(char* ptr)
 		PlayerInfo.players[packet->id].WinnerID = packet->winnerid;
 		break;
 	}
-	case SC_HP: {
-		SC_DAMAGE_CHANGE* packet = reinterpret_cast<SC_DAMAGE_CHANGE*>(ptr);
-		PlayerInfo.players[packet->id].hp = packet->hp;
-		break;
-	}
 	case SC_MYITEM_COUNT:{
 		SC_MY_ITEM_COUNT* packet = reinterpret_cast<SC_MY_ITEM_COUNT*>(ptr);
 		Tempcnt = packet->MyITEMCount;
@@ -280,13 +261,6 @@ bool ClientSocket::PacketProcess(char* ptr)
 	case SC_REMOVE_ITEM: {
 		CS_REMOVE_ITEM_PACKET* packet = reinterpret_cast<CS_REMOVE_ITEM_PACKET*>(ptr);
 		MyCharacterController->SetDestroyItemid(packet->itemid);
-		break;
-	}
-	case SC_MOPP:
-	{
-		CS_MOPP_PACKET* packet = reinterpret_cast<CS_MOPP_PACKET*>(ptr);
-		MyCharacterController->SetMoppItemID(packet->itemid);
-		MoppType = packet->mopptype;
 		break;
 	}
 	case SC_INCREASE_COUNT: {
@@ -313,6 +287,7 @@ bool ClientSocket::PacketProcess(char* ptr)
 	}
 	case SC_MYNEW_COUNT: {
 		SC_MYNEW_ITEM_COUNT* packet = reinterpret_cast<SC_MYNEW_ITEM_COUNT*>(ptr);
+		UE_LOG(LogTemp, Warning, TEXT("packet->mynewcount  : %d"), packet->MyITEMCount);
 		MyItemCount = packet->MyITEMCount;
 		itemflag = true;
 		break;
@@ -321,11 +296,6 @@ bool ClientSocket::PacketProcess(char* ptr)
 		SC_CH2_SKILL_PACKET* packet = reinterpret_cast<SC_CH2_SKILL_PACKET*>(ptr);
 		PlayerInfo.players[packet->id].p_type = packet->p_type;
 		PlayerInfo.players[packet->id].bFinishSkill = packet->bfinish;
-		break;
-	}
-	case SC_DELTA: {
-		SC_DELTA_TIME_PACKET* packet = reinterpret_cast<SC_DELTA_TIME_PACKET*>(ptr);
-		gameinst->SetDeltaTime(packet->time);
 		break;
 	}
 	default:
@@ -349,19 +319,7 @@ void ClientSocket::Send_Login_Info(char* id, char* pw)
 	UE_LOG(LogClass, Warning, TEXT("Sending login info - id: %s, pw: %s"), ANSI_TO_TCHAR(id), ANSI_TO_TCHAR(pw));
 
 }
-void ClientSocket::Send_Account_PACKET(char* id, char* pw)
-{
-	//패킷 조립
-	CS_ACCOUNT_PACKET packet;
-	packet.size = sizeof(packet);
-	packet.type = CS_ACCOUNT;
-	strcpy_s(packet.id, id);
-	strcpy_s(packet.pw, pw);
 
-	SendPacket(&packet);
-
-
-}
 void ClientSocket::Send_Move_Packet(int sessionID, FVector Location, FRotator Rotation, FVector Velocity, float Max_speed)
 {
 	//if (login_cond == true) {
@@ -377,9 +335,10 @@ void ClientSocket::Send_Move_Packet(int sessionID, FVector Location, FRotator Ro
 	packet.vy = Velocity.Y;
 	packet.vz = Velocity.Z;
 	packet.Max_speed = Max_speed;
-
+	//Send(packet.size, &packet);
 	SendPacket(&packet);
-	
+	//UE_LOG(LogClass, Warning, TEXT("send move"));
+//}
 }
 
 void ClientSocket::Send_Character_Type(PlayerType type, int id)
@@ -389,12 +348,12 @@ void ClientSocket::Send_Character_Type(PlayerType type, int id)
 	packet.size = sizeof(packet);
 	packet.type = CS_SELECT_CHAR;
 	packet.id = id;
-
+	//Send(packet.size, &packet);
 	auto location = player->GetActorLocation();
 	packet.x = location.X;
 	packet.y = location.Y;
 	packet.z = location.Z;
-
+	//packet.p_type = character_type;
 	packet.p_type = type;
 	SendPacket(&packet);
 }
@@ -612,24 +571,6 @@ void ClientSocket::Send_CH2_SKILL_PACKET(int id, PlayerType type, bool bSkill)
 	packet.bfinish = bSkill;
 	SendPacket(&packet);
 }
-void ClientSocket::Send_Mopp_Sync_packet(int itemid, int mopptype)
-{
-	CS_MOPP_PACKET packet;
-	packet.size = sizeof(packet);
-	packet.type = CS_MOPP;
-	packet.itemid = itemid;
-	packet.mopptype = mopptype;
-	SendPacket(&packet);
-}
-void ClientSocket::Send_HP_packet(int id, float hp)
-{
-	CS_DAMAGE_PACKET packet;
-	packet.size = sizeof(packet);
-	packet.type = CS_HP;
-	packet.id = id;
-	packet.hp = hp;
-	SendPacket(&packet);
-}
 bool ClientSocket::Init()
 {
 	//UE_LOG(LogTemp, Warning, TEXT("Thread has been initialized"));
@@ -713,7 +654,6 @@ void ClientSocket::Stop()
 {
 	// thread safety 변수를 조작해 while loop 가 돌지 못하게 함
 	StopTaskCounter.Increment();
-	
 }
 
 void ClientSocket::Exit()

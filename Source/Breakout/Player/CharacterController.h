@@ -114,6 +114,9 @@ public:
 	// 다른 캐릭터들의 정보
 	std::queue<std::shared_ptr<CPlayer>> NewPlayer;
 	std::queue<std::shared_ptr<CItem>> NewItem;
+	//int my_session_id;
+	//bool ProcessPacket(char* p);
+
 	//virtual void OnPossess(APawn* InPawn) override;
 	void SetChName();
 	void SetNum();
@@ -159,7 +162,6 @@ public:
 	void UpdateSyncItem();
 	void SetHp(float DamagedHp);
 	void SetDestroyItemid(int itemid) { Escapeid = itemid; };
-	void SetMoppItemID(int moppID) { MoppID = moppID; };
 	bool UpdateWorld();
 	float damaged = 0;
 	//초기 컨트롤러 세팅
@@ -168,6 +170,8 @@ public:
 	//Tick함수
 	virtual void Tick(float DeltaTime);
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+	//void RecvNewPlayer(int sessionID, float x, float y, float z);
+	//void SendPlayerPos(int id);
 
 	// 스폰시킬 다른 캐릭터
 	UPROPERTY(EditAnywhere, Category = "Spawning")
@@ -182,7 +186,6 @@ public:
 	TObjectPtr<class AMainHUD> MainHUD;
 	int id;
 	int Escapeid;
-	int MoppID;
 	bool bNewPlayerEntered = false;
 	bool bNewWeaponEntered = false;
 	bool bInitPlayerSetting = false;
@@ -198,6 +201,4 @@ public:
 	class ANiagaraActor* ServerTemp;
 	UBOGameInstance* inst;
 	bool bSync = false;
-	class ABOGameMode* m_GameMode;
-		
 };

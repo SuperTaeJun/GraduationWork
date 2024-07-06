@@ -29,17 +29,13 @@ public:
 	FVector StartBeam;
 	FVector EndBeam;
 
-	void SetSphereRadius(float Radius) { SphereRadius = Radius; }
-	class USoundCue* GetReloadSound() {return ReloadSound;}
+	class USoundCue* GetReloadSound() { return ReloadSound; }
 protected:
 	UPROPERTY(EditAnywhere, Category = "Weapon Properties")
 	TObjectPtr<class USkeletalMeshComponent> WeaponMesh;
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class AProjectileBullet> ProjectileBulletClass;
-
-	UPROPERTY(EditAnywhere)
-	TObjectPtr<class USpotLightComponent> SpotLight;
 
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<class USoundCue> FireSound;
@@ -51,7 +47,7 @@ protected:
 	float DistanceToSphere = 800.f;
 
 	UPROPERTY(EditAnywhere, Category = "Weapon Scatter")
-	float SphereRadius = 15.f;
+	float SphereRadius = 100.f;
 
 	//ÃÑ¾Ë ÈåÅÍÁü »ç¿ë ÇÒÁö¸»Áö
 	UPROPERTY(EditAnywhere, Category = "Weapon Scatter")
@@ -61,7 +57,8 @@ protected:
 	float Firerate=0.15;
 
 public:
-	float Range = 10000.f;
+	UPROPERTY(EditAnywhere, Category = "Weapon Properties")
+	float Range = 1500.f;
 protected:
 	virtual void BeginPlay() override;
 
@@ -79,5 +76,5 @@ public:
 public:
 	FORCEINLINE USkeletalMeshComponent* GetWeaponMesh() const { return WeaponMesh; }
 	void SetDetectNiagara(bool bUse);
-	class USpotLightComponent* GetSpotLight() { return SpotLight; }
+
 };

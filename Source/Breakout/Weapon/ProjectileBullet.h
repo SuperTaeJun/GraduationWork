@@ -45,7 +45,7 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	//총알의 이동속도 기준으로 사라지는 시간을 써야함 // 라이플과 샷건 모두 100m/s로 날아감 ex) 디스턴스가 2라면 사거리는 200m
-	float Distance = 0.3f; 
+	float Distance = 2.f; 
 
 	FTimerHandle DistanceTimerHandle;
 	void DistanceTimer();

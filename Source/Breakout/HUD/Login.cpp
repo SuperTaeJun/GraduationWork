@@ -13,14 +13,14 @@ void ULogin::NativeConstruct()
 
 	if (Login)
 		Login->OnClicked.AddDynamic(this, &ULogin::PressLogin);
-	if (Login)
-		SignUp->OnClicked.AddDynamic(this, &ULogin::PressSignUp);
 
 }
 
 void ULogin::PressLogin()
 {
-	
+	//UE_LOG(LogTemp, Warning, TEXT("ID : %s"), ID->GetText().ToString());
+	//UE_LOG(LogTemp, Warning, TEXT("Password : %s"), Password->GetText().ToString());
+
 	FString IDToString = ID->GetText().ToString();
 	FString PasswordToString = Password->GetText().ToString();
 
@@ -31,20 +31,7 @@ void ULogin::PressLogin()
 	{
 		PlaySound(ClickSound);
 	}
-	//if (Cast<UBOGameInstance>(GetGameInstance())->m_Socket->bLoginConnect)
-	//{
-	//	RemoveFromParent();
-	//	Cast<UBOGameInstance>(GetGameInstance())->m_Socket->bLoginConnect = false;
-	//}
 
 	RemoveFromParent();
-}
-
-void ULogin::PressSignUp()
-{
-	FString IDToString = ID->GetText().ToString();
-	FString PasswordToString = Password->GetText().ToString();
-	if (Cast<UBOGameInstance>(GetGameInstance())->m_Socket)
-		Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Account_PACKET(TCHAR_TO_UTF8(*IDToString), TCHAR_TO_UTF8(*PasswordToString));
 }
 

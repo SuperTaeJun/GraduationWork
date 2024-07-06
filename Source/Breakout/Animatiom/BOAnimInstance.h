@@ -21,6 +21,7 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Movement, meta = (AllowPrivateAccess = "true"))
 	bool bUseLeftHand;
+
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Character, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class ACharacterBase> BaseCharacter;

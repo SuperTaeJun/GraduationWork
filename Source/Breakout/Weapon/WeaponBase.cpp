@@ -18,7 +18,6 @@
 #include "ClientSocket.h"
 #include "Weapon/ProjectileBullet.h"
 #include "Sound/SoundCue.h"
-#include "Components/SpotLightComponent.h"
 //#define TRACE_LENGTH 1000.f
 
 AWeaponBase::AWeaponBase()
@@ -38,8 +37,6 @@ AWeaponBase::AWeaponBase()
 	DetectNiagara->SetWorldRotation(FRotator(90.f, 90.f, 0).Quaternion());
 	DetectNiagara->SetWorldLocation(FVector(0.f, 580.f, 0.f));
 
-	SpotLight = CreateDefaultSubobject<USpotLightComponent>(TEXT("SpotLight"));
-	SpotLight->SetupAttachment(RootComponent);
 }
 
 // Called when the game starts or when spawned
@@ -51,18 +48,24 @@ void AWeaponBase::BeginPlay()
 
 FVector AWeaponBase::TraceEndWithScatter(const FVector& TraceStart, const FVector& HitTarget)
 {
-	FVector ToTargetNormalized = (HitTarget - TraceStart).GetSafeNormal(); //방향벡터 정규화
-	FVector SphereCenter = TraceStart + ToTargetNormalized * DistanceToSphere;// TraceStart와 목표 사이의 거리만큼 떨어진 구의 중심
-	FVector RandVector = UKismetMathLibrary::RandomUnitVector() * FMath::FRandRange(0.f, SphereRadius);// 구의 반경 내에서 무작위 방향 벡터
-	FVector EndLoc = SphereCenter + RandVector;// 구의 중심에 무작위 벡터를 더해 최종 지점
-	FVector ToEndLoc = EndLoc - TraceStart;// 시작 지점에서 최종 지점으로의 벡터
+	//UE_LOG(LogTemp, Log, TEXT("TRACE"));
+	FVector ToTargetNormalized = (HitTarget - TraceStart).GetSafeNormal();
+	FVector SphereCenter = TraceStart + ToTargetNormalized * DistanceToSphere;
+	FVector RandVector = UKismetMathLibrary::RandomUnitVector() * FMath::FRandRange(0.f, SphereRadius);
+	FVector EndLoc = SphereCenter + RandVector;
+	FVector ToEndLoc = EndLoc - TraceStart;
 
-	//디버그용 시각화
-	//DrawDebugSphere(GetWorld(), SphereCenter, SphereRadius, 12, FColor::Red, true, 0.5f);//구의 중심
-	//DrawDebugSphere(GetWorld(), EndLoc, 4.f, 12, FColor::Orange, true, 0.5f); //최종 지점
-	//DrawDebugLine(	GetWorld(),TraceStart,FVector(TraceStart + ToEndLoc * 1000.f / ToEndLoc.Size()),FColor::Cyan,true,0.5f); // 시작 지점과 최종지점 선
+	//DrawDebugSphere(GetWorld(), SphereCenter, SphereRadius, 12, FColor::Red, false, 0.5f);
+	//DrawDebugSphere(GetWorld(), EndLoc, 4.f, 12, FColor::Orange, false, 0.5f);
+	//DrawDebugLine(
+	//	GetWorld(),
+	//	TraceStart,
+	//	FVector(TraceStart + ToEndLoc * TRACE_LENGTH / ToEndLoc.Size()),
+	//	FColor::Cyan,
+	//	false,
+	//	0.5f);
 
-	return FVector(TraceStart + ToEndLoc / ToEndLoc.Size());
+	return FVector(TraceStart + ToEndLoc * Range / ToEndLoc.Size());
 }
 
 void AWeaponBase::WeaponTraceHit(const FVector& TraceStart, const FVector& HitTarget, FHitResult& OutHit)
@@ -191,7 +194,6 @@ void AWeaponBase::Fire(const FVector& HitTarget)
 		FTransform SocketTransform = MuzzleSocket->GetSocketTransform(GetWeaponMesh());
 		FVector Start = SocketTransform.GetLocation();
 
-		//WeaponTraceHit(Start, HitTarget, FireHit);
 		FVector ToTarget = bUseScatter ? TraceEndWithScatter(Start, HitTarget) : Start + (HitTarget - Start) * 1.25f;
 		ToTarget = ToTarget - SocketTransform.GetLocation();
 
@@ -209,15 +211,6 @@ void AWeaponBase::Fire(const FVector& HitTarget)
 				Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Fire_Effect(Cast<ACharacterBase>(GetOwner())->_SessionId, SocketTransform.GetLocation(), ToTargetRot, 0);
 				FiredBullet->SetOwner(OwnerPawn);
 			}
-			/*if (ImpactNiagara)
-			{
-				UNiagaraFunctionLibrary::SpawnSystemAtLocation
-				(
-					World,
-					ImpactNiagara,
-					SocketTransform.GetLocation()
-				);
-			}*/
 			if (FireSound)
 			{
 				UGameplayStatics::PlaySoundAtLocation(

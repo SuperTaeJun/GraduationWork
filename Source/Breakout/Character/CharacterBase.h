@@ -10,8 +10,6 @@
 class UInputAction;
 #define DEFAULTCAMERALENGTH 200
 #define SPRINTCAMERALENGTH 100
-#define AIMCAMERALAENGTH 50
-
 
 UCLASS()
 class BREAKOUT_API ACharacterBase : public ACharacter
@@ -60,7 +58,7 @@ protected:
 
 	bool bCanEscape;
 	bool StaminaExhaustionState;
-	bool bSkillUsing = false;
+
 	int32 GrendeNum;
 	int32 WallGrendeNum;
 	int32 BoobyTrapNum;
@@ -71,7 +69,7 @@ protected:
 
 	FVector SWAimLastLoc;
 	FTransform StartTransform;
-
+	bool bSkillUsing = false;
 public:
 	void SetResetState();
 
@@ -89,7 +87,6 @@ public:
 	void SetHealth(float DamagedHp);
 
 	class AWeaponBase* GetWeapon() { return CurWeapon; }
-	class ACharacterController* GetChController() { return MainController; }
 
 	FORCEINLINE float GetHealth() const { return Health; }
 	FORCEINLINE bool GetbFfirePressed() const { return bFirePressed; }
@@ -148,6 +145,7 @@ protected:
 
 	TObjectPtr<class AMainHUD> MainHUD;
 	TObjectPtr<class ACharacterController> MainController;
+
 	UPROPERTY(EditAnywhere, Category = Animation)
 	TObjectPtr<class UAnimMontage> FireActionMontage;
 	UPROPERTY(EditAnywhere, Category = Animation)
@@ -158,8 +156,6 @@ protected:
 	TObjectPtr<class UAnimMontage> ReloadMontage;
 	UPROPERTY(EditAnywhere, Category = Animation)
 	TObjectPtr<class UAnimMontage> InterMontage;
-	UPROPERTY(EditAnywhere, Category = Animation)
-	TObjectPtr<class UAnimMontage> HitMontage;
 
 	FName RightSocketName;
 
@@ -213,10 +209,8 @@ protected:
 	//크로스헤어기준으로 사거리만큼 조준했을때 마지막 충돌위치
 	FVector HitTarget;
 
-	//카메라 설정
 	void SetSprint();
 	void SetRun();
-	void SetAiming();
 
 
 	//입력값
@@ -254,8 +248,7 @@ protected:
 	TObjectPtr<UInputAction> SelectTrapAction;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
 	TObjectPtr<UInputAction> DetectAction;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
-	TObjectPtr<UInputAction> LightAction;
+
 	void Move(const FInputActionValue& Value);
 	void Look(const FInputActionValue& Value);
 	void Sprint_S(const FInputActionValue& Value);
@@ -278,9 +271,6 @@ protected:
 	virtual void Skill_E(const FInputActionValue& Value);
 	void Detect_S(const FInputActionValue& Value);
 	void Detect_E(const FInputActionValue& Value);
-	void Aiming_S(const FInputActionValue& Value);
-	void Aiming_E(const FInputActionValue& Value);
-	void LightOnOff(const FInputActionValue& Value);
 
 public:
 	//서버랑 연동하는 함수들
@@ -289,13 +279,11 @@ public:
 	bool bStarted;
 	FTimerHandle StartHandle;
 	void StartGame();
-	float StartTime = 0.f;
 	float StartedCnt;
 	bool bDeadAnim = false;
 	class UBOGameInstance* inst;
 	class UCameraComponent* GetCamera() { return FollowCamera; }
 	void Server_PlayDeadAnim();
-	bool bWait = false;
 };
 
 UENUM(BlueprintType)
@@ -304,7 +292,7 @@ enum class ECharacterState : uint8
 	ECS_IDLE UMETA(DisplayName = "Idle"),
 	ECS_RUN UMETA(DisplayName = "Run"),
 	ECS_SPRINT UMETA(DisplayName = "Sprint"),
-	ECS_AIMING UMETA(DisplayName = "Aiming"),
+	ECS_FALLING UMETA(DisplayName = "Falling"),
 
 	ECS_DEFAULT UMETA(DisplayName = "Default")
 };

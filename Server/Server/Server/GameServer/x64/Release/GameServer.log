@@ -1,0 +1,24 @@
+﻿  pch.cpp
+  CLIENT.cpp
+  EscapeObject.cpp
+C:\Users\sejin\Downloads\GraduationWork\Server\Server\Server\GameServer\EscapeObject.h(21,33): error C2039: 'mt19937': 'std'의 멤버가 아닙니다.
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.36.32532\include\iostream(19,1): message : 'std' 선언을 참조하십시오.
+C:\Users\sejin\Downloads\GraduationWork\Server\Server\Server\GameServer\EscapeObject.h(21,40): error C2061: 구문 오류: 식별자 'mt19937'
+C:\Users\sejin\Downloads\GraduationWork\Server\Server\Server\GameServer\EscapeObject.h(22,17): error C2065: 'gen': 선언되지 않은 식별자입니다.
+C:\Users\sejin\Downloads\GraduationWork\Server\Server\Server\GameServer\EscapeObject.h(22,13): error C3861: 'dis': 식별자를 찾을 수 없습니다.
+C:\Users\sejin\Downloads\GraduationWork\Server\Server\Server\GameServer\EscapeObject.h(23,17): error C2065: 'gen': 선언되지 않은 식별자입니다.
+C:\Users\sejin\Downloads\GraduationWork\Server\Server\Server\GameServer\EscapeObject.h(23,13): error C3861: 'dis': 식별자를 찾을 수 없습니다.
+C:\Users\sejin\Downloads\GraduationWork\Server\Server\Server\GameServer\EscapeObject.h(24,18): error C2065: 'gen': 선언되지 않은 식별자입니다.
+C:\Users\sejin\Downloads\GraduationWork\Server\Server\Server\GameServer\EscapeObject.h(24,13): error C3861: 'disz': 식별자를 찾을 수 없습니다.
+  GameServer.cpp
+C:\Users\sejin\Downloads\GraduationWork\Server\Server\Server\GameServer\EscapeObject.h(21,33): error C2039: 'mt19937': 'std'의 멤버가 아닙니다.
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.36.32532\include\iostream(19,1): message : 'std' 선언을 참조하십시오.
+C:\Users\sejin\Downloads\GraduationWork\Server\Server\Server\GameServer\EscapeObject.h(21,40): error C2061: 구문 오류: 식별자 'mt19937'
+C:\Users\sejin\Downloads\GraduationWork\Server\Server\Server\GameServer\EscapeObject.h(22,17): error C2065: 'gen': 선언되지 않은 식별자입니다.
+C:\Users\sejin\Downloads\GraduationWork\Server\Server\Server\GameServer\EscapeObject.h(22,13): error C3861: 'dis': 식별자를 찾을 수 없습니다.
+C:\Users\sejin\Downloads\GraduationWork\Server\Server\Server\GameServer\EscapeObject.h(23,17): error C2065: 'gen': 선언되지 않은 식별자입니다.
+C:\Users\sejin\Downloads\GraduationWork\Server\Server\Server\GameServer\EscapeObject.h(23,13): error C3861: 'dis': 식별자를 찾을 수 없습니다.
+C:\Users\sejin\Downloads\GraduationWork\Server\Server\Server\GameServer\EscapeObject.h(24,18): error C2065: 'gen': 선언되지 않은 식별자입니다.
+C:\Users\sejin\Downloads\GraduationWork\Server\Server\Server\GameServer\EscapeObject.h(24,13): error C3861: 'disz': 식별자를 찾을 수 없습니다.
+  LockQueue.cpp
+  Overlap.cpp

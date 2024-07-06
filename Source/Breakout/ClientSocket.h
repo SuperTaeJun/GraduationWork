@@ -11,7 +11,7 @@
 #include <fstream>
 #include <map>
 #include <mutex>
-#include "../../Server/Server/protocol.h"
+#include "../../Server/Server/Server/ServerCore/protocol.h"
 #include <vector>
 #include <iostream>
 #include "Windows/PostWindowsApi.h"
@@ -72,7 +72,7 @@ public:
 	int WinnerID = -1;
 	//int hp;
 	int weptype;
-	float hp;
+	int damage;
 	int skilltype;
 	int itemAnimtype = -1;
 	// 아이디 비번
@@ -288,7 +288,6 @@ public:
 	void CloseSocket();
 	bool PacketProcess(char* ptr);
 	void Send_Login_Info(char* id, char* pw);
-	void Send_Account_PACKET(char* id, char* pw);
 	void Send_Move_Packet(int sessionID, FVector Location, FRotator Rotation, FVector Velocity, float Max_speed);
 	void Send_Character_Type(PlayerType type, int id);
 	void Send_Weapon_Type(WeaponType type, int id);
@@ -311,8 +310,6 @@ public:
 	void Send_item_Anim_packet(int id, int num);
 	void Send_Remove_Weapon(int id, bool bWeapon);
 	void Send_CH2_SKILL_PACKET(int id, PlayerType type, bool bSkill);
-	void Send_Mopp_Sync_packet(int itemid, int mopptype);
-	void Send_HP_packet(int id, float hp);
 	virtual bool Init() override;
 	virtual uint32 Run() override;
 	virtual void Stop() override;
@@ -339,7 +336,6 @@ public:
 	int local_id = -1;
 	bool login_cond = false;
 	bool bAllReady = false;
-	bool bTravel = false;
 	bool itemflag = false;
 	int MyItemCount;
 	std::queue<std::shared_ptr<CItem>> ItemQueue;
@@ -350,10 +346,6 @@ public:
 	int Tempcnt2;
 	FString TempPlayerName;
 	bool bAcquire = false;
-	int MoppType = -1;
-	float TempMoppTime = 0.f;
-	bool bLoginConnect = false;
-	bool bLobby = false;
 private:
 	ACharacterController* MyCharacterController;
 	CPlayerInfo PlayerInfo;

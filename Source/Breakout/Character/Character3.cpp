@@ -15,14 +15,8 @@
 #include "InputMappingContext.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
-#include "Components/PostProcessComponent.h"
 ACharacter3::ACharacter3()
 {
-	PostProcessComp= CreateDefaultSubobject<UPostProcessComponent>(TEXT("PostProcessComp"));
-	PostProcessComp->SetupAttachment(RootComponent);
-	PostProcessComp->bAutoActivate = false;
-	PostProcessComp->bEnabled = false;
-
 	NiagaraComp = CreateDefaultSubobject<UNiagaraComponent>(TEXT("NiagaraComp"));
 	NiagaraComp->SetAutoActivate(false);
 	ConstructorHelpers::FObjectFinder<UNiagaraSystem> FxRef(TEXT("/Game/Niagara/SKill/Skill3/NS_Skill3.NS_Skill3"));
@@ -131,7 +125,6 @@ void ACharacter3::GhostStart()
 		DynamicMaterial->SetScalarParameterValue(FName("Alpha"), 1.f);
 		GetWorld()->GetTimerManager().SetTimer(GhostTimer, this, &ACharacter3::GhostEnd, 4.f, false);
 
-		PostProcessComp->bEnabled = true;
 
 		//패킷 
 		if (inst)
@@ -158,9 +151,6 @@ void ACharacter3::GhostEnd()
 		bGhost = false;
 		// 1=스킬사용할때 머터리얼 0=기본머터리얼
 		DynamicMaterial->SetScalarParameterValue(FName("Alpha"), 0.f);
-
-		PostProcessComp->bEnabled = false;
-
 		if (inst)
 			Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Niagara_cancel(bCancel, _SessionId, 1);
 	}

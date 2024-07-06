@@ -1,5 +1,4 @@
 #include "Character/CharacterBase.h"
-#include "Character/CharacterBase.h"
 //입력
 #include "InputMappingContext.h"
 #include "EnhancedInputComponent.h"
@@ -31,8 +30,8 @@
 #include "Animatiom/BOAnimInstance.h"
 #include "Materials/MaterialInstance.h"
 #include "Materials/MaterialInstanceDynamic.h"
-#include "Components/SpotLightComponent.h"
 #include "Sound/SoundCue.h"
+
 ACharacterBase::ACharacterBase()
 {
 	PrimaryActorTick.bCanEverTick = true;
@@ -49,8 +48,6 @@ ACharacterBase::ACharacterBase()
 	Movement = GetCharacterMovement();
 	Movement->MaxWalkSpeed = 400.f;
 	Movement->bOrientRotationToMovement = true;
-	Movement->JumpZVelocity = 480.f;
-	Movement->AirControl = 0.2f;
 	bUseControllerRotationYaw = false;
 
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
@@ -334,13 +331,12 @@ void ACharacterBase::GrandeThrow()
 {
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 	Cast<UBOAnimInstance>(AnimInstance)->bUseLeftHand = false;
-	PlayAnimMontage(GrenadeMontage, 2.f, FName("Fire"));
-	CurWeapon->SetActorHiddenInGame(true);
-	//CurWeapon->SetActorHiddenInGame(true);
-	//UE_LOG(LogTemp, Log, TEXT("FIRE"));
+	//PlayAnimMontage(GrenadeMontage, 2.f, FName("Fire"));
+
 }
 void ACharacterBase::GrandeAim()
 {
+	CurWeapon->SetActorHiddenInGame(true);
 	Grenade->bHiddenInGame = false;
 
 	const USkeletalMeshSocket* WeaponSocket = GetMesh()->GetSocketByName(FName("LeftHandSocket"));
@@ -351,7 +347,7 @@ void ACharacterBase::GrandeAim()
 	}
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 	if (AnimInstance && GrenadeMontage)
-		PlayAnimMontage(GrenadeMontage, 1.5f, FName("Aim"));
+		PlayAnimMontage(GrenadeMontage, 1.5f);
 }
 void ACharacterBase::GrandeThrowFinish()
 {
@@ -360,7 +356,7 @@ void ACharacterBase::GrandeThrowFinish()
 	Cast<UBOAnimInstance>(AnimInstance)->bUseLeftHand = true;
 	const USkeletalMeshSocket* WeaponSocket = GetMesh()->GetSocketByName(RightSocketName);
 
-	//CurWeapon->SetActorHiddenInGame(false);
+	CurWeapon->SetActorHiddenInGame(false);
 
 	if (WeaponSocket && CurWeapon)
 	{
@@ -444,55 +440,48 @@ void ACharacterBase::SetSpawnGrenade(TSubclassOf<AProjectileBase> Projectile)
 
 void ACharacterBase::ReciveDamage(AActor* DamagedActor, float Damage, const UDamageType* DamageType, class AController* InstigatorController, AActor* DamageCauser)
 {
-	if (HitMontage && Health > 0.0f)
-		PlayAnimMontage(HitMontage);
-
-	if (MainController)
+	
+	Health = FMath::Clamp(Health - Damage, 0.f, MaxHealth);
+	UpdateHpHUD();
+	ACharacterBase* DamageInsigatorCh= Cast<ACharacterBase>(InstigatorController->GetPawn());
+	if (Health <= 0.0f)
 	{
-		Health = FMath::Clamp(Health - Damage, 0.f, MaxHealth);
-		if (inst)
-			inst->m_Socket->Send_HP_packet(inst->GetPlayerID(), Health);
-		UpdateHpHUD();
-		ACharacterBase* DamageInsigatorCh = Cast<ACharacterBase>(InstigatorController->GetPawn());
-		if (Health <= 0.0f)
+		bDissolve = true;
+		if (DamageInsigatorCh)
 		{
-			bDissolve = true;
-			if (DamageInsigatorCh)
+			//서버
+			if (ObtainedEscapeToolNum > 0 && 10 > ObtainedEscapeToolNum)
 			{
-				//서버
-				if (ObtainedEscapeToolNum > 0 && 10 > ObtainedEscapeToolNum)
-				{
-					DamageInsigatorCh->SetEscapeToolNum(DamageInsigatorCh->ObtainedEscapeToolNum + 1);
-					ObtainedEscapeToolNum -= 1;
-					if (inst) {
-						//ui에서 상대방의 아이템 개수 늘려주고
-						Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Increase_item_count_packet(DamageInsigatorCh->_SessionId, DamageInsigatorCh->GetEscapeToolNum());
-						// 내꺼는 줄여줌 
-						Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Decrease_item_count_packet(inst->GetPlayerID(), ObtainedEscapeToolNum);
-
-					}
-
+				DamageInsigatorCh->SetEscapeToolNum(DamageInsigatorCh->ObtainedEscapeToolNum + 1);
+				ObtainedEscapeToolNum -= 1;
+				if (inst) {
+					//ui에서 상대방의 아이템 개수 늘려주고
+					Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Increase_item_count_packet(DamageInsigatorCh->_SessionId, DamageInsigatorCh->GetEscapeToolNum());
+					// 내꺼는 줄여줌 
+					Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Decrease_item_count_packet(inst->GetPlayerID(), ObtainedEscapeToolNum);
+					
 				}
-				else if (10 <= ObtainedEscapeToolNum)
-				{
-					DamageInsigatorCh->SetEscapeToolNum(DamageInsigatorCh->ObtainedEscapeToolNum + 4);
-					ObtainedEscapeToolNum -= 4;
-					if (inst) {
-						Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Increase_item_count_packet(DamageInsigatorCh->_SessionId, DamageInsigatorCh->GetEscapeToolNum());
-						Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Decrease_item_count_packet(inst->GetPlayerID(), ObtainedEscapeToolNum);
-					}
+			
+			}
+			else if (10 <= ObtainedEscapeToolNum)
+			{
+				DamageInsigatorCh->SetEscapeToolNum(DamageInsigatorCh->ObtainedEscapeToolNum + 4);
+				ObtainedEscapeToolNum -= 4;
+				if (inst) {
+					Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Increase_item_count_packet(DamageInsigatorCh->_SessionId, DamageInsigatorCh->GetEscapeToolNum());
+					Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Decrease_item_count_packet(inst->GetPlayerID(), ObtainedEscapeToolNum);
 				}
 			}
-			if (CurWeapon)
-				CurWeapon->CurAmmo = 0;
-			PlayAnimMontage(DeadMontage);
-			GetWorld()->GetTimerManager().SetTimer(DeadTimer, this, &ACharacterBase::Dead, DeadTime, false);
-			if (MainController)
-				DisableInput(MainController);
-			UpdateObtainedEscapeTool();
-			//if (MainController)//이거 죽었을때 다시 충돌 일어나서 애니메이션 재생되는거 막는용도
-			//	Health = 99999.f;
 		}
+		if(CurWeapon)
+			CurWeapon->CurAmmo = 0;
+		PlayAnimMontage(DeadMontage);
+		GetWorld()->GetTimerManager().SetTimer(DeadTimer, this, &ACharacterBase::Dead, DeadTime, false);
+		if(MainController)
+			DisableInput(MainController);
+		UpdateObtainedEscapeTool();
+		if(MainController)//이거 죽었을때 다시 충돌 일어나서 애니메이션 재생되는거 막는용도
+			Health = 99999.f;
 	}
 }
 
@@ -516,11 +505,11 @@ void ACharacterBase::Dead()
 
 void ACharacterBase::TurnInPlace(float DeltaTime)
 {
-	if (AO_Yaw > 45.f)
+	if (AO_Yaw > 30.f)
 	{
 		TurningType = ETurningInPlace::ETIP_Right;
 	}
-	else if (AO_Yaw < -45.f)
+	else if (AO_Yaw < -30.f)
 	{
 		TurningType = ETurningInPlace::ETIP_Left;
 	}
@@ -547,8 +536,9 @@ void ACharacterBase::AimOffset(float DeltaTime)
 
 	if (!IsFalling && Speed == 0.f) //점프 아니고 서있을때
 	{
+		//UE_LOG(LogTemp, Log, TEXT("%f"), Speed);
 		FRotator CurAimRotation = FRotator(0.f, GetBaseAimRotation().Yaw, 0.f);
-		FRotator DeltaRotation = UKismetMathLibrary::NormalizedDeltaRotator(CurAimRotation,StartingAimRotation);
+		FRotator DeltaRotation = UKismetMathLibrary::NormalizedDeltaRotator(CurAimRotation, StartingAimRotation);
 		AO_Yaw = DeltaRotation.Yaw;
 		if (TurningType == ETurningInPlace::ETIP_NotTurning)
 		{
@@ -564,7 +554,6 @@ void ACharacterBase::AimOffset(float DeltaTime)
 		bUseControllerRotationYaw = true;
 		TurningType = ETurningInPlace::ETIP_NotTurning;
 	}
-	//초기 카메라 위치 +20.f
 	AO_Pitch = GetBaseAimRotation().Pitch + 20.f;
 	if (AO_Pitch > 90.f && !IsLocallyControlled())
 	{
@@ -602,7 +591,6 @@ void ACharacterBase::Fire()
 		}
 		PlayFireActionMontage();
 
-		//카메라쉐이크
 		UGameplayStatics::GetPlayerCameraManager(GetWorld(), 0)->StartCameraShake(UShoot::StaticClass());
 
 		CurWeapon->CurAmmo -= 1;
@@ -682,9 +670,6 @@ void ACharacterBase::SetRun()
 	Movement->bOrientRotationToMovement = false;
 	bUseControllerRotationYaw = true;
 }
-void ACharacterBase::SetAiming()
-{
-}
 enum Move {
 	Move_Player
 };
@@ -722,11 +707,16 @@ void ACharacterBase::Sprint_S(const FInputActionValue& Value)
 	if (!StaminaExhaustionState && CurWeapon)
 	{
 		CharacterState = ECharacterState::ECS_SPRINT;
+		//Movement->bOrientRotationToMovement = true;
+		//bUseControllerRotationYaw = false;
+
 		SetSprint();
 	}
 	else
 	{
 		CharacterState = ECharacterState::ECS_RUN;
+		//Movement->bOrientRotationToMovement = false;
+		//bUseControllerRotationYaw = true;
 		SetRun();
 	}
 }
@@ -734,6 +724,8 @@ void ACharacterBase::Sprint_E(const FInputActionValue& Value)
 {
 	CharacterState = ECharacterState::ECS_RUN;
 	Movement->MaxWalkSpeed = 400;
+	//Movement->bOrientRotationToMovement = false;
+	//bUseControllerRotationYaw = true;
 	SetRun();
 }
 void ACharacterBase::Fire_S(const FInputActionValue& Value)
@@ -763,22 +755,24 @@ void ACharacterBase::Inter(const FInputActionValue& Value)
 	if (bCanObtainEscapeTool && OverlappingEscapeTool)
 	{
 		ObtainedEscapeToolNum += 1;
+		//패킷(id, num)
+		if (inst)
+			Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Item_packet(inst->GetPlayerID(), ObtainedEscapeToolNum);
 		UpdateObtainedEscapeTool();
 		OverlappingEscapeTool->SetHideMesh();
 		OverlappingEscapeTool = nullptr;
 	}
 	else if (!bCanObtainEscapeTool && OverlappingEscapeTool)
 	{
-		//EToolTranfrom(Value);
-		OverlappingEscapeTool->CurState = 1;
-		
+		//UE_LOG(LogTemp, Log, TEXT("TEST"));
+		EToolTranfrom(Value);
 	}
 
-	//게임종료 부분
 	if (bCanEscape)
 	{
 		if (inst)
 			Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_End_Game_packet(inst->GetPlayerID());
+		//GetWorld()->ServerTravel(FString("/Game/Maps/GameRoom"), false,true);
 	}
 }
 void ACharacterBase::Inter_Start(const FInputActionValue& Value)
@@ -789,11 +783,8 @@ void ACharacterBase::Inter_Start(const FInputActionValue& Value)
 			Cast<UBOAnimInstance>(AnimInstance)->bUseLeftHand = false;
 			if (InterMontage) {
 				PlayAnimMontage(InterMontage);
-				if (inst) {
+				if (inst)
 					inst->m_Socket->Send_item_Anim_packet(inst->GetPlayerID(), 0);
-					UE_LOG(LogTemp, Warning, TEXT("HAH %d"), OverlappingEscapeTool->ItemID);
-					inst->m_Socket->Send_Mopp_Sync_packet(OverlappingEscapeTool->ItemID, 1);
-				}
 			}
 		}
 }
@@ -801,24 +792,19 @@ void ACharacterBase::Inter_End(const FInputActionValue& Value)
 {
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 	Cast<UBOAnimInstance>(AnimInstance)->bUseLeftHand = true;
-	if (InterMontage) 
+	if (InterMontage) {
 		StopAnimMontage(InterMontage);
-
-	if (OverlappingEscapeTool) 
-	{
-		OverlappingEscapeTool->CurState = 0;
-		if (inst) 
-		{
-			inst->m_Socket->Send_Mopp_Sync_packet(OverlappingEscapeTool->ItemID, 0);
+		if (inst)
 			inst->m_Socket->Send_item_Anim_packet(inst->GetPlayerID(), 1);
-		}
 	}
-	
+
 }
 void ACharacterBase::EToolTranfrom(const FInputActionValue& Value)
 {
-
+	//if (OverlappingEscapeTool)
+	//{
 	OverlappingEscapeTool->TransformMesh(GetWorld()->GetDeltaSeconds(),false,false);
+	//}
 
 }
 void ACharacterBase::Reroad(const FInputActionValue& Value)
@@ -834,7 +820,7 @@ void ACharacterBase::Reroad(const FInputActionValue& Value)
 		}
 		if (CurWeapon->GetReloadSound())
 		{
-			UGameplayStatics::PlaySoundAtLocation(this, CurWeapon->GetReloadSound(),GetActorLocation());
+			UGameplayStatics::PlaySoundAtLocation(this, CurWeapon->GetReloadSound(), GetActorLocation());
 		}
 	}
 }
@@ -942,41 +928,6 @@ void ACharacterBase::Detect_E(const FInputActionValue& Value)
 	}
 }
 
-void ACharacterBase::Aiming_S(const FInputActionValue& Value)
-{
-	CharacterState = ECharacterState::ECS_AIMING;
-
-	CameraBoom->TargetArmLength = 50.f;
-	if (CurWeapon)
-	{
-		CurWeapon->SetSphereRadius(10.f);
-	}
-}
-
-void ACharacterBase::Aiming_E(const FInputActionValue& Value)
-{
-	UE_LOG(LogTemp, Log, TEXT("AIM END"));
-	CharacterState = ECharacterState::ECS_RUN;
-	//CameraBoom->TargetArmLength = 200;
-	if (CurWeapon)
-	{
-		CurWeapon->SetSphereRadius(15.f);
-	}
-}
-
-void ACharacterBase::LightOnOff(const FInputActionValue& Value)
-{
-	if (CurWeapon && CurWeapon->GetSpotLight())
-	{
-		UE_LOG(LogTemp, Log, TEXT("ONOFF"));
-
-		if (CurWeapon->GetSpotLight()->IsVisible())
-			CurWeapon->GetSpotLight()->SetVisibility(false);
-		else
-			CurWeapon->GetSpotLight()->SetVisibility(true);
-	}
-}
-
 void ACharacterBase::Detect_S(const FInputActionValue& Value)
 {
 	if (CurWeapon)
@@ -1013,11 +964,6 @@ void ACharacterBase::Tick(float DeltaTime)
 		}
 		UpdateCameraBoom(DeltaTime);
 		break;
-	case ECharacterState::ECS_AIMING:
-	{
-		
-	}
-		break;
 	case ECharacterState::ECS_DEFAULT:
 		Movement->MaxWalkSpeed = 400.f;
 		UpdateCameraBoom(DeltaTime);
@@ -1028,8 +974,6 @@ void ACharacterBase::Tick(float DeltaTime)
 	{
 		CanJump = true;
 	}
-
-	//UE_LOG(LogTemp, Warning, TEXT("HHHHHH : %s"),*GetVelocity().ToString());
 
 	UpdateStamina(DeltaTime);
 	AimOffset(DeltaTime);
@@ -1060,25 +1004,16 @@ void ACharacterBase::Tick(float DeltaTime)
 	}
 
 
-	if (Cast<UBOGameInstance>(GetWorld()->GetGameInstance())->m_Socket->bAllReady == true && !bStarted)
+	if (/*Cast<UBOGameInstance>(GetWorld()->GetGameInstance())->m_Socket->bAllReady == true &&*/ !bStarted)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("StartGame"));
 		Cast<UBOGameInstance>(GetWorld()->GetGameInstance())->m_Socket->bAllReady = false;
 		bStarted = true;
 		//DisableInput(UGameplayStatics::GetPlayerController(GetWorld(), 0));
-		bWait = true;
 		GetWorldTimerManager().SetTimer(StartHandle, this, &ACharacterBase::StartGame, 5.f);
 	}
-	//if (bWait)
-	//{
-	//	StartTime += inst->GetDeltaTime();
-	//	UE_LOG(LogTemp, Warning, TEXT("STARTTIME %f"), StartTime);
-	//	if (StartTime >= 5.f)
-	//	{
-	//		bWait = false;
-	//		StartGame();
-	//	}
-	//}
+
+
 }
 
 void ACharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -1106,9 +1041,6 @@ void ACharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 		EnhancedInputComponent->BindAction(SelectTrapAction, ETriggerEvent::Triggered, this, &ACharacterBase::SelectTrap);
 		EnhancedInputComponent->BindAction(DetectAction, ETriggerEvent::Triggered, this, &ACharacterBase::Detect_S);
 		EnhancedInputComponent->BindAction(DetectAction, ETriggerEvent::Completed, this, &ACharacterBase::Detect_E);
-		EnhancedInputComponent->BindAction(AimAction, ETriggerEvent::Triggered, this, &ACharacterBase::Aiming_S);
-		EnhancedInputComponent->BindAction(AimAction, ETriggerEvent::Completed, this, &ACharacterBase::Aiming_E);
-		EnhancedInputComponent->BindAction(LightAction, ETriggerEvent::Started, this, &ACharacterBase::LightOnOff);
 	}
 }
 
@@ -1146,8 +1078,6 @@ void ACharacterBase::StartGame()
 		//	UE_LOG(LogTemp, Warning, TEXT("ADDTOOLNUM"));
 		//	MainHUD->AddToolNumUi();
 		//}
-		if (inst)
-			inst->m_Socket->Send_Start_game_packet(inst->GetPlayerID());
 		MainController->MainHUD->AddToolNumUi();
 		// num 계수, name 처리 
 		MainController->SetNum();

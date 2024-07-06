@@ -28,11 +28,10 @@
 #include "TimerManager.h"
 #include "FX/Skill4Actor.h"
 #include "GameProp/EscapeTool.h"
-#include "../../Server/Server/protocol.h"
+#include "../../Server/Server/Server/ServerCore/protocol.h"
 #include <string>
 #include "ClientSocket.h"
 #include"Animatiom/BOAnimInstance.h"
-#include "Game/BOGameMode.h"
 
 ACharacterController::ACharacterController()
 {
@@ -49,14 +48,12 @@ ACharacterController::ACharacterController()
 
 void ACharacterController::BeginPlay()
 {
-	
+	//FInputModeGameOnly GameOnlyInput;
+	//SetInputMode(GameOnlyInput);
 	MainHUD = Cast<AMainHUD>(GetHUD());
-	// 현재 월드 세팅
-	m_GameMode = Cast<ABOGameMode>(GetWorld()->GetAuthGameMode());
-
+	//inst = Cast<UBOGameInstance>(GetGameInstance());
 	inst = Cast<UBOGameInstance>(GetGameInstance());
 	inst->m_Socket->SetPlayerController(this);
-	
 	UE_LOG(LogTemp, Warning, TEXT("BEGIN"));
 	if (inst)
 	{
@@ -125,7 +122,17 @@ void ACharacterController::SetNum()
 	}
 }
 
-
+//void ACharacterController::OnPossess(APawn* InPawn)
+//{
+//	Super::OnPossess(InPawn);
+//
+//	ACharacterBase* Ch = Cast<ACharacterBase>(InPawn);
+//	if (Ch)
+//	{
+//		Ch->SetWeaponUi();
+//	}
+//
+//}
 void ACharacterController::SetHUDHealth(float Health, float MaxHealth)
 {
 	if (MainHUD)
@@ -326,15 +333,15 @@ void ACharacterController::Tick(float DeltaTime)
 		//UE_LOG(LogClass, Warning, TEXT("hp : %f"), DamagedHp);
 		//BaseCharacter->SetHealth(DamgeHp);
 		//UE_LOG(LogTemp, Warning, TEXT("my health : %f"), BaseCharacter->GetHealth());
-		/*UGameplayStatics::ApplyDamage(
+		UGameplayStatics::ApplyDamage(
 			GetOwner(),
 			damaged,
 			this,
 			this,
 			UDamageType::StaticClass()
-		);*/
+		);
 		//BaseCharacter->SetHealth(damaged);
-		//damaged = 0;
+		damaged = 0;
 		//BaseCharacter->SetHealth(BaseCharacter->GetHealth());
 		if(BaseCharacter->GetHealth()<=9999)
 			SetHUDHealth(BaseCharacter->GetHealth(), BaseCharacter->MaxGetHealth());
@@ -343,18 +350,18 @@ void ACharacterController::Tick(float DeltaTime)
 		SetNum();
 		inst->m_Socket->bAcquire = false;
 	}
-	
 	if (MainHUD && inst->m_Socket->itemflag) {
 		BaseCharacter->SetEscapeToolNum(inst->m_Socket->MyItemCount);
 		BaseCharacter->UpdateObtainedEscapeTool();
 		inst->m_Socket->itemflag = false;
 	}
+	
 }
 
 void ACharacterController::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
-	//inst->m_Socket->CloseSocket();
-	//inst->m_Socket->StopListen();
+	/*c_socket->CloseSocket();
+	c_socket->StopListen();*/
 }
 
 
@@ -457,8 +464,6 @@ bool ACharacterController::UpdateWorld()
 			PlayerVelocity.X = info->VeloX;
 			PlayerVelocity.Y = info->VeloY;
 			PlayerVelocity.Z = info->VeloZ;
-
-			float SyncHP = info->hp;
 			// 나이아가라 레이저
 			FVector Firegun;
 			FRotator EFiregun;
@@ -475,7 +480,7 @@ bool ACharacterController::UpdateWorld()
 			HEloc.X = info->Hshot.X;
 			HEloc.Y = info->Hshot.Y;
 			HEloc.Z = info->Hshot.Z;
-			
+
 			FRotator EffectRot;
 			EffectRot.Pitch = info->FEffect.Pitch;
 			EffectRot.Yaw = info->FEffect.Yaw;
@@ -518,7 +523,6 @@ bool ACharacterController::UpdateWorld()
 			OtherPlayer->SetActorRotation(PlayerRotation);
 			OtherPlayer->SetActorLocation(PlayerLocation);
 			OtherPlayer->GetCharacterMovement()->MaxWalkSpeed = info->Max_Speed;
-			OtherPlayer->SetHealth(SyncHP);
 			if (info->bGetWeapon == true)
 			{
 				OtherPlayer->CurWeapon->Destroy();
@@ -708,15 +712,14 @@ bool ACharacterController::UpdateWorld()
 					ServerTemp->Destroy();
 			}
 			/*UE_LOG(LogTemp, Warning, TEXT("otherplayer hp : %f"), OtherPlayer->GetHealth());*/
-			//UE_LOG(LogTemp, Warning, TEXT("my hp : %f"), Cast<ACharacterBase>(GetPawn())->GetHealth());
+			UE_LOG(LogTemp, Warning, TEXT("my hp : %f"), Cast<ACharacterBase>(GetPawn())->GetHealth());
 			if (info->bStopAnim == true) { //처리
 				OtherPlayer->StopAnimMontage(SyncDeadMontage);
 				info->bStopAnim = false;
 				OtherPlayer->bDeadAnim = false;
-				UE_LOG(LogTemp, Warning, TEXT("OtherPlayer->GetHealth() : %f"), OtherPlayer->GetHealth());
-				//OtherPlayer->SetHealth(100.f);
+				OtherPlayer->SetHealth(100.f);
 			}
-			else if (OtherPlayer->GetHealth() <= 0&& OtherPlayer->bDeadAnim == false) {
+			if (OtherPlayer->GetHealth() <= 0&& OtherPlayer->bDeadAnim == false) {
 				UE_LOG(LogTemp, Warning, TEXT("otherplayer hp : %f"), OtherPlayer->GetHealth());
 				UE_LOG(LogTemp, Warning, TEXT("my hp : %f"), Cast<ACharacterBase>(GetPawn())->GetHealth());
 				OtherPlayer->PlayAnimMontage(SyncDeadMontage);
@@ -748,28 +751,15 @@ bool ACharacterController::UpdateWorld()
 				OtherPlayer->PlayAnimMontage(SyncReloadMontageCh3);
 				info->bServerReload = false;
 			}
-			if (m_GameMode) {
-				for (int i = 0; i < m_GameMode->EscapeTools.Num(); i++)
-				{
-					if (Cast<AEscapeTool>(m_GameMode->EscapeTools[i]))
-						if (Escapeid == Cast<AEscapeTool>(m_GameMode->EscapeTools[i])->ItemID)
-							Cast<AEscapeTool>(m_GameMode->EscapeTools[i])->Destroy();
-				}
+			TArray<AActor*> EscapeTools;
+			UGameplayStatics::GetAllActorsOfClass(GetWorld(), AEscapeTool::StaticClass(), EscapeTools);
+			for (int i = 0; i < EscapeTools.Num(); i++)
+			{
+				if(Cast<AEscapeTool>(EscapeTools[i]))
+					if (Escapeid == Cast<AEscapeTool>(EscapeTools[i])->ItemID)
+						Cast<AEscapeTool>(EscapeTools[i])->Destroy();
 			}
-			if (inst->m_Socket->MoppType == 0) {
-				//Cast<AEscapeTool>(m_GameMode->EscapeTools[MoppID])->TransformMesh(inst->m_Socket->TempMoppTime, false, false);
-				Cast<AEscapeTool>(m_GameMode->EscapeTools[MoppID])->CurState = 0;
-				inst->m_Socket->MoppType = -1;
-			}
-			else if (inst->m_Socket->MoppType == 1) {
-				Cast<AEscapeTool>(m_GameMode->EscapeTools[MoppID])->CurState = 1;
-				inst->m_Socket->MoppType = -1;
-			}
-			else if (inst->m_Socket->MoppType == 2) {
-				Cast<AEscapeTool>(m_GameMode->EscapeTools[MoppID])->CurState = 2;
-				inst->m_Socket->MoppType = -1;
-			}
-
+		
 		}
 	}
 	return true;
@@ -809,18 +799,13 @@ void ACharacterController::UpdateSyncPlayer()
 				SpawnActor.Instigator = GetInstigator();
 				SpawnActor.Name = FName(*FString(to_string(NewPlayer.front()->Id).c_str()));
 				ToSpawn = ACharacter1::StaticClass();
-				if (world) {
-					ACharacter1* SpawnCharacter = world->SpawnActor<ACharacter1>(ToSpawn,
-						S_LOCATION, S_ROTATOR, SpawnActor);
-					if (SpawnCharacter) {
-						SpawnCharacter->SpawnDefaultController();
-						SpawnCharacter->_SessionId = NewPlayer.front()->Id;
-						SpawnCharacter->GetMesh()->SetSkeletalMesh(SkMeshAsset1);
-					}
-					if (Anim1)
-						SpawnCharacter->GetMesh()->SetAnimClass(Anim1);
-					SpawnCharacter->SetHealth(NewPlayer.front()->hp);
-				}
+				ACharacter1* SpawnCharacter = world->SpawnActor<ACharacter1>(ToSpawn,
+					S_LOCATION, S_ROTATOR, SpawnActor);
+				SpawnCharacter->SpawnDefaultController();
+				SpawnCharacter->_SessionId = NewPlayer.front()->Id;
+				SpawnCharacter->GetMesh()->SetSkeletalMesh(SkMeshAsset1);
+				if (Anim1)
+					SpawnCharacter->GetMesh()->SetAnimClass(Anim1);
 			}
 			break;
 		case  PlayerType::Character2:
@@ -835,22 +820,16 @@ void ACharacterController::UpdateSyncPlayer()
 				S_ROTATOR.Roll = 0.0f;
 				FActorSpawnParameters SpawnActor;
 				SpawnActor.Owner = this;
-				SpawnActor.Instigator = GetInstigator();  
+				SpawnActor.Instigator = GetInstigator();
 				SpawnActor.Name = FName(*FString(to_string(NewPlayer.front()->Id).c_str()));
 				ToSpawn = ACharacter2::StaticClass();
-				if (world)
-				{
-					ACharacter2* SpawnCharacter = world->SpawnActor<ACharacter2>(ToSpawn,
-						FVector::ZeroVector, FRotator::ZeroRotator, SpawnActor);
-					if (SpawnCharacter) {
-						SpawnCharacter->SpawnDefaultController();
-						SpawnCharacter->_SessionId = NewPlayer.front()->Id;
-						SpawnCharacter->GetMesh()->SetSkeletalMesh(SkMeshAsset2);
-					}
-					if (Anim2)
-						SpawnCharacter->GetMesh()->SetAnimClass(Anim2);
-					SpawnCharacter->SetHealth(NewPlayer.front()->hp);
-				}
+				ACharacter2* SpawnCharacter = world->SpawnActor<ACharacter2>(ToSpawn,
+					S_LOCATION, S_ROTATOR, SpawnActor);
+				SpawnCharacter->SpawnDefaultController();
+				SpawnCharacter->_SessionId = NewPlayer.front()->Id;
+				SpawnCharacter->GetMesh()->SetSkeletalMesh(SkMeshAsset2);
+				if (Anim2)
+					SpawnCharacter->GetMesh()->SetAnimClass(Anim2);
 			}
 			break;
 		case  PlayerType::Character3:
@@ -868,25 +847,19 @@ void ACharacterController::UpdateSyncPlayer()
 				SpawnActor.Instigator = GetInstigator();
 				SpawnActor.Name = FName(*FString(to_string(NewPlayer.front()->Id).c_str()));
 				ToSpawn = ACharacter3::StaticClass();
-				if (world) {
-					ACharacter3* SpawnCharacter = world->SpawnActor<ACharacter3>(ToSpawn,
-						FVector::ZeroVector, FRotator::ZeroRotator, SpawnActor);
-					if (SpawnCharacter) {
-						SpawnCharacter->SpawnDefaultController();
-						SpawnCharacter->_SessionId = NewPlayer.front()->Id;
-						SpawnCharacter->GetMesh()->SetSkeletalMesh(SkMeshAsset3);
-					}
-
-					DynamicMaterial = UMaterialInstanceDynamic::Create(OldMaterial, this);
-					if (DynamicMaterial)
-					{
-						SpawnCharacter->GetMesh()->SetMaterial(0, DynamicMaterial);
-						DynamicMaterial->SetScalarParameterValue(FName("Alpha"), 0.f);
-					}
-					if (Anim3)
-						SpawnCharacter->GetMesh()->SetAnimClass(Anim3);
-					SpawnCharacter->SetHealth(NewPlayer.front()->hp);
+				ACharacter3* SpawnCharacter = world->SpawnActor<ACharacter3>(ToSpawn,
+					S_LOCATION, S_ROTATOR, SpawnActor);
+				SpawnCharacter->SpawnDefaultController();
+				SpawnCharacter->_SessionId = NewPlayer.front()->Id;
+				SpawnCharacter->GetMesh()->SetSkeletalMesh(SkMeshAsset3);
+				DynamicMaterial = UMaterialInstanceDynamic::Create(OldMaterial, this);
+				if (DynamicMaterial)
+				{
+					SpawnCharacter->GetMesh()->SetMaterial(0, DynamicMaterial);
+					DynamicMaterial->SetScalarParameterValue(FName("Alpha"), 0.f);
 				}
+				if (Anim3)
+					SpawnCharacter->GetMesh()->SetAnimClass(Anim3);
 			}
 			break;
 		case  PlayerType::Character4:
@@ -904,19 +877,13 @@ void ACharacterController::UpdateSyncPlayer()
 				SpawnActor.Instigator = GetInstigator();
 				SpawnActor.Name = FName(*FString(to_string(NewPlayer.front()->Id).c_str()));
 				ToSpawn = ACharacter4::StaticClass();
-				if (world)
-				{
-					ACharacter4* SpawnCharacter = world->SpawnActor<ACharacter4>(ToSpawn,
-						FVector::ZeroVector, FRotator::ZeroRotator, SpawnActor);
-					if (SpawnCharacter) {
-						SpawnCharacter->SpawnDefaultController();
-						SpawnCharacter->_SessionId = NewPlayer.front()->Id;
-						SpawnCharacter->GetMesh()->SetSkeletalMesh(SkMeshAsset4);
-					}
-					if (Anim4)
-						SpawnCharacter->GetMesh()->SetAnimClass(Anim4);
-					SpawnCharacter->SetHealth(NewPlayer.front()->hp);
-				}
+				ACharacter4* SpawnCharacter = world->SpawnActor<ACharacter4>(ToSpawn,
+					S_LOCATION, S_ROTATOR, SpawnActor);
+				SpawnCharacter->SpawnDefaultController();
+				SpawnCharacter->_SessionId = NewPlayer.front()->Id;
+				SpawnCharacter->GetMesh()->SetSkeletalMesh(SkMeshAsset4);
+				if (Anim4)
+					SpawnCharacter->GetMesh()->SetAnimClass(Anim4);
 			}
 			break;
 		default:
@@ -1011,7 +978,6 @@ void ACharacterController::UpdatePlayer()
 	auto MyRotation = m_Player->GetActorRotation();
 	auto MyVelocity = m_Player->GetVelocity();
 	auto max_speed = m_Player->GetCharacterMovement()->MaxWalkSpeed;
-	//auto MyHP = m_Player->GetHealth();
 	FVector MyCameraLocation;
 	FRotator MyCameraRotation;
 	m_Player->GetActorEyesViewPoint(MyCameraLocation, MyCameraRotation);

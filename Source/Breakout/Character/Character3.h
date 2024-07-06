@@ -25,9 +25,6 @@ public:
 	TObjectPtr<class UNiagaraComponent> NiagaraComp;
 	class UBOGameInstance* inst;
 	TObjectPtr<class UMaterialInstanceDynamic> DynamicMaterial;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TObjectPtr<class UPostProcessComponent> PostProcessComp;
 protected:
 	virtual void Skill_S(const FInputActionValue& Value) override;
 	virtual void Skill_E(const FInputActionValue& Value) override;
