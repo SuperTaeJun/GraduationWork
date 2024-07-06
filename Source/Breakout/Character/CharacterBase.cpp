@@ -30,6 +30,7 @@
 #include "Animatiom/BOAnimInstance.h"
 #include "Materials/MaterialInstance.h"
 #include "Materials/MaterialInstanceDynamic.h"
+#include "Sound/SoundCue.h"
 
 ACharacterBase::ACharacterBase()
 {
@@ -89,19 +90,6 @@ ACharacterBase::ACharacterBase()
 	bCanEscape = false;
 
 }
-
-//float ACharacterBase::GetAO_Yaw()
-//{
-//	AO_Yaw = UKismetMathLibrary::NormalizedDeltaRotator(GetControlRotation(), GetActorRotation()).Yaw;
-//
-//	return AO_Yaw;
-//}
-//
-//float ACharacterBase::GetAO_Pitch()
-//{
-//	AO_Pitch = UKismetMathLibrary::NormalizedDeltaRotator(GetControlRotation(), GetActorRotation()).Pitch;
-//	return AO_Pitch;
-//}
 
 void ACharacterBase::BeginPlay()
 {
@@ -343,13 +331,12 @@ void ACharacterBase::GrandeThrow()
 {
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 	Cast<UBOAnimInstance>(AnimInstance)->bUseLeftHand = false;
-	PlayAnimMontage(GrenadeMontage, 2.f, FName("Fire"));
-	CurWeapon->SetActorHiddenInGame(true);
-	//CurWeapon->SetActorHiddenInGame(true);
-	//UE_LOG(LogTemp, Log, TEXT("FIRE"));
+	//PlayAnimMontage(GrenadeMontage, 2.f, FName("Fire"));
+
 }
 void ACharacterBase::GrandeAim()
 {
+	CurWeapon->SetActorHiddenInGame(true);
 	Grenade->bHiddenInGame = false;
 
 	const USkeletalMeshSocket* WeaponSocket = GetMesh()->GetSocketByName(FName("LeftHandSocket"));
@@ -360,7 +347,7 @@ void ACharacterBase::GrandeAim()
 	}
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 	if (AnimInstance && GrenadeMontage)
-		PlayAnimMontage(GrenadeMontage, 1.5f, FName("Aim"));
+		PlayAnimMontage(GrenadeMontage, 1.5f);
 }
 void ACharacterBase::GrandeThrowFinish()
 {
@@ -369,7 +356,7 @@ void ACharacterBase::GrandeThrowFinish()
 	Cast<UBOAnimInstance>(AnimInstance)->bUseLeftHand = true;
 	const USkeletalMeshSocket* WeaponSocket = GetMesh()->GetSocketByName(RightSocketName);
 
-	//CurWeapon->SetActorHiddenInGame(false);
+	CurWeapon->SetActorHiddenInGame(false);
 
 	if (WeaponSocket && CurWeapon)
 	{
@@ -518,11 +505,11 @@ void ACharacterBase::Dead()
 
 void ACharacterBase::TurnInPlace(float DeltaTime)
 {
-	if (AO_Yaw > 45.f)
+	if (AO_Yaw > 30.f)
 	{
 		TurningType = ETurningInPlace::ETIP_Right;
 	}
-	else if (AO_Yaw < -45.f)
+	else if (AO_Yaw < -30.f)
 	{
 		TurningType = ETurningInPlace::ETIP_Left;
 	}
@@ -567,7 +554,7 @@ void ACharacterBase::AimOffset(float DeltaTime)
 		bUseControllerRotationYaw = true;
 		TurningType = ETurningInPlace::ETIP_NotTurning;
 	}
-	AO_Pitch = GetBaseAimRotation().Pitch;
+	AO_Pitch = GetBaseAimRotation().Pitch + 20.f;
 	if (AO_Pitch > 90.f && !IsLocallyControlled())
 	{
 		FVector2D InRange(270.f, 360.f);
@@ -831,6 +818,10 @@ void ACharacterBase::Reroad(const FInputActionValue& Value)
 				inst->m_Socket->Send_Reload_packet(inst->GetPlayerID(), true);
 			bCanFire = false;
 		}
+		if (CurWeapon->GetReloadSound())
+		{
+			UGameplayStatics::PlaySoundAtLocation(this, CurWeapon->GetReloadSound(), GetActorLocation());
+		}
 	}
 }
 
@@ -1013,7 +1004,7 @@ void ACharacterBase::Tick(float DeltaTime)
 	}
 
 
-	if (Cast<UBOGameInstance>(GetWorld()->GetGameInstance())->m_Socket->bAllReady == true && !bStarted)
+	if (/*Cast<UBOGameInstance>(GetWorld()->GetGameInstance())->m_Socket->bAllReady == true &&*/ !bStarted)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("StartGame"));
 		Cast<UBOGameInstance>(GetWorld()->GetGameInstance())->m_Socket->bAllReady = false;
