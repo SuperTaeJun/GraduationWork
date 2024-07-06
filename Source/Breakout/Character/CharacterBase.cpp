@@ -975,8 +975,6 @@ void ACharacterBase::Tick(float DeltaTime)
 		CanJump = true;
 	}
 
-	//UE_LOG(LogTemp, Warning, TEXT("HHHHHH : %s"),*GetVelocity().ToString());
-
 	UpdateStamina(DeltaTime);
 	UpdateSprintCamera(DeltaTime);
 	AimOffset(DeltaTime);
@@ -1007,7 +1005,7 @@ void ACharacterBase::Tick(float DeltaTime)
 	}
 
 
-	if (Cast<UBOGameInstance>(GetWorld()->GetGameInstance())->m_Socket->bAllReady == true && !bStarted)
+	if (/*Cast<UBOGameInstance>(GetWorld()->GetGameInstance())->m_Socket->bAllReady == true &&*/ !bStarted)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("StartGame"));
 		Cast<UBOGameInstance>(GetWorld()->GetGameInstance())->m_Socket->bAllReady = false;
