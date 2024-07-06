@@ -37,7 +37,7 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
-	void UpdateSprintCamera(float DeltaTime);
+	void UpdateCameraBoom(float DeltaTime);
 	void UpdateStamina(float DeltaTime);
 	void SetHUDCrosshair(float DeltaTime);
 	void UpdateHpHUD();
@@ -69,6 +69,7 @@ protected:
 
 	FVector SWAimLastLoc;
 	FTransform StartTransform;
+	bool bSkillUsing = false;
 public:
 	void SetResetState();
 

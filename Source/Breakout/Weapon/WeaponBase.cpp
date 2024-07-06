@@ -194,7 +194,6 @@ void AWeaponBase::Fire(const FVector& HitTarget)
 		FTransform SocketTransform = MuzzleSocket->GetSocketTransform(GetWeaponMesh());
 		FVector Start = SocketTransform.GetLocation();
 
-		//WeaponTraceHit(Start, HitTarget, FireHit);
 		FVector ToTarget = bUseScatter ? TraceEndWithScatter(Start, HitTarget) : Start + (HitTarget - Start) * 1.25f;
 		ToTarget = ToTarget - SocketTransform.GetLocation();
 
@@ -212,15 +211,6 @@ void AWeaponBase::Fire(const FVector& HitTarget)
 				Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Fire_Effect(Cast<ACharacterBase>(GetOwner())->_SessionId, SocketTransform.GetLocation(), ToTargetRot, 0);
 				FiredBullet->SetOwner(OwnerPawn);
 			}
-			/*if (ImpactNiagara)
-			{
-				UNiagaraFunctionLibrary::SpawnSystemAtLocation
-				(
-					World,
-					ImpactNiagara,
-					SocketTransform.GetLocation()
-				);
-			}*/
 			if (FireSound)
 			{
 				UGameplayStatics::PlaySoundAtLocation(

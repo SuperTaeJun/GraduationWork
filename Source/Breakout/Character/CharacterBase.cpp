@@ -156,12 +156,16 @@ void ACharacterBase::BeginPlay()
 }
 
 
-void ACharacterBase::UpdateSprintCamera(float DeltaTime)
+void ACharacterBase::UpdateCameraBoom(float DeltaTime)
 {
-	if(CameraBoom->TargetArmLength>= SPRINTCAMERALENGTH && CharacterState == ECharacterState::ECS_SPRINT)
-		CameraBoom->TargetArmLength -= DeltaTime * 400;
-	else if (CameraBoom->TargetArmLength <= DEFAULTCAMERALENGTH && CharacterState == ECharacterState::ECS_RUN)
+	if (CameraBoom->TargetArmLength <= DEFAULTCAMERALENGTH && (CharacterState == ECharacterState::ECS_RUN || CharacterState == ECharacterState::ECS_IDLE))
+	{
 		CameraBoom->TargetArmLength += DeltaTime * 400;
+	}
+	else if (CameraBoom->TargetArmLength >= SPRINTCAMERALENGTH && CharacterState == ECharacterState::ECS_SPRINT)
+	{
+		CameraBoom->TargetArmLength -= DeltaTime * 400;
+	}
 }
 void ACharacterBase::UpdateStamina(float DeltaTime)
 {
@@ -951,22 +955,27 @@ void ACharacterBase::Tick(float DeltaTime)
 	switch (CharacterState)
 	{
 	case ECharacterState::ECS_IDLE:
+		UpdateCameraBoom(DeltaTime);
 		break;
 	case ECharacterState::ECS_RUN:
 		Movement->MaxWalkSpeed = 400.f;
 		UGameplayStatics::GetPlayerCameraManager(GetWorld(), 0)->StartCameraShake(UJog::StaticClass());
+		UpdateCameraBoom(DeltaTime);
 		break;
 	case ECharacterState::ECS_SPRINT:
 		if (!StaminaExhaustionState)
 		{
-			Movement->MaxWalkSpeed = 600.f;
-			UGameplayStatics::GetPlayerCameraManager(GetWorld(), 0)->StartCameraShake(USprint::StaticClass());
+			if (!bSkillUsing)
+			{
+				Movement->MaxWalkSpeed = 600.f;
+				UGameplayStatics::GetPlayerCameraManager(GetWorld(), 0)->StartCameraShake(USprint::StaticClass());
+			}
 		}
-		break;
-	case ECharacterState::ECS_FALLING:
+		UpdateCameraBoom(DeltaTime);
 		break;
 	case ECharacterState::ECS_DEFAULT:
 		Movement->MaxWalkSpeed = 400.f;
+		UpdateCameraBoom(DeltaTime);
 		break;
 	}
 
@@ -976,7 +985,6 @@ void ACharacterBase::Tick(float DeltaTime)
 	}
 
 	UpdateStamina(DeltaTime);
-	UpdateSprintCamera(DeltaTime);
 	AimOffset(DeltaTime);
 
 	SetHUDCrosshair(DeltaTime);
@@ -1005,7 +1013,7 @@ void ACharacterBase::Tick(float DeltaTime)
 	}
 
 
-	if (/*Cast<UBOGameInstance>(GetWorld()->GetGameInstance())->m_Socket->bAllReady == true &&*/ !bStarted)
+	if (Cast<UBOGameInstance>(GetWorld()->GetGameInstance())->m_Socket->bAllReady == true && !bStarted)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("StartGame"));
 		Cast<UBOGameInstance>(GetWorld()->GetGameInstance())->m_Socket->bAllReady = false;
