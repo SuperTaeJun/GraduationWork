@@ -254,11 +254,11 @@ bool ClientSocket::PacketProcess(char* ptr)
 		PlayerInfo.players[packet->id].WinnerID = packet->winnerid;
 		break;
 	}
-	case SC_HP: {
-		SC_DAMAGE_CHANGE* packet = reinterpret_cast<SC_DAMAGE_CHANGE*>(ptr);
-		PlayerInfo.players[packet->id].hp = packet->hp;
-		break;
-	}
+	//case SC_HP: {
+	//	SC_DAMAGE_CHANGE* packet = reinterpret_cast<SC_DAMAGE_CHANGE*>(ptr);
+	//	PlayerInfo.players[packet->id].hp = packet->hp;
+	//	break;
+	//}
 	case SC_MYITEM_COUNT:{
 		SC_MY_ITEM_COUNT* packet = reinterpret_cast<SC_MY_ITEM_COUNT*>(ptr);
 		Tempcnt = packet->MyITEMCount;

@@ -765,7 +765,7 @@ void process_packet(int s_id, char* p)
 		//	packet.type = SC_SYNC_UI;
 		//	cl.do_send(sizeof(packet), &packet);
 		//}
-		
+
 		break;
 	}
 	case CS_HIT_EFFECT: {
@@ -1167,7 +1167,7 @@ void process_packet(int s_id, char* p)
 		}
 		break;
 	}
-	case CS_HP: {
+	/*case CS_HP: {
 		CS_DAMAGE_PACKET* packet = reinterpret_cast<CS_DAMAGE_PACKET*>(p);
 		CLIENT& cl = clients[packet->id];
 		cl._hp = packet->hp;
@@ -1188,7 +1188,7 @@ void process_packet(int s_id, char* p)
 			other.do_send(sizeof(packet), &packet);
 		}
 		break;
-	}
+	}*/
 	default:
 		cout << " 오류패킷타입 : " << p << endl;
 		break;
@@ -1464,4 +1464,3 @@ void send_delta_time_to_clients(double deltaTime) {
 		client.state_lock.unlock();
 	}
 }
-
