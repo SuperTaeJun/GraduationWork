@@ -49,12 +49,6 @@ const char CS_ITEM_ANIM = 23;
 const char CS_REMOVE_WEAPON = 24;
 const char CS_DECREASE_COUNT = 25;
 const char CS_CH2_SKILL = 26;
-const char CS_PLAYER_HEAL = 27;
-const char CS_PLAYER_RELOAD = 28;
-const char CS_MOPP = 29;
-const char CS_HP = 30;
-const char CS_ACCOUNT = 31;
-const char CS_LOGOUT = 32; // 이때 delete 되게 할 용도
 
 const char SC_LOGIN_OK = 1;
 const char SC_OTHER_PLAYER = 2;
@@ -64,6 +58,7 @@ const char SC_OTHER_WEAPO = 5;
 const char SC_ALL_READY = 6;
 const char SC_ATTACK = 7;
 const char SC_EFFECT = 8;
+const char SC_PLAYER_DAMAGE = 9;
 const char SC_SHOTGUN_BEAM = 10;
 const char SC_SHOTGUN_DAMAGED = 11;
 const char SC_NiAGARA = 12;
@@ -82,15 +77,6 @@ const char SC_ITEM_ANIM = 24;
 const char SC_REMOVE_WEAPON = 25;
 const char SC_MYNEW_COUNT = 26;
 const char SC_CH2_SKILL = 27;
-const char SC_PLAYER_HEAL = 28;
-const char SC_PLAYER_RELOAD = 29;
-const char SC_MOPP = 30;
-const char SC_HP = 31;
-const char SC_DELTA = 32;
-const char SC_TRAVLE = 33;
-const char SC_LOGIN_FAIL = 34;
-const char SC_LOBBY_ROOM = 35;
-const char SC_SYNC_UI = 36;
 
 #pragma pack (push, 1)
 struct CS_LOGIN_PACKET
@@ -105,19 +91,7 @@ struct SC_LOGIN_BACK {
 	unsigned type;
 	int id;
 	char cid[MAX_INFO_SIZE];
-	bool bLogin;
-};
-struct SC_LOGIN_FAIL_PACKET {
-	unsigned char size;
-	unsigned type;
-	int id;
-	char failreason[MAX_INFO_SIZE];
-};
-struct CS_ACCOUNT_PACKET {
-	unsigned char size;
-	unsigned type;
-	char id[MAX_INFO_SIZE];
-	char pw[MAX_INFO_SIZE];
+
 };
 #pragma pack(pop)
 
@@ -140,14 +114,9 @@ struct SC_PLAYER_SYNC {
 	float Max_speed;
 	float x, y, z;
 	float yaw;
-	float hp;
-	PlayerType p_type;
-};
-struct SC_SYNC_UI_PACKET {
-	unsigned char size;
-	unsigned type;
-	int id;
+	//char object_type;
 	char name[MAX_INFO_SIZE];
+	PlayerType p_type;
 };
 struct CS_SELECT_CHARACTER
 {
@@ -184,11 +153,6 @@ struct CS_READY_PACKET {
 	unsigned char size;
 	unsigned type;
 };
-struct SC_TRAVEL_PACKET {
-	unsigned char size;
-	unsigned type;
-	bool ingame;
-};
 struct SC_ACCEPT_READY {
 	unsigned char size;
 	unsigned type;
@@ -220,16 +184,18 @@ struct CS_EFFECT_PACKET {
 struct CS_DAMAGE_PACKET {
 	unsigned char size;
 	unsigned char type;
-	int id;
-	float hp;
+	int damaged_id;
+	float damage;
 };
-struct SC_DAMAGE_CHANGE {
+struct SC_DAMAGE_CHANGE
+{
 	unsigned char size;
 	unsigned char type;
-	int id;
-	float hp;
+	int damaged_id;
+	int damage;
 };
-struct CS_SIGNAL_PACKET {
+struct CS_SIGNAL_PACKET
+{
 	unsigned char size;
 	unsigned char type;
 	int id;
@@ -390,35 +356,5 @@ struct SC_CH2_SKILL_PACKET {
 	int id;
 	PlayerType p_type;
 	bool bfinish;
-};
-struct CS_HEAL_PACKET {
-	unsigned char size;
-	unsigned char type;
-	int id;
-	float hp;
-};
-struct CS_RELOAD_TIMER_PACKET {
-	unsigned char size;
-	unsigned char type;
-	int id;
-	int bulletcount;
-};
-struct CS_MOPP_PACKET {
-	unsigned char size;
-	unsigned char type;
-	int itemid;
-	int mopptype;
-};
-struct SC_DELTA_TIME_PACKET {
-	unsigned char size;
-	unsigned char type;
-	int id;
-	double time;
-};
-struct SC_LOBBY_PACKET {
-	unsigned char size;
-	unsigned char type;
-	int id;
-	bool bLobby;
 };
 #pragma pack(pop)

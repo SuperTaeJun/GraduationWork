@@ -99,10 +99,8 @@ public:
 	float VZ;
 	float Max_Speed;
 
-	float _hp; // 체력
-	float _max_hp; // 체력
-	int _bulletcount;
-	int _max_bulletcount;
+	int _hp; // 체력
+	int damage;
 	bool is_bone = false;
 	bool bGetWeapon = false;
 	bool bCancel;
@@ -114,7 +112,6 @@ public:
 	int wtype;
 	//--------------------
 	bool bStopAnim;
-	bool bLogin = false;
 	unordered_set   <int>  viewlist; // 시야 안 오브젝트
 	mutex vl;
 	mutex hp_lock;
@@ -139,12 +136,11 @@ public:
 	SOCKET  _socket;
 	int      _prev_size;
 	int      last_move_time;
-	int currentRoom;  // 클라이언트가 속한 게임룸 ID를 저장
+
 public:
 	CLIENT() : _state(ST_FREE), _prev_size(0)
 	{
-		_max_hp = 100.f;
-		_hp = 100.f;
+		_hp = 100;
 		myItemCount = 0;
 	}
 
@@ -281,33 +277,24 @@ atomic<int> ready_count = 0;
 atomic<int> ingamecount = 0;
 using namespace chrono;
 
-vector<vector<int>> gameRooms; // 게임룸 컨테이너
-
-mutex mtx;
-
 void ev_timer();
 int get_id();
 void send_select_character_type_packet(int _s_id);
 void send_login_ok_packet(int _s_id);
 void send_move_packet(int _id, int target);
 void send_change_hp(int _s_id);
+void send_put_object(int _s_id, int target);
 void Disconnect(int _s_id);
 void send_ready_packet(int _s_id);
 void send_endgame_packet(int _s_id);
-void player_heal(int s_id);
-void player_reload_weapon(int s_id);
 void send_myitem_count_packet(int _s_id);
 void send_item_packet(int _s_id, int item_index);
 void send_myitem_packet(int _s_id);
 void worker_thread();
-void timer();
-void send_delta_time_to_clients(double deltaTime);
-void send_travel_ready_packet(int _s_id);
-void send_login_fail_packet(int _s_id);
-void SendLobbyPacket(int clientId);
+
+
 int main()
 {
-
 	wcout.imbue(locale("korean"));
 	WSADATA WSAData;
 	::WSAStartup(MAKEWORD(2, 2), &WSAData);
@@ -319,7 +306,7 @@ int main()
 	server_addr.sin_addr.s_addr = htonl(INADDR_ANY);
 	bind(sever_socket, reinterpret_cast<sockaddr*>(&server_addr), sizeof(server_addr));
 	listen(sever_socket, SOMAXCONN);
-	cout << "서버 13시작" << endl;
+	cout << "서버 시작" << endl;
 	g_h_iocp = CreateIoCompletionPort(INVALID_HANDLE_VALUE, NULL, NULL, 0);
 	CreateIoCompletionPort(reinterpret_cast<HANDLE>(sever_socket), g_h_iocp, 0, 0);
 
@@ -335,28 +322,11 @@ int main()
 
 	for (int i = 0; i < MAX_USER; ++i)
 		clients[i]._s_id = i;
-	for (int i = 0; i < MAX_OBJ; ++i)
-		objects[i].ob_id = i;
-	objects[0].x = 1710.f;
-	objects[0].y = -1080.f;
-	objects[0].z = 120.f;
 
-	objects[1].x = 1800.f;
-	objects[1].y = -570.f;
-	objects[1].z = 80.f;
-
-
-	objects[2].x = 2280.f;
-	objects[2].y = -630.f;
-	objects[2].z = 100.f;
-
-	objects[3].x = 2110.f;
-	objects[3].y = -1080.f;
-	objects[3].z = 120.f;
-
+	g_timer = CreateEvent(NULL, FALSE, FALSE, NULL);
 	vector <thread> worker_threads;
 	thread servertherad{ ev_timer };
-	thread TimerThread{ timer };
+
 	for (int i = 0; i < 16; ++i)
 		worker_threads.emplace_back(worker_thread);
 
@@ -364,7 +334,6 @@ int main()
 		th.join();
 	if (servertherad.joinable())
 		servertherad.join();
-	TimerThread.join();
 	for (auto& cl : clients) {
 		if (ST_INGAME == cl._state)
 			Disconnect(cl._s_id);
@@ -419,28 +388,10 @@ void send_login_ok_packet(int _s_id)
 	packet.size = sizeof(packet);
 	packet.type = SC_LOGIN_OK;
 	packet.id = _s_id;
-	packet.bLogin = clients[_s_id].bLogin;
 	strcpy_s(packet.cid, clients[_s_id].name);
-	clients[_s_id].do_send(sizeof(packet), &packet);
-}
-void send_login_fail_packet(int _s_id)
-{
-	SC_LOGIN_FAIL_PACKET packet;
-	packet.size = sizeof(packet);
-	packet.type = SC_LOGIN_FAIL;
-	packet.id = _s_id;
-	strcpy_s(packet.failreason, "fail");
+	cout << "_s_id" << _s_id << endl;
 
 	clients[_s_id].do_send(sizeof(packet), &packet);
-}
-void SendLobbyPacket(int clientId)
-{
-	SC_LOBBY_PACKET packet;
-	packet.size = sizeof(packet);
-	packet.type = SC_LOBBY_ROOM;
-	packet.id = clientId;
-	packet.bLobby = true;
-	clients[clientId].do_send(sizeof(packet), &packet);
 }
 void send_select_character_type_packet(int _s_id)
 {
@@ -455,6 +406,28 @@ void send_select_character_type_packet(int _s_id)
 	clients[_s_id].do_send(sizeof(packet), &packet);
 }
 
+
+//로그인 실패
+
+
+//오브젝트 생성
+void send_put_object(int _s_id, int target)
+{
+	SC_PLAYER_SYNC packet;
+	packet.id = target;
+	packet.size = sizeof(packet);
+	packet.type = SC_OTHER_PLAYER;
+	packet.x = clients[target].x;
+	packet.y = clients[target].y;
+	packet.z = clients[target].z;
+
+	strcpy_s(packet.name, clients[target].name);
+	//packet.object_type = 0;
+	clients[_s_id].do_send(sizeof(packet), &packet);
+}
+
+
+//해제
 void Disconnect(int _s_id)
 {
 	CLIENT& cl = clients[_s_id];
@@ -464,86 +437,31 @@ void Disconnect(int _s_id)
 	closesocket(clients[_s_id]._socket);
 	cout << "------------연결 종료------------" << endl;
 }
-void createGameRoom(int clientId) {
-	gameRooms.emplace_back();  // 새로운 게임룸 생성
-	gameRooms.back().push_back(clientId);  // 첫 번째 클라이언트 추가
-	clients[clientId].currentRoom = gameRooms.size() - 1;
-	cout << "Client " << clientId << " created and joined room " << (gameRooms.size() - 1) << endl;
-}
 
-void matchClientToGameRoom(int clientId) {
-	unique_lock<mutex> lock(mtx);
 
-	// 현재 생성된 게임룸들 중에서 빈 자리가 있는 곳에 클라이언트 매칭
-	for (auto& room : gameRooms) {
-		if (room.size() < 2) {  // 방의 최대 인원수는 3명
-			room.push_back(clientId);
-			clients[clientId].currentRoom = (&room - &gameRooms[0]);
-			cout << "Client " << clientId << " matched to room " << (&room - &gameRooms[0]) << endl;
-			cout << "clients[clientId].currentRoom : " << clients[clientId].currentRoom << endl;
-			// 만약 최대 인원에 도달했다면 게임 시작
-			if (room.size() == 2) {
-				//게임 넘어가도록 패킷 보내기 <- 여기서
-				cout << "Room " << (&room - &gameRooms[0]) << " is full. Game starting!" << endl;
-				for (int id : room)
-					SendLobbyPacket(id);
-			}
-
-			return;  // 클라이언트 매칭 후 함수 종료
-		}
-	}
-
-	// 모든 게임룸이 가득 찬 경우
-	createGameRoom(clientId);
-}
-// 우선 로그인 ok 패킷을 보내면서 게임룸 등록
-// 게임룸에 들어가면서 current_game 변수 추가
-// 3명이 다 찼을 경우 같은 게임룸에 있는 플레이어에게 게임 시작 패킷 전송 -> 클라에서는 이걸 받으면 한번에 이동하도록
-// 모든 패킷에는 같은 게임룸에 있는 플레이어인지 체크 
+//패킷 판별
 void process_packet(int s_id, char* p)
 {
-
 	unsigned char packet_type = p[1];
+	//CLIENT& cl = clients[s_id];
+	//cout << "packet type :" << to_string(packet_type) << endl;
 	switch (packet_type) {
 	case CS_LOGIN: {
 		CS_LOGIN_PACKET* packet = reinterpret_cast<CS_LOGIN_PACKET*>(p);
 
 		CLIENT& cl = clients[s_id];
-		cout << "Adazbzhxlkjbnzlkvnlk" << endl;
 		cout << "[Recv login] ID :" << packet->id << ", PASSWORD : " << packet->pw << endl;
 		cl.state_lock.lock();
 		cl._state = ST_INGAME;
 		cl.state_lock.unlock();
-		//for (int i = 0; i < MAX_USER; ++i)
-		//{
-		//	if (strcmp(packet->id, clients[i].name) == 0)
-		//		send_login_fail_packet(s_id);
-		//}
+		cout << "cl.sid : " << cl._s_id << endl;
 		strcpy_s(cl.name, packet->id);
-		strcpy_s(cl._pw, packet->pw);
-		cl.bLogin = true;
+		cout << "czc : " << cl.name << endl;
 		send_login_ok_packet(cl._s_id);
 		cout << "플레이어[" << s_id << "]" << " 로그인 성공" << endl;
-		matchClientToGameRoom(cl._s_id);
-		/*if (DB_odbc(packet->id, packet->pw))
-		{
-			strcpy_s(cl.name, packet->id);
-			strcpy_s(cl._pw, packet->pw);
-			cl.bLogin = true;
-			send_login_ok_packet(cl._s_id);
-			cout << "플레이어[" << s_id << "]" << " 로그인 성공" << endl;
-			matchClientToGameRoom(cl._s_id);
-		}
-		else
-			send_login_fail_packet(s_id);*/
+
 		break;
-	}
-	case CS_ACCOUNT: {
-		CS_ACCOUNT_PACKET* packet = reinterpret_cast<CS_ACCOUNT_PACKET*>(p);
-		CLIENT& cl = clients[s_id];
-		//save_data(packet->id, packet->pw);
-		cout << "계정 생성 완료" << endl;
-		break;
+
 	}
 	case CS_SELECT_CHAR: {
 
@@ -558,26 +476,79 @@ void process_packet(int s_id, char* p)
 		ingamecount++;
 		send_select_character_type_packet(cl._s_id);
 
-		int currentRoom = cl.currentRoom;
+
+
+		cout << "cl._s_id : " << cl._s_id << ", 131 ,, " << cl.p_type << endl;
+		for (auto& other : clients) {
+			if (other._s_id == cl._s_id) continue;
+			other.state_lock.lock();
+			if (ST_INGAME != other._state) {
+				other.state_lock.unlock();
+				continue;
+			}
+			else other.state_lock.unlock();
+
+			SC_PLAYER_SYNC packet;
+			packet.id = cl._s_id;
+			strcpy_s(packet.name, cl.name);
+			packet.size = sizeof(packet);
+			packet.type = SC_OTHER_PLAYER;
+			packet.x = cl.x;
+			packet.y = cl.y;
+			packet.z = cl.z;
+			packet.yaw = cl.Yaw;
+			packet.Max_speed = cl.Max_Speed;
+			packet.p_type = cl.p_type;
+			printf_s("[Send put object] id : %d, location : (%f,%f,%f), yaw : %f\n", packet.id, packet.x, packet.y, packet.z, packet.yaw);
+			cout << "이거 누구한테 감 :  ?" << other._s_id << endl;
+			other.do_send(sizeof(packet), &packet);
+		}
+
+		// 새로 접속한 플레이어에게 주위 객체 정보를 보낸다
+		for (auto& other : clients) {
+			if (other._s_id == cl._s_id) continue;
+			other.state_lock.lock();
+			if (ST_INGAME != other._state) {
+				other.state_lock.unlock();
+				continue;
+			}
+			else other.state_lock.unlock();
+
+
+			SC_PLAYER_SYNC packet;
+			packet.id = other._s_id;
+			strcpy_s(packet.name, other.name);
+
+			packet.size = sizeof(packet);
+			packet.type = SC_OTHER_PLAYER;
+			packet.x = other.x;
+			packet.y = other.y;
+			packet.z = other.z;
+			packet.yaw = other.Yaw;
+			packet.Max_speed = other.Max_Speed;
+			packet.p_type = other.p_type;
+			printf_s("[어떤 클라의 Send put object] id : %d, location : (%f,%f,%f), yaw : %f\n", packet.id, packet.x, packet.y, packet.z, packet.yaw);
+
+			cl.do_send(sizeof(packet), &packet);
+
+		}
+		cout << "몇명 들어옴 : " << ingamecount << endl;
+
 		if (ingamecount >= 2)
 		{
 			for (auto& player : clients) {
 				if (ST_INGAME != player._state)
 					continue;
-				if (player.currentRoom != currentRoom)
-					continue;
+
 				send_ready_packet(player._s_id);
 				cout << "보낼 플레이어" << player._s_id << endl;
 
 			}
-			cout << "cl._s_id : " << cl._s_id << ", 131 ,, " << cl.p_type << endl;
-
 		}
 		break;
 	}
 	case CS_MOVE_Packet: {
 		CS_MOVE_PACKET* packet = reinterpret_cast<CS_MOVE_PACKET*>(p);
-
 		CLIENT& cl = clients[packet->id];
 		cl.x = packet->x;
 		cl.y = packet->y;
@@ -587,14 +558,11 @@ void process_packet(int s_id, char* p)
 		cl.VY = packet->vy;
 		cl.VZ = packet->vz;
 		cl.Max_Speed = packet->Max_speed;
-		int currentRoom = cl.currentRoom;
 
 		for (auto& other : clients) {
 			if (other._s_id == s_id)
 				continue;
 			if (ST_INGAME != other._state)
-				continue;
-			if (other.currentRoom != currentRoom)
 				continue;
 			send_move_packet(other._s_id, cl._s_id);
 		}
@@ -606,9 +574,7 @@ void process_packet(int s_id, char* p)
 		CLIENT& cl = clients[packet->id];
 		cl.w_type = packet->weapon_type;
 		cl.selectweapon = packet->bselectwep;
-		//if(weapon type에 따라서 bullet 개수 적용)
 		cout << "플레이어 : " << cl._s_id << "무기 타입" << cl.w_type << endl;
-		int currentRoom = cl.currentRoom;
 		for (auto& other : clients) {
 			if (other._s_id == cl._s_id) continue;
 			other.state_lock.lock();
@@ -617,16 +583,12 @@ void process_packet(int s_id, char* p)
 				continue;
 			}
 			else other.state_lock.unlock();
-			if (other.currentRoom != currentRoom)
-				continue;
 			SC_SYNC_WEAPO packet;
 			packet.id = cl._s_id;
 			packet.size = sizeof(packet);
 			packet.type = SC_OTHER_WEAPO;
 			packet.weapon_type = cl.w_type;
 			packet.bselectwep = cl.selectweapon;
-			cout << "cl.name : " << cl.name << endl;
-			//strcpy_s(packet.cid, cl.name);
 			cout << "이거 누구한테 감 :  ?" << other._s_id << endl;
 			other.do_send(sizeof(packet), &packet);
 		}
@@ -636,19 +598,15 @@ void process_packet(int s_id, char* p)
 		CS_READY_PACKET* packet = reinterpret_cast<CS_READY_PACKET*>(p);
 		CLIENT& cl = clients[s_id];
 		ready_count++;
-		cout << "ready_count : " << ready_count << endl;
-		int currentRoom = cl.currentRoom;
-		if (ready_count >= 2)
+		cout << "ready_count" << ready_count << endl;
+		if (ready_count >= 3)
 		{
 			for (auto& player : clients) {
 				if (ST_INGAME != player._state)
 					continue;
-				if (player.currentRoom != currentRoom)
-					continue;
-				send_travel_ready_packet(player._s_id);
+				send_ready_packet(player._s_id);
 				cout << "보낼 플레이어" << player._s_id << endl;
 			}
-			ready_count = 0;
 		}
 		break;
 	}
@@ -714,58 +672,6 @@ void process_packet(int s_id, char* p)
 		break;
 	}
 	case CS_START_GAME: {
-		CS_START_GAME_PACKET* packet = reinterpret_cast<CS_START_GAME_PACKET*>(p);
-		CLIENT& cl = clients[packet->id];
-		cout << "몇명 들어옴 : " << ingamecount << endl;
-		int currentRoom = cl.currentRoom;
-		for (auto& other : clients) {
-			if (other._s_id == cl._s_id) continue;
-			other.state_lock.lock();
-			if (ST_INGAME != other._state) {
-				other.state_lock.unlock();
-				continue;
-			}
-			else other.state_lock.unlock();
-			if (other.currentRoom != currentRoom)
-				continue;
-			SC_PLAYER_SYNC packet;
-			packet.id = cl._s_id;
-			//strcpy_s(packet.name, cl.name);
-			//cout << "cl.name" << packet.name << endl;
-			packet.size = sizeof(packet);
-			packet.type = SC_OTHER_PLAYER;
-			packet.x = cl.x;
-			packet.y = cl.y;
-			packet.z = cl.z;
-			packet.yaw = cl.Yaw;
-			packet.hp = 100.f;
-			packet.Max_speed = cl.Max_Speed;
-			packet.p_type = cl.p_type;
-			printf_s("[Send put object] id : %d, location : (%f,%f,%f), yaw : %f\n", packet.id, packet.x, packet.y, packet.z, packet.yaw);
-			cout << "이거 누구한테 감 :  ?" << other._s_id << endl;
-			other.do_send(sizeof(packet), &packet);
-		}
-
-		//// 새로 접속한 플레이어에게 주위 객체 정보를 보낸다
-		//for (auto& other : clients) {
-		//	if (other._s_id == cl._s_id) continue;
-		//	other.state_lock.lock();
-		//	if (ST_INGAME != other._state) {
-		//		other.state_lock.unlock();
-		//		continue;
-		//	}
-		//	else other.state_lock.unlock();
-
-
-		//	SC_SYNC_UI_PACKET packet;
-		//	packet.id = other._s_id;
-		//	strcpy_s(packet.name, other.name);
-		//	
-		//	packet.size = sizeof(packet);
-		//	packet.type = SC_SYNC_UI;
-		//	cl.do_send(sizeof(packet), &packet);
-		//}
-
 		break;
 	}
 	case CS_HIT_EFFECT: {
@@ -849,7 +755,11 @@ void process_packet(int s_id, char* p)
 			packet.type = SC_NiAGARA_CANCEL;
 			packet.cancel = cl.bCancel;
 			packet.num = cl.num;
+			//packet.weapon_type = cl.w_type;
+		//printf_s("[Send put object] id : %d, location : (%f,%f,%f), yaw : %f\n", packet.id, packet.x, packet.y, packet.z, packet.yaw);
 			cout << "이거 누구한테 감 :  ?" << other._s_id << endl;
+			//	cout << "나이아가라" << endl;
+
 			other.do_send(sizeof(packet), &packet);
 
 		}
@@ -960,11 +870,10 @@ void process_packet(int s_id, char* p)
 	}
 	case CS_STOP_ANIM: {
 		CS_STOP_ANIM_PACKET* packet = reinterpret_cast<CS_STOP_ANIM_PACKET*>(p);
-		cout << "들어옴 : " << packet->id << endl;
+		cout << "packet->id : " << packet->id << endl;
 		CLIENT& cl = clients[packet->id];
 		cl.bStopAnim = true;
 		for (auto& other : clients) {
-			if (other._s_id == cl._s_id) continue;
 			other.state_lock.lock();
 			if (ST_INGAME != other._state) {
 				other.state_lock.unlock();
@@ -1054,7 +963,7 @@ void process_packet(int s_id, char* p)
 		CS_ITEM_INFO_PACKET* packet = reinterpret_cast<CS_ITEM_INFO_PACKET*> (p);
 		CLIENT& cl = clients[s_id];
 
-		send_item_packet(cl._s_id, packet->objid);
+		//send_item_packet(cl._s_id, packet->objid);
 		break;
 	}
 	case CS_RELOAD: {
@@ -1143,52 +1052,6 @@ void process_packet(int s_id, char* p)
 		}
 		break;
 	}
-	case CS_MOPP: {
-		CS_MOPP_PACKET* packet = reinterpret_cast<CS_MOPP_PACKET*>(p);
-		CLIENT& cl = clients[s_id];
-		cout << "itemid : " << packet->itemid << endl;
-		int itemid = packet->itemid;
-		int mopptype = packet->mopptype;
-		cout << "mopptype : " << mopptype << endl;
-		for (auto& other : clients) {
-			if (other._s_id == cl._s_id) continue;
-			other.state_lock.lock();
-			if (ST_INGAME != other._state) {
-				other.state_lock.unlock();
-				continue;
-			}
-			else other.state_lock.unlock();
-			CS_MOPP_PACKET packet;
-			packet.itemid = itemid;
-			packet.size = sizeof(packet);
-			packet.type = SC_MOPP;
-			packet.mopptype = mopptype;
-			other.do_send(sizeof(packet), &packet);
-		}
-		break;
-	}
-	/*case CS_HP: {
-		CS_DAMAGE_PACKET* packet = reinterpret_cast<CS_DAMAGE_PACKET*>(p);
-		CLIENT& cl = clients[packet->id];
-		cl._hp = packet->hp;
-		cout << "hp : " << cl._hp << endl;
-		for (auto& other : clients) {
-			if (other._s_id == cl._s_id) continue;
-			other.state_lock.lock();
-			if (ST_INGAME != other._state) {
-				other.state_lock.unlock();
-				continue;
-			}
-			else other.state_lock.unlock();
-			SC_DAMAGE_CHANGE packet;
-			packet.size = sizeof(packet);
-			packet.type = SC_HP;
-			packet.id = cl._s_id;
-			packet.hp = cl._hp;
-			other.do_send(sizeof(packet), &packet);
-		}
-		break;
-	}*/
 	default:
 		cout << " 오류패킷타입 : " << p << endl;
 		break;
@@ -1288,13 +1151,6 @@ void worker_thread()
 
 			break;
 		}
-		case IO_RELOAD_WEAPON: {
-			// 플레이어의 탄창을 늘려주고
-			// if(탄창이 max count 보다 작다면) 
-				//player_reload_weapon(_s_id);
-			// send_packet(_S_id);
-			break;
-		}
 		}
 	}
 }
@@ -1316,26 +1172,15 @@ void send_move_packet(int _id, int target)
 	packet.Max_speed = clients[target].Max_Speed;
 	clients[_id].do_send(sizeof(packet), &packet);
 }
-void player_heal(int s_id)
-{
-	if (clients[s_id]._hp < clients[s_id]._max_hp)
-		Timer_Event(s_id, s_id, ET_HEAL, 1s);
 
-}
-void player_reload_weapon(int s_id)
-{
-	if (clients[s_id]._bulletcount < clients[s_id]._max_bulletcount)
-		Timer_Event(s_id, s_id, ET_RELOAD, 100ms);
-
-}
 //데미지 깍는 곳
 void send_change_hp(int _s_id)
 {
 	SC_DAMAGE_CHANGE packet;
 	packet.size = sizeof(packet);
-	packet.type = SC_HP;
-	packet.id = _s_id;
-	packet.hp = clients[_s_id]._hp;
+	packet.type = SC_PLAYER_DAMAGE;
+	packet.damaged_id = _s_id;
+	packet.damage = clients[_s_id].damage;
 	clients[_s_id].do_send(sizeof(packet), &packet);
 }
 
@@ -1344,14 +1189,6 @@ void send_ready_packet(int _s_id)
 	SC_ACCEPT_READY packet;
 	packet.size = sizeof(packet);
 	packet.type = SC_ALL_READY;
-	packet.ingame = true;
-	clients[_s_id].do_send(sizeof(packet), &packet);
-}
-void send_travel_ready_packet(int _s_id)
-{
-	SC_TRAVEL_PACKET packet;
-	packet.size = sizeof(packet);
-	packet.type = SC_TRAVLE;
 	packet.ingame = true;
 	clients[_s_id].do_send(sizeof(packet), &packet);
 }
@@ -1389,6 +1226,7 @@ void send_item_packet(int _s_id, int item_index)
 {
 	SC_ITEM_PACKET packet;
 
+	cout << "_s_id, packetsize" << _s_id << sizeof(packet) << endl;
 	packet.type = SC_ITEM;
 	packet.size = sizeof(packet);
 
@@ -1403,64 +1241,23 @@ void send_item_packet(int _s_id, int item_index)
 
 void ev_timer()
 {
-	while (true)
+	WaitForSingleObject(g_timer, INFINITE);
 	{
-		//cout << "adad" << endl;
-		while (!timer_q.Empty()) {
-
-			timer_ev order;
-			timer_q.WaitPop(order);
-			auto t = order.start_t - chrono::system_clock::now();
-			int s_id = order.this_id;
-			if (clients[s_id]._state != ST_INGAME) continue;
-			if (clients[s_id]._is_active == false) continue;
-			if (order.start_t <= chrono::system_clock::now()) {
-				if (order.order == ET_HEAL) {
-					Player_Event(s_id, order.target_id, IO_HEAL_HP);
-					this_thread::sleep_for(100ms);
-				}
-				else if (order.order == ET_RELOAD) {
-					Player_Event(s_id, order.target_id, IO_RELOAD_WEAPON);
-					this_thread::sleep_for(100ms);
-				}
-			}
-			else {
-				timer_q.Push(order);
-				this_thread::sleep_for(10ms);
-			}
-		}
+		timer_q.Clear();
 	}
-
-
-}
-
-void timer()
-{
-	auto prev_time = high_resolution_clock::now();
 	while (true) {
-		auto current_time = high_resolution_clock::now();
-		duration<double> delta = current_time - prev_time;
-		prev_time = current_time;
-		double delta_time = delta.count();
-
-		send_delta_time_to_clients(delta_time);
-
-		this_thread::sleep_for(milliseconds(1000 / 60));
-	}
-}
-
-void send_delta_time_to_clients(double deltaTime) {
-	SC_DELTA_TIME_PACKET packet;
-	packet.time = deltaTime;
-	packet.size = sizeof(packet);
-	packet.type = SC_DELTA;
-	//cout << "dt" << packet.time << endl;
-	for (auto& client : clients) {
-		client.state_lock.lock();
-		if (client._state == ST_INGAME) {
-			client.do_send(packet.size, &packet);
-			//std::cout << "Send delta time " << deltaTime << " to client " << client._s_id << std::endl;
+		timer_ev order;
+		timer_q.WaitPop(order);
+		auto t = order.start_t - chrono::system_clock::now();
+		int s_id = order.this_id;
+		if (clients[s_id]._state != ST_INGAME) continue;
+		if (clients[s_id]._is_active == false) continue;
+		if (order.start_t <= chrono::system_clock::now()) {
 		}
-		client.state_lock.unlock();
+		else {
+			timer_q.Push(order);
+			this_thread::sleep_for(10ms);
+		}
 	}
+
 }
