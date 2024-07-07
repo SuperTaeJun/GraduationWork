@@ -258,7 +258,7 @@ bool ClientSocket::PacketProcess(char* ptr)
 	}
 	case SC_ALIVE: {
 		CS_ALIVE_PACKET* packet = reinterpret_cast<CS_ALIVE_PACKET*>(ptr);
-		PlayerInfo.players[packet->id].bAlive = packet->bAlive;
+		PlayerInfo.players[packet->id].bStopAnim = packet->bAlive;
 		break;
 	}
 	case SC_REMOVE_ITEM: {

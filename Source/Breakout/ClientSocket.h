@@ -102,7 +102,7 @@ public:
 	bool  bniagarach1 = false;
 	bool  bch4end = false;
 	bool  bEndGame = false;
-	bool  bAlive = true;
+	bool  bStopAnim = false;
 	bool  bServerReload = false;
 	bool  bFinishSkill = false;
 	// ³ªÀÌ¾Æ°¡¶ó ½¸ ÀÌÆÑÆ®

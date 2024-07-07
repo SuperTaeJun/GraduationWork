@@ -431,9 +431,9 @@ bool ACharacterController::UpdateWorld()
 
 			if (!info->IsAlive) continue;
 
-		/*	if (OtherPlayer && OtherPlayer->_SessionId == id)
-			{*/
-			if (info->bEndGame == true) 
+			/*	if (OtherPlayer && OtherPlayer->_SessionId == id)
+				{*/
+			if (info->bEndGame == true)
 			{
 				//inst->m_Socket->Exit();
 				//Cast<ACharacterBase>(GetPawn())->PlayAnimMontage(Cast<ACharacterBase>(GetPawn())->GetDeadMontage());
@@ -611,8 +611,8 @@ bool ACharacterController::UpdateWorld()
 				GetWorld()->SpawnActor<AProjectileBullet>(ShotgunRef, Vshotgun, Rshotgun4, SpawnParameters);
 				info->sfired = false;
 			}
-		
-		
+
+
 			if (info->skilltype == 0 && info->p_type == PlayerType::Character1)
 			{
 				if (Cast<ACharacter1>(OtherPlayer)) {
@@ -633,7 +633,7 @@ bool ACharacterController::UpdateWorld()
 					ACharacter1* Niagaraplayer = Cast<ACharacter1>(OtherPlayer);
 					Niagaraplayer->GetMesh()->SetVisibility(true);
 					Niagaraplayer->GetCurWeapon()->GetWeaponMesh()->SetVisibility(true);
-		
+
 					info->skilltype = -1;
 				}
 			}
@@ -645,7 +645,7 @@ bool ACharacterController::UpdateWorld()
 					info->skilltype = -1;
 				}
 			}
-			else if (info->p_type == PlayerType::Character2 &&info->bFinishSkill) 
+			else if (info->p_type == PlayerType::Character2 && info->bFinishSkill)
 			{
 				ACharacter2* Niagaraplayer = Cast<ACharacter2>(OtherPlayer);
 				Niagaraplayer->GetMesh()->SetVisibility(true);
@@ -656,12 +656,12 @@ bool ACharacterController::UpdateWorld()
 			{
 				if (Cast<ACharacter3>(OtherPlayer)) {
 					ACharacter3* Niagaraplayer = Cast<ACharacter3>(OtherPlayer);
-					if(Niagaraplayer->DynamicMaterial)
+					if (Niagaraplayer->DynamicMaterial)
 						Niagaraplayer->GetMesh()->SetMaterial(0, Niagaraplayer->DynamicMaterial);
 					//Niagaraplayer->DynamicMaterial->SetScalarParameterValue(FName("Alpha"), 0.f);
 					Niagaraplayer->ServerGhostStart();
-				/*	Niagaraplayer->DynamicMaterial->SetVectorParameterValue(FName("Loc"), Niagaraplayer->GetCapsuleComponent()->GetForwardVector() * -1.f);
-					Niagaraplayer->DynamicMaterial->SetScalarParameterValue(FName("Amount"), Niagaraplayer->GetCharacterMovement()->Velocity.Length() / 4);*/
+					/*	Niagaraplayer->DynamicMaterial->SetVectorParameterValue(FName("Loc"), Niagaraplayer->GetCapsuleComponent()->GetForwardVector() * -1.f);
+						Niagaraplayer->DynamicMaterial->SetScalarParameterValue(FName("Amount"), Niagaraplayer->GetCharacterMovement()->Velocity.Length() / 4);*/
 					info->skilltype = -1;
 				}
 			}
@@ -674,7 +674,7 @@ bool ACharacterController::UpdateWorld()
 			}
 			else if (info->skilltype == 0 && info->p_type == PlayerType::Character4)
 			{
-				if (ACharacter4* Niagaraplayer =Cast<ACharacter4>(OtherPlayer)) {
+				if (ACharacter4* Niagaraplayer = Cast<ACharacter4>(OtherPlayer)) {
 					Niagaraplayer->SaveCurLocation();
 					FActorSpawnParameters SpawnParameters;
 					SpawnParameters.Owner = OtherPlayer;
@@ -682,7 +682,7 @@ bool ACharacterController::UpdateWorld()
 					ch4skill.X = info->CH1NiaLoc.X;
 					ch4skill.Y = info->CH1NiaLoc.Y;
 					ch4skill.Z = info->CH1NiaLoc.Z;
-					ServerTemp =GetWorld()->SpawnActor<ANiagaraActor>(NiagaraActorRef, ch4skill, FRotator::ZeroRotator, SpawnParameters);
+					ServerTemp = GetWorld()->SpawnActor<ANiagaraActor>(NiagaraActorRef, ch4skill, FRotator::ZeroRotator, SpawnParameters);
 					info->skilltype = -1;
 				}
 
@@ -697,7 +697,7 @@ bool ACharacterController::UpdateWorld()
 					//Cast<ASkill4Actor>(ServerTemp)->bTimerStart = true;
 				}
 			}
-			if(info->p_type == PlayerType::Character4 && info->skilltype == 2){
+			if (info->p_type == PlayerType::Character4 && info->skilltype == 2) {
 				ACharacter4* Niagaraplayer = Cast<ACharacter4>(OtherPlayer);
 				Niagaraplayer->GetNiagaraComp()->Deactivate();
 				Niagaraplayer->GetMesh()->SetVisibility(true, false);
@@ -709,16 +709,19 @@ bool ACharacterController::UpdateWorld()
 				if (ServerTemp)
 					ServerTemp->Destroy();
 			}
-
-			if (info->bAlive == true) { //贸府
+			/*UE_LOG(LogTemp, Warning, TEXT("otherplayer hp : %f"), OtherPlayer->GetHealth());*/
+			UE_LOG(LogTemp, Warning, TEXT("my hp : %f"), Cast<ACharacterBase>(GetPawn())->GetHealth());
+			if (info->bStopAnim == true) { //贸府
 				OtherPlayer->StopAnimMontage(SyncDeadMontage);
-				info->bAlive = false;
-				OtherPlayer->bAlive = false;
+				info->bStopAnim = false;
+				OtherPlayer->bDeadAnim = false;
 				OtherPlayer->SetHealth(100.f);
 			}
-			else {
+			if (OtherPlayer->GetHealth() <= 0 && OtherPlayer->bDeadAnim == false) {
+				UE_LOG(LogTemp, Warning, TEXT("otherplayer hp : %f"), OtherPlayer->GetHealth());
+				UE_LOG(LogTemp, Warning, TEXT("my hp : %f"), Cast<ACharacterBase>(GetPawn())->GetHealth());
 				OtherPlayer->PlayAnimMontage(SyncDeadMontage);
-				OtherPlayer->bAlive = true;
+				OtherPlayer->bDeadAnim = true;
 			}
 			if (info->bServerReload == true)
 			{
@@ -750,11 +753,11 @@ bool ACharacterController::UpdateWorld()
 			UGameplayStatics::GetAllActorsOfClass(GetWorld(), AEscapeTool::StaticClass(), EscapeTools);
 			for (int i = 0; i < EscapeTools.Num(); i++)
 			{
-				if(Cast<AEscapeTool>(EscapeTools[i]))
+				if (Cast<AEscapeTool>(EscapeTools[i]))
 					if (Escapeid == Cast<AEscapeTool>(EscapeTools[i])->ItemID)
 						Cast<AEscapeTool>(EscapeTools[i])->Destroy();
 			}
-		
+
 		}
 	}
 	return true;
