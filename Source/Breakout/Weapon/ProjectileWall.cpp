@@ -25,7 +25,6 @@ void AProjectileWall::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActo
 		SpawnParameters.Owner = GetOwner();
 		SpawnParameters.Instigator = InstigatorPawn;
 
-
 		FRotator Rotation = InstigatorPawn->GetActorForwardVector().Rotation();
 		UWorld* World = GetWorld();
 		if (World)
