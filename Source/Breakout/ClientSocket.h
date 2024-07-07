@@ -72,7 +72,7 @@ public:
 	int WinnerID = -1;
 	//int hp;
 	int weptype;
-	int damage;
+	float hp = 100.f;
 	int skilltype;
 	int itemAnimtype = -1;
 	// 아이디 비번
@@ -348,11 +348,15 @@ public:
 	FString TempPlayerName;
 	bool bAcquire = false;
 	bool bTravel = false;
+	inline float get_hp()
+	{
+		return hp;
+	}
 private:
 	ACharacterController* MyCharacterController;
 	CPlayerInfo PlayerInfo;
 	UBOGameInstance* gameinst;
 	CItemInfo Iteminfo;
-
+	float hp = 100.f;
 };
 

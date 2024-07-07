@@ -202,13 +202,10 @@ bool ClientSocket::PacketProcess(char* ptr)
 		break;
 	}
 	//HP동기화 처리
-	case SC_PLAYER_DAMAGE: {
-		/*SC_DAMAGE_CHANGE* packet = reinterpret_cast<SC_DAMAGE_CHANGE*>(ptr);
-		CPlayer player;
-		player.Id = packet->damaged_id;
-		player.damage = packet->damage;
-
-		MyCharacterController->SetHp(player.damage);*/
+	case SC_HP_CHANGE: {
+		SC_HP_CHANGE_PACKET* packet = reinterpret_cast<SC_HP_CHANGE_PACKET*>(ptr);
+		PlayerInfo.players[packet->id].hp = packet->HP;
+		hp = packet->HP;
 		break;
 	}
 	case SC_NiAGARA: {

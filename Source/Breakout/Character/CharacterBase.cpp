@@ -206,11 +206,10 @@ void ACharacterBase::SetHUDCrosshair(float DeltaTime)
 
 void ACharacterBase::UpdateHpHUD()
 {
-	inst->m_Socket;
 	MainController = MainController == nullptr ? Cast<ACharacterController>(Controller) : MainController;
 	if (MainController)
 	{
-		MainController->SetHUDHealth(FMath::Clamp(Health,0.f,100.f), MaxHealth);
+		MainController->SetHUDHealth(FMath::Clamp(inst->m_Socket->get_hp(),0.f,100.f), MaxHealth);
 	}
 }
 
@@ -449,8 +448,8 @@ void ACharacterBase::ReciveDamage(AActor* DamagedActor, float Damage, const UDam
 	UpdateHpHUD();
 	ACharacterBase* DamageInsigatorCh= Cast<ACharacterBase>(InstigatorController->GetPawn());
 
-	inst->m_Socket;
-	if (Health <= 0.0f)
+	
+	if (inst->m_Socket->get_hp() <= 0.0f)
 	{
 		bDissolve = true;
 		if (DamageInsigatorCh)
