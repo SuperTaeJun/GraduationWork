@@ -542,7 +542,7 @@ void process_packet(int s_id, char* p)
 	}
 	case CS_READY: {
 		CS_READY_PACKET* packet = reinterpret_cast<CS_READY_PACKET*>(p);
-		CLIENT& cl = clients[s_id];
+		CLIENT& cl = clients[packet->id];
 		ready_count++;
 		cout << "ready_count" << ready_count << endl;
 		if (ready_count >= 2)
@@ -1030,7 +1030,7 @@ void process_packet(int s_id, char* p)
 		CS_DAMAGE_PACKET* packet = reinterpret_cast<CS_DAMAGE_PACKET*>(p);
 		CLIENT& cl = clients[packet->id];
 		cl._hp -= packet->damage;
-
+		cout << "my hp : " << cl._hp << endl;
 		send_change_hp(packet->id);
 		break;
 	}

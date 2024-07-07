@@ -156,6 +156,7 @@ struct SC_SYNC_WEAPO
 struct CS_READY_PACKET {
 	unsigned char size;
 	unsigned char type;
+	int id;
 };
 struct SC_ACCEPT_READY {
 	unsigned char size;

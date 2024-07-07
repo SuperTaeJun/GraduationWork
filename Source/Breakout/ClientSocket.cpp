@@ -82,6 +82,7 @@ bool ClientSocket::PacketProcess(char* ptr)
 		SC_LOGIN_BACK* packet = reinterpret_cast<SC_LOGIN_BACK*>(ptr);
 		//to_do
 		gameinst->SetPlayerID(packet->id);
+		UE_LOG(LogTemp, Warning, TEXT("MY ID : %d"), packet->id);
 		break;
 	}
 	case SC_ITEM: {
@@ -371,11 +372,12 @@ void ClientSocket::Send_Weapon_Type(WeaponType type, int sessionID)
 	packet.bselectwep = true;
 	SendPacket(&packet);
 }
-void ClientSocket::Send_Ready_Packet(bool ready)
+void ClientSocket::Send_Ready_Packet(bool ready, int id)
 {
 	CS_READY_PACKET packet;
 	packet.size = sizeof(packet);
 	packet.type = CS_READY;
+	packet.id = id;
 	SendPacket(&packet);
 }
 void ClientSocket::Send_Fire_Effect(int attack_id, FVector ImLoc, FRotator ImRot, int wtype)

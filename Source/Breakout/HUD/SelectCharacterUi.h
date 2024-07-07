@@ -61,6 +61,7 @@ public:
 	void Button3Hovered();
 	UFUNCTION()
 	void Button4Hovered();
+	class UBOGameInstance* inst;
 private:
 	ACharacterController* MyCharacterController;
 	bool bClicked;

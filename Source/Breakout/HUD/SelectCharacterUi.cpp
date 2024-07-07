@@ -9,6 +9,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Animation/SkeletalMeshActor.h"
 #include "Sound/SoundCue.h"
+#include "Game/BOGameInstance.h"
 
 //#include "Network/PacketData.h"
 void USelectCharacterUi::NativeConstruct()
@@ -63,7 +64,7 @@ void USelectCharacterUi::Matching()
 	if(bClicked){
 		//Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Ready_Packet(bClicked);
 
-		Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Ready_Packet(bClicked);
+		Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Ready_Packet(bClicked, Cast<UBOGameInstance>(GetGameInstance())->GetPlayerID());
 			//GetWorld()->ServerTravel(FString("/Game/Maps/MainMap"), true);
 		//GetWorld()->ServerTravel(FString("/Game/Maps/MainMap"), true);
 		//GetWorld()->ServerTravel(FString("/Game/Maps/TestMap"), true);

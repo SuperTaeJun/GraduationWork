@@ -443,7 +443,7 @@ void ACharacterBase::ReciveDamage(AActor* DamagedActor, float Damage, const UDam
 	if (MainController)
 		MainController->SeverHpSync(Damage, inst->GetPlayerID());
 
-
+	UE_LOG(LogTemp, Warning, TEXT("RECV MY ID : %d"), inst->GetPlayerID());
 	//Health = FMath::Clamp(Health - Damage, 0.f, MaxHealth);
 	UpdateHpHUD();
 	ACharacterBase* DamageInsigatorCh= Cast<ACharacterBase>(InstigatorController->GetPawn());

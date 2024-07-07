@@ -291,7 +291,7 @@ public:
 	void Send_Move_Packet(int sessionID, FVector Location, FRotator Rotation, FVector Velocity, float Max_speed);
 	void Send_Character_Type(PlayerType type, int id);
 	void Send_Weapon_Type(WeaponType type, int id);
-	void Send_Ready_Packet(bool ready);
+	void Send_Ready_Packet(bool ready, int id);
 	void Send_Fire_Effect(int attack_id, FVector ImLoc, FRotator ImRot, int wtype);
 	void Send_ShotGun_packet(int attack_id, FVector ServerBeamStart, TArray<FRotator> ServerBeamEnd, int size);
 	void Send_Niagara_packet(int clientid, PlayerType type, int num);
