@@ -1049,10 +1049,10 @@ void ACharacterController::SeverHpSync(float hp, int myid)
 
 }
 
-void ACharacterController::ServerDeadSync(bool bAlive, int myid)
-{
-	if (inst)
-		inst->m_Socket->Send_Alive_packet(myid, bAlive);
-}
+//void ACharacterController::ServerDeadSync(bool bAlive, int myid)
+//{
+//	if (inst)
+//		inst->m_Socket->Send_My_HP_PACKET(myid, bAlive);
+//}
 
 
