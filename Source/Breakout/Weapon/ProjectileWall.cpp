@@ -19,7 +19,7 @@ void AProjectileWall::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActo
 	APawn* InstigatorPawn = Cast<APawn>(GetOwner());
 
 
-	if (WallClass && InstigatorPawn)
+	if (WallClass && InstigatorPawn!=OtherActor)
 	{
 		FActorSpawnParameters SpawnParameters;
 		SpawnParameters.Owner = GetOwner();

@@ -719,7 +719,7 @@ bool ACharacterController::UpdateWorld()
 			}
 			if (OtherPlayer->GetHealth() <= 0 && OtherPlayer->bDeadAnim == false) {
 				UE_LOG(LogTemp, Warning, TEXT("otherplayer hp : %f"), OtherPlayer->GetHealth());
-				UE_LOG(LogTemp, Warning, TEXT("my hp : %f"), Cast<ACharacterBase>(GetPawn())->GetHealth());
+				//UE_LOG(LogTemp, Warning, TEXT("my hp : %f"), Cast<ACharacterBase>(GetPawn())->GetHealth());
 				OtherPlayer->PlayAnimMontage(SyncDeadMontage);
 				OtherPlayer->bDeadAnim = true;
 			}
