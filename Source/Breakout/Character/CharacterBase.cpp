@@ -440,10 +440,14 @@ void ACharacterBase::SetSpawnGrenade(TSubclassOf<AProjectileBase> Projectile)
 
 void ACharacterBase::ReciveDamage(AActor* DamagedActor, float Damage, const UDamageType* DamageType, class AController* InstigatorController, AActor* DamageCauser)
 {
+	if (MainController)
+		MainController->SeverHpSync(Health, inst->GetPlayerID());
 	
 	Health = FMath::Clamp(Health - Damage, 0.f, MaxHealth);
 	UpdateHpHUD();
 	ACharacterBase* DamageInsigatorCh= Cast<ACharacterBase>(InstigatorController->GetPawn());
+
+	
 	if (Health <= 0.0f)
 	{
 		bDissolve = true;
@@ -475,13 +479,17 @@ void ACharacterBase::ReciveDamage(AActor* DamagedActor, float Damage, const UDam
 		}
 		if(CurWeapon)
 			CurWeapon->CurAmmo = 0;
-		PlayAnimMontage(DeadMontage);
 		GetWorld()->GetTimerManager().SetTimer(DeadTimer, this, &ACharacterBase::Dead, DeadTime, false);
 		if(MainController)
 			DisableInput(MainController);
 		UpdateObtainedEscapeTool();
-		if(MainController)//이거 죽었을때 다시 충돌 일어나서 애니메이션 재생되는거 막는용도
-			Health = 99999.f;
+
+		if (bAlive)
+		{
+			bAlive = false;
+			PlayAnimMontage(DeadMontage);
+			//MainController->ServerDeadSync(bAlive, inst->GetPlayerID());
+		}
 	}
 }
 
@@ -1004,7 +1012,7 @@ void ACharacterBase::Tick(float DeltaTime)
 	}
 
 
-	if (/*Cast<UBOGameInstance>(GetWorld()->GetGameInstance())->m_Socket->bAllReady == true &&*/ !bStarted)
+	if (Cast<UBOGameInstance>(GetWorld()->GetGameInstance())->m_Socket->bAllReady == true && !bStarted)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("StartGame"));
 		Cast<UBOGameInstance>(GetWorld()->GetGameInstance())->m_Socket->bAllReady = false;
@@ -1078,6 +1086,8 @@ void ACharacterBase::StartGame()
 		//	UE_LOG(LogTemp, Warning, TEXT("ADDTOOLNUM"));
 		//	MainHUD->AddToolNumUi();
 		//}
+		/*if (inst)
+			inst->m_Socket->Send_Start_game_packet(inst->GetPlayerID());*/
 		MainController->MainHUD->AddToolNumUi();
 		// num 계수, name 처리 
 		MainController->SetNum();

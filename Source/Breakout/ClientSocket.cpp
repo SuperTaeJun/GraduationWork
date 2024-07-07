@@ -82,6 +82,7 @@ bool ClientSocket::PacketProcess(char* ptr)
 		SC_LOGIN_BACK* packet = reinterpret_cast<SC_LOGIN_BACK*>(ptr);
 		//to_do
 		gameinst->SetPlayerID(packet->id);
+		UE_LOG(LogTemp, Warning, TEXT("MY ID : %d"), packet->id);
 		break;
 	}
 	case SC_ITEM: {
@@ -147,6 +148,11 @@ bool ClientSocket::PacketProcess(char* ptr)
 		bAllReady = packet->ingame;
 		break;
 	}
+	case SC_TRAVLE: {
+		SC_TRAVEL_PACKET* packet = reinterpret_cast<SC_TRAVEL_PACKET*>(ptr);
+		bTravel = packet->ingame;
+		break;
+	}
   // 공격 나이아가라 이팩트 효과
 	case SC_ATTACK: {
 		SC_ATTACK_PLAYER* packet = reinterpret_cast<SC_ATTACK_PLAYER*>(ptr);
@@ -197,13 +203,10 @@ bool ClientSocket::PacketProcess(char* ptr)
 		break;
 	}
 	//HP동기화 처리
-	case SC_PLAYER_DAMAGE: {
-		SC_DAMAGE_CHANGE* packet = reinterpret_cast<SC_DAMAGE_CHANGE*>(ptr);
-		CPlayer player;
-		player.Id = packet->damaged_id;
-		player.damage = packet->damage;
-
-		MyCharacterController->SetHp(player.damage);
+	case SC_HP_CHANGE: {
+		SC_HP_CHANGE_PACKET* packet = reinterpret_cast<SC_HP_CHANGE_PACKET*>(ptr);
+		PlayerInfo.players[packet->id].hp = packet->HP;
+		hp = packet->HP;
 		break;
 	}
 	case SC_NiAGARA: {
@@ -253,9 +256,9 @@ bool ClientSocket::PacketProcess(char* ptr)
 		bAcquire = true;
 		break;
 	}
-	case SC_STOP_ANIM: {
-		CS_STOP_ANIM_PACKET* packet = reinterpret_cast<CS_STOP_ANIM_PACKET*>(ptr);
-		PlayerInfo.players[packet->id].bStopAnim = packet->bStopAnim;
+	case SC_ALIVE: {
+		CS_ALIVE_PACKET* packet = reinterpret_cast<CS_ALIVE_PACKET*>(ptr);
+		PlayerInfo.players[packet->id].bStopAnim = packet->bAlive;
 		break;
 	}
 	case SC_REMOVE_ITEM: {
@@ -369,11 +372,12 @@ void ClientSocket::Send_Weapon_Type(WeaponType type, int sessionID)
 	packet.bselectwep = true;
 	SendPacket(&packet);
 }
-void ClientSocket::Send_Ready_Packet(bool ready)
+void ClientSocket::Send_Ready_Packet(bool ready, int id)
 {
 	CS_READY_PACKET packet;
 	packet.size = sizeof(packet);
 	packet.type = CS_READY;
+	packet.id = id;
 	SendPacket(&packet);
 }
 void ClientSocket::Send_Fire_Effect(int attack_id, FVector ImLoc, FRotator ImRot, int wtype)
@@ -499,12 +503,13 @@ void ClientSocket::Send_Item_packet(int id, int itemCount)
 	packet.itemCount = itemCount;
 	SendPacket(&packet);
 }
-void ClientSocket::Send_Stop_Anim_packet(int id)
+void ClientSocket::Send_Alive_packet(int id, bool bAlive)
 {
-	CS_STOP_ANIM_PACKET packet;
+	CS_ALIVE_PACKET packet;
 	packet.size = sizeof(packet);
-	packet.type = CS_STOP_ANIM;
+	packet.type = CS_ALIVE;
 	packet.id = id;
+	packet.bAlive = bAlive;
 	SendPacket(&packet);
 }
 void ClientSocket::Send_Destroyed_item_packet(int id)
@@ -569,6 +574,15 @@ void ClientSocket::Send_CH2_SKILL_PACKET(int id, PlayerType type, bool bSkill)
 	packet.id = id;
 	packet.p_type = type;
 	packet.bfinish = bSkill;
+	SendPacket(&packet);
+}
+void ClientSocket::Send_My_HP_PACKET(int id, float damaage)
+{
+	CS_DAMAGE_PACKET packet;
+	packet.size = sizeof(packet);
+	packet.type = CS_DAMAGE;
+	packet.id = id;
+	packet.hp = damaage;
 	SendPacket(&packet);
 }
 bool ClientSocket::Init()

@@ -20,4 +20,9 @@ void AGameRoomMode::Tick(float Delta)
 	//	//SleepEx(0.5, true);
 	//	Cast<UBOGameInstance>(GetGameInstance())->m_Socket->bAllReady = false;
 	//}
+	if (true == Cast<UBOGameInstance>(GetGameInstance())->m_Socket->bTravel) {
+		GetWorld()->ServerTravel(FString("/Game/Maps/MainMap"), true);
+		//SleepEx(0.5, true);
+		Cast<UBOGameInstance>(GetGameInstance())->m_Socket->bTravel = false;
+	}
 }

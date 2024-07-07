@@ -11,7 +11,7 @@
 #include <fstream>
 #include <map>
 #include <mutex>
-#include "../../Server/Server/Server/ServerCore/protocol.h"
+#include "../../Server/Server/protocol.h"
 #include <vector>
 #include <iostream>
 #include "Windows/PostWindowsApi.h"
@@ -72,7 +72,7 @@ public:
 	int WinnerID = -1;
 	//int hp;
 	int weptype;
-	int damage;
+	float hp = 100.f;
 	int skilltype;
 	int itemAnimtype = -1;
 	// 아이디 비번
@@ -291,7 +291,7 @@ public:
 	void Send_Move_Packet(int sessionID, FVector Location, FRotator Rotation, FVector Velocity, float Max_speed);
 	void Send_Character_Type(PlayerType type, int id);
 	void Send_Weapon_Type(WeaponType type, int id);
-	void Send_Ready_Packet(bool ready);
+	void Send_Ready_Packet(bool ready, int id);
 	void Send_Fire_Effect(int attack_id, FVector ImLoc, FRotator ImRot, int wtype);
 	void Send_ShotGun_packet(int attack_id, FVector ServerBeamStart, TArray<FRotator> ServerBeamEnd, int size);
 	void Send_Niagara_packet(int clientid, PlayerType type, int num);
@@ -302,7 +302,7 @@ public:
 	void Send_End_Game_packet(int id);
 	void Send_Signal_packet(int id, int num);
 	void Send_Item_packet(int id, int itemCount);
-	void Send_Stop_Anim_packet(int id);
+	void Send_Alive_packet(int id, bool bAlive);
 	void Send_Destroyed_item_packet(int id);
 	void Send_Increase_item_count_packet(int id, int itemcount);
 	void Send_Decrease_item_count_packet(int id, int itemcount);
@@ -310,6 +310,7 @@ public:
 	void Send_item_Anim_packet(int id, int num);
 	void Send_Remove_Weapon(int id, bool bWeapon);
 	void Send_CH2_SKILL_PACKET(int id, PlayerType type, bool bSkill);
+	void Send_My_HP_PACKET(int id, float damaage);
 	virtual bool Init() override;
 	virtual uint32 Run() override;
 	virtual void Stop() override;
@@ -346,11 +347,16 @@ public:
 	int Tempcnt2;
 	FString TempPlayerName;
 	bool bAcquire = false;
+	bool bTravel = false;
+	inline float get_hp()
+	{
+		return hp;
+	}
 private:
 	ACharacterController* MyCharacterController;
 	CPlayerInfo PlayerInfo;
 	UBOGameInstance* gameinst;
 	CItemInfo Iteminfo;
-
+	float hp = 100.f;
 };
 

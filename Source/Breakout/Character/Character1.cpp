@@ -9,7 +9,7 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "Player/CharacterController.h"
-#include "../../Server/Server/Server/ServerCore/protocol.h"
+#include "../../Server/Server/protocol.h"
 #include "Game/BOGameMode.h"
 
 ACharacter1::ACharacter1()

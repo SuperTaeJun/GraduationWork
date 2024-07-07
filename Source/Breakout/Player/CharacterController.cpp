@@ -28,7 +28,7 @@
 #include "TimerManager.h"
 #include "FX/Skill4Actor.h"
 #include "GameProp/EscapeTool.h"
-#include "../../Server/Server/Server/ServerCore/protocol.h"
+#include "../../Server/Server/protocol.h"
 #include <string>
 #include "ClientSocket.h"
 #include"Animatiom/BOAnimInstance.h"
@@ -340,11 +340,9 @@ void ACharacterController::Tick(float DeltaTime)
 			this,
 			UDamageType::StaticClass()
 		);
-		//BaseCharacter->SetHealth(damaged);
+
 		damaged = 0;
-		//BaseCharacter->SetHealth(BaseCharacter->GetHealth());
-		if(BaseCharacter->GetHealth()<=9999)
-			SetHUDHealth(BaseCharacter->GetHealth(), BaseCharacter->MaxGetHealth());
+
 	}
 	if (MainHUD && inst->m_Socket->bAcquire) {
 		SetNum();
@@ -433,9 +431,9 @@ bool ACharacterController::UpdateWorld()
 
 			if (!info->IsAlive) continue;
 
-		/*	if (OtherPlayer && OtherPlayer->_SessionId == id)
-			{*/
-			if (info->bEndGame == true) 
+			/*	if (OtherPlayer && OtherPlayer->_SessionId == id)
+				{*/
+			if (info->bEndGame == true)
 			{
 				//inst->m_Socket->Exit();
 				//Cast<ACharacterBase>(GetPawn())->PlayAnimMontage(Cast<ACharacterBase>(GetPawn())->GetDeadMontage());
@@ -547,12 +545,13 @@ bool ACharacterController::UpdateWorld()
 				else if (info->weptype == 2) {
 					OtherPlayer->PlayAnimMontage(GrenadeMontage, 1.f, FName("Fire"));
 					GetWorld()->SpawnActor<AProjectileBase>(GrenadeRef, HEloc, EffectRot, SpawnParameters);
-
+					UE_LOG(LogTemp, Warning, TEXT("FIRE"));
 					info->hiteffect = false;
 				}
 				else if (info->weptype == 3) {
 					OtherPlayer->PlayAnimMontage(GrenadeMontage, 1.f, FName("Fire"));
 					GetWorld()->SpawnActor<AProjectileBase>(WallRef, HEloc, EffectRot, SpawnParameters);
+					UE_LOG(LogTemp, Warning, TEXT("WALL"));
 					info->hiteffect = false;
 				}
 				else if (info->weptype == 4) {
@@ -613,8 +612,8 @@ bool ACharacterController::UpdateWorld()
 				GetWorld()->SpawnActor<AProjectileBullet>(ShotgunRef, Vshotgun, Rshotgun4, SpawnParameters);
 				info->sfired = false;
 			}
-		
-		
+
+
 			if (info->skilltype == 0 && info->p_type == PlayerType::Character1)
 			{
 				if (Cast<ACharacter1>(OtherPlayer)) {
@@ -635,7 +634,7 @@ bool ACharacterController::UpdateWorld()
 					ACharacter1* Niagaraplayer = Cast<ACharacter1>(OtherPlayer);
 					Niagaraplayer->GetMesh()->SetVisibility(true);
 					Niagaraplayer->GetCurWeapon()->GetWeaponMesh()->SetVisibility(true);
-		
+
 					info->skilltype = -1;
 				}
 			}
@@ -647,7 +646,7 @@ bool ACharacterController::UpdateWorld()
 					info->skilltype = -1;
 				}
 			}
-			else if (info->p_type == PlayerType::Character2 &&info->bFinishSkill) 
+			else if (info->p_type == PlayerType::Character2 && info->bFinishSkill)
 			{
 				ACharacter2* Niagaraplayer = Cast<ACharacter2>(OtherPlayer);
 				Niagaraplayer->GetMesh()->SetVisibility(true);
@@ -658,12 +657,12 @@ bool ACharacterController::UpdateWorld()
 			{
 				if (Cast<ACharacter3>(OtherPlayer)) {
 					ACharacter3* Niagaraplayer = Cast<ACharacter3>(OtherPlayer);
-					if(Niagaraplayer->DynamicMaterial)
+					if (Niagaraplayer->DynamicMaterial)
 						Niagaraplayer->GetMesh()->SetMaterial(0, Niagaraplayer->DynamicMaterial);
 					//Niagaraplayer->DynamicMaterial->SetScalarParameterValue(FName("Alpha"), 0.f);
 					Niagaraplayer->ServerGhostStart();
-				/*	Niagaraplayer->DynamicMaterial->SetVectorParameterValue(FName("Loc"), Niagaraplayer->GetCapsuleComponent()->GetForwardVector() * -1.f);
-					Niagaraplayer->DynamicMaterial->SetScalarParameterValue(FName("Amount"), Niagaraplayer->GetCharacterMovement()->Velocity.Length() / 4);*/
+					/*	Niagaraplayer->DynamicMaterial->SetVectorParameterValue(FName("Loc"), Niagaraplayer->GetCapsuleComponent()->GetForwardVector() * -1.f);
+						Niagaraplayer->DynamicMaterial->SetScalarParameterValue(FName("Amount"), Niagaraplayer->GetCharacterMovement()->Velocity.Length() / 4);*/
 					info->skilltype = -1;
 				}
 			}
@@ -676,7 +675,7 @@ bool ACharacterController::UpdateWorld()
 			}
 			else if (info->skilltype == 0 && info->p_type == PlayerType::Character4)
 			{
-				if (ACharacter4* Niagaraplayer =Cast<ACharacter4>(OtherPlayer)) {
+				if (ACharacter4* Niagaraplayer = Cast<ACharacter4>(OtherPlayer)) {
 					Niagaraplayer->SaveCurLocation();
 					FActorSpawnParameters SpawnParameters;
 					SpawnParameters.Owner = OtherPlayer;
@@ -684,7 +683,7 @@ bool ACharacterController::UpdateWorld()
 					ch4skill.X = info->CH1NiaLoc.X;
 					ch4skill.Y = info->CH1NiaLoc.Y;
 					ch4skill.Z = info->CH1NiaLoc.Z;
-					ServerTemp =GetWorld()->SpawnActor<ANiagaraActor>(NiagaraActorRef, ch4skill, FRotator::ZeroRotator, SpawnParameters);
+					ServerTemp = GetWorld()->SpawnActor<ANiagaraActor>(NiagaraActorRef, ch4skill, FRotator::ZeroRotator, SpawnParameters);
 					info->skilltype = -1;
 				}
 
@@ -699,7 +698,7 @@ bool ACharacterController::UpdateWorld()
 					//Cast<ASkill4Actor>(ServerTemp)->bTimerStart = true;
 				}
 			}
-			if(info->p_type == PlayerType::Character4 && info->skilltype == 2){
+			if (info->p_type == PlayerType::Character4 && info->skilltype == 2) {
 				ACharacter4* Niagaraplayer = Cast<ACharacter4>(OtherPlayer);
 				Niagaraplayer->GetNiagaraComp()->Deactivate();
 				Niagaraplayer->GetMesh()->SetVisibility(true, false);
@@ -719,9 +718,9 @@ bool ACharacterController::UpdateWorld()
 				OtherPlayer->bDeadAnim = false;
 				OtherPlayer->SetHealth(100.f);
 			}
-			if (OtherPlayer->GetHealth() <= 0&& OtherPlayer->bDeadAnim == false) {
+			if (OtherPlayer->GetHealth() <= 0 && OtherPlayer->bDeadAnim == false) {
 				UE_LOG(LogTemp, Warning, TEXT("otherplayer hp : %f"), OtherPlayer->GetHealth());
-				UE_LOG(LogTemp, Warning, TEXT("my hp : %f"), Cast<ACharacterBase>(GetPawn())->GetHealth());
+				//UE_LOG(LogTemp, Warning, TEXT("my hp : %f"), Cast<ACharacterBase>(GetPawn())->GetHealth());
 				OtherPlayer->PlayAnimMontage(SyncDeadMontage);
 				OtherPlayer->bDeadAnim = true;
 			}
@@ -755,16 +754,207 @@ bool ACharacterController::UpdateWorld()
 			UGameplayStatics::GetAllActorsOfClass(GetWorld(), AEscapeTool::StaticClass(), EscapeTools);
 			for (int i = 0; i < EscapeTools.Num(); i++)
 			{
-				if(Cast<AEscapeTool>(EscapeTools[i]))
+				if (Cast<AEscapeTool>(EscapeTools[i]))
 					if (Escapeid == Cast<AEscapeTool>(EscapeTools[i])->ItemID)
 						Cast<AEscapeTool>(EscapeTools[i])->Destroy();
 			}
-		
+
 		}
 	}
 	return true;
 }
 
+//void ACharacterController::UpdateSyncPlayer()
+//{
+//	// 동기화 용
+//	UWorld* const world = GetWorld();
+//	/*if (other_session_id == id)
+//		return;*/
+//	int size_ = NewPlayer.size();
+//	for (int i = 0; i < size_; ++i)
+//	{
+//		UE_LOG(LogTemp, Warning, TEXT("%d"), NewPlayer.front()->Id);
+//		if (NewPlayer.front()->Id == id)
+//		{
+//			UE_LOG(LogTemp, Warning, TEXT("%d %d"), NewPlayer.front()->Id, id);
+//			NewPlayer.front() = nullptr;
+//			NewPlayer.pop();
+//			continue;
+//		}
+//		switch (NewPlayer.front()->p_type)
+//		{
+//		case PlayerType::Character1:
+//			if (SkMeshAsset1) {
+//				FVector S_LOCATION;
+//				S_LOCATION.X = NewPlayer.front()->X;
+//				S_LOCATION.Y = NewPlayer.front()->Y;
+//				S_LOCATION.Z = NewPlayer.front()->Z;
+//				FRotator S_ROTATOR;
+//				S_ROTATOR.Yaw = NewPlayer.front()->Yaw;
+//				S_ROTATOR.Pitch = 0.0f;
+//				S_ROTATOR.Roll = 0.0f;
+//				FActorSpawnParameters SpawnActor;
+//				SpawnActor.Owner = this;
+//				SpawnActor.Instigator = GetInstigator();
+//				SpawnActor.Name = FName(*FString(to_string(NewPlayer.front()->Id).c_str()));
+//				ToSpawn = ACharacter1::StaticClass();
+//				if (world) {
+//					ACharacter1* SpawnCharacter = world->SpawnActor<ACharacter1>(ToSpawn,
+//						S_LOCATION, S_ROTATOR, SpawnActor);
+//					if (SpawnCharacter) {
+//						SpawnCharacter->SpawnDefaultController();
+//						SpawnCharacter->_SessionId = NewPlayer.front()->Id;
+//						SpawnCharacter->GetMesh()->SetSkeletalMesh(SkMeshAsset1);
+//					}
+//					if (Anim1)
+//						SpawnCharacter->GetMesh()->SetAnimClass(Anim1);
+//					SpawnCharacter->SetHealth(100.f);
+//				}
+//			}
+//			break;
+//		case  PlayerType::Character2:
+//			if (SkMeshAsset2) {
+//				FVector S_LOCATION;
+//				S_LOCATION.X = NewPlayer.front()->X;
+//				S_LOCATION.Y = NewPlayer.front()->Y;
+//				S_LOCATION.Z = NewPlayer.front()->Z;
+//				FRotator S_ROTATOR;
+//				S_ROTATOR.Yaw = NewPlayer.front()->Yaw;
+//				S_ROTATOR.Pitch = 0.0f;
+//				S_ROTATOR.Roll = 0.0f;
+//				FActorSpawnParameters SpawnActor;
+//				SpawnActor.Owner = this;
+//				SpawnActor.Instigator = GetInstigator();
+//				SpawnActor.Name = FName(*FString(to_string(NewPlayer.front()->Id).c_str()));
+//				ToSpawn = ACharacter2::StaticClass();
+//				if (world)
+//				{
+//					ACharacter2* SpawnCharacter = world->SpawnActor<ACharacter2>(ToSpawn,
+//						FVector::ZeroVector, FRotator::ZeroRotator, SpawnActor);
+//					if (SpawnCharacter) {
+//						SpawnCharacter->SpawnDefaultController();
+//						SpawnCharacter->_SessionId = NewPlayer.front()->Id;
+//						SpawnCharacter->GetMesh()->SetSkeletalMesh(SkMeshAsset2);
+//					}
+//					if (Anim2)
+//						SpawnCharacter->GetMesh()->SetAnimClass(Anim2);
+//					SpawnCharacter->SetHealth(100.f);
+//				}
+//			}
+//			break;
+//		case  PlayerType::Character3:
+//			if (SkMeshAsset3) {
+//				FVector S_LOCATION;
+//				S_LOCATION.X = NewPlayer.front()->X;
+//				S_LOCATION.Y = NewPlayer.front()->Y;
+//				S_LOCATION.Z = NewPlayer.front()->Z;
+//				FRotator S_ROTATOR;
+//				S_ROTATOR.Yaw = NewPlayer.front()->Yaw;
+//				S_ROTATOR.Pitch = 0.0f;
+//				S_ROTATOR.Roll = 0.0f;
+//				FActorSpawnParameters SpawnActor;
+//				SpawnActor.Owner = this;
+//				SpawnActor.Instigator = GetInstigator();
+//				SpawnActor.Name = FName(*FString(to_string(NewPlayer.front()->Id).c_str()));
+//				ToSpawn = ACharacter3::StaticClass();
+//				if (world) {
+//					ACharacter3* SpawnCharacter = world->SpawnActor<ACharacter3>(ToSpawn,
+//						FVector::ZeroVector, FRotator::ZeroRotator, SpawnActor);
+//					if (SpawnCharacter) {
+//						SpawnCharacter->SpawnDefaultController();
+//						SpawnCharacter->_SessionId = NewPlayer.front()->Id;
+//						SpawnCharacter->GetMesh()->SetSkeletalMesh(SkMeshAsset3);
+//					}
+//
+//					DynamicMaterial = UMaterialInstanceDynamic::Create(OldMaterial, this);
+//					if (DynamicMaterial)
+//					{
+//						SpawnCharacter->GetMesh()->SetMaterial(0, DynamicMaterial);
+//						DynamicMaterial->SetScalarParameterValue(FName("Alpha"), 0.f);
+//					}
+//					if (Anim3)
+//						SpawnCharacter->GetMesh()->SetAnimClass(Anim3);
+//					SpawnCharacter->SetHealth(100.f);
+//				}
+//			}
+//			break;
+//		case  PlayerType::Character4:
+//			if (SkMeshAsset4) {
+//				FVector S_LOCATION;
+//				S_LOCATION.X = NewPlayer.front()->X;
+//				S_LOCATION.Y = NewPlayer.front()->Y;
+//				S_LOCATION.Z = NewPlayer.front()->Z;
+//				FRotator S_ROTATOR;
+//				S_ROTATOR.Yaw = NewPlayer.front()->Yaw;
+//				S_ROTATOR.Pitch = 0.0f;
+//				S_ROTATOR.Roll = 0.0f;
+//				FActorSpawnParameters SpawnActor;
+//				SpawnActor.Owner = this;
+//				SpawnActor.Instigator = GetInstigator();
+//				SpawnActor.Name = FName(*FString(to_string(NewPlayer.front()->Id).c_str()));
+//				ToSpawn = ACharacter4::StaticClass();
+//				if (world)
+//				{
+//					ACharacter4* SpawnCharacter = world->SpawnActor<ACharacter4>(ToSpawn,
+//						FVector::ZeroVector, FRotator::ZeroRotator, SpawnActor);
+//					if (SpawnCharacter) {
+//						SpawnCharacter->SpawnDefaultController();
+//						SpawnCharacter->_SessionId = NewPlayer.front()->Id;
+//						SpawnCharacter->GetMesh()->SetSkeletalMesh(SkMeshAsset4);
+//					}
+//					if (Anim4)
+//						SpawnCharacter->GetMesh()->SetAnimClass(Anim4);
+//					SpawnCharacter->SetHealth(100.f);
+//				}
+//			}
+//			break;
+//		default:
+//			if (SkMeshAsset1) {
+//				FVector S_LOCATION;
+//				S_LOCATION.X = NewPlayer.front()->X;
+//				S_LOCATION.Y = NewPlayer.front()->Y;
+//				S_LOCATION.Z = NewPlayer.front()->Z;
+//				FRotator S_ROTATOR;
+//				S_ROTATOR.Yaw = NewPlayer.front()->Yaw;
+//				S_ROTATOR.Pitch = 0.0f;
+//				S_ROTATOR.Roll = 0.0f;
+//				FActorSpawnParameters SpawnActor;
+//				SpawnActor.Owner = this;
+//				SpawnActor.Instigator = GetInstigator();
+//				SpawnActor.Name = FName(*FString(to_string(NewPlayer.front()->Id).c_str()));
+//				ToSpawn = ACharacter1::StaticClass();
+//				ACharacter1* SpawnCharacter = world->SpawnActor<ACharacter1>(ToSpawn,
+//					S_LOCATION, S_ROTATOR, SpawnActor);
+//				SpawnCharacter->SpawnDefaultController();
+//				SpawnCharacter->_SessionId = NewPlayer.front()->Id;
+//				SpawnCharacter->GetMesh()->SetSkeletalMesh(SkMeshAsset1);
+//				if (Anim1)
+//					SpawnCharacter->GetMesh()->SetAnimClass(Anim1);
+//			}
+//			break;
+//		}
+//
+//		if (PlayerInfo != nullptr)
+//		{
+//			CPlayer info;
+//			info.Id = NewPlayer.front()->Id;
+//			info.X = NewPlayer.front()->X;
+//			info.Y = NewPlayer.front()->Y;
+//			info.Z = NewPlayer.front()->Z;
+//
+//			info.Yaw = NewPlayer.front()->Yaw;
+//
+//			PlayerInfo->players[NewPlayer.front()->Id] = info;
+//			p_cnt = PlayerInfo->players.size();
+//		}
+//
+//		UE_LOG(LogClass, Warning, TEXT("other spawned player connect"));
+//
+//		NewPlayer.front() = nullptr;
+//		NewPlayer.pop();
+//	}
+//	bNewPlayerEntered = false;
+//}
 void ACharacterController::UpdateSyncPlayer()
 {
 	// 동기화 용
@@ -933,7 +1123,6 @@ void ACharacterController::UpdateSyncPlayer()
 	}
 	bNewPlayerEntered = false;
 }
-
 void ACharacterController::UpdateSyncItem()
 {
 	UWorld* const world = GetWorld();
@@ -1024,16 +1213,17 @@ void ACharacterController::OnPossess(APawn* InPawn)
 	}
 }
 
-void ACharacterController::SetHp(float recvdamaged)
+void ACharacterController::SeverHpSync(float hp, int myid)
 {
-	damaged = recvdamaged;
-	//Cast<ACharacterBase>(GetOwner())->SetHealth(recvdamaged);
-	//UE_LOG(LogClass, Warning, TEXT("hp : %f"), DamagedHp);
-	//ACharacterBase* BaseCharacter = Cast<ACharacterBase>(GetPawn());
-	//if (BaseCharacter)
-	//{
-	//	UE_LOG(LogClass, Warning, TEXT("hp : %f"), DamagedHp);
-	//	BaseCharacter->SetHealth(DamagedHp);
-	//	SetHUDHealth(BaseCharacter->GetHealth(), BaseCharacter->MaxGetHealth());
-	//}
+	if (inst)
+		inst->m_Socket->Send_My_HP_PACKET(myid, hp);
+
 }
+
+//void ACharacterController::ServerDeadSync(bool bAlive, int myid)
+//{
+//	if (inst)
+//		inst->m_Socket->Send_My_HP_PACKET(myid, bAlive);
+//}
+
+
