@@ -201,4 +201,6 @@ public:
 	class ANiagaraActor* ServerTemp;
 	UBOGameInstance* inst;
 	bool bSync = false;
+
+	void SeverHpSync(float damge, int id);
 };

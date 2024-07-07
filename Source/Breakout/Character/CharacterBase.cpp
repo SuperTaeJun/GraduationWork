@@ -206,6 +206,7 @@ void ACharacterBase::SetHUDCrosshair(float DeltaTime)
 
 void ACharacterBase::UpdateHpHUD()
 {
+	inst->m_Socket;
 	MainController = MainController == nullptr ? Cast<ACharacterController>(Controller) : MainController;
 	if (MainController)
 	{
@@ -440,10 +441,15 @@ void ACharacterBase::SetSpawnGrenade(TSubclassOf<AProjectileBase> Projectile)
 
 void ACharacterBase::ReciveDamage(AActor* DamagedActor, float Damage, const UDamageType* DamageType, class AController* InstigatorController, AActor* DamageCauser)
 {
-	
-	Health = FMath::Clamp(Health - Damage, 0.f, MaxHealth);
+	if (MainController)
+		MainController->SeverHpSync(Damage, _SessionId);
+
+
+	//Health = FMath::Clamp(Health - Damage, 0.f, MaxHealth);
 	UpdateHpHUD();
 	ACharacterBase* DamageInsigatorCh= Cast<ACharacterBase>(InstigatorController->GetPawn());
+
+	inst->m_Socket;
 	if (Health <= 0.0f)
 	{
 		bDissolve = true;
@@ -482,6 +488,7 @@ void ACharacterBase::ReciveDamage(AActor* DamagedActor, float Damage, const UDam
 
 		if (bAlive)
 		{
+			inst->m_Socket;
 			bAlive = false;
 			PlayAnimMontage(DeadMontage);
 		}

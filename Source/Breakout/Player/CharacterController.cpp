@@ -340,11 +340,9 @@ void ACharacterController::Tick(float DeltaTime)
 			this,
 			UDamageType::StaticClass()
 		);
-		//BaseCharacter->SetHealth(damaged);
+
 		damaged = 0;
-		//BaseCharacter->SetHealth(BaseCharacter->GetHealth());
-		if(BaseCharacter->GetHealth()<=9999)
-			SetHUDHealth(BaseCharacter->GetHealth(), BaseCharacter->MaxGetHealth());
+
 	}
 	if (MainHUD && inst->m_Socket->bAcquire) {
 		SetNum();
@@ -1045,6 +1043,12 @@ void ACharacterController::OnPossess(APawn* InPawn)
 		bEnableMouseOverEvents = true;
 		showWeaponSelect();
 	}
+}
+
+void ACharacterController::SeverHpSync(float damge, int id)
+{
+
+
 }
 
 void ACharacterController::SetHp(float recvdamaged)
