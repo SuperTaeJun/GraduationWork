@@ -111,7 +111,7 @@ public:
 	float e_x, e_y, e_z;
 	int wtype;
 	//--------------------
-	bool bStopAnim;
+	bool bAlive;
 	unordered_set   <int>  viewlist; // 시야 안 오브젝트
 	mutex vl;
 	mutex hp_lock;
@@ -843,25 +843,26 @@ void process_packet(int s_id, char* p)
 		}
 		break;
 	}
-	case CS_STOP_ANIM: {
-		CS_STOP_ANIM_PACKET* packet = reinterpret_cast<CS_STOP_ANIM_PACKET*>(p);
+	case CS_ALIVE: {
+		CS_ALIVE_PACKET* packet = reinterpret_cast<CS_ALIVE_PACKET*>(p);
 		cout << "packet->id : " << packet->id << endl;
 		CLIENT& cl = clients[packet->id];
-		cl.bStopAnim = true;
+		cl.bAlive = packet->bAlive;
 		for (auto& other : clients) {
+			if (other._s_id == cl._s_id) continue;
 			other.state_lock.lock();
 			if (ST_INGAME != other._state) {
 				other.state_lock.unlock();
 				continue;
 			}
 			else other.state_lock.unlock();
-			CS_STOP_ANIM_PACKET packet;
+			CS_ALIVE_PACKET packet;
 
 
 			packet.size = sizeof(packet);
-			packet.type = SC_STOP_ANIM;
+			packet.type = SC_ALIVE;
 			packet.id = cl._s_id;
-			packet.bStopAnim = cl.bStopAnim;
+			packet.bAlive = cl.bAlive;
 			other.do_send(sizeof(packet), &packet);
 		}
 

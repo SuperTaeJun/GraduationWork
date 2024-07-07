@@ -709,19 +709,16 @@ bool ACharacterController::UpdateWorld()
 				if (ServerTemp)
 					ServerTemp->Destroy();
 			}
-			/*UE_LOG(LogTemp, Warning, TEXT("otherplayer hp : %f"), OtherPlayer->GetHealth());*/
-			UE_LOG(LogTemp, Warning, TEXT("my hp : %f"), Cast<ACharacterBase>(GetPawn())->GetHealth());
-			if (info->bStopAnim == true) { //贸府
+
+			if (info->bAlive == true) { //贸府
 				OtherPlayer->StopAnimMontage(SyncDeadMontage);
-				info->bStopAnim = false;
-				OtherPlayer->bDeadAnim = false;
+				info->bAlive = false;
+				OtherPlayer->bAlive = false;
 				OtherPlayer->SetHealth(100.f);
 			}
-			if (OtherPlayer->GetHealth() <= 0&& OtherPlayer->bDeadAnim == false) {
-				UE_LOG(LogTemp, Warning, TEXT("otherplayer hp : %f"), OtherPlayer->GetHealth());
-				UE_LOG(LogTemp, Warning, TEXT("my hp : %f"), Cast<ACharacterBase>(GetPawn())->GetHealth());
+			else {
 				OtherPlayer->PlayAnimMontage(SyncDeadMontage);
-				OtherPlayer->bDeadAnim = true;
+				OtherPlayer->bAlive = true;
 			}
 			if (info->bServerReload == true)
 			{
@@ -1050,6 +1047,12 @@ void ACharacterController::SeverHpSync(float hp, int myid)
 	if (inst)
 		inst->m_Socket->Send_My_HP_PACKET(myid, hp);
 
+}
+
+void ACharacterController::ServerDeadSync(bool bAlive, int myid)
+{
+	if (inst)
+		inst->m_Socket->Send_Alive_packet(myid, bAlive);
 }
 
 

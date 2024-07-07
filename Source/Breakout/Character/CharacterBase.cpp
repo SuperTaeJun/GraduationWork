@@ -487,9 +487,9 @@ void ACharacterBase::ReciveDamage(AActor* DamagedActor, float Damage, const UDam
 
 		if (bAlive)
 		{
-			inst->m_Socket;
 			bAlive = false;
 			PlayAnimMontage(DeadMontage);
+			MainController->ServerDeadSync(bAlive, inst->GetPlayerID());
 		}
 	}
 }

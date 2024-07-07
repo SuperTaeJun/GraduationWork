@@ -40,7 +40,7 @@ const char CS_START_GAME = 14;
 const char CS_NiAGARA_CH1 = 15;
 const char CS_END_GAME = 16;
 const char CS_GETITEM = 17;
-const char CS_STOP_ANIM = 18;
+const char CS_ALIVE = 18;
 const char CS_REMOVE_ITEM = 19;
 const char CS_INCREASE_COUNT = 20;
 const char CS_ITEM_INFO = 21;
@@ -69,7 +69,7 @@ const char SC_NiAGARA_CH1 = 15;
 const char SC_ITEM = 16;
 const char SC_END_GAME = 17;
 const char SC_ITEM_ACQUIRE = 18;
-const char SC_STOP_ANIM = 19;
+const char SC_ALIVE = 19;
 const char SC_REMOVE_ITEM = 20;
 const char SC_MYITEM_COUNT = 21;
 const char SC_INCREASE_COUNT = 22;
@@ -301,11 +301,11 @@ struct SC_ITEM_ACQUIRE_PACKET {
 	char cid[MAX_INFO_SIZE];
 	int itemCount;
 };
-struct CS_STOP_ANIM_PACKET {
+struct CS_ALIVE_PACKET {
 	unsigned char size;
 	unsigned char type;
 	int id;
-	bool bStopAnim;
+	bool bAlive;
 };
 struct CS_REMOVE_ITEM_PACKET {
 	unsigned char size;

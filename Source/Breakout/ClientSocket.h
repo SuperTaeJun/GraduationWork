@@ -102,7 +102,7 @@ public:
 	bool  bniagarach1 = false;
 	bool  bch4end = false;
 	bool  bEndGame = false;
-	bool  bStopAnim = false;
+	bool  bAlive = false;
 	bool  bServerReload = false;
 	bool  bFinishSkill = false;
 	// ³ªÀÌ¾Æ°¡¶ó ½¸ ÀÌÆÑÆ®
@@ -302,7 +302,7 @@ public:
 	void Send_End_Game_packet(int id);
 	void Send_Signal_packet(int id, int num);
 	void Send_Item_packet(int id, int itemCount);
-	void Send_Stop_Anim_packet(int id);
+	void Send_Alive_packet(int id, bool bAlive);
 	void Send_Destroyed_item_packet(int id);
 	void Send_Increase_item_count_packet(int id, int itemcount);
 	void Send_Decrease_item_count_packet(int id, int itemcount);
