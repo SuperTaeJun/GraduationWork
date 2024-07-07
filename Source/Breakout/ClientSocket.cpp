@@ -203,12 +203,12 @@ bool ClientSocket::PacketProcess(char* ptr)
 	}
 	//HP동기화 처리
 	case SC_PLAYER_DAMAGE: {
-		SC_DAMAGE_CHANGE* packet = reinterpret_cast<SC_DAMAGE_CHANGE*>(ptr);
+		/*SC_DAMAGE_CHANGE* packet = reinterpret_cast<SC_DAMAGE_CHANGE*>(ptr);
 		CPlayer player;
 		player.Id = packet->damaged_id;
 		player.damage = packet->damage;
 
-		MyCharacterController->SetHp(player.damage);
+		MyCharacterController->SetHp(player.damage);*/
 		break;
 	}
 	case SC_NiAGARA: {
@@ -574,6 +574,15 @@ void ClientSocket::Send_CH2_SKILL_PACKET(int id, PlayerType type, bool bSkill)
 	packet.id = id;
 	packet.p_type = type;
 	packet.bfinish = bSkill;
+	SendPacket(&packet);
+}
+void ClientSocket::Send_My_HP_PACKET(int id, float damaage)
+{
+	CS_DAMAGE_PACKET packet;
+	packet.size = sizeof(packet);
+	packet.type = CS_DAMAGE;
+	packet.id = id;
+	packet.damage = damaage;
 	SendPacket(&packet);
 }
 bool ClientSocket::Init()

@@ -99,7 +99,7 @@ public:
 	float VZ;
 	float Max_Speed;
 
-	int _hp; // 체력
+	float _hp; // 체력
 	int damage;
 	bool is_bone = false;
 	bool bGetWeapon = false;
@@ -140,7 +140,7 @@ public:
 public:
 	CLIENT() : _state(ST_FREE), _prev_size(0)
 	{
-		_hp = 100;
+		_hp = 100.f;
 		myItemCount = 0;
 	}
 
@@ -172,6 +172,10 @@ public:
 			if (ERROR_IO_PENDING != error_num)
 				error_display(error_num);
 		}
+	}
+	inline float get_hp()
+	{
+		return _hp;
 	}
 };
 
@@ -1025,6 +1029,14 @@ void process_packet(int s_id, char* p)
 		}
 		break;
 	}
+	case CS_DAMAGE: {
+		CS_DAMAGE_PACKET* packet = reinterpret_cast<CS_DAMAGE_PACKET*>(p);
+		CLIENT& cl = clients[packet->id];
+		cl._hp -= packet->damage;
+
+		send_change_hp(packet->id);
+		break;
+	}
 	default:
 		cout << " 오류패킷타입 : " << p << endl;
 		break;
@@ -1146,16 +1158,17 @@ void send_move_packet(int _id, int target)
 	clients[_id].do_send(sizeof(packet), &packet);
 }
 
-//데미지 깍는 곳
 void send_change_hp(int _s_id)
 {
-	SC_DAMAGE_CHANGE packet;
+	SC_HP_CHANGE_PACKET packet;
 	packet.size = sizeof(packet);
-	packet.type = SC_PLAYER_DAMAGE;
-	packet.damaged_id = _s_id;
-	packet.damage = clients[_s_id].damage;
+	packet.id = _s_id;
+	packet.type = SC_HP_CHANGE;
+	packet.HP = clients[_s_id]._hp;
 	clients[_s_id].do_send(sizeof(packet), &packet);
 }
+
+
 
 void send_ready_packet(int _s_id)
 {

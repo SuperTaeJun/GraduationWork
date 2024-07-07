@@ -442,7 +442,7 @@ void ACharacterBase::SetSpawnGrenade(TSubclassOf<AProjectileBase> Projectile)
 void ACharacterBase::ReciveDamage(AActor* DamagedActor, float Damage, const UDamageType* DamageType, class AController* InstigatorController, AActor* DamageCauser)
 {
 	if (MainController)
-		MainController->SeverHpSync(Damage, _SessionId);
+		MainController->SeverHpSync(Damage, inst->GetPlayerID());
 
 
 	//Health = FMath::Clamp(Health - Damage, 0.f, MaxHealth);

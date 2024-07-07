@@ -49,6 +49,7 @@ const char CS_ITEM_ANIM = 23;
 const char CS_REMOVE_WEAPON = 24;
 const char CS_DECREASE_COUNT = 25;
 const char CS_CH2_SKILL = 26;
+const char CS_DAMAGE = 27;
 
 const char SC_LOGIN_OK = 1;
 const char SC_OTHER_PLAYER = 2;
@@ -78,6 +79,7 @@ const char SC_REMOVE_WEAPON = 25;
 const char SC_MYNEW_COUNT = 26;
 const char SC_CH2_SKILL = 27;
 const char SC_TRAVLE = 28;
+const char SC_HP_CHANGE = 29;
 
 
 #pragma pack (push, 1)
@@ -186,15 +188,15 @@ struct CS_EFFECT_PACKET {
 struct CS_DAMAGE_PACKET {
 	unsigned char size;
 	unsigned char type;
-	int damaged_id;
+	int id;
 	float damage;
 };
-struct SC_DAMAGE_CHANGE
+struct SC_HP_CHANGE_PACKET
 {
 	unsigned char size;
 	unsigned char type;
-	int damaged_id;
-	int damage;
+	int id;
+	float HP;
 };
 struct CS_SIGNAL_PACKET
 {
@@ -363,5 +365,6 @@ struct SC_TRAVEL_PACKET {
 	unsigned char size;
 	unsigned char type;
 	bool ingame;
-};
+}; 
+
 #pragma pack(pop)

@@ -1045,22 +1045,11 @@ void ACharacterController::OnPossess(APawn* InPawn)
 	}
 }
 
-void ACharacterController::SeverHpSync(float damge, int id)
+void ACharacterController::SeverHpSync(float damge, int myid)
 {
-
+	if (inst)
+		inst->m_Socket->Send_My_HP_PACKET(myid, damge);
 
 }
 
-void ACharacterController::SetHp(float recvdamaged)
-{
-	damaged = recvdamaged;
-	//Cast<ACharacterBase>(GetOwner())->SetHealth(recvdamaged);
-	//UE_LOG(LogClass, Warning, TEXT("hp : %f"), DamagedHp);
-	//ACharacterBase* BaseCharacter = Cast<ACharacterBase>(GetPawn());
-	//if (BaseCharacter)
-	//{
-	//	UE_LOG(LogClass, Warning, TEXT("hp : %f"), DamagedHp);
-	//	BaseCharacter->SetHealth(DamagedHp);
-	//	SetHUDHealth(BaseCharacter->GetHealth(), BaseCharacter->MaxGetHealth());
-	//}
-}
+
