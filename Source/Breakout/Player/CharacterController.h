@@ -202,5 +202,5 @@ public:
 	UBOGameInstance* inst;
 	bool bSync = false;
 
-	void SeverHpSync(float damge, int myid);
+	void SeverHpSync(float hp, int myid);
 };

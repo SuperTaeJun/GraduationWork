@@ -581,7 +581,7 @@ void ClientSocket::Send_My_HP_PACKET(int id, float damaage)
 	packet.size = sizeof(packet);
 	packet.type = CS_DAMAGE;
 	packet.id = id;
-	packet.damage = damaage;
+	packet.hp = damaage;
 	SendPacket(&packet);
 }
 bool ClientSocket::Init()

@@ -1045,10 +1045,10 @@ void ACharacterController::OnPossess(APawn* InPawn)
 	}
 }
 
-void ACharacterController::SeverHpSync(float damge, int myid)
+void ACharacterController::SeverHpSync(float hp, int myid)
 {
 	if (inst)
-		inst->m_Socket->Send_My_HP_PACKET(myid, damge);
+		inst->m_Socket->Send_My_HP_PACKET(myid, hp);
 
 }
 

@@ -190,7 +190,7 @@ struct CS_DAMAGE_PACKET {
 	unsigned char size;
 	unsigned char type;
 	int id;
-	float damage;
+	float hp;
 };
 struct SC_HP_CHANGE_PACKET
 {
