@@ -475,13 +475,16 @@ void ACharacterBase::ReciveDamage(AActor* DamagedActor, float Damage, const UDam
 		}
 		if(CurWeapon)
 			CurWeapon->CurAmmo = 0;
-		PlayAnimMontage(DeadMontage);
 		GetWorld()->GetTimerManager().SetTimer(DeadTimer, this, &ACharacterBase::Dead, DeadTime, false);
 		if(MainController)
 			DisableInput(MainController);
 		UpdateObtainedEscapeTool();
-		if(MainController)//이거 죽었을때 다시 충돌 일어나서 애니메이션 재생되는거 막는용도
-			Health = 99999.f;
+
+		if (bAlive)
+		{
+			bAlive = false;
+			PlayAnimMontage(DeadMontage);
+		}
 	}
 }
 

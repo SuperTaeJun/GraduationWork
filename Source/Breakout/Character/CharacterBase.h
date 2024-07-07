@@ -118,6 +118,8 @@ public:
 	FTimerHandle DeadTimer;
 	//int p_id; // player own id
 	TObjectPtr<class AWeaponBase> CurWeapon;
+
+	bool bAlive = true;
 protected:
 
 	UPROPERTY(EditAnywhere, Category = Arrow)

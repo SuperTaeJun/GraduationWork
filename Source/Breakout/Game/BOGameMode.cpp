@@ -104,6 +104,7 @@ void ABOGameMode::Respawn(ACharacter* RespawnedCh, AController* RespawnedControl
 
 	if (MyCharacter && RespawnedController)
 	{
+		MyCharacter->bAlive = true;
 		FName Tagname = TagName;
 		AActor* PlayerStarts;
 		PlayerStarts=FindPlayerStart(MyCharacter->GetController(), *Tagname.ToString());
