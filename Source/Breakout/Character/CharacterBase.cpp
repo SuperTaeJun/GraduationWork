@@ -209,7 +209,7 @@ void ACharacterBase::UpdateHpHUD()
 	MainController = MainController == nullptr ? Cast<ACharacterController>(Controller) : MainController;
 	if (MainController)
 	{
-		MainController->SetHUDHealth(FMath::Clamp(inst->m_Socket->get_hp(),0.f,100.f), MaxHealth);
+		MainController->SetHUDHealth(FMath::Clamp(Health,0.f,100.f), MaxHealth);
 	}
 }
 
@@ -441,15 +441,15 @@ void ACharacterBase::SetSpawnGrenade(TSubclassOf<AProjectileBase> Projectile)
 void ACharacterBase::ReciveDamage(AActor* DamagedActor, float Damage, const UDamageType* DamageType, class AController* InstigatorController, AActor* DamageCauser)
 {
 	if (MainController)
-		MainController->SeverHpSync(Damage, inst->GetPlayerID());
-
+		MainController->SeverHpSync(Health, inst->GetPlayerID());
+	
 	UE_LOG(LogTemp, Warning, TEXT("RECV MY ID : %d"), inst->GetPlayerID());
-	//Health = FMath::Clamp(Health - Damage, 0.f, MaxHealth);
+	Health = FMath::Clamp(Health - Damage, 0.f, MaxHealth);
 	UpdateHpHUD();
 	ACharacterBase* DamageInsigatorCh= Cast<ACharacterBase>(InstigatorController->GetPawn());
 
 	
-	if (inst->m_Socket->get_hp() <= 0.0f)
+	if (Health <= 0.0f)
 	{
 		bDissolve = true;
 		if (DamageInsigatorCh)
