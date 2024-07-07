@@ -84,13 +84,13 @@ const char SC_TRAVLE = 28;
 struct CS_LOGIN_PACKET
 {
 	unsigned char size;
-	unsigned type;
+	unsigned char type;
 	char id[MAX_INFO_SIZE];
 	char pw[MAX_INFO_SIZE];
 };
 struct SC_LOGIN_BACK {
 	unsigned char size;
-	unsigned type;
+	unsigned char type;
 	int id;
 	char cid[MAX_INFO_SIZE];
 
@@ -102,7 +102,7 @@ struct SC_LOGIN_BACK {
 struct CS_MOVE_PACKET
 {
 	unsigned char size;
-	unsigned type;
+	unsigned char type;
 	int	id;
 	float Max_speed;
 	float x, y, z;
@@ -111,7 +111,7 @@ struct CS_MOVE_PACKET
 };
 struct SC_PLAYER_SYNC {
 	unsigned char size;
-	unsigned type;
+	unsigned char type;
 	int id;
 	float Max_speed;
 	float x, y, z;
@@ -123,14 +123,14 @@ struct SC_PLAYER_SYNC {
 struct CS_SELECT_CHARACTER
 {
 	unsigned char size;
-	unsigned type;
+	unsigned char type;
 	int id;
 	float x, y, z;
 	PlayerType p_type;
 };
 struct SC_SELECT_CHARACTER_BACK {
 	unsigned char size;
-	unsigned type;
+	unsigned char type;
 	int clientid;
 	float x, y, z;
 	PlayerType p_type;
@@ -138,7 +138,7 @@ struct SC_SELECT_CHARACTER_BACK {
 struct CS_SELECT_WEAPO
 {
 	unsigned char size;
-	unsigned type;
+	unsigned char type;
 	int id;
 	bool bselectwep;
 	WeaponType weapon_type;
@@ -146,18 +146,18 @@ struct CS_SELECT_WEAPO
 struct SC_SYNC_WEAPO
 {
 	unsigned char size;
-	unsigned type;
+	unsigned char type;
 	int id;
 	bool bselectwep;
 	WeaponType weapon_type;
 };
 struct CS_READY_PACKET {
 	unsigned char size;
-	unsigned type;
+	unsigned char type;
 };
 struct SC_ACCEPT_READY {
 	unsigned char size;
-	unsigned type;
+	unsigned char type;
 	bool ingame;
 };
 struct CS_ATTACK_PLAYER {
@@ -361,7 +361,7 @@ struct SC_CH2_SKILL_PACKET {
 };
 struct SC_TRAVEL_PACKET {
 	unsigned char size;
-	unsigned type;
+	unsigned char type;
 	bool ingame;
 };
 #pragma pack(pop)
