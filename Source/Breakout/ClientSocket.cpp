@@ -147,6 +147,11 @@ bool ClientSocket::PacketProcess(char* ptr)
 		bAllReady = packet->ingame;
 		break;
 	}
+	case SC_TRAVLE: {
+		SC_TRAVEL_PACKET* packet = reinterpret_cast<SC_TRAVEL_PACKET*>(ptr);
+		bTravel = packet->ingame;
+		break;
+	}
   // 공격 나이아가라 이팩트 효과
 	case SC_ATTACK: {
 		SC_ATTACK_PLAYER* packet = reinterpret_cast<SC_ATTACK_PLAYER*>(ptr);
