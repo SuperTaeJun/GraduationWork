@@ -11,7 +11,7 @@
 #include <fstream>
 #include <map>
 #include <mutex>
-#include "../../Server/Server/Server/ServerCore/protocol.h"
+#include "../../Server/Server/protocol.h"
 #include <vector>
 #include <iostream>
 #include "Windows/PostWindowsApi.h"
@@ -346,6 +346,7 @@ public:
 	int Tempcnt2;
 	FString TempPlayerName;
 	bool bAcquire = false;
+	bool bTravel = false;
 private:
 	ACharacterController* MyCharacterController;
 	CPlayerInfo PlayerInfo;

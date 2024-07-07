@@ -1078,6 +1078,8 @@ void ACharacterBase::StartGame()
 		//	UE_LOG(LogTemp, Warning, TEXT("ADDTOOLNUM"));
 		//	MainHUD->AddToolNumUi();
 		//}
+		if (inst)
+			inst->m_Socket->Send_Start_game_packet(inst->GetPlayerID());
 		MainController->MainHUD->AddToolNumUi();
 		// num 계수, name 처리 
 		MainController->SetNum();
