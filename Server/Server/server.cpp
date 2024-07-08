@@ -855,7 +855,7 @@ void process_packet(int s_id, unsigned char* p)
 	case CS_DISSOLVE: {
 		CS_DISSOLVE_PACKET* packet = reinterpret_cast<CS_DISSOLVE_PACKET*>(p);
 		CLIENT& cl = clients[packet->id];
-		//cout << "dissolve : " << packet->dissolve << endl;
+		cout << "dissolve : " << packet->dissolve << endl;
 		cl.dissolve = packet->dissolve;
 		for (auto& other : clients) {
 			if (other._s_id == cl._s_id) continue;
