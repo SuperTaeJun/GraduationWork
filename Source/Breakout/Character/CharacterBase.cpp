@@ -452,7 +452,8 @@ void ACharacterBase::ReciveDamage(AActor* DamagedActor, float Damage, const UDam
 	
 	if (Health <= 0.0f)
 	{
-		bDissolve = true;
+		if(MainController)
+			bDissolve = true;
 		if (DamageInsigatorCh)
 		{
 			//¼­¹ö
