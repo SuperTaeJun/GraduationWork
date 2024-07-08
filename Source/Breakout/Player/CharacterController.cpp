@@ -726,7 +726,7 @@ bool ACharacterController::UpdateWorld()
 			// Á×À» ¶§ µðÁ¹ºê
 			if (info->dissolve == 0) {
 				ServerSetDissolve(true, OtherPlayer);
-				info->dissolve = 2;
+				//info->dissolve = 2;
 			}
 			else if (info->dissolve == 1)
 			{
