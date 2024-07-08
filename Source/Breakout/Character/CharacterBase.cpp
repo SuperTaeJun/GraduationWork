@@ -1002,6 +1002,7 @@ void ACharacterBase::Tick(float DeltaTime)
 	//캐릭터 디졸브
 	if (bDissolve)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("WWWWWWWWW"));
 		if (MDissolveInst)
 		{
 			MDynamicDissolveInst = UMaterialInstanceDynamic::Create(MDissolveInst, this);
