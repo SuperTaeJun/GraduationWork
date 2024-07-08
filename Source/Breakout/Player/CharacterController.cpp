@@ -1245,10 +1245,13 @@ void ACharacterController::ServerSetDissolve(bool dissolve, ACharacterBase* play
 	}
 	else
 	{
+		if (player->GetDynamicMaterial())
+		{
+			float DissolvePercent = -1.f;
+			player->GetMesh()->SetMaterial(0, player->GetDynamicMaterial());
+			player->GetDynamicMaterial()->SetScalarParameterValue(FName("Dissolve"), DissolvePercent);
+		}
 		player->SetbDissolve(dissolve);
-		float DissolvePercent = -1.f;
-		player->GetMesh()->SetMaterial(0, player->GetDynamicMaterial());
-		player->GetDynamicMaterial()->SetScalarParameterValue(FName("Dissolve"), DissolvePercent);
 	}
 }
 
