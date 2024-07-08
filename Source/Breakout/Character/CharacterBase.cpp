@@ -452,8 +452,7 @@ void ACharacterBase::ReciveDamage(AActor* DamagedActor, float Damage, const UDam
 	
 	if (Health <= 0.0f)
 	{
-		if(MainController)
-			bDissolve = true;
+		bDissolve = true;
 		if (DamageInsigatorCh)
 		{
 			//서버
@@ -1003,18 +1002,18 @@ void ACharacterBase::Tick(float DeltaTime)
 	//캐릭터 디졸브
 	if (bDissolve)
 	{
-		
+
 		if (MDissolveInst)
 		{
 			MDynamicDissolveInst = UMaterialInstanceDynamic::Create(MDissolveInst, this);
 			if (MDynamicDissolveInst)
 			{
-				DissolvePercent += DeltaTime/4;
+				DissolvePercent += DeltaTime / 4;
 				GetMesh()->SetMaterial(0, MDynamicDissolveInst);
 				MDynamicDissolveInst->SetScalarParameterValue(FName("Dissolve"), DissolvePercent);
+				if (inst)
+					inst->m_Socket->Send_Dissolve_packet(inst->GetPlayerID(), 0);
 			}
-			if(inst)
-				inst->m_Socket->Send_Dissolve_packet(inst->GetPlayerID(), 0);
 		}
 	}
 

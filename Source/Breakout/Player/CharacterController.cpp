@@ -1242,17 +1242,19 @@ void ACharacterController::ServerSetDissolve(bool dissolve, ACharacterBase* play
 	if (dissolve == true)
 	{
 		player->SetbDissolve(true);
+		player->GetCurWeapon()->SetActorHiddenInGame(true);
 	}
 	else
 	{
 		UE_LOG(LogTemp, Warning, TEXT("WWWWWWWWW"));
 		if (player->GetDynamicMaterial())
 		{
+			player->SetbDissolve(false);
 			player->SetDissolvePersent(-1.f);
 			player->GetMesh()->SetMaterial(0, player->GetDynamicMaterial());
 			player->GetDynamicMaterial()->SetScalarParameterValue(FName("Dissolve"), player->GetDissolvePersent());
+			player->GetCurWeapon()->SetActorHiddenInGame(false);
 		}
-		player->SetbDissolve(false);
 	}
 }
 
