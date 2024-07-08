@@ -109,17 +109,19 @@ void ABOGameMode::Respawn(ACharacter* RespawnedCh, AController* RespawnedControl
 		AActor* PlayerStarts;
 		PlayerStarts=FindPlayerStart(MyCharacter->GetController(), *Tagname.ToString());
 		MyCharacter->SetResetState();
+	
 		MyCharacter->SetActorTransform(PlayerStarts->GetActorTransform());
 		//ÆÐÅ¶ BOOL °ª
 		if (inst)
-			Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Alive_packet(inst->GetPlayerID(), MyCharacter->bAlive);
+			Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Alive_packet(inst->GetPlayerID(), 1);
 
 		//Cast<ACharacterController>(RespawnedController)->ServerDeadSync(MyCharacter->bAlive, inst->GetPlayerID());
 		MyCharacter->StopAnimMontage(MyCharacter->GetDeadMontage());
 		Cast<ACharacterController>(RespawnedController)->OnPossess(MyCharacter);
 		//RestartPlayerAtPlayerStart(RespawnedController, PlayerStarts);
 	}
-
+	if (inst)
+		inst->m_Socket->Send_Dissolve_packet(inst->GetPlayerID(), 1);
 }
 
 UClass* ABOGameMode::GetDefaultPawnClassForController_Implementation(AController* InController)

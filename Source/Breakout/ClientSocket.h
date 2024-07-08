@@ -75,6 +75,10 @@ public:
 	float hp = 100.f;
 	int skilltype;
 	int itemAnimtype = -1;
+	// 죽는 애니메이션 타입
+	int deadtype = 2;
+	// 디졸브 상태
+	int	dissolve = 2;
 	// 아이디 비번
 	FString    userId = {};
 	FString    userPw = {};
@@ -102,7 +106,6 @@ public:
 	bool  bniagarach1 = false;
 	bool  bch4end = false;
 	bool  bEndGame = false;
-	bool  bStopAnim = false;
 	bool  bServerReload = false;
 	bool  bFinishSkill = false;
 	// 나이아가라 슛 이팩트
@@ -302,7 +305,7 @@ public:
 	void Send_End_Game_packet(int id);
 	void Send_Signal_packet(int id, int num);
 	void Send_Item_packet(int id, int itemCount);
-	void Send_Alive_packet(int id, bool bAlive);
+	void Send_Alive_packet(int id, int deadtype);
 	void Send_Destroyed_item_packet(int id);
 	void Send_Increase_item_count_packet(int id, int itemcount);
 	void Send_Decrease_item_count_packet(int id, int itemcount);
@@ -311,6 +314,7 @@ public:
 	void Send_Remove_Weapon(int id, bool bWeapon);
 	void Send_CH2_SKILL_PACKET(int id, PlayerType type, bool bSkill);
 	void Send_My_HP_PACKET(int id, float damaage);
+	void Send_Dissolve_packet(int id, int dissolve);
 	virtual bool Init() override;
 	virtual uint32 Run() override;
 	virtual void Stop() override;

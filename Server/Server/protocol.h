@@ -1,6 +1,6 @@
 #pragma once
 #define SERVER_PORT		8001
-#define SERVER_IP		"192.168.102.28"
+#define SERVER_IP		"192.168.219.101"
 #define MAX_INFO_SIZE   20
 #include <vector>
 #include <array>
@@ -26,8 +26,8 @@ const int  MAX_USER = 10000;
 const int  MAX_OBJ = 11;
 
 
-const char CS_MOVE_Packet = 0;
 const char CS_LOGIN = 1;
+const char CS_MOVE_Packet = 2;
 const char CS_SELECT_CHAR = 3;
 const char CS_SELECT_WEP = 4;
 const char CS_READY = 5;
@@ -50,6 +50,7 @@ const char CS_REMOVE_WEAPON = 24;
 const char CS_DECREASE_COUNT = 25;
 const char CS_CH2_SKILL = 26;
 const char CS_DAMAGE = 27;
+const char CS_DISSOLVE = 28;
 
 const char SC_LOGIN_OK = 1;
 const char SC_OTHER_PLAYER = 2;
@@ -80,6 +81,7 @@ const char SC_MYNEW_COUNT = 26;
 const char SC_CH2_SKILL = 27;
 const char SC_TRAVLE = 28;
 const char SC_HP_CHANGE = 29;
+const char SC_DISSOLVE = 30;
 
 
 #pragma pack (push, 1)
@@ -305,7 +307,7 @@ struct CS_ALIVE_PACKET {
 	unsigned char size;
 	unsigned char type;
 	int id;
-	bool bAlive;
+	int deadtype;
 };
 struct CS_REMOVE_ITEM_PACKET {
 	unsigned char size;
@@ -367,5 +369,12 @@ struct SC_TRAVEL_PACKET {
 	unsigned char type;
 	bool ingame;
 }; 
+struct CS_DISSOLVE_PACKET {
+	unsigned char size;
+	unsigned char type;
+	int id;
+	// 0 : 디졸브, 1 : 디졸브 없애고 원상복귀, 2 평상시
+	int dissolve;
+};
 
 #pragma pack(pop)

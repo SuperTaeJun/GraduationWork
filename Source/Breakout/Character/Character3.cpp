@@ -31,6 +31,7 @@ ACharacter3::ACharacter3()
 	OldMaterial = ConstructorHelpers::FObjectFinder<UMaterialInstance>(TEXT("/Script/Engine.MaterialInstanceConstant'/Game/Niagara/SKill/Skill3/M_Character3_Inst.M_Character3_Inst'")).Object;
 
 	SetSprint();
+	MDissolveInst = ConstructorHelpers::FObjectFinder<UMaterialInstance>(TEXT("/Game/BreakoutAsset/Character/Character1/Material/MI_Ch1Material_Dissolve.MI_Ch1Material_Dissolve")).Object;
 }
 void ACharacter3::BeginPlay()
 {
@@ -128,7 +129,7 @@ void ACharacter3::GhostStart()
 
 		//패킷 
 		if (inst)
-			Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Niagara_packet(_SessionId, PlayerType::Character3, 0);
+			Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Niagara_packet(inst->GetPlayerID(), PlayerType::Character3, 0);
 	}
 }
 
@@ -152,7 +153,7 @@ void ACharacter3::GhostEnd()
 		// 1=스킬사용할때 머터리얼 0=기본머터리얼
 		DynamicMaterial->SetScalarParameterValue(FName("Alpha"), 0.f);
 		if (inst)
-			Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Niagara_cancel(bCancel, _SessionId, 1);
+			Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Niagara_cancel(bCancel, inst->GetPlayerID(), 1);
 	}
 }
 

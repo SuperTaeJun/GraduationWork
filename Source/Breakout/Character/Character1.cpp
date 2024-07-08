@@ -19,6 +19,7 @@ ACharacter1::ACharacter1()
 
 
 	SetSprint();
+	MDissolveInst = ConstructorHelpers::FObjectFinder<UMaterialInstance>(TEXT("/Game/BreakoutAsset/Character/Character1/Material/MI_Ch1Material_Dissolve.MI_Ch1Material_Dissolve")).Object;
 }
 
 void ACharacter1::BeginPlay()
@@ -105,7 +106,7 @@ void ACharacter1::Skill_E(const FInputActionValue& Value)
 	MainController->SetHUDCoolVisibility(true);
 	MainController->SetHUDSkillOpacity(0.3);
 	if (inst)
-		Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Niagara_cancel(true, _SessionId, 1);
+		Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Niagara_cancel(true, inst->GetPlayerID(), 1);
 }
 
 void ACharacter1::Skill_T(const FInputActionValue& Value)

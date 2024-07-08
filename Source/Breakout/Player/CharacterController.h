@@ -203,4 +203,5 @@ public:
 	bool bSync = false;
 
 	void SeverHpSync(float hp, int myid);
+	void ServerSetDissolve(bool dissolve, class ACharacterBase* player);
 };

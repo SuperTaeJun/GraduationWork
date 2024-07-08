@@ -206,7 +206,7 @@ bool ClientSocket::PacketProcess(char* ptr)
 	case SC_HP_CHANGE: {
 		SC_HP_CHANGE_PACKET* packet = reinterpret_cast<SC_HP_CHANGE_PACKET*>(ptr);
 		PlayerInfo.players[packet->id].hp = packet->HP;
-		hp = packet->HP;
+		//hp = packet->HP;
 		break;
 	}
 	case SC_NiAGARA: {
@@ -258,7 +258,12 @@ bool ClientSocket::PacketProcess(char* ptr)
 	}
 	case SC_ALIVE: {
 		CS_ALIVE_PACKET* packet = reinterpret_cast<CS_ALIVE_PACKET*>(ptr);
-		PlayerInfo.players[packet->id].bStopAnim = packet->bAlive;
+		PlayerInfo.players[packet->id].deadtype = packet->deadtype;
+		break;
+	}
+	case SC_DISSOLVE: {
+		CS_DISSOLVE_PACKET* packet = reinterpret_cast<CS_DISSOLVE_PACKET*>(ptr);
+		PlayerInfo.players[packet->id].dissolve = packet->dissolve;
 		break;
 	}
 	case SC_REMOVE_ITEM: {
@@ -503,13 +508,13 @@ void ClientSocket::Send_Item_packet(int id, int itemCount)
 	packet.itemCount = itemCount;
 	SendPacket(&packet);
 }
-void ClientSocket::Send_Alive_packet(int id, bool bAlive)
+void ClientSocket::Send_Alive_packet(int id, int deadtype)
 {
 	CS_ALIVE_PACKET packet;
 	packet.size = sizeof(packet);
 	packet.type = CS_ALIVE;
 	packet.id = id;
-	packet.bAlive = bAlive;
+	packet.deadtype = deadtype;
 	SendPacket(&packet);
 }
 void ClientSocket::Send_Destroyed_item_packet(int id)
@@ -583,6 +588,15 @@ void ClientSocket::Send_My_HP_PACKET(int id, float damaage)
 	packet.type = CS_DAMAGE;
 	packet.id = id;
 	packet.hp = damaage;
+	SendPacket(&packet);
+}
+void ClientSocket::Send_Dissolve_packet(int id, int dissolve)
+{
+	CS_DISSOLVE_PACKET packet;
+	packet.size = sizeof(packet);
+	packet.type = CS_DISSOLVE;
+	packet.id = id;
+	packet.dissolve = dissolve;
 	SendPacket(&packet);
 }
 bool ClientSocket::Init()

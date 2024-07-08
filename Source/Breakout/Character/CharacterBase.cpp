@@ -89,6 +89,8 @@ ACharacterBase::ACharacterBase()
 	StartedCnt = 5.f;
 	bCanEscape = false;
 
+	//MDissolveInst= ConstructorHelpers::FObjectFinder<UMaterialInstance>
+	MDissolveInst =ConstructorHelpers::FObjectFinder<UMaterialInstance>(TEXT("/Game/BreakoutAsset/Character/Character1/Material/MI_Ch1Material_Dissolve.MI_Ch1Material_Dissolve")).Object;
 }
 
 void ACharacterBase::BeginPlay()
@@ -425,10 +427,10 @@ void ACharacterBase::SetSpawnGrenade(TSubclassOf<AProjectileBase> Projectile)
 				switch (BojoMugiType)
 				{
 				case EBojoMugiType::E_Grenade:
-					Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Fire_Effect(_SessionId, StartLocation, ToHitTarget.Rotation(), 2);
+					Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Fire_Effect(inst->GetPlayerID(), StartLocation, ToHitTarget.Rotation(), 2);
 					break;
 				case EBojoMugiType::E_Wall:
-					Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Fire_Effect(_SessionId, StartLocation, ToHitTarget.Rotation(), 3);
+					Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Fire_Effect(inst->GetPlayerID(), StartLocation, ToHitTarget.Rotation(), 3);
 					break;
 
 				}
@@ -451,6 +453,8 @@ void ACharacterBase::ReciveDamage(AActor* DamagedActor, float Damage, const UDam
 	if (Health <= 0.0f)
 	{
 		bDissolve = true;
+		if (inst)
+			inst->m_Socket->Send_Dissolve_packet(inst->GetPlayerID(), 0);
 		if (DamageInsigatorCh)
 		{
 			//서버
@@ -484,11 +488,12 @@ void ACharacterBase::ReciveDamage(AActor* DamagedActor, float Damage, const UDam
 			DisableInput(MainController);
 		UpdateObtainedEscapeTool();
 
-		if (bAlive)
+		if (bAlive && MainController)
 		{
 			bAlive = false;
 			PlayAnimMontage(DeadMontage);
-			//MainController->ServerDeadSync(bAlive, inst->GetPlayerID());
+			if (inst)
+				Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Alive_packet(inst->GetPlayerID(), 0);
 		}
 	}
 }
@@ -876,7 +881,7 @@ void ACharacterBase::GrandeFire(const FInputActionValue& Value)
 				//여기 부비트랩
 				if (Cast<UBOGameInstance>(GetGameInstance()))
 				{
-					Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Fire_Effect(_SessionId, SWAimLastLoc, FRotator::ZeroRotator, 4);
+					Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Fire_Effect(inst->GetPlayerID(), SWAimLastLoc, FRotator::ZeroRotator, 4);
 				}
 			}
 		}
@@ -999,12 +1004,13 @@ void ACharacterBase::Tick(float DeltaTime)
 	//캐릭터 디졸브
 	if (bDissolve)
 	{
+
 		if (MDissolveInst)
 		{
 			MDynamicDissolveInst = UMaterialInstanceDynamic::Create(MDissolveInst, this);
 			if (MDynamicDissolveInst)
 			{
-				DissolvePercent += DeltaTime/4;
+				DissolvePercent += DeltaTime / 4;
 				GetMesh()->SetMaterial(0, MDynamicDissolveInst);
 				MDynamicDissolveInst->SetScalarParameterValue(FName("Dissolve"), DissolvePercent);
 			}
@@ -1086,8 +1092,8 @@ void ACharacterBase::StartGame()
 		//	UE_LOG(LogTemp, Warning, TEXT("ADDTOOLNUM"));
 		//	MainHUD->AddToolNumUi();
 		//}
-		/*if (inst)
-			inst->m_Socket->Send_Start_game_packet(inst->GetPlayerID());*/
+		if (inst)
+			inst->m_Socket->Send_Start_game_packet(inst->GetPlayerID());
 		MainController->MainHUD->AddToolNumUi();
 		// num 계수, name 처리 
 		MainController->SetNum();
