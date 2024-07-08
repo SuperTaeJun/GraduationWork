@@ -714,7 +714,7 @@ bool ACharacterController::UpdateWorld()
 					ServerTemp->Destroy();
 			}
 			/*UE_LOG(LogTemp, Warning, TEXT("otherplayer hp : %f"), OtherPlayer->GetHealth());*/
-			UE_LOG(LogTemp, Warning, TEXT("my hp : %f"), Cast<ACharacterBase>(GetPawn())->GetHealth());
+			//UE_LOG(LogTemp, Warning, TEXT("my hp : %f"), Cast<ACharacterBase>(GetPawn())->GetHealth());
 			if (info->deadtype == 1) { //Ã³¸®
 				OtherPlayer->StopAnimMontage(SyncDeadMontage);
 				//OtherPlayer->bDeadAnim = false;
@@ -722,7 +722,7 @@ bool ACharacterController::UpdateWorld()
 				OtherPlayer->SetHealth(100.f);
 			}
 			else if (info->deadtype == 0) {
-				UE_LOG(LogTemp, Warning, TEXT("otherplayer hp : %f"), OtherPlayer->GetHealth());
+				//UE_LOG(LogTemp, Warning, TEXT("otherplayer hp : %f"), OtherPlayer->GetHealth());
 				//UE_LOG(LogTemp, Warning, TEXT("my hp : %f"), Cast<ACharacterBase>(GetPawn())->GetHealth());
 				OtherPlayer->PlayAnimMontage(SyncDeadMontage);
 				info->deadtype = 2;
@@ -799,7 +799,8 @@ void ACharacterController::UpdateSyncPlayer()
 				FActorSpawnParameters SpawnActor;
 				SpawnActor.Owner = this;
 				SpawnActor.Instigator = GetInstigator();
-				SpawnActor.Name = FName(*FString(to_string(NewPlayer.front()->Id).c_str()));
+				//SpawnActor.Name = FName(*FString(to_string(NewPlayer.front()->Id).c_str()));
+				SpawnActor.Name = FName("char1");
 				ToSpawn = ACharacter1::StaticClass();
 				if (world) {
 					ACharacter1* SpawnCharacter = world->SpawnActor<ACharacter1>(ToSpawn,
@@ -828,7 +829,8 @@ void ACharacterController::UpdateSyncPlayer()
 				FActorSpawnParameters SpawnActor;
 				SpawnActor.Owner = this;
 				SpawnActor.Instigator = GetInstigator();
-				SpawnActor.Name = FName(*FString(to_string(NewPlayer.front()->Id).c_str()));
+				//SpawnActor.Name = FName(*FString(to_string(NewPlayer.front()->Id).c_str()));
+				SpawnActor.Name = FName(SpawnActor.Name = FName("char2"));
 				ToSpawn = ACharacter2::StaticClass();
 				if (world)
 				{
@@ -858,7 +860,8 @@ void ACharacterController::UpdateSyncPlayer()
 				FActorSpawnParameters SpawnActor;
 				SpawnActor.Owner = this;
 				SpawnActor.Instigator = GetInstigator();
-				SpawnActor.Name = FName(*FString(to_string(NewPlayer.front()->Id).c_str()));
+				//SpawnActor.Name = FName(*FString(to_string(NewPlayer.front()->Id).c_str()));
+				SpawnActor.Name = FName(SpawnActor.Name = FName("char3"));
 				ToSpawn = ACharacter3::StaticClass();
 				if (world) {
 					ACharacter3* SpawnCharacter = world->SpawnActor<ACharacter3>(ToSpawn,
@@ -894,7 +897,8 @@ void ACharacterController::UpdateSyncPlayer()
 				FActorSpawnParameters SpawnActor;
 				SpawnActor.Owner = this;
 				SpawnActor.Instigator = GetInstigator();
-				SpawnActor.Name = FName(*FString(to_string(NewPlayer.front()->Id).c_str()));
+				//SpawnActor.Name = FName(*FString(to_string(NewPlayer.front()->Id).c_str()));
+				SpawnActor.Name = FName(SpawnActor.Name = FName("char4"));
 				ToSpawn = ACharacter4::StaticClass();
 				if (world)
 				{
@@ -924,7 +928,8 @@ void ACharacterController::UpdateSyncPlayer()
 				FActorSpawnParameters SpawnActor;
 				SpawnActor.Owner = this;
 				SpawnActor.Instigator = GetInstigator();
-				SpawnActor.Name = FName(*FString(to_string(NewPlayer.front()->Id).c_str()));
+				//SpawnActor.Name = FName(*FString(to_string(NewPlayer.front()->Id).c_str()));
+				SpawnActor.Name = FName(SpawnActor.Name = FName("char4"));
 				ToSpawn = ACharacter1::StaticClass();
 				ACharacter1* SpawnCharacter = world->SpawnActor<ACharacter1>(ToSpawn,
 					S_LOCATION, S_ROTATOR, SpawnActor);
