@@ -105,7 +105,7 @@ void ACharacter1::Skill_E(const FInputActionValue& Value)
 	MainController->SetHUDCoolVisibility(true);
 	MainController->SetHUDSkillOpacity(0.3);
 	if (inst)
-		Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Niagara_cancel(true, _SessionId, 1);
+		Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Niagara_cancel(true, inst->GetPlayerID(), 1);
 }
 
 void ACharacter1::Skill_T(const FInputActionValue& Value)

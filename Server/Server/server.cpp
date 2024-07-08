@@ -51,7 +51,7 @@ public:
 	WSAOVERLAPPED   _wsa_over;
 	IO_type         _op;
 	WSABUF         _wsa_buf;
-	char   _net_buf[BUFSIZE];
+	unsigned		 char   _net_buf[2047];
 	int            _target;
 public:
 	Overlap(IO_type _op, char num_bytes, void* mess) : _op(_op)
@@ -412,23 +412,6 @@ void send_select_character_type_packet(int _s_id)
 //로그인 실패
 
 
-//오브젝트 생성
-void send_put_object(int _s_id, int target)
-{
-	SC_PLAYER_SYNC packet;
-	packet.id = target;
-	packet.size = sizeof(packet);
-	packet.type = SC_OTHER_PLAYER;
-	packet.x = clients[target].x;
-	packet.y = clients[target].y;
-	packet.z = clients[target].z;
-
-	strcpy_s(packet.name, clients[target].name);
-	//packet.object_type = 0;
-	clients[_s_id].do_send(sizeof(packet), &packet);
-}
-
-
 //해제
 void Disconnect(int _s_id)
 {
@@ -442,11 +425,11 @@ void Disconnect(int _s_id)
 
 
 //패킷 판별
-void process_packet(int s_id, char* p)
+void process_packet(int s_id, unsigned char* p)
 {
 	unsigned char packet_type = p[1];
 	//CLIENT& cl = clients[s_id];
-	//cout << "packet type :" << to_string(packet_type) << endl;
+	cout << "user : " << s_id << "packet type :" << to_string(packet_type) << endl;
 	switch (packet_type) {
 	case CS_LOGIN: {
 		CS_LOGIN_PACKET* packet = reinterpret_cast<CS_LOGIN_PACKET*>(p);
@@ -469,7 +452,7 @@ void process_packet(int s_id, char* p)
 
 		CS_SELECT_CHARACTER* packet = reinterpret_cast<CS_SELECT_CHARACTER*>(p);
 		CLIENT& cl = clients[packet->id];
-		cout << "cl.sid?= " << packet->id << ", 00 , " << cl._s_id << endl;
+		//cout << "cl.sid?= " << packet->id << ", 00 , " << cl._s_id << endl;
 		cl.x = packet->x;
 		cl.y = packet->y;
 		cl.z = packet->z;
@@ -478,7 +461,7 @@ void process_packet(int s_id, char* p)
 		ingamecount++;
 		send_select_character_type_packet(cl._s_id);
 
-		cout << "몇명 들어옴 : " << ingamecount << endl;
+		//cout << "몇명 들어옴 : " << ingamecount << endl;
 
 		if (ingamecount >= 2)
 		{
@@ -487,7 +470,7 @@ void process_packet(int s_id, char* p)
 					continue;
 
 				send_ready_packet(player._s_id);
-				cout << "보낼 플레이어" << player._s_id << endl;
+				//cout << "보낼 플레이어" << player._s_id << endl;
 
 			}
 		}
@@ -520,7 +503,7 @@ void process_packet(int s_id, char* p)
 		CLIENT& cl = clients[packet->id];
 		cl.w_type = packet->weapon_type;
 		cl.selectweapon = packet->bselectwep;
-		cout << "플레이어 : " << cl._s_id << "무기 타입" << cl.w_type << endl;
+		//cout << "플레이어 : " << cl._s_id << "무기 타입" << cl.w_type << endl;
 		for (auto& other : clients) {
 			if (other._s_id == cl._s_id) continue;
 			other.state_lock.lock();
@@ -535,7 +518,7 @@ void process_packet(int s_id, char* p)
 			packet.type = SC_OTHER_WEAPO;
 			packet.weapon_type = cl.w_type;
 			packet.bselectwep = cl.selectweapon;
-			cout << "이거 누구한테 감 :  ?" << other._s_id << endl;
+		//	cout << "이거 누구한테 감 :  ?" << other._s_id << endl;
 			other.do_send(sizeof(packet), &packet);
 		}
 		break;
@@ -543,21 +526,20 @@ void process_packet(int s_id, char* p)
 	case CS_READY: {
 		CS_READY_PACKET* packet = reinterpret_cast<CS_READY_PACKET*>(p);
 		CLIENT& cl = clients[packet->id];
-		cout << "Ready id" << packet->id;
+		//cout << "Ready id" << packet->id;
 		ready_count++;
-		cout << "ready_count" << ready_count << endl;
+		//cout << "ready_count" << ready_count << endl;
 		if (ready_count >= 2)
 		{
 			for (auto& player : clients) {
 				if (ST_INGAME != player._state)
 					continue;
 				send_travel_ready_packet(player._s_id);
-				cout << "보낼 플레이어" << player._s_id << endl;
+			//	cout << "보낼 플레이어" << player._s_id << endl;
 			}
 		}
 		break;
 	}
-
 	case CS_SHOTGUN_BEAM: {
 		CS_SHOTGUN_BEAM_PACKET* packet = reinterpret_cast<CS_SHOTGUN_BEAM_PACKET*>(p);
 		CLIENT& cl = clients[packet->attackid];
@@ -612,7 +594,7 @@ void process_packet(int s_id, char* p)
 			packet.yaw4 = cl.yaw4;
 			packet.roll4 = cl.roll4;
 
-			cout << "이거 누구한테 감 :  ?" << other._s_id << endl;
+		//	cout << "이거 누구한테 감 :  ?" << other._s_id << endl;
 			other.do_send(sizeof(packet), &packet);
 
 		}
@@ -641,12 +623,10 @@ void process_packet(int s_id, char* p)
 			packet.yaw = cl.Yaw;
 			packet.Max_speed = cl.Max_Speed;
 			packet.p_type = cl.p_type;
-			printf_s("[Send put object] id : %d, location : (%f,%f,%f), yaw : %f\n", packet.id, packet.x, packet.y, packet.z, packet.yaw);
-			cout << "이거 누구한테 감 :  ?" << other._s_id << endl;
+			//printf_s("[Send put object] id : %d, location : (%f,%f,%f), yaw : %f\n", packet.id, packet.x, packet.y, packet.z, packet.yaw);
+			//cout << "이거 누구한테 감 :  ?" << other._s_id << endl;
 			other.do_send(sizeof(packet), &packet);
 		}
-
-
 		break;
 	}
 	case CS_HIT_EFFECT: {
@@ -659,7 +639,7 @@ void process_packet(int s_id, char* p)
 		cl.Yaw = packet->r_yaw;
 		cl.Roll = packet->r_roll;
 		cl.wtype = packet->wep_type;
-		cout << "weptype : " << cl.wtype << endl;
+		//cout << "weptype : " << cl.wtype << endl;
 		for (auto& other : clients) {
 			if (other._s_id == cl._s_id) continue;
 			other.state_lock.lock();
@@ -705,7 +685,7 @@ void process_packet(int s_id, char* p)
 			packet.type = SC_NiAGARA;
 			packet.playertype = cl.p_type;
 			packet.num = cl.num;
-			cout << "이거 누구한테 감 :  ?" << other._s_id << endl;
+			//cout << "이거 누구한테 감 :  ?" << other._s_id << endl;
 			other.do_send(sizeof(packet), &packet);
 
 		}
@@ -733,7 +713,7 @@ void process_packet(int s_id, char* p)
 			packet.num = cl.num;
 			//packet.weapon_type = cl.w_type;
 		//printf_s("[Send put object] id : %d, location : (%f,%f,%f), yaw : %f\n", packet.id, packet.x, packet.y, packet.z, packet.yaw);
-			cout << "이거 누구한테 감 :  ?" << other._s_id << endl;
+			//cout << "이거 누구한테 감 :  ?" << other._s_id << endl;
 			//	cout << "나이아가라" << endl;
 
 			other.do_send(sizeof(packet), &packet);
@@ -772,7 +752,7 @@ void process_packet(int s_id, char* p)
 		break;
 	}
 	case CS_SIGNAl: {
-		cout << "aaaaa들어옴?" << endl;
+		//cout << "aaaaa들어옴?" << endl;
 		CS_SIGNAL_PACKET* packet = reinterpret_cast<CS_SIGNAL_PACKET*>(p);
 		CLIENT& cl = clients[packet->id];
 		cl.num = packet->num;
@@ -798,7 +778,7 @@ void process_packet(int s_id, char* p)
 		CS_END_GAME_PACKET* packet = reinterpret_cast<CS_END_GAME_PACKET*>(p);
 		CLIENT& cl = clients[packet->id];
 
-		cout << "누가 이김 " << packet->id << endl;
+	//	cout << "누가 이김 " << packet->id << endl;
 		for (auto& other : clients) {
 			other.state_lock.lock();
 			if (ST_INGAME != other._state) {
@@ -824,7 +804,7 @@ void process_packet(int s_id, char* p)
 		cl.myItemCount = packet->itemCount;
 		send_myitem_packet(cl._s_id);
 
-		cout << "내가 획득한 아이템 개수" << cl._s_id << " : " << cl.myItemCount << endl;
+	//	cout << "내가 획득한 아이템 개수" << cl._s_id << " : " << cl.myItemCount << endl;
 		for (auto& other : clients) {
 			if (other._s_id == cl._s_id) continue;
 			other.state_lock.lock();
@@ -846,7 +826,7 @@ void process_packet(int s_id, char* p)
 	}
 	case CS_ALIVE: {
 		CS_ALIVE_PACKET* packet = reinterpret_cast<CS_ALIVE_PACKET*>(p);
-		cout << "packet->id : " << packet->id << endl;
+	//	cout << "packet->id : " << packet->id << endl;
 		CLIENT& cl = clients[packet->id];
 		cl.bAlive = packet->bAlive;
 		for (auto& other : clients) {
@@ -872,7 +852,7 @@ void process_packet(int s_id, char* p)
 	case CS_REMOVE_ITEM: {
 		CS_REMOVE_ITEM_PACKET* packet = reinterpret_cast<CS_REMOVE_ITEM_PACKET*>(p);
 		CLIENT& cl = clients[s_id];
-		cout << "itemid : " << packet->itemid << endl;
+		//cout << "itemid : " << packet->itemid << endl;
 		int itemid = packet->itemid;
 		for (auto& other : clients) {
 			if (other._s_id == cl._s_id) continue;
@@ -1033,7 +1013,7 @@ void process_packet(int s_id, char* p)
 		CS_DAMAGE_PACKET* packet = reinterpret_cast<CS_DAMAGE_PACKET*>(p);
 		CLIENT& cl = clients[packet->id];
 		cl._hp = packet->hp;
-		cout << "my hp : " << cl._hp << endl;
+		//cout << "my hp : " << cl._hp << endl;
 		send_change_hp(packet->id);
 		break;
 	}
@@ -1075,7 +1055,7 @@ void worker_thread()
 			}
 			CLIENT& cl = clients[_s_id];
 			int remain_data = num_byte + cl._prev_size;
-			char* packet_start = exp_over->_net_buf;
+			unsigned char* packet_start = exp_over->_net_buf;
 			int packet_size = packet_start[0];
 
 			while (packet_size <= remain_data) {
@@ -1090,6 +1070,8 @@ void worker_thread()
 				cl._prev_size = remain_data;
 				memcpy(&exp_over->_net_buf, packet_start, remain_data);
 			}
+			if (remain_data == 0)
+				cl._prev_size = 0;
 			cl.do_recv();
 			break;
 		}

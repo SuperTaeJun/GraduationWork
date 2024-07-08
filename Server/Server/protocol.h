@@ -1,6 +1,6 @@
 #pragma once
 #define SERVER_PORT		8001
-#define SERVER_IP		"192.168.102.28"
+#define SERVER_IP		"192.168.219.101"
 #define MAX_INFO_SIZE   20
 #include <vector>
 #include <array>
@@ -26,8 +26,8 @@ const int  MAX_USER = 10000;
 const int  MAX_OBJ = 11;
 
 
-const char CS_MOVE_Packet = 0;
 const char CS_LOGIN = 1;
+const char CS_MOVE_Packet = 2;
 const char CS_SELECT_CHAR = 3;
 const char CS_SELECT_WEP = 4;
 const char CS_READY = 5;

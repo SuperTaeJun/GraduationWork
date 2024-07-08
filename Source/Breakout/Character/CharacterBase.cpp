@@ -425,10 +425,10 @@ void ACharacterBase::SetSpawnGrenade(TSubclassOf<AProjectileBase> Projectile)
 				switch (BojoMugiType)
 				{
 				case EBojoMugiType::E_Grenade:
-					Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Fire_Effect(_SessionId, StartLocation, ToHitTarget.Rotation(), 2);
+					Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Fire_Effect(inst->GetPlayerID(), StartLocation, ToHitTarget.Rotation(), 2);
 					break;
 				case EBojoMugiType::E_Wall:
-					Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Fire_Effect(_SessionId, StartLocation, ToHitTarget.Rotation(), 3);
+					Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Fire_Effect(inst->GetPlayerID(), StartLocation, ToHitTarget.Rotation(), 3);
 					break;
 
 				}
@@ -876,7 +876,7 @@ void ACharacterBase::GrandeFire(const FInputActionValue& Value)
 				//여기 부비트랩
 				if (Cast<UBOGameInstance>(GetGameInstance()))
 				{
-					Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Fire_Effect(_SessionId, SWAimLastLoc, FRotator::ZeroRotator, 4);
+					Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Fire_Effect(inst->GetPlayerID(), SWAimLastLoc, FRotator::ZeroRotator, 4);
 				}
 			}
 		}
@@ -1086,8 +1086,8 @@ void ACharacterBase::StartGame()
 		//	UE_LOG(LogTemp, Warning, TEXT("ADDTOOLNUM"));
 		//	MainHUD->AddToolNumUi();
 		//}
-		/*if (inst)
-			inst->m_Socket->Send_Start_game_packet(inst->GetPlayerID());*/
+		if (inst)
+			inst->m_Socket->Send_Start_game_packet(inst->GetPlayerID());
 		MainController->MainHUD->AddToolNumUi();
 		// num 계수, name 처리 
 		MainController->SetNum();

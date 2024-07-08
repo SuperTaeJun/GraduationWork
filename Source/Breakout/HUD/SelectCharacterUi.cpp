@@ -64,8 +64,8 @@ void USelectCharacterUi::Matching()
 	if(bClicked){
 		//Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Ready_Packet(bClicked);
 
-		//Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Ready_Packet(bClicked, Cast<UBOGameInstance>(GetGameInstance())->GetPlayerID());
-		GetWorld()->ServerTravel(FString("/Game/Maps/MainMap"), true);
+		Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Ready_Packet(bClicked, Cast<UBOGameInstance>(GetGameInstance())->GetPlayerID());
+		//GetWorld()->ServerTravel(FString("/Game/Maps/MainMap"), true);
 		//GetWorld()->ServerTravel(FString("/Game/Maps/MainMap"), true);
 		//GetWorld()->ServerTravel(FString("/Game/Maps/TestMap"), true);
 

@@ -128,7 +128,7 @@ void ACharacter3::GhostStart()
 
 		//패킷 
 		if (inst)
-			Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Niagara_packet(_SessionId, PlayerType::Character3, 0);
+			Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Niagara_packet(inst->GetPlayerID(), PlayerType::Character3, 0);
 	}
 }
 
@@ -152,7 +152,7 @@ void ACharacter3::GhostEnd()
 		// 1=스킬사용할때 머터리얼 0=기본머터리얼
 		DynamicMaterial->SetScalarParameterValue(FName("Alpha"), 0.f);
 		if (inst)
-			Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Niagara_cancel(bCancel, _SessionId, 1);
+			Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Niagara_cancel(bCancel, inst->GetPlayerID(), 1);
 	}
 }
 

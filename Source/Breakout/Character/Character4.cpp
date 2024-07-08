@@ -81,7 +81,7 @@ void ACharacter4::Skill_S(const FInputActionValue& Value)
 		GetWorld()->GetTimerManager().SetTimer(TelpoTimer, this, &ACharacter4::SetLocation, 0.5f, false);
 		Cast<ASkill4Actor>(Temp)->bTimerStart = true;
 		if (inst)
-			Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Niagara_cancel(true, _SessionId, 1);
+			Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Niagara_cancel(true, inst->GetPlayerID(), 1);
 	}
 }
 
