@@ -1241,7 +1241,7 @@ void ACharacterController::ServerSetDissolve(bool dissolve, ACharacterBase* play
 {
 	if (dissolve == true)
 	{
-		player->SetbDissolve(dissolve);
+		player->SetbDissolve(true);
 	}
 	else
 	{
