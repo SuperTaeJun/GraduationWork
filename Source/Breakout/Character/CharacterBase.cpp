@@ -1009,6 +1009,8 @@ void ACharacterBase::Tick(float DeltaTime)
 				GetMesh()->SetMaterial(0, MDynamicDissolveInst);
 				MDynamicDissolveInst->SetScalarParameterValue(FName("Dissolve"), DissolvePercent);
 			}
+			if(inst)
+				inst->m_Socket->Send_Dissolve_packet(inst->GetPlayerID(), 0);
 		}
 	}
 

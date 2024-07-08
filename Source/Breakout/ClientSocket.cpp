@@ -261,6 +261,11 @@ bool ClientSocket::PacketProcess(char* ptr)
 		PlayerInfo.players[packet->id].deadtype = packet->deadtype;
 		break;
 	}
+	case SC_DISSOLVE: {
+		CS_DISSOLVE_PACKET* packet = reinterpret_cast<CS_DISSOLVE_PACKET*>(ptr);
+		PlayerInfo.players[packet->id].dissolve = packet->dissolve;
+		break;
+	}
 	case SC_REMOVE_ITEM: {
 		CS_REMOVE_ITEM_PACKET* packet = reinterpret_cast<CS_REMOVE_ITEM_PACKET*>(ptr);
 		MyCharacterController->SetDestroyItemid(packet->itemid);
@@ -583,6 +588,15 @@ void ClientSocket::Send_My_HP_PACKET(int id, float damaage)
 	packet.type = CS_DAMAGE;
 	packet.id = id;
 	packet.hp = damaage;
+	SendPacket(&packet);
+}
+void ClientSocket::Send_Dissolve_packet(int id, int dissolve)
+{
+	CS_DISSOLVE_PACKET packet;
+	packet.size = sizeof(packet);
+	packet.type = CS_DISSOLVE;
+	packet.id = id;
+	packet.dissolve = dissolve;
 	SendPacket(&packet);
 }
 bool ClientSocket::Init()

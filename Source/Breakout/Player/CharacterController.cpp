@@ -713,19 +713,25 @@ bool ACharacterController::UpdateWorld()
 				if (ServerTemp)
 					ServerTemp->Destroy();
 			}
-			/*UE_LOG(LogTemp, Warning, TEXT("otherplayer hp : %f"), OtherPlayer->GetHealth());*/
-			//UE_LOG(LogTemp, Warning, TEXT("my hp : %f"), Cast<ACharacterBase>(GetPawn())->GetHealth());
+			// Á×´Â ¾Ö´Ï¸ÞÀÌ¼Ç
 			if (info->deadtype == 1) { //Ã³¸®
 				OtherPlayer->StopAnimMontage(SyncDeadMontage);
-				//OtherPlayer->bDeadAnim = false;
 				info->deadtype = 2;
 				OtherPlayer->SetHealth(100.f);
 			}
 			else if (info->deadtype == 0) {
-				//UE_LOG(LogTemp, Warning, TEXT("otherplayer hp : %f"), OtherPlayer->GetHealth());
-				//UE_LOG(LogTemp, Warning, TEXT("my hp : %f"), Cast<ACharacterBase>(GetPawn())->GetHealth());
 				OtherPlayer->PlayAnimMontage(SyncDeadMontage);
 				info->deadtype = 2;
+			}
+			// Á×À» ¶§ µðÁ¹ºê
+			if (info->dissolve == 0) {
+				ServerSetDissolve(true, OtherPlayer);
+				info->dissolve = 2;
+			}
+			else if (info->dissolve == 1)
+			{
+				ServerSetDissolve(false, OtherPlayer);
+				info->dissolve = 2;
 			}
 			if (info->bServerReload == true)
 			{
@@ -1229,6 +1235,21 @@ void ACharacterController::SeverHpSync(float hp, int myid)
 	if (inst)
 		inst->m_Socket->Send_My_HP_PACKET(myid, hp);
 
+}
+
+void ACharacterController::ServerSetDissolve(bool dissolve, ACharacterBase* player)
+{
+	if (dissolve == true)
+	{
+		player->SetbDissolve(dissolve);
+	}
+	else
+	{
+		player->SetbDissolve(dissolve);
+		float DissolvePercent = -1.f;
+		player->GetMesh()->SetMaterial(0, player->GetDynamicMaterial());
+		player->GetDynamicMaterial()->SetScalarParameterValue(FName("Dissolve"), DissolvePercent);
+	}
 }
 
 //void ACharacterController::ServerDeadSync(bool bAlive, int myid)

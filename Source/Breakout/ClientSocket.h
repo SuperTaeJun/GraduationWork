@@ -77,6 +77,8 @@ public:
 	int itemAnimtype = -1;
 	// 죽는 애니메이션 타입
 	int deadtype = 2;
+	// 디졸브 상태
+	int	dissolve = 2;
 	// 아이디 비번
 	FString    userId = {};
 	FString    userPw = {};
@@ -312,6 +314,7 @@ public:
 	void Send_Remove_Weapon(int id, bool bWeapon);
 	void Send_CH2_SKILL_PACKET(int id, PlayerType type, bool bSkill);
 	void Send_My_HP_PACKET(int id, float damaage);
+	void Send_Dissolve_packet(int id, int dissolve);
 	virtual bool Init() override;
 	virtual uint32 Run() override;
 	virtual void Stop() override;

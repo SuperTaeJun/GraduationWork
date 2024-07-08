@@ -109,6 +109,8 @@ void ABOGameMode::Respawn(ACharacter* RespawnedCh, AController* RespawnedControl
 		AActor* PlayerStarts;
 		PlayerStarts=FindPlayerStart(MyCharacter->GetController(), *Tagname.ToString());
 		MyCharacter->SetResetState();
+		if (inst)
+			inst->m_Socket->Send_Dissolve_packet(inst->GetPlayerID(), 1);
 		MyCharacter->SetActorTransform(PlayerStarts->GetActorTransform());
 		//ÆÐÅ¶ BOOL °ª
 		if (inst)
