@@ -432,7 +432,7 @@ void process_packet(int s_id, unsigned char* p)
 {
 	unsigned char packet_type = p[1];
 	//CLIENT& cl = clients[s_id];
-	//cout << "user : " << s_id << "packet type :" << to_string(packet_type) << endl;
+	cout << "user : " << s_id << "packet type :" << to_string(packet_type) << endl;
 	switch (packet_type) {
 	case CS_LOGIN: {
 		CS_LOGIN_PACKET* packet = reinterpret_cast<CS_LOGIN_PACKET*>(p);
@@ -855,7 +855,8 @@ void process_packet(int s_id, unsigned char* p)
 	case CS_DISSOLVE: {
 		CS_DISSOLVE_PACKET* packet = reinterpret_cast<CS_DISSOLVE_PACKET*>(p);
 		CLIENT& cl = clients[packet->id];
-		cout << "dissolve : " << packet->dissolve << endl;
+		if(packet->dissolve == 1)
+			cout << "dissolve : " << packet->dissolve << endl;
 		cl.dissolve = packet->dissolve;
 		for (auto& other : clients) {
 			if (other._s_id == cl._s_id) continue;
