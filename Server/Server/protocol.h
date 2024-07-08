@@ -305,7 +305,7 @@ struct CS_ALIVE_PACKET {
 	unsigned char size;
 	unsigned char type;
 	int id;
-	bool bAlive;
+	int deadtype;
 };
 struct CS_REMOVE_ITEM_PACKET {
 	unsigned char size;

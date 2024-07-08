@@ -488,7 +488,8 @@ void ACharacterBase::ReciveDamage(AActor* DamagedActor, float Damage, const UDam
 		{
 			bAlive = false;
 			PlayAnimMontage(DeadMontage);
-			//MainController->ServerDeadSync(bAlive, inst->GetPlayerID());
+			if (inst)
+				Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Alive_packet(inst->GetPlayerID(), 0);
 		}
 	}
 }

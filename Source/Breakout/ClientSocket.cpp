@@ -258,7 +258,7 @@ bool ClientSocket::PacketProcess(char* ptr)
 	}
 	case SC_ALIVE: {
 		CS_ALIVE_PACKET* packet = reinterpret_cast<CS_ALIVE_PACKET*>(ptr);
-		PlayerInfo.players[packet->id].bStopAnim = packet->bAlive;
+		PlayerInfo.players[packet->id].deadtype = packet->deadtype;
 		break;
 	}
 	case SC_REMOVE_ITEM: {
@@ -503,13 +503,13 @@ void ClientSocket::Send_Item_packet(int id, int itemCount)
 	packet.itemCount = itemCount;
 	SendPacket(&packet);
 }
-void ClientSocket::Send_Alive_packet(int id, bool bAlive)
+void ClientSocket::Send_Alive_packet(int id, int deadtype)
 {
 	CS_ALIVE_PACKET packet;
 	packet.size = sizeof(packet);
 	packet.type = CS_ALIVE;
 	packet.id = id;
-	packet.bAlive = bAlive;
+	packet.deadtype = deadtype;
 	SendPacket(&packet);
 }
 void ClientSocket::Send_Destroyed_item_packet(int id)
