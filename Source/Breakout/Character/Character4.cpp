@@ -22,6 +22,7 @@ ACharacter4::ACharacter4()
 	NiagaraComp->SetAsset(FxRef.Object);
 
 	SetSprint();
+	MDissolveInst = ConstructorHelpers::FObjectFinder<UMaterialInstance>(TEXT("/Game/BreakoutAsset/Character/Character1/Material/MI_Ch1Material_Dissolve.MI_Ch1Material_Dissolve")).Object;
 }
 
 void ACharacter4::BeginPlay()

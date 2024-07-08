@@ -85,7 +85,9 @@ public:
 	void SetbShowSelect(bool _bShowSelect) {bShowSelectUi = _bShowSelect;}
 	void SetbCanObtainEscapeTool(bool _bCanObtain);
 	void SetHealth(float DamagedHp);
-	void SetbDissolve(bool dissolve) { bDissolve = dissolve; }
+	void SetbDissolve(bool Dissolve) { bDissolve = Dissolve; }
+	void SetDissolvePersent(float Dissolve) { DissolvePercent = Dissolve; }
+	float GetDissolvePersent() {return DissolvePercent; }
 	class UMaterialInstanceDynamic* GetDynamicMaterial() { return MDynamicDissolveInst; }
 	class AWeaponBase* GetWeapon() { return CurWeapon; }
 

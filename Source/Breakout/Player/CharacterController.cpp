@@ -717,8 +717,6 @@ bool ACharacterController::UpdateWorld()
 			if (info->deadtype == 1) { //Ã³¸®
 				OtherPlayer->StopAnimMontage(SyncDeadMontage);
 				info->deadtype = 2;
-				ServerSetDissolve(false, OtherPlayer);
-				info->dissolve = 2;
 				OtherPlayer->SetHealth(100.f);
 			}
 			else if (info->deadtype == 0) {
@@ -732,7 +730,8 @@ bool ACharacterController::UpdateWorld()
 			}
 			else if (info->dissolve == 1)
 			{
-
+				ServerSetDissolve(false, OtherPlayer);
+				info->dissolve = 2;
 			}
 			if (info->bServerReload == true)
 			{
@@ -1249,9 +1248,9 @@ void ACharacterController::ServerSetDissolve(bool dissolve, ACharacterBase* play
 		UE_LOG(LogTemp, Warning, TEXT("WWWWWWWWW"));
 		if (player->GetDynamicMaterial())
 		{
-			float DissolvePercent = -1.f;
+			player->SetDissolvePersent(-1.f);
 			player->GetMesh()->SetMaterial(0, player->GetDynamicMaterial());
-			player->GetDynamicMaterial()->SetScalarParameterValue(FName("Dissolve"), DissolvePercent);
+			player->GetDynamicMaterial()->SetScalarParameterValue(FName("Dissolve"), player->GetDissolvePersent());
 		}
 		player->SetbDissolve(false);
 	}
