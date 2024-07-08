@@ -206,7 +206,7 @@ bool ClientSocket::PacketProcess(char* ptr)
 	case SC_HP_CHANGE: {
 		SC_HP_CHANGE_PACKET* packet = reinterpret_cast<SC_HP_CHANGE_PACKET*>(ptr);
 		PlayerInfo.players[packet->id].hp = packet->HP;
-		hp = packet->HP;
+		//hp = packet->HP;
 		break;
 	}
 	case SC_NiAGARA: {

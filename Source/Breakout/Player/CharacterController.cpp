@@ -483,6 +483,8 @@ bool ACharacterController::UpdateWorld()
 			EffectRot.Pitch = info->FEffect.Pitch;
 			EffectRot.Yaw = info->FEffect.Yaw;
 			EffectRot.Roll = info->FEffect.Roll;
+
+			float SyncHP = info->hp;
 			//------------------------
 			if (!OtherPlayer->GetCurWeapon() && info->bselectweapon)
 			{
@@ -521,6 +523,7 @@ bool ACharacterController::UpdateWorld()
 			OtherPlayer->SetActorRotation(PlayerRotation);
 			OtherPlayer->SetActorLocation(PlayerLocation);
 			OtherPlayer->GetCharacterMovement()->MaxWalkSpeed = info->Max_Speed;
+			OtherPlayer->SetHealth(SyncHP);
 			if (info->bGetWeapon == true)
 			{
 				OtherPlayer->CurWeapon->Destroy();
