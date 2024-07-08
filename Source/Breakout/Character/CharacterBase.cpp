@@ -484,7 +484,7 @@ void ACharacterBase::ReciveDamage(AActor* DamagedActor, float Damage, const UDam
 			DisableInput(MainController);
 		UpdateObtainedEscapeTool();
 
-		if (bAlive)
+		if (bAlive && MainController)
 		{
 			bAlive = false;
 			PlayAnimMontage(DeadMontage);
