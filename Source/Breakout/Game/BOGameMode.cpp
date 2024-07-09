@@ -120,8 +120,8 @@ void ABOGameMode::Respawn(ACharacter* RespawnedCh, AController* RespawnedControl
 		Cast<ACharacterController>(RespawnedController)->OnPossess(MyCharacter);
 		//RestartPlayerAtPlayerStart(RespawnedController, PlayerStarts);
 	}
-	if (inst)
-		inst->m_Socket->Send_Dissolve_packet(inst->GetPlayerID(), 1);
+	//if (inst)
+	//	inst->m_Socket->Send_Dissolve_packet(inst->GetPlayerID(), 1);
 }
 
 UClass* ABOGameMode::GetDefaultPawnClassForController_Implementation(AController* InController)

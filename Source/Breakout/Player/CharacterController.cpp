@@ -722,6 +722,7 @@ bool ACharacterController::UpdateWorld()
 				OtherPlayer->StopAnimMontage(SyncDeadMontage);
 				info->deadtype = 2;
 				OtherPlayer->SetHealth(100.f);
+				ServerSetDissolve(false, OtherPlayer);
 			}
 			else if (info->deadtype == 0) {
 				OtherPlayer->PlayAnimMontage(SyncDeadMontage);

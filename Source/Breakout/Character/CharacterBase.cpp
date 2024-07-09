@@ -273,8 +273,8 @@ void ACharacterBase::SetResetState()
 	CurWeapon = nullptr;
 	//bDissolve = false;
 	DissolvePercent = -1.f;
-	//GetMesh()->SetMaterial(0, MDynamicDissolveInst);
-	//MDynamicDissolveInst->SetScalarParameterValue(FName("Dissolve"), DissolvePercent);
+	GetMesh()->SetMaterial(0, MDynamicDissolveInst);
+	MDynamicDissolveInst->SetScalarParameterValue(FName("Dissolve"), DissolvePercent);
 
 	//여기서 패킷
 	if (inst)
@@ -442,17 +442,17 @@ void ACharacterBase::SetSpawnGrenade(TSubclassOf<AProjectileBase> Projectile)
 
 void ACharacterBase::ReciveDamage(AActor* DamagedActor, float Damage, const UDamageType* DamageType, class AController* InstigatorController, AActor* DamageCauser)
 {
+	Health = FMath::Clamp(Health - Damage, 0.f, MaxHealth);
 	if (MainController)
 		MainController->SeverHpSync(Health, inst->GetPlayerID());
 	
-	Health = FMath::Clamp(Health - Damage, 0.f, MaxHealth);
 	UpdateHpHUD();
 	ACharacterBase* DamageInsigatorCh= Cast<ACharacterBase>(InstigatorController->GetPawn());
 
 	
 	if (Health <= 0.0f)
 	{
-		//bDissolve = true;
+		bDissolve = true;
 		if (inst)
 			inst->m_Socket->Send_Dissolve_packet(inst->GetPlayerID(), 0);
 		if (DamageInsigatorCh)
@@ -1002,7 +1002,7 @@ void ACharacterBase::Tick(float DeltaTime)
 	}
 
 	//캐릭터 디졸브
-	if (bDissolve)
+	if (bDissolve && Health<=0)
 	{
 
 		if (MDissolveInst)
