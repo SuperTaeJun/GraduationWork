@@ -1249,7 +1249,6 @@ void ACharacterController::ServerSetDissolve(bool dissolve, ACharacterBase* play
 			player->SetDissolvePersent(-1.f);
 			player->GetMesh()->SetMaterial(0, player->GetDynamicMaterial());
 			player->GetDynamicMaterial()->SetScalarParameterValue(FName("Dissolve"), player->GetDissolvePersent());
-			//player->GetCurWeapon()->SetActorHiddenInGame(false);
 		}
 	}
 }

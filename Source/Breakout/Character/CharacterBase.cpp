@@ -271,7 +271,7 @@ void ACharacterBase::SetResetState()
 	UpdateStaminaHUD();
 	CurWeapon->Destroy();
 	CurWeapon = nullptr;
-	bDissolve = false;
+	//bDissolve = false;
 	DissolvePercent = -1.f;
 	GetMesh()->SetMaterial(0, MDynamicDissolveInst);
 	MDynamicDissolveInst->SetScalarParameterValue(FName("Dissolve"), DissolvePercent);
@@ -452,7 +452,7 @@ void ACharacterBase::ReciveDamage(AActor* DamagedActor, float Damage, const UDam
 	
 	if (Health <= 0.0f)
 	{
-		bDissolve = true;
+		//bDissolve = true;
 		if (inst)
 			inst->m_Socket->Send_Dissolve_packet(inst->GetPlayerID(), 0);
 		if (DamageInsigatorCh)
