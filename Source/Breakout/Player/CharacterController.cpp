@@ -442,6 +442,15 @@ bool ACharacterController::UpdateWorld()
 			}
 			//}
 
+			if (info->dissolve == 0) {
+				ServerSetDissolve(true, OtherPlayer);
+				//info->dissolve = 2;
+			}
+			else if (info->dissolve == 1)
+			{
+				ServerSetDissolve(false, OtherPlayer);
+				info->dissolve = 2;
+			}
 
 			if (!OtherPlayer || OtherPlayer->_SessionId == -1 || OtherPlayer->_SessionId == id)
 			{
@@ -545,21 +554,27 @@ bool ACharacterController::UpdateWorld()
 					GetWorld()->SpawnActor<AProjectileBase>(LauncherRef, HEloc, EffectRot, SpawnParameters);
 					info->hiteffect = false;
 				}
-				else if (info->weptype == 2) {
+			}
+			if (info->bBojo == true)
+			{
+				FActorSpawnParameters SpawnParameters;
+				SpawnParameters.Owner = OtherPlayer;
+				SpawnParameters.Instigator = OtherPlayer;
+				if (info->weptype == 2) {
 					OtherPlayer->PlayAnimMontage(GrenadeMontage, 1.f, FName("Fire"));
 					GetWorld()->SpawnActor<AProjectileBase>(GrenadeRef, HEloc, EffectRot, SpawnParameters);
 					UE_LOG(LogTemp, Warning, TEXT("FIRE"));
-					info->hiteffect = false;
+					info->bBojo = false;
 				}
 				else if (info->weptype == 3) {
 					OtherPlayer->PlayAnimMontage(GrenadeMontage, 1.f, FName("Fire"));
 					GetWorld()->SpawnActor<AProjectileBase>(WallRef, HEloc, EffectRot, SpawnParameters);
 					UE_LOG(LogTemp, Warning, TEXT("WALL"));
-					info->hiteffect = false;
+					info->bBojo = false;
 				}
 				else if (info->weptype == 4) {
 					GetWorld()->SpawnActor<AProjectileBase>(BoobyTrapRef, HEloc, EffectRot, SpawnParameters);
-					info->hiteffect = false;
+					info->bBojo = false;
 				}
 			}
 			FVector Vshotgun;
@@ -591,18 +606,7 @@ bool ACharacterController::UpdateWorld()
 			Rshotgun4.Pitch = info->sEshot4.Pitch;
 			Rshotgun4.Yaw = info->sEshot4.Yaw;
 			Rshotgun4.Roll = info->sEshot4.Roll;
-			Rshotgun5.Pitch = info->sEshot5.Pitch;
-			Rshotgun5.Yaw = info->sEshot5.Yaw;
-			Rshotgun5.Roll = info->sEshot5.Roll;
-			Rshotgun6.Pitch = info->sEshot6.Pitch;
-			Rshotgun6.Yaw = info->sEshot6.Yaw;
-			Rshotgun6.Roll = info->sEshot6.Roll;
-			Rshotgun7.Pitch = info->sEshot7.Pitch;
-			Rshotgun7.Yaw = info->sEshot7.Yaw;
-			Rshotgun7.Roll = info->sEshot7.Roll;
-			Rshotgun8.Pitch = info->sEshot8.Pitch;
-			Rshotgun8.Yaw = info->sEshot8.Yaw;
-			Rshotgun8.Roll = info->sEshot8.Roll;
+			//----------------------------------------
 			if (OtherPlayer->GetCurWeapon() && info->sfired == true)
 			{
 				FActorSpawnParameters SpawnParameters;
@@ -724,15 +728,7 @@ bool ACharacterController::UpdateWorld()
 				info->deadtype = 2;
 			}
 			// Á×À» ¶§ µðÁ¹ºê
-			if (info->dissolve == 0) {
-				ServerSetDissolve(true, OtherPlayer);
-				//info->dissolve = 2;
-			}
-			else if (info->dissolve == 1)
-			{
-				ServerSetDissolve(false, OtherPlayer);
-				info->dissolve = 2;
-			}
+			
 			if (info->bServerReload == true)
 			{
 				OtherPlayer->PlayAnimMontage(SyncReloadMontageCh3);

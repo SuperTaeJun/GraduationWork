@@ -22,6 +22,71 @@ class UBOGameInstance;
 class ACharacterController;
 using namespace std;
 
+
+template<typename T>
+class LockQueue
+{
+public:
+	LockQueue() { }
+
+	LockQueue(const LockQueue&) = delete;
+	LockQueue& operator=(const LockQueue&) = delete;
+
+	void Push(T value)
+		//void Push(int32 value)
+	{
+		lock_guard<mutex> lock(_mutex);
+		_queue.push(std::move(value));
+		_condVar.notify_one();
+	}
+
+	bool TryPop(T& value)
+		//bool TryPop(int32& value)
+	{
+		lock_guard<mutex> lock(_mutex);
+		if (_queue.empty())
+			return false;
+
+		value = std::move(_queue.front());
+		_queue.pop();
+		return true;
+	}
+
+	void WaitPop(T& value)
+		//void WaitPop(int32& value)
+	{
+		unique_lock<mutex> lock(_mutex);
+		_condVar.wait(lock, [this] { return _queue.empty() == false; });
+		value = std::move(_queue.front());
+		_queue.pop();
+	}
+
+	void Clear()
+	{
+		unique_lock<mutex> lock(_mutex);
+		if (_queue.empty() == false)
+		{
+			queue<T> _empty;
+			//queue<int32> _empty;
+			swap(_queue, _empty);
+		}
+	}
+
+	int Size()
+	{
+		unique_lock<mutex> lock(_mutex);
+		return _queue.size();
+	}
+
+
+private:
+	std::queue<T> _queue;
+	//std::queue<int32> _queue;
+	std::mutex _mutex;
+	std::condition_variable _condVar;
+};
+
+
 const int buffsize = 2048;
 
 
@@ -108,6 +173,8 @@ public:
 	bool  bEndGame = false;
 	bool  bServerReload = false;
 	bool  bFinishSkill = false;
+	// º¸Á¶¹«±â ÅõÃ´
+	bool  bBojo = false;
 	// ³ªÀÌ¾Æ°¡¶ó ½¸ ÀÌÆÑÆ®
 	FVector Sshot;
 	FVector Eshot;
@@ -296,6 +363,7 @@ public:
 	void Send_Weapon_Type(WeaponType type, int id);
 	void Send_Ready_Packet(bool ready, int id);
 	void Send_Fire_Effect(int attack_id, FVector ImLoc, FRotator ImRot, int wtype);
+	void Send_BojoWeapon_packet(int id, FVector ImLoc, FRotator ImRot, int wtype);
 	void Send_ShotGun_packet(int attack_id, FVector ServerBeamStart, TArray<FRotator> ServerBeamEnd, int size);
 	void Send_Niagara_packet(int clientid, PlayerType type, int num);
 	void Send_Niagara_cancel(bool bcancel, int id, int num);

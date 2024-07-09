@@ -202,6 +202,20 @@ bool ClientSocket::PacketProcess(char* ptr)
 	
 		break;
 	}
+	case SC_BOJOWEAPON: {
+		CS_EFFECT_PACKET* packet = reinterpret_cast<CS_EFFECT_PACKET*>(ptr);
+		PlayerInfo.players[packet->attack_id].Hshot.X = packet->lx;
+		PlayerInfo.players[packet->attack_id].Hshot.Y = packet->ly;
+		PlayerInfo.players[packet->attack_id].Hshot.Z = packet->lz;
+		PlayerInfo.players[packet->attack_id].FEffect.Pitch = packet->r_pitch;
+		PlayerInfo.players[packet->attack_id].FEffect.Yaw = packet->r_yaw;
+		PlayerInfo.players[packet->attack_id].FEffect.Roll = packet->r_roll;
+		PlayerInfo.players[packet->attack_id].weptype = packet->wep_type;
+		PlayerInfo.players[packet->attack_id].bBojo = true;
+		//MyCharacterController->SetHitEffect(packet->attack_id);
+
+		break;
+	}
 	//HP동기화 처리
 	case SC_HP_CHANGE: {
 		SC_HP_CHANGE_PACKET* packet = reinterpret_cast<SC_HP_CHANGE_PACKET*>(ptr);
@@ -400,6 +414,23 @@ void ClientSocket::Send_Fire_Effect(int attack_id, FVector ImLoc, FRotator ImRot
 	packet.wep_type = wtype;
 	SendPacket(&packet);
 }
+void ClientSocket::Send_BojoWeapon_packet(int id, FVector ImLoc, FRotator ImRot, int wtype)
+{
+	CS_BOJOWEAPON_PACKET packet;
+	packet.size = sizeof(packet);
+	packet.type = CS_BOJOWEAPON;
+	packet.attack_id = id;
+	packet.lx = ImLoc.X;
+	packet.ly = ImLoc.Y;
+	packet.lz = ImLoc.Z;
+	packet.r_pitch = ImRot.Pitch;
+	packet.r_yaw = ImRot.Yaw;
+	packet.r_roll = ImRot.Roll;
+	packet.wep_type = wtype;
+	SendPacket(&packet);
+}
+
+
 
 void ClientSocket::Send_ShotGun_packet(int attack_id, FVector ServerBeamStart, TArray<FRotator> ServerBeamEnd, int size)
 {
