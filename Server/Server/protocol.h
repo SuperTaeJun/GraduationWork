@@ -1,6 +1,6 @@
 #pragma once
 #define SERVER_PORT		8001
-#define SERVER_IP		"192.168.219.101"
+#define SERVER_IP		"192.168.54.28"
 #define MAX_INFO_SIZE   20
 #include <vector>
 #include <array>
@@ -32,6 +32,7 @@ const char CS_SELECT_CHAR = 3;
 const char CS_SELECT_WEP = 4;
 const char CS_READY = 5;
 const char CS_HIT_EFFECT = 7;
+const char CS_BOJOWEAPON = 8;
 const char CS_SIGNAl = 9;
 const char CS_SHOTGUN_BEAM = 10;
 const char CS_NiAGARA = 12;
@@ -82,6 +83,7 @@ const char SC_CH2_SKILL = 27;
 const char SC_TRAVLE = 28;
 const char SC_HP_CHANGE = 29;
 const char SC_DISSOLVE = 30;
+const char SC_BOJOWEAPON = 31;
 
 
 #pragma pack (push, 1)
@@ -186,6 +188,15 @@ struct CS_EFFECT_PACKET {
 	float lx, ly, lz;
 	float r_pitch, r_yaw, r_roll;
 	// 0 = 라이플, 1, 런처
+	int wep_type;
+};
+struct CS_BOJOWEAPON_PACKET {
+	unsigned char size;
+	unsigned char type;
+	int attack_id;
+	float lx, ly, lz;
+	float r_pitch, r_yaw, r_roll;
+	// 2 = 수류탄, 3: 벽 4 : 부비트랩
 	int wep_type;
 };
 struct CS_DAMAGE_PACKET {
