@@ -442,15 +442,14 @@ bool ACharacterController::UpdateWorld()
 			}
 			//}
 
-			if (info->dissolve == 0) {
-				ServerSetDissolve(true, OtherPlayer);
-				info->dissolve = 2;
-			}
-			else if (info->dissolve == 1)
-			{
-	/*			ServerSetDissolve(false, OtherPlayer);
-				info->dissolve = 2;*/
-			}
+	//		if (info->dissolve == 0) {
+	//			
+	//		}
+	//		else if (info->dissolve == 1)
+	//		{
+	///*			ServerSetDissolve(false, OtherPlayer);
+	//			info->dissolve = 2;*/
+	//		}
 
 			if (!OtherPlayer || OtherPlayer->_SessionId == -1 || OtherPlayer->_SessionId == id)
 			{
@@ -727,6 +726,8 @@ bool ACharacterController::UpdateWorld()
 			else if (info->deadtype == 0) {
 				OtherPlayer->PlayAnimMontage(SyncDeadMontage);
 				info->deadtype = 2;
+				ServerSetDissolve(true, OtherPlayer);
+				//info->dissolve = 2;
 			}
 			// Á×À» ¶§ µðÁ¹ºê
 			

@@ -453,8 +453,8 @@ void ACharacterBase::ReciveDamage(AActor* DamagedActor, float Damage, const UDam
 	if (Health <= 0.0f)
 	{
 		bDissolve = true;
-		if (inst)
-			inst->m_Socket->Send_Dissolve_packet(inst->GetPlayerID(), 0);
+		/*if (inst)
+			inst->m_Socket->Send_Dissolve_packet(inst->GetPlayerID(), 0);*/
 		if (DamageInsigatorCh)
 		{
 			//서버
@@ -1002,7 +1002,7 @@ void ACharacterBase::Tick(float DeltaTime)
 	}
 
 	//캐릭터 디졸브
-	if (bDissolve && Health<=0 && DissolvePercent==-1)
+	if (bDissolve && Health<=0.f)
 	{
 
 		if (MDissolveInst)
