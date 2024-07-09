@@ -273,8 +273,8 @@ void ACharacterBase::SetResetState()
 	CurWeapon = nullptr;
 	//bDissolve = false;
 	DissolvePercent = -1.f;
-	GetMesh()->SetMaterial(0, MDynamicDissolveInst);
-	MDynamicDissolveInst->SetScalarParameterValue(FName("Dissolve"), DissolvePercent);
+	//GetMesh()->SetMaterial(0, MDynamicDissolveInst);
+	//MDynamicDissolveInst->SetScalarParameterValue(FName("Dissolve"), DissolvePercent);
 
 	//여기서 패킷
 	if (inst)
