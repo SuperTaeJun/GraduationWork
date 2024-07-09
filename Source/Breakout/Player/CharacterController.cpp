@@ -448,8 +448,8 @@ bool ACharacterController::UpdateWorld()
 			}
 			else if (info->dissolve == 1)
 			{
-				ServerSetDissolve(false, OtherPlayer);
-				info->dissolve = 2;
+	/*			ServerSetDissolve(false, OtherPlayer);
+				info->dissolve = 2;*/
 			}
 
 			if (!OtherPlayer || OtherPlayer->_SessionId == -1 || OtherPlayer->_SessionId == id)

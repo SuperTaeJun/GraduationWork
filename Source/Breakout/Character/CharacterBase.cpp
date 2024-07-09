@@ -1002,7 +1002,7 @@ void ACharacterBase::Tick(float DeltaTime)
 	}
 
 	//캐릭터 디졸브
-	if (bDissolve && Health<=0)
+	if (bDissolve && Health<=0 && DissolvePercent==-1)
 	{
 
 		if (MDissolveInst)
