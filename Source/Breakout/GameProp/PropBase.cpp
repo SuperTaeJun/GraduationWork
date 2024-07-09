@@ -161,6 +161,11 @@ void APropBase::InterpMeshData(FMeshData& Data, FMeshData& DataA, FMeshData& Dat
 			Data.Colors[x] = FMath::Lerp(DataA.Colors[x], DataB.Colors[y], Alpha);
 		}
 	}
+
+	if (Alpha <= 0.f)
+	{
+		Data = DataA;
+	}
 }
 
 void APropBase::GetMeshDataFromStaticMesh(UStaticMesh* Mesh, UPARAM(ref) FMeshData& Data, int32 LODIndex, int32 SectionIndex, bool GetAllSections)
