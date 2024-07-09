@@ -60,13 +60,13 @@ void AProjectileBullet::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherAc
 
 	APawn* FiringPawn =GetInstigator();
 	AController* FiringController = FiringPawn->GetController();
-	if (FiringPawn)
+	if (FiringPawn && OtherActor!=GetOwner())
 	{
 		ACharacterBase* DamagedCharacter=Cast<ACharacterBase>(OtherActor);
 		ABulletHoleWall* DamagedWall = Cast<ABulletHoleWall>(OtherActor);
 		AProjectileBoobyTrap* DamagedTrap = Cast<AProjectileBoobyTrap>(OtherActor);
 		AExplosiveActor* ExplosiveActor = Cast<AExplosiveActor>(OtherActor);
-		if(DamagedCharacter && !(OtherActor == GetOwner()))
+		if(DamagedCharacter)
 			UGameplayStatics::ApplyDamage(DamagedCharacter,Damage,FiringController,FiringPawn,UDamageType::StaticClass());
 		else if (DamagedWall)
 		{
@@ -81,8 +81,10 @@ void AProjectileBullet::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherAc
 		{
 			UGameplayStatics::ApplyDamage(ExplosiveActor, Damage, FiringController, FiringPawn, UDamageType::StaticClass());
 		}
+
+
+		Destroy();
 	}
-	Destroy();
 }
 
 void AProjectileBullet::Destroyed()
