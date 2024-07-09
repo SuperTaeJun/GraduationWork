@@ -60,8 +60,10 @@ void AEscapeTool::Destroyed()
 {
 	Super::Destroyed();
 	if (inst)
+	{
 		inst->m_Socket->Send_Destroyed_item_packet(ItemID);
-	
+		//inst->m_Socket->Send_item_Anim_packet(inst->GetPlayerID(), 1);
+	}
 }
 
 void AEscapeTool::TransformMesh(float DeltaTime, bool Clamp, bool TransformReverse)
@@ -82,13 +84,11 @@ void AEscapeTool::TransformMesh(float DeltaTime, bool Clamp, bool TransformRever
 		}
 	}
 
-	Cur = FMath::Clamp
-	(
-		Time/*(((DegSin(Time * 180.f) * 1.1) + 1.0) / 2.f)*/,
-		0.f,
-		1.f
-	);
+	Cur = FMath::Clamp	(Time,0.f,1.f);
 
+	if (Cur > 1.f) Cur = 1.f;
+	else if (Cur < 0.f) Cur = 0.f;
+	DynamicMaterial->SetScalarParameterValue(FName("Alpha"), Cur);
 	InterpMeshData(InterpData, Data1, Data2, Cur, Clamp);
 
 	ProceduralMesh->UpdateMeshSection_LinearColor(0, InterpData.Verts, InterpData.Normals, InterpData.UVs, InterpData.Colors, TArray<FProcMeshTangent>());
@@ -96,13 +96,25 @@ void AEscapeTool::TransformMesh(float DeltaTime, bool Clamp, bool TransformRever
 	if (TransformReverse)
 	{
 		Time = Time - (DeltaTime * MorphingSpeed);
-		DynamicMaterial->SetScalarParameterValue(FName("Alpha"), Time);
 	}
 	else
 	{
 		Time = Time + (DeltaTime * MorphingSpeed);
-		DynamicMaterial->SetScalarParameterValue(FName("Alpha"), Time);
 	}
+	//InterpMeshData(InterpData, Data1, Data2, Cur, Clamp);
+
+	//ProceduralMesh->UpdateMeshSection_LinearColor(0, InterpData.Verts, InterpData.Normals, InterpData.UVs, InterpData.Colors, TArray<FProcMeshTangent>());
+
+	//if (TransformReverse)
+	//{
+	//	Time = Time - (DeltaTime * MorphingSpeed);
+	//	DynamicMaterial->SetScalarParameterValue(FName("Alpha"), Time);
+	//}
+	//else
+	//{
+	//	Time = Time + (DeltaTime * MorphingSpeed);
+	//	DynamicMaterial->SetScalarParameterValue(FName("Alpha"), Time);
+	//}
 
 	UpdatePercent(Cur);
 }
