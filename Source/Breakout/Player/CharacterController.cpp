@@ -755,11 +755,7 @@ bool ACharacterController::UpdateWorld()
 			}
 
 
-			if (info->bServerReload == true)
-			{
-				OtherPlayer->PlayAnimMontage(SyncReloadMontageCh3);
-				info->bServerReload = false;
-			}
+			
 			//TArray<AActor*> EscapeTools;
 			/*UGameplayStatics::GetAllActorsOfClass(GetWorld(), AEscapeTool::StaticClass(), EscapeTools);
 			for (int i = 0; i < EscapeTools.Num(); i++)
@@ -1016,6 +1012,8 @@ void ACharacterController::UpdatePlayer()
 	auto MyRotation = m_Player->GetActorRotation();
 	auto MyVelocity = m_Player->GetVelocity();
 	auto max_speed = m_Player->GetCharacterMovement()->MaxWalkSpeed;
+	auto AO_Yaw = m_Player->GetAO_Yaw();
+	auto AO_Pitch = m_Player->GetAO_Pitch();
 	FVector MyCameraLocation;
 	FRotator MyCameraRotation;
 	m_Player->GetActorEyesViewPoint(MyCameraLocation, MyCameraRotation);

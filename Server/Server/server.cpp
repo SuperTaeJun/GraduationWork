@@ -680,7 +680,7 @@ void process_packet(int s_id, unsigned char* p)
 		cl.Yaw = packet->r_yaw;
 		cl.Roll = packet->r_roll;
 		cl.wtype = packet->wep_type;
-		//cout << "weptype : " << cl.wtype << endl;
+		cout << "id : " << packet->attack_id << "weptype : " << cl.wtype << endl;
 		for (auto& other : clients) {
 			if (other._s_id == cl._s_id) continue;
 			other.state_lock.lock();

@@ -344,7 +344,7 @@ void ClientSocket::Send_Login_Info(char* id, char* pw)
 
 }
 
-void ClientSocket::Send_Move_Packet(int sessionID, FVector Location, FRotator Rotation, FVector Velocity, float Max_speed)
+void ClientSocket::Send_Move_Packet(int sessionID, FVector Location, FRotator Rotation, FVector Velocity, float Max_speed, float AO_Yaw, float AO_Pitch)
 {
 	//if (login_cond == true) {
 	CS_MOVE_PACKET packet;
@@ -359,6 +359,8 @@ void ClientSocket::Send_Move_Packet(int sessionID, FVector Location, FRotator Ro
 	packet.vy = Velocity.Y;
 	packet.vz = Velocity.Z;
 	packet.Max_speed = Max_speed;
+	packet.AO_yaw = AO_Yaw;
+	packet.AO_pitch = AO_Pitch;
 	//Send(packet.size, &packet);
 	SendPacket(&packet);
 	//UE_LOG(LogClass, Warning, TEXT("send move"));
