@@ -554,28 +554,7 @@ bool ACharacterController::UpdateWorld()
 					info->hiteffect = false;
 				}
 			}
-			if (info->bBojo == true)
-			{
-				FActorSpawnParameters SpawnParameters;
-				SpawnParameters.Owner = OtherPlayer;
-				SpawnParameters.Instigator = OtherPlayer;
-				if (info->weptype == 2) {
-					OtherPlayer->PlayAnimMontage(GrenadeMontage, 1.f, FName("Fire"));
-					GetWorld()->SpawnActor<AProjectileBase>(GrenadeRef, HEloc, EffectRot, SpawnParameters);
-					UE_LOG(LogTemp, Warning, TEXT("FIRE"));
-					info->bBojo = false;
-				}
-				else if (info->weptype == 3) {
-					OtherPlayer->PlayAnimMontage(GrenadeMontage, 1.f, FName("Fire"));
-					GetWorld()->SpawnActor<AProjectileBase>(WallRef, HEloc, EffectRot, SpawnParameters);
-					UE_LOG(LogTemp, Warning, TEXT("WALL"));
-					info->bBojo = false;
-				}
-				else if (info->weptype == 4) {
-					GetWorld()->SpawnActor<AProjectileBase>(BoobyTrapRef, HEloc, EffectRot, SpawnParameters);
-					info->bBojo = false;
-				}
-			}
+		
 			FVector Vshotgun;
 			FRotator Rshotgun;
 			FRotator Rshotgun1;

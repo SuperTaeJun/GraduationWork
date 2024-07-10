@@ -202,20 +202,6 @@ bool ClientSocket::PacketProcess(char* ptr)
 	
 		break;
 	}
-	case SC_BOJOWEAPON: {
-		CS_EFFECT_PACKET* packet = reinterpret_cast<CS_EFFECT_PACKET*>(ptr);
-		PlayerInfo.players[packet->attack_id].Hshot.X = packet->lx;
-		PlayerInfo.players[packet->attack_id].Hshot.Y = packet->ly;
-		PlayerInfo.players[packet->attack_id].Hshot.Z = packet->lz;
-		PlayerInfo.players[packet->attack_id].FEffect.Pitch = packet->r_pitch;
-		PlayerInfo.players[packet->attack_id].FEffect.Yaw = packet->r_yaw;
-		PlayerInfo.players[packet->attack_id].FEffect.Roll = packet->r_roll;
-		PlayerInfo.players[packet->attack_id].weptype = packet->wep_type;
-		PlayerInfo.players[packet->attack_id].bBojo = true;
-		//MyCharacterController->SetHitEffect(packet->attack_id);
-
-		break;
-	}
 	//HP동기화 처리
 	case SC_HP_CHANGE: {
 		SC_HP_CHANGE_PACKET* packet = reinterpret_cast<SC_HP_CHANGE_PACKET*>(ptr);

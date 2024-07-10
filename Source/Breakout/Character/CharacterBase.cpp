@@ -421,20 +421,7 @@ void ACharacterBase::SetSpawnGrenade(TSubclassOf<AProjectileBase> Projectile)
 		if (World)
 		{
 			World->SpawnActor<AProjectileBase>(Projectile, StartLocation, ToHitTarget.Rotation(), SpawnParms);
-			if (Cast<UBOGameInstance>(GetGameInstance()))
-			{
-				switch (BojoMugiType)
-				{
-				case EBojoMugiType::E_Grenade:
-					Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_BojoWeapon_packet(inst->GetPlayerID(), StartLocation, ToHitTarget.Rotation(), 2);
-					break;
-				case EBojoMugiType::E_Wall:
-					Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_BojoWeapon_packet(inst->GetPlayerID(), StartLocation, ToHitTarget.Rotation(), 3);
-					break;
-
-				}
-					
-			}
+			
 		}
 	}
 }
@@ -878,10 +865,7 @@ void ACharacterBase::GrandeFire(const FInputActionValue& Value)
 				World->SpawnActor<AProjectileBase>(BoobyTrapClass, SWAimLastLoc, FRotator::ZeroRotator, SpawnParms);
 				BoobyTrapNum -= 1;
 				//여기 부비트랩
-				if (Cast<UBOGameInstance>(GetGameInstance()))
-				{
-					Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_BojoWeapon_packet(inst->GetPlayerID(), SWAimLastLoc, FRotator::ZeroRotator, 4);
-				}
+			
 			}
 		}
 		else
