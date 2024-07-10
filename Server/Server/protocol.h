@@ -52,6 +52,7 @@ const char CS_DECREASE_COUNT = 25;
 const char CS_CH2_SKILL = 26;
 const char CS_DAMAGE = 27;
 const char CS_DISSOLVE = 28;
+const char CS_BOJO_ANIM = 29;
 
 const char SC_LOGIN_OK = 1;
 const char SC_OTHER_PLAYER = 2;
@@ -84,6 +85,8 @@ const char SC_TRAVLE = 28;
 const char SC_HP_CHANGE = 29;
 const char SC_DISSOLVE = 30;
 const char SC_BOJOWEAPON = 31;
+const char SC_BOJO_ANIM = 32;
+
 
 
 #pragma pack (push, 1)
@@ -386,6 +389,13 @@ struct CS_DISSOLVE_PACKET {
 	int id;
 	// 0 : 디졸브, 1 : 디졸브 없애고 원상복귀, 2 평상시
 	int dissolve;
+};
+struct CS_BOJO_ANIM_PACKET {
+	unsigned char size;
+	unsigned char type;
+	int id;
+	// 0 : 디졸브, 1 : 디졸브 없애고 원상복귀, 2 평상시
+	int bojoanimtype;
 };
 
 #pragma pack(pop)

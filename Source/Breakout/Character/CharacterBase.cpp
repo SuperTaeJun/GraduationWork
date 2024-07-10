@@ -335,7 +335,8 @@ void ACharacterBase::GrandeThrow()
 	Cast<UBOAnimInstance>(AnimInstance)->bUseLeftHand = false;
 	//PlayAnimMontage(GrenadeMontage, 2.f, FName("Fire"));
 
-	//¼ö·ùÅº ÅõÃ´ ¾Ö´Ï¸ÞÀÌ¼Ç
+
+
 
 }
 void ACharacterBase::GrandeAim()
@@ -350,8 +351,13 @@ void ACharacterBase::GrandeAim()
 		WeaponSocket->AttachActor(CurWeapon, GetMesh());
 	}
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+	// ¼ö·ùÅº ÅõÃ´ ¾Ö´Ï¸ÞÀÌ¼Ç
 	if (AnimInstance && GrenadeMontage)
+	{
+		if (inst)
+			inst->m_Socket->Send_BojoAnim_packet(inst->GetPlayerID(), 0);
 		PlayAnimMontage(GrenadeMontage, 1.5f);
+	}
 }
 void ACharacterBase::GrandeThrowFinish()
 {

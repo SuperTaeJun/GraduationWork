@@ -554,7 +554,11 @@ bool ACharacterController::UpdateWorld()
 					info->hiteffect = false;
 				}
 			}
-		
+			if (info->bojoanimtype == 0)
+			{
+				OtherPlayer->PlayAnimMontage(GrenadeMontage, 1.5f);
+				info->bojoanimtype = 1;
+			}
 			FVector Vshotgun;
 			FRotator Rshotgun;
 			FRotator Rshotgun1;

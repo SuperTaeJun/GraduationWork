@@ -110,6 +110,8 @@ public:
 	float s_x, s_y, s_z;
 	float e_x, e_y, e_z;
 	int wtype;
+	//보조무기 애니메이션 상태
+	int bojoanimtype;
 	//--------------------
 	//죽는 애니메이션 타입
 	int deadtype;
@@ -1056,6 +1058,27 @@ void process_packet(int s_id, unsigned char* p)
 			packet.type = SC_HP_CHANGE;
 			packet.id = cl._s_id;
 			packet.HP = cl._hp;
+			other.do_send(sizeof(packet), &packet);
+		}
+		break;
+	}
+	case CS_BOJO_ANIM: {
+		CS_BOJO_ANIM_PACKET* packet = reinterpret_cast<CS_BOJO_ANIM_PACKET*>(p);
+		CLIENT& cl = clients[packet->id];
+		cl.bojoanimtype = packet->bojoanimtype;
+		for (auto& other : clients) {
+			if (other._s_id == cl._s_id) continue;
+			other.state_lock.lock();
+			if (ST_INGAME != other._state) {
+				other.state_lock.unlock();
+				continue;
+			}
+			else other.state_lock.unlock();
+			CS_BOJO_ANIM_PACKET packet;
+			packet.size = sizeof(packet);
+			packet.type = SC_BOJO_ANIM;
+			packet.id = cl._s_id;
+			packet.bojoanimtype = cl.bojoanimtype;
 			other.do_send(sizeof(packet), &packet);
 		}
 		break;

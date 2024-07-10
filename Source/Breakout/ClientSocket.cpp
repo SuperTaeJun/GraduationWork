@@ -202,6 +202,11 @@ bool ClientSocket::PacketProcess(char* ptr)
 	
 		break;
 	}
+	case SC_BOJO_ANIM: {
+		CS_BOJO_ANIM_PACKET* packet = reinterpret_cast<CS_BOJO_ANIM_PACKET*>(ptr);
+		PlayerInfo.players[packet->id].bojoanimtype = packet->bojoanimtype;
+		break;
+	}
 	//HP동기화 처리
 	case SC_HP_CHANGE: {
 		SC_HP_CHANGE_PACKET* packet = reinterpret_cast<SC_HP_CHANGE_PACKET*>(ptr);
@@ -385,6 +390,7 @@ void ClientSocket::Send_Ready_Packet(bool ready, int id)
 	packet.id = id;
 	SendPacket(&packet);
 }
+
 void ClientSocket::Send_Fire_Effect(int attack_id, FVector ImLoc, FRotator ImRot, int wtype)
 {
 	CS_EFFECT_PACKET packet;
@@ -616,6 +622,17 @@ void ClientSocket::Send_Dissolve_packet(int id, int dissolve)
 	packet.dissolve = dissolve;
 	SendPacket(&packet);
 }
+void ClientSocket::Send_BojoAnim_packet(int id, int bojo)
+{
+	CS_BOJO_ANIM_PACKET packet;
+	packet.size = sizeof(packet);
+	packet.type = CS_BOJO_ANIM;
+	packet.id = id;
+	packet.bojoanimtype = bojo;
+	SendPacket(&packet);
+}
+
+
 bool ClientSocket::Init()
 {
 	//UE_LOG(LogTemp, Warning, TEXT("Thread has been initialized"));

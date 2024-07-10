@@ -144,6 +144,8 @@ public:
 	int deadtype = 2;
 	// 디졸브 상태
 	int	dissolve = 2;
+	// 보조무기 애니메이션
+	int bojoanimtype = 2;
 	// 아이디 비번
 	FString    userId = {};
 	FString    userPw = {};
@@ -383,6 +385,7 @@ public:
 	void Send_CH2_SKILL_PACKET(int id, PlayerType type, bool bSkill);
 	void Send_My_HP_PACKET(int id, float damaage);
 	void Send_Dissolve_packet(int id, int dissolve);
+	void Send_BojoAnim_packet(int id, int bojo);
 	virtual bool Init() override;
 	virtual uint32 Run() override;
 	virtual void Stop() override;
