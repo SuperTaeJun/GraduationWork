@@ -318,9 +318,8 @@ void ACharacterController::Tick(float DeltaTime)
 		InitPlayer();
 
 	//새 플레이어 스폰
-	if (inst)
-		if(inst->bPlayerSync)
-			UpdateSyncPlayer();
+	if (bNewPlayerEntered)
+		UpdateSyncPlayer();
 	//if(NewItem.size() == 1)
 	//	UpdateSyncItem();
 
@@ -374,7 +373,7 @@ void ACharacterController::SetInitPlayerInfo(const CPlayer& owner_player)
 void ACharacterController::SetNewCharacterInfo(std::shared_ptr<CPlayer> InitPlayer)
 {
 	if (InitPlayer != nullptr) {
-		//bNewPlayerEntered = true;
+		bNewPlayerEntered = true;
 		NewPlayer.push(InitPlayer);
 		UE_LOG(LogTemp, Warning, TEXT("The value of size_: %d"), NewPlayer.size());
 	}
@@ -966,8 +965,7 @@ void ACharacterController::UpdateSyncPlayer()
 		NewPlayer.front() = nullptr;
 		NewPlayer.pop();
 	}
-	if(inst)
-		inst->bPlayerSync = false;
+	bNewPlayerEntered = false;
 }
 
 

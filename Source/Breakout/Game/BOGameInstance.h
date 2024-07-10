@@ -35,5 +35,5 @@ public:
 	class ClientSocket* m_Socket;
 	bool connect;
 	int playerID;
-	bool bPlayerSync = false;
+	
 };

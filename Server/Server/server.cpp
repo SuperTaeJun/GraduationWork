@@ -465,60 +465,7 @@ void process_packet(int s_id, unsigned char* p)
 		send_select_character_type_packet(cl._s_id);
 
 		//cout << "몇명 들어옴 : " << ingamecount << endl;
-		for (auto& other : clients) {
-			if (other._s_id == cl._s_id) continue;
-			other.state_lock.lock();
-			if (ST_INGAME != other._state) {
-				other.state_lock.unlock();
-				continue;
-			}
-			else other.state_lock.unlock();
 
-			SC_PLAYER_SYNC packet;
-			packet.id = cl._s_id;
-			strcpy_s(packet.name, cl.name);
-			packet.size = sizeof(packet);
-			packet.type = SC_OTHER_PLAYER;
-			packet.x = cl.x;
-			packet.y = cl.y;
-			packet.z = cl.z;
-			packet.yaw = cl.Yaw;
-			packet.Max_speed = cl.Max_Speed;
-			packet.p_type = cl.p_type;
-			printf_s("[Send put object] id : %d, location : (%f,%f,%f), yaw : %f\n", packet.id, packet.x, packet.y, packet.z, packet.yaw);
-			cout << "이거 누구한테 감 :  ?" << other._s_id << endl;
-			other.do_send(sizeof(packet), &packet);
-		}
-
-		// 새로 접속한 플레이어에게 주위 객체 정보를 보낸다
-		for (auto& other : clients) {
-			if (other._s_id == cl._s_id) continue;
-			other.state_lock.lock();
-			if (ST_INGAME != other._state) {
-				other.state_lock.unlock();
-				continue;
-			}
-			else other.state_lock.unlock();
-
-
-			SC_PLAYER_SYNC packet;
-			packet.id = other._s_id;
-			strcpy_s(packet.name, other.name);
-
-			packet.size = sizeof(packet);
-			packet.type = SC_OTHER_PLAYER;
-			packet.x = other.x;
-			packet.y = other.y;
-			packet.z = other.z;
-			packet.yaw = other.Yaw;
-			packet.Max_speed = other.Max_Speed;
-			packet.p_type = other.p_type;
-			printf_s("[어떤 클라의 Send put object] id : %d, location : (%f,%f,%f), yaw : %f\n", packet.id, packet.x, packet.y, packet.z, packet.yaw);
-
-			cl.do_send(sizeof(packet), &packet);
-
-		}
-		cout << "몇명 들어옴 : " << ingamecount << endl;
 		if (ingamecount >= 2)
 		{
 			for (auto& player : clients) {
