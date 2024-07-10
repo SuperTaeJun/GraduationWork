@@ -136,7 +136,10 @@ public:
 	int Id = -1;
 	int WinnerID = -1;
 	//int hp;
+	//주무기 타입
 	int weptype;
+	// 보조무기 타입
+	int bojotype = 3;
 	float hp = 100.f;
 	int skilltype;
 	int itemAnimtype = -1;
@@ -175,8 +178,6 @@ public:
 	bool  bEndGame = false;
 	bool  bServerReload = false;
 	bool  bFinishSkill = false;
-	// 보조무기 투척
-	bool  bBojo = false;
 	// 나이아가라 슛 이팩트
 	FVector Sshot;
 	FVector Eshot;

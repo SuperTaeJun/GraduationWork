@@ -271,7 +271,7 @@ void ACharacterBase::SetResetState()
 	UpdateStaminaHUD();
 	CurWeapon->Destroy();
 	CurWeapon = nullptr;
-	//bDissolve = false;
+	bDissolve = false;
 	DissolvePercent = -1.f;
 	GetMesh()->SetMaterial(0, MDynamicDissolveInst);
 	MDynamicDissolveInst->SetScalarParameterValue(FName("Dissolve"), DissolvePercent);
@@ -430,6 +430,22 @@ void ACharacterBase::SetSpawnGrenade(TSubclassOf<AProjectileBase> Projectile)
 		{
 			World->SpawnActor<AProjectileBase>(Projectile, StartLocation, ToHitTarget.Rotation(), SpawnParms);
 			//¼ö·ùÅº ½ºÆù
+			switch (BojoMugiType)
+			{
+			case EBojoMugiType::E_Grenade:
+				if (inst)
+					inst->m_Socket->Send_BojoWeapon_packet(inst->GetPlayerID(), StartLocation, ToHitTarget.Rotation(), 0);
+				break;
+			case EBojoMugiType::E_Wall:
+				if (inst)
+					inst->m_Socket->Send_BojoWeapon_packet(inst->GetPlayerID(), StartLocation, ToHitTarget.Rotation(), 1);
+				break;
+			case EBojoMugiType::E_BoobyTrap:
+				if (inst)
+					inst->m_Socket->Send_BojoWeapon_packet(inst->GetPlayerID(), StartLocation, ToHitTarget.Rotation(), 2);
+				break;
+			}
+			
 		}
 	}
 }

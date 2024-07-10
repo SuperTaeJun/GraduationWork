@@ -202,6 +202,17 @@ bool ClientSocket::PacketProcess(char* ptr)
 	
 		break;
 	}
+	case SC_BOJOWEAPON: {
+		CS_BOJOWEAPON_PACKET* packet = reinterpret_cast<CS_BOJOWEAPON_PACKET*>(ptr);
+		PlayerInfo.players[packet->attack_id].Hshot.X = packet->lx;
+		PlayerInfo.players[packet->attack_id].Hshot.Y = packet->ly;
+		PlayerInfo.players[packet->attack_id].Hshot.Z = packet->lz;
+		PlayerInfo.players[packet->attack_id].FEffect.Pitch = packet->r_pitch;
+		PlayerInfo.players[packet->attack_id].FEffect.Yaw = packet->r_yaw;
+		PlayerInfo.players[packet->attack_id].FEffect.Roll = packet->r_roll;
+		PlayerInfo.players[packet->attack_id].bojotype = packet->wep_type;
+		break;
+	}
 	case SC_BOJO_ANIM: {
 		CS_BOJO_ANIM_PACKET* packet = reinterpret_cast<CS_BOJO_ANIM_PACKET*>(ptr);
 		PlayerInfo.players[packet->id].bojoanimtype = packet->bojoanimtype;

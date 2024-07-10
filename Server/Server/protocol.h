@@ -199,7 +199,7 @@ struct CS_BOJOWEAPON_PACKET {
 	int attack_id;
 	float lx, ly, lz;
 	float r_pitch, r_yaw, r_roll;
-	// 2 = 수류탄, 3: 벽 4 : 부비트랩
+	// 0= 수류탄, 1: 벽 2 : 부비트랩
 	int wep_type;
 };
 struct CS_DAMAGE_PACKET {

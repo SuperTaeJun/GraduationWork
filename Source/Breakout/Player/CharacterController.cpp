@@ -554,6 +554,26 @@ bool ACharacterController::UpdateWorld()
 					info->hiteffect = false;
 				}
 			}
+			if (info->bojotype != 3)
+			{
+				FActorSpawnParameters SpawnParameters;
+				SpawnParameters.Owner = OtherPlayer;
+				SpawnParameters.Instigator = OtherPlayer;
+				if (info->bojotype == 0) {
+					GetWorld()->SpawnActor<AProjectileBase>(GrenadeRef, HEloc, EffectRot, SpawnParameters);
+					UE_LOG(LogTemp, Warning, TEXT("FIRE"));
+					info->bojotype = 3;
+				}
+				else if (info->bojotype == 1) {
+					GetWorld()->SpawnActor<AProjectileBase>(WallRef, HEloc, EffectRot, SpawnParameters);
+					UE_LOG(LogTemp, Warning, TEXT("WALL"));
+					info->bojotype = 3;
+				}
+				else if (info->bojotype == 2) {
+					GetWorld()->SpawnActor<AProjectileBase>(BoobyTrapRef, HEloc, EffectRot, SpawnParameters);
+					info->bojotype = 3;
+				}
+			}
 			if (info->bojoanimtype == 0)
 			{
 				OtherPlayer->PlayAnimMontage(GrenadeMontage, 1.5f);
