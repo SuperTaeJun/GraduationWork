@@ -335,6 +335,8 @@ void ACharacterBase::GrandeThrow()
 	Cast<UBOAnimInstance>(AnimInstance)->bUseLeftHand = false;
 	//PlayAnimMontage(GrenadeMontage, 2.f, FName("Fire"));
 
+	//수류탄 투척 애니메이션
+
 }
 void ACharacterBase::GrandeAim()
 {
@@ -421,7 +423,7 @@ void ACharacterBase::SetSpawnGrenade(TSubclassOf<AProjectileBase> Projectile)
 		if (World)
 		{
 			World->SpawnActor<AProjectileBase>(Projectile, StartLocation, ToHitTarget.Rotation(), SpawnParms);
-			
+			//수류탄 스폰
 		}
 	}
 }
