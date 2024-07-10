@@ -271,7 +271,7 @@ void ACharacterBase::SetResetState()
 	UpdateStaminaHUD();
 	CurWeapon->Destroy();
 	CurWeapon = nullptr;
-	//bDissolve = false;
+	bDissolve = false;
 	DissolvePercent = -1.f;
 	GetMesh()->SetMaterial(0, MDynamicDissolveInst);
 	MDynamicDissolveInst->SetScalarParameterValue(FName("Dissolve"), DissolvePercent);
@@ -352,6 +352,8 @@ void ACharacterBase::GrandeAim()
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 	if (AnimInstance && GrenadeMontage)
 		PlayAnimMontage(GrenadeMontage, 1.5f);
+
+
 }
 void ACharacterBase::GrandeThrowFinish()
 {
