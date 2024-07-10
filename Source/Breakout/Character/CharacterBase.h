@@ -90,6 +90,8 @@ public:
 	float GetDissolvePersent() {return DissolvePercent; }
 	class UMaterialInstanceDynamic* GetDynamicMaterial() { return MDynamicDissolveInst; }
 	class AWeaponBase* GetWeapon() { return CurWeapon; }
+	class ACharacterController* GetMainController() { return MainController; }
+
 
 	FORCEINLINE float GetHealth() const { return Health; }
 	FORCEINLINE bool GetbFfirePressed() const { return bFirePressed; }
