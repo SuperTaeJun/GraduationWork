@@ -93,6 +93,8 @@ public:
 	float	Pitch;
 	float	Roll;
 	float   Speed;
+	// 에임 오프셋
+	float AO_YAW, AO_PITCH;
 	// 속도
 	float VX;
 	float VY;
@@ -492,7 +494,8 @@ void process_packet(int s_id, unsigned char* p)
 		cl.VY = packet->vy;
 		cl.VZ = packet->vz;
 		cl.Max_Speed = packet->Max_speed;
-
+		cl.AO_PITCH = packet->AO_pitch;
+		cl.AO_YAW = packet->AO_yaw;
 		for (auto& other : clients) {
 			if (other._s_id == s_id)
 				continue;
@@ -1233,6 +1236,8 @@ void send_move_packet(int _id, int target)
 	packet.vy = clients[target].VY;
 	packet.vz = clients[target].VZ;
 	packet.Max_speed = clients[target].Max_Speed;
+	packet.AO_pitch = clients[target].AO_PITCH;
+	packet.AO_yaw = clients[target].AO_YAW;
 	clients[_id].do_send(sizeof(packet), &packet);
 }
 

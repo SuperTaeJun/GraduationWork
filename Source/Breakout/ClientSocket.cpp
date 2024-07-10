@@ -121,6 +121,8 @@ bool ClientSocket::PacketProcess(char* ptr)
 		PlayerInfo.players[packet->id].VeloY = packet->vy;
 		PlayerInfo.players[packet->id].VeloZ = packet->vz;
 		PlayerInfo.players[packet->id].Max_Speed = packet->Max_speed;
+		PlayerInfo.players[packet->id].AO_PITCH = packet->AO_pitch;
+		PlayerInfo.players[packet->id].AO_YAW = packet->AO_yaw;
 		break;
 	}
 	case SC_CHAR_BACK: {

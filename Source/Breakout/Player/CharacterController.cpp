@@ -465,6 +465,8 @@ bool ACharacterController::UpdateWorld()
 			PlayerRotation.Pitch = 0.0f;
 			PlayerRotation.Roll = 0.0f;
 
+			float AO_YAW = info->AO_YAW;
+			float AO_PITCH = info->AO_PITCH;
 			//¼Óµµ
 			FVector PlayerVelocity;
 			PlayerVelocity.X = info->VeloX;
@@ -530,7 +532,10 @@ bool ACharacterController::UpdateWorld()
 			OtherPlayer->AddMovementInput(PlayerVelocity);
 			OtherPlayer->SetActorRotation(PlayerRotation);
 			OtherPlayer->SetActorLocation(PlayerLocation);
+			OtherPlayer->SetAO_PITCH(AO_PITCH);
+			OtherPlayer->SetAO_YAW(AO_YAW);
 			OtherPlayer->GetCharacterMovement()->MaxWalkSpeed = info->Max_Speed;
+			
 			OtherPlayer->SetHealth(SyncHP);
 			if (info->bGetWeapon == true)
 			{
@@ -1017,7 +1022,7 @@ void ACharacterController::UpdatePlayer()
 	FVector MyCameraLocation;
 	FRotator MyCameraRotation;
 	m_Player->GetActorEyesViewPoint(MyCameraLocation, MyCameraRotation);
-	inst->m_Socket->Send_Move_Packet(id, MyLocation, MyRotation, MyVelocity, max_speed);
+	inst->m_Socket->Send_Move_Packet(id, MyLocation, MyRotation, MyVelocity, max_speed , AO_Yaw, AO_Pitch);
 	//UE_LOG(LogClass, Warning, TEXT("send move packet"));
 }
 

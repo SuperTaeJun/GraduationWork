@@ -165,6 +165,10 @@ public:
 	float VeloY = 0;
 	float VeloZ = 0;
 	float Max_Speed = 400;
+	// 에임오프셋
+	float AO_YAW = 0;
+	float AO_PITCH = 0;
+
 	bool  bGetWeapon = false;
 	bool  IsAlive = true;
 	bool  fired = false;
