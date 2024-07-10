@@ -22,7 +22,7 @@ enum WeaponType
 
 constexpr int BUFSIZE = 1048;
 const int  MAX_NAME_SIZE = 20;
-const int  MAX_USER = 10000;
+const int  MAX_USER = 1000;
 const int  MAX_OBJ = 11;
 
 

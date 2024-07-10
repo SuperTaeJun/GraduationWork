@@ -364,7 +364,6 @@ void ACharacterBase::GrandeThrowFinish()
 	{
 		WeaponSocket->AttachActor(CurWeapon, GetMesh());
 	}
-	GrendeNum -= 1;
 
 	//Grenade->bHiddenInGame = false;
 	Grenade->SetHiddenInGame(true);
@@ -1092,8 +1091,8 @@ void ACharacterBase::StartGame()
 		//	UE_LOG(LogTemp, Warning, TEXT("ADDTOOLNUM"));
 		//	MainHUD->AddToolNumUi();
 		//}
-		if (inst)
-			inst->m_Socket->Send_Start_game_packet(inst->GetPlayerID());
+		
+			//inst->m_Socket->Send_Start_game_packet(inst->GetPlayerID());
 		MainController->MainHUD->AddToolNumUi();
 		// num 계수, name 처리 
 		MainController->SetNum();
@@ -1101,6 +1100,8 @@ void ACharacterBase::StartGame()
 		SetActorTransform(StartTransform);
 		MainController->MainHUD->RemoveMatchingUi();
 		//bStarted = false;
+		if (inst)
+			inst->bSyncPlayer = true;
 		EnableInput(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 		SetWeaponUi();
 	
