@@ -668,42 +668,6 @@ void process_packet(int s_id, unsigned char* p)
 		break;
 
 	}
-	case CS_BOJOWEAPON: {
-		CS_BOJOWEAPON_PACKET* packet = reinterpret_cast<CS_BOJOWEAPON_PACKET*>(p);
-		CLIENT& cl = clients[packet->attack_id];
-		cl.s_x = packet->lx;
-		cl.s_y = packet->ly;
-		cl.s_z = packet->lz;
-		cl.Pitch = packet->r_pitch;
-		cl.Yaw = packet->r_yaw;
-		cl.Roll = packet->r_roll;
-		cl.wtype = packet->wep_type;
-		//cout << "weptype : " << cl.wtype << endl;
-		for (auto& other : clients) {
-			if (other._s_id == cl._s_id) continue;
-			other.state_lock.lock();
-			if (ST_INGAME != other._state) {
-				other.state_lock.unlock();
-				continue;
-			}
-			else other.state_lock.unlock();
-			CS_BOJOWEAPON_PACKET packet;
-			packet.attack_id = cl._s_id;
-			packet.size = sizeof(packet);
-			packet.type = SC_BOJOWEAPON;
-			packet.lx = cl.s_x;
-			packet.ly = cl.s_y;
-			packet.lz = cl.s_z;
-			packet.r_pitch = cl.Pitch;
-			packet.r_yaw = cl.Yaw;
-			packet.r_roll = cl.Roll;
-			packet.wep_type = cl.wtype;
-			other.do_send(sizeof(packet), &packet);
-
-		}
-		break;
-
-	}
 	case CS_NiAGARA: {
 		//cout << "나이아가라 들어옴?" << endl;
 		CS_NIAGARA_SYNC_PACKET* packet = reinterpret_cast<CS_NIAGARA_SYNC_PACKET*>(p);
