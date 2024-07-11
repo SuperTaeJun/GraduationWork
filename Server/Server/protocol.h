@@ -1,6 +1,6 @@
 #pragma once
 #define SERVER_PORT		8001
-#define SERVER_IP		"192.168.54.28"
+#define SERVER_IP		"192.168.219.101"
 #define MAX_INFO_SIZE   20
 #include <vector>
 #include <array>
@@ -53,6 +53,7 @@ const char CS_CH2_SKILL = 26;
 const char CS_DAMAGE = 27;
 const char CS_DISSOLVE = 28;
 const char CS_BOJO_ANIM = 29;
+const char CS_MOPP = 30;
 
 const char SC_LOGIN_OK = 1;
 const char SC_OTHER_PLAYER = 2;
@@ -86,6 +87,7 @@ const char SC_HP_CHANGE = 29;
 const char SC_DISSOLVE = 30;
 const char SC_BOJOWEAPON = 31;
 const char SC_BOJO_ANIM = 32;
+const char SC_MOPP = 33;
 
 
 
@@ -398,6 +400,14 @@ struct CS_BOJO_ANIM_PACKET {
 	int id;
 	// 0 : 디졸브, 1 : 디졸브 없애고 원상복귀, 2 평상시
 	int bojoanimtype;
+};
+struct CS_MOPP_PACKET {
+	unsigned char size;
+	unsigned char type;
+	int id;
+	int itemid;
+	// 모프 변환 상태
+	int mopptype;
 };
 
 #pragma pack(pop)

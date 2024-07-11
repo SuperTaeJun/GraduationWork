@@ -32,6 +32,7 @@
 #include <string>
 #include "ClientSocket.h"
 #include"Animatiom/BOAnimInstance.h"
+#include "Game/BOGameMode.h"
 
 ACharacterController::ACharacterController()
 {
@@ -52,6 +53,8 @@ void ACharacterController::BeginPlay()
 	//SetInputMode(GameOnlyInput);
 	MainHUD = Cast<AMainHUD>(GetHUD());
 	//inst = Cast<UBOGameInstance>(GetGameInstance());
+	m_GameMode = Cast<ABOGameMode>(GetWorld()->GetAuthGameMode());
+
 	inst = Cast<UBOGameInstance>(GetGameInstance());
 	inst->m_Socket->SetPlayerController(this);
 	UE_LOG(LogTemp, Warning, TEXT("BEGIN"));
@@ -442,15 +445,6 @@ bool ACharacterController::UpdateWorld()
 			}
 			//}
 
-	//		if (info->dissolve == 0) {
-	//			
-	//		}
-	//		else if (info->dissolve == 1)
-	//		{
-	///*			ServerSetDissolve(false, OtherPlayer);
-	//			info->dissolve = 2;*/
-	//		}
-
 			if (!OtherPlayer || OtherPlayer->_SessionId == -1 || OtherPlayer->_SessionId == id)
 			{
 				continue;
@@ -759,17 +753,28 @@ bool ACharacterController::UpdateWorld()
 				info->itemAnimtype = -1;
 			}
 
+			if (m_GameMode) {
+				for (int i = 0; i < m_GameMode->EscapeTools.Num(); i++)
+				{
+					if (Cast<AEscapeTool>(m_GameMode->EscapeTools[i]))
+						if (Escapeid == Cast<AEscapeTool>(m_GameMode->EscapeTools[i])->ItemID)
+							Cast<AEscapeTool>(m_GameMode->EscapeTools[i])->Destroy();
+				}
+			}
 
-			
-			TArray<AActor*> EscapeTools;
-			UGameplayStatics::GetAllActorsOfClass(GetWorld(), AEscapeTool::StaticClass(), EscapeTools);
-			for (int i = 0; i < EscapeTools.Num(); i++)
-			{
-				if (Cast<AEscapeTool>(EscapeTools[i]))
-					if (Escapeid == Cast<AEscapeTool>(EscapeTools[i])->ItemID)
-						Cast<AEscapeTool>(EscapeTools[i])->Destroy();
-
-				OtherPlayer->SetEscapeToolNum(info->itemCount);
+			// 모프 동기화
+			if (inst->m_Socket->MoppType == 0) {
+				//Cast<AEscapeTool>(m_GameMode->EscapeTools[MoppID])->TransformMesh(inst->m_Socket->TempMoppTime, false, false);
+				Cast<AEscapeTool>(m_GameMode->EscapeTools[MoppID])->bOverlap = 0;
+				inst->m_Socket->MoppType = -1;
+			}
+			else if (inst->m_Socket->MoppType == 1) {
+				Cast<AEscapeTool>(m_GameMode->EscapeTools[MoppID])->bOverlap = 1;
+				inst->m_Socket->MoppType = -1;
+			}
+			else if (inst->m_Socket->MoppType == 2) {
+				Cast<AEscapeTool>(m_GameMode->EscapeTools[MoppID])->bOverlap = 2;
+				inst->m_Socket->MoppType = -1;
 			}
 
 		}

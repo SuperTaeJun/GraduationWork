@@ -58,6 +58,7 @@ private:
 
 	void UpdatePercent(float Percent);
 	class UBOGameInstance* inst;
+public:
 	//0 = 기본상태
 	//1 = a->b로 보간중인 상태
 	//2 = b->a로 다시 돌아가는 상태

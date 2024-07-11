@@ -788,7 +788,8 @@ void ACharacterBase::Inter(const FInputActionValue& Value)
 	else if (!bCanObtainEscapeTool && OverlappingEscapeTool)
 	{
 		//UE_LOG(LogTemp, Log, TEXT("TEST"));
-		EToolTranfrom(Value);
+		//EToolTranfrom(Value);
+		OverlappingEscapeTool->bOverlap = 1;
 	}
 
 	if (bCanEscape)
@@ -806,8 +807,10 @@ void ACharacterBase::Inter_Start(const FInputActionValue& Value)
 			Cast<UBOAnimInstance>(AnimInstance)->bUseLeftHand = false;
 			if (InterMontage) {
 				PlayAnimMontage(InterMontage);
-				if (inst)
+				if (inst) {
 					inst->m_Socket->Send_item_Anim_packet(inst->GetPlayerID(), 0);
+					inst->m_Socket->Send_Mopp_Sync_packet(OverlappingEscapeTool->ItemID, 1, inst->GetPlayerID());
+				}
 			}
 		}
 }
@@ -815,10 +818,15 @@ void ACharacterBase::Inter_End(const FInputActionValue& Value)
 {
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 	Cast<UBOAnimInstance>(AnimInstance)->bUseLeftHand = true;
-	if (InterMontage) {
+	if (InterMontage) 
 		StopAnimMontage(InterMontage);
-		if (inst)
+	if (OverlappingEscapeTool)
+	{
+		OverlappingEscapeTool->bOverlap = 0;
+		if (inst) {
+			inst->m_Socket->Send_Mopp_Sync_packet(OverlappingEscapeTool->ItemID, 0, inst->GetPlayerID());
 			inst->m_Socket->Send_item_Anim_packet(inst->GetPlayerID(), 1);
+		}
 	}
 
 }
