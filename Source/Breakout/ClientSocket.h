@@ -149,6 +149,8 @@ public:
 	int	dissolve = 2;
 	// 보조무기 애니메이션
 	int bojoanimtype = 2;
+	// 아이템 개수
+	int itemCount = 0;
 	// 아이디 비번
 	FString    userId = {};
 	FString    userPw = {};
@@ -381,7 +383,7 @@ public:
 	void Send_Signal_packet(int id, int num);
 	void Send_Item_packet(int id, int itemCount);
 	void Send_Alive_packet(int id, int deadtype);
-	void Send_Destroyed_item_packet(int id);
+	void Send_Destroyed_item_packet(int id, int playerid);
 	void Send_Increase_item_count_packet(int id, int itemcount);
 	void Send_Decrease_item_count_packet(int id, int itemcount);
 	void Send_Reload_packet(int id, bool bReload);

@@ -329,6 +329,7 @@ struct CS_REMOVE_ITEM_PACKET {
 	unsigned char type;
 	int id;
 	int itemid;
+	int itemcount;
 };
 struct SC_MY_ITEM_COUNT {
 	unsigned char size;

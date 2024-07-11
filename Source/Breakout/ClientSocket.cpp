@@ -287,6 +287,7 @@ bool ClientSocket::PacketProcess(char* ptr)
 	case SC_REMOVE_ITEM: {
 		CS_REMOVE_ITEM_PACKET* packet = reinterpret_cast<CS_REMOVE_ITEM_PACKET*>(ptr);
 		MyCharacterController->SetDestroyItemid(packet->itemid);
+		PlayerInfo.players[packet->id].itemCount = packet->itemcount;
 		break;
 	}
 	case SC_INCREASE_COUNT: {
@@ -555,12 +556,13 @@ void ClientSocket::Send_Alive_packet(int id, int deadtype)
 	packet.deadtype = deadtype;
 	SendPacket(&packet);
 }
-void ClientSocket::Send_Destroyed_item_packet(int id)
+void ClientSocket::Send_Destroyed_item_packet(int id, int playerid)
 {
 	CS_REMOVE_ITEM_PACKET packet;
 	packet.size = sizeof(packet);
 	packet.type = CS_REMOVE_ITEM;
 	packet.itemid = id;
+	packet.id = playerid;
 	SendPacket(&packet);
 }
 void ClientSocket::Send_Increase_item_count_packet(int id, int itemcount)

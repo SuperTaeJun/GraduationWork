@@ -436,7 +436,7 @@ void process_packet(int s_id, unsigned char* p)
 {
 	unsigned char packet_type = p[1];
 	//CLIENT& cl = clients[s_id];
-	cout << "user : " << s_id << "packet type :" << to_string(packet_type) << endl;
+	//cout << "user : " << s_id << "packet type :" << to_string(packet_type) << endl;
 	switch (packet_type) {
 	case CS_LOGIN: {
 		CS_LOGIN_PACKET* packet = reinterpret_cast<CS_LOGIN_PACKET*>(p);
@@ -915,6 +915,7 @@ void process_packet(int s_id, unsigned char* p)
 	case CS_REMOVE_ITEM: {
 		CS_REMOVE_ITEM_PACKET* packet = reinterpret_cast<CS_REMOVE_ITEM_PACKET*>(p);
 		CLIENT& cl = clients[s_id];
+		cl.myItemCount += 1;
 		//cout << "itemid : " << packet->itemid << endl;
 		int itemid = packet->itemid;
 		for (auto& other : clients) {
@@ -929,6 +930,8 @@ void process_packet(int s_id, unsigned char* p)
 			packet.itemid = itemid;
 			packet.size = sizeof(packet);
 			packet.type = SC_REMOVE_ITEM;
+			packet.id = cl._s_id;
+			packet.itemcount = cl.myItemCount;
 			other.do_send(sizeof(packet), &packet);
 		}
 		break;
@@ -937,6 +940,7 @@ void process_packet(int s_id, unsigned char* p)
 		CS_INCREASE_ITEM_PACKET* packet = reinterpret_cast<CS_INCREASE_ITEM_PACKET*>(p);
 		CLIENT& cl = clients[packet->Increaseid];
 		cl.myItemCount = packet->itemCount;
+		cout << "packet->id : " << packet->Increaseid << "packet->itemcount" << packet->itemCount << endl;
 		send_myitem_count_packet(cl._s_id);
 
 		for (auto& other : clients) {

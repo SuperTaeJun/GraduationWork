@@ -761,14 +761,16 @@ bool ACharacterController::UpdateWorld()
 
 
 			
-			//TArray<AActor*> EscapeTools;
-			/*UGameplayStatics::GetAllActorsOfClass(GetWorld(), AEscapeTool::StaticClass(), EscapeTools);
+			TArray<AActor*> EscapeTools;
+			UGameplayStatics::GetAllActorsOfClass(GetWorld(), AEscapeTool::StaticClass(), EscapeTools);
 			for (int i = 0; i < EscapeTools.Num(); i++)
 			{
 				if (Cast<AEscapeTool>(EscapeTools[i]))
 					if (Escapeid == Cast<AEscapeTool>(EscapeTools[i])->ItemID)
 						Cast<AEscapeTool>(EscapeTools[i])->Destroy();
-			}*/
+
+
+			}
 
 		}
 	}
