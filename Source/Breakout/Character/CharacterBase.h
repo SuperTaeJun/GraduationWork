@@ -27,6 +27,8 @@ public:
 
 	FORCEINLINE float GetAO_Yaw() const { return AO_Yaw; }
 	FORCEINLINE float GetAO_Pitch() const { return AO_Pitch; }
+	void SetAO_YAW(float Servao_yaw) { AO_Yaw = Servao_yaw; }
+	void SetAO_PITCH(float Servao_pitch) { AO_Pitch = Servao_pitch; }
 	class AWeaponBase* GetCurWeapon() const { return CurWeapon; }
 	void UpdateObtainedEscapeTool();
 	/*float GetAO_Yaw();
@@ -90,6 +92,8 @@ public:
 	float GetDissolvePersent() {return DissolvePercent; }
 	class UMaterialInstanceDynamic* GetDynamicMaterial() { return MDynamicDissolveInst; }
 	class AWeaponBase* GetWeapon() { return CurWeapon; }
+	class ACharacterController* GetMainController() { return MainController; }
+
 
 	FORCEINLINE float GetHealth() const { return Health; }
 	FORCEINLINE bool GetbFfirePressed() const { return bFirePressed; }

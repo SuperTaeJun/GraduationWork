@@ -22,7 +22,7 @@ enum WeaponType
 
 constexpr int BUFSIZE = 1048;
 const int  MAX_NAME_SIZE = 20;
-const int  MAX_USER = 10000;
+const int  MAX_USER = 1000;
 const int  MAX_OBJ = 11;
 
 
@@ -52,6 +52,7 @@ const char CS_DECREASE_COUNT = 25;
 const char CS_CH2_SKILL = 26;
 const char CS_DAMAGE = 27;
 const char CS_DISSOLVE = 28;
+const char CS_BOJO_ANIM = 29;
 
 const char SC_LOGIN_OK = 1;
 const char SC_OTHER_PLAYER = 2;
@@ -84,6 +85,8 @@ const char SC_TRAVLE = 28;
 const char SC_HP_CHANGE = 29;
 const char SC_DISSOLVE = 30;
 const char SC_BOJOWEAPON = 31;
+const char SC_BOJO_ANIM = 32;
+
 
 
 #pragma pack (push, 1)
@@ -114,6 +117,7 @@ struct CS_MOVE_PACKET
 	float x, y, z;
 	float vx, vy, vz;
 	float yaw;
+	float AO_yaw, AO_pitch;
 };
 struct SC_PLAYER_SYNC {
 	unsigned char size;
@@ -196,7 +200,7 @@ struct CS_BOJOWEAPON_PACKET {
 	int attack_id;
 	float lx, ly, lz;
 	float r_pitch, r_yaw, r_roll;
-	// 2 = ¼ö·ùÅº, 3: º® 4 : ºÎºñÆ®·¦
+	// 0= ¼ö·ùÅº, 1: º® 2 : ºÎºñÆ®·¦
 	int wep_type;
 };
 struct CS_DAMAGE_PACKET {
@@ -325,6 +329,7 @@ struct CS_REMOVE_ITEM_PACKET {
 	unsigned char type;
 	int id;
 	int itemid;
+	int itemcount;
 };
 struct SC_MY_ITEM_COUNT {
 	unsigned char size;
@@ -386,6 +391,13 @@ struct CS_DISSOLVE_PACKET {
 	int id;
 	// 0 : µðÁ¹ºê, 1 : µðÁ¹ºê ¾ø¾Ö°í ¿ø»óº¹±Í, 2 Æò»ó½Ã
 	int dissolve;
+};
+struct CS_BOJO_ANIM_PACKET {
+	unsigned char size;
+	unsigned char type;
+	int id;
+	// 0 : µðÁ¹ºê, 1 : µðÁ¹ºê ¾ø¾Ö°í ¿ø»óº¹±Í, 2 Æò»ó½Ã
+	int bojoanimtype;
 };
 
 #pragma pack(pop)

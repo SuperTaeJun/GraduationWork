@@ -33,8 +33,9 @@ void AProjectileWall::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActo
 			ConvertLoc.Z += 100.f;
 			World->SpawnActor<ABulletHoleWall>(WallClass, ConvertLoc, Rotation, SpawnParameters);
 		}
+
+		Destroy();
+
 	}
-	
-	Destroy();
 
 }

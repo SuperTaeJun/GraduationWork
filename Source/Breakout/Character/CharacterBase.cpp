@@ -271,7 +271,7 @@ void ACharacterBase::SetResetState()
 	UpdateStaminaHUD();
 	CurWeapon->Destroy();
 	CurWeapon = nullptr;
-	//bDissolve = false;
+	bDissolve = false;
 	DissolvePercent = -1.f;
 	GetMesh()->SetMaterial(0, MDynamicDissolveInst);
 	MDynamicDissolveInst->SetScalarParameterValue(FName("Dissolve"), DissolvePercent);
@@ -335,6 +335,9 @@ void ACharacterBase::GrandeThrow()
 	Cast<UBOAnimInstance>(AnimInstance)->bUseLeftHand = false;
 	//PlayAnimMontage(GrenadeMontage, 2.f, FName("Fire"));
 
+
+
+
 }
 void ACharacterBase::GrandeAim()
 {
@@ -348,8 +351,13 @@ void ACharacterBase::GrandeAim()
 		WeaponSocket->AttachActor(CurWeapon, GetMesh());
 	}
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+	// 수류탄 투척 애니메이션
 	if (AnimInstance && GrenadeMontage)
+	{
+		if (inst)
+			inst->m_Socket->Send_BojoAnim_packet(inst->GetPlayerID(), 0);
 		PlayAnimMontage(GrenadeMontage, 1.5f);
+	}
 }
 void ACharacterBase::GrandeThrowFinish()
 {
@@ -364,7 +372,6 @@ void ACharacterBase::GrandeThrowFinish()
 	{
 		WeaponSocket->AttachActor(CurWeapon, GetMesh());
 	}
-	GrendeNum -= 1;
 
 	//Grenade->bHiddenInGame = false;
 	Grenade->SetHiddenInGame(true);
@@ -422,20 +429,23 @@ void ACharacterBase::SetSpawnGrenade(TSubclassOf<AProjectileBase> Projectile)
 		if (World)
 		{
 			World->SpawnActor<AProjectileBase>(Projectile, StartLocation, ToHitTarget.Rotation(), SpawnParms);
-			if (Cast<UBOGameInstance>(GetGameInstance()))
+			//수류탄 스폰
+			switch (BojoMugiType)
 			{
-				switch (BojoMugiType)
-				{
-				case EBojoMugiType::E_Grenade:
-					Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_BojoWeapon_packet(inst->GetPlayerID(), StartLocation, ToHitTarget.Rotation(), 2);
-					break;
-				case EBojoMugiType::E_Wall:
-					Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_BojoWeapon_packet(inst->GetPlayerID(), StartLocation, ToHitTarget.Rotation(), 3);
-					break;
-
-				}
-					
+			case EBojoMugiType::E_Grenade:
+				if (inst)
+					inst->m_Socket->Send_BojoWeapon_packet(inst->GetPlayerID(), StartLocation, ToHitTarget.Rotation(), 0);
+				break;
+			case EBojoMugiType::E_Wall:
+				if (inst)
+					inst->m_Socket->Send_BojoWeapon_packet(inst->GetPlayerID(), StartLocation, ToHitTarget.Rotation(), 1);
+				break;
+			case EBojoMugiType::E_BoobyTrap:
+				if (inst)
+					inst->m_Socket->Send_BojoWeapon_packet(inst->GetPlayerID(), StartLocation, ToHitTarget.Rotation(), 2);
+				break;
 			}
+			
 		}
 	}
 }
@@ -447,7 +457,7 @@ void ACharacterBase::ReciveDamage(AActor* DamagedActor, float Damage, const UDam
 		MainController->SeverHpSync(Health, inst->GetPlayerID());
 	
 	UpdateHpHUD();
-	ACharacterBase* DamageInsigatorCh= Cast<ACharacterBase>(InstigatorController->GetPawn());
+	ACharacterBase* DamageInsigatorCh= Cast<ACharacterBase>(DamageCauser);
 
 	
 	if (Health <= 0.0f)
@@ -455,7 +465,7 @@ void ACharacterBase::ReciveDamage(AActor* DamagedActor, float Damage, const UDam
 		bDissolve = true;
 		/*if (inst)
 			inst->m_Socket->Send_Dissolve_packet(inst->GetPlayerID(), 0);*/
-		if (DamageInsigatorCh)
+		if (DamageInsigatorCh && bAlive)
 		{
 			//서버
 			if (ObtainedEscapeToolNum > 0 && 10 > ObtainedEscapeToolNum)
@@ -879,10 +889,7 @@ void ACharacterBase::GrandeFire(const FInputActionValue& Value)
 				World->SpawnActor<AProjectileBase>(BoobyTrapClass, SWAimLastLoc, FRotator::ZeroRotator, SpawnParms);
 				BoobyTrapNum -= 1;
 				//여기 부비트랩
-				if (Cast<UBOGameInstance>(GetGameInstance()))
-				{
-					Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_BojoWeapon_packet(inst->GetPlayerID(), SWAimLastLoc, FRotator::ZeroRotator, 4);
-				}
+			
 			}
 		}
 		else
@@ -1018,7 +1025,7 @@ void ACharacterBase::Tick(float DeltaTime)
 	}
 
 
-	if (Cast<UBOGameInstance>(GetWorld()->GetGameInstance())->m_Socket->bAllReady == true && !bStarted)
+	if (/*Cast<UBOGameInstance>(GetWorld()->GetGameInstance())->m_Socket->bAllReady == true &&*/ !bStarted)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("StartGame"));
 		Cast<UBOGameInstance>(GetWorld()->GetGameInstance())->m_Socket->bAllReady = false;
@@ -1092,7 +1099,7 @@ void ACharacterBase::StartGame()
 		//	UE_LOG(LogTemp, Warning, TEXT("ADDTOOLNUM"));
 		//	MainHUD->AddToolNumUi();
 		//}
-		if (inst)
+		if(inst)
 			inst->m_Socket->Send_Start_game_packet(inst->GetPlayerID());
 		MainController->MainHUD->AddToolNumUi();
 		// num 계수, name 처리 

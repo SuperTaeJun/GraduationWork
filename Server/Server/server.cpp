@@ -93,6 +93,8 @@ public:
 	float	Pitch;
 	float	Roll;
 	float   Speed;
+	// 에임 오프셋
+	float AO_YAW, AO_PITCH;
 	// 속도
 	float VX;
 	float VY;
@@ -110,6 +112,8 @@ public:
 	float s_x, s_y, s_z;
 	float e_x, e_y, e_z;
 	int wtype;
+	//보조무기 애니메이션 상태
+	int bojoanimtype;
 	//--------------------
 	//죽는 애니메이션 타입
 	int deadtype;
@@ -490,7 +494,8 @@ void process_packet(int s_id, unsigned char* p)
 		cl.VY = packet->vy;
 		cl.VZ = packet->vz;
 		cl.Max_Speed = packet->Max_speed;
-
+		cl.AO_PITCH = packet->AO_pitch;
+		cl.AO_YAW = packet->AO_yaw;
 		for (auto& other : clients) {
 			if (other._s_id == s_id)
 				continue;
@@ -678,7 +683,7 @@ void process_packet(int s_id, unsigned char* p)
 		cl.Yaw = packet->r_yaw;
 		cl.Roll = packet->r_roll;
 		cl.wtype = packet->wep_type;
-		//cout << "weptype : " << cl.wtype << endl;
+		cout << "id : " << packet->attack_id << "weptype : " << cl.wtype << endl;
 		for (auto& other : clients) {
 			if (other._s_id == cl._s_id) continue;
 			other.state_lock.lock();
@@ -702,7 +707,6 @@ void process_packet(int s_id, unsigned char* p)
 
 		}
 		break;
-
 	}
 	case CS_NiAGARA: {
 		//cout << "나이아가라 들어옴?" << endl;
@@ -750,11 +754,6 @@ void process_packet(int s_id, unsigned char* p)
 			packet.type = SC_NiAGARA_CANCEL;
 			packet.cancel = cl.bCancel;
 			packet.num = cl.num;
-			//packet.weapon_type = cl.w_type;
-		//printf_s("[Send put object] id : %d, location : (%f,%f,%f), yaw : %f\n", packet.id, packet.x, packet.y, packet.z, packet.yaw);
-			//cout << "이거 누구한테 감 :  ?" << other._s_id << endl;
-			//	cout << "나이아가라" << endl;
-
 			other.do_send(sizeof(packet), &packet);
 
 		}
@@ -916,6 +915,7 @@ void process_packet(int s_id, unsigned char* p)
 	case CS_REMOVE_ITEM: {
 		CS_REMOVE_ITEM_PACKET* packet = reinterpret_cast<CS_REMOVE_ITEM_PACKET*>(p);
 		CLIENT& cl = clients[s_id];
+		cl.myItemCount += 1;
 		//cout << "itemid : " << packet->itemid << endl;
 		int itemid = packet->itemid;
 		for (auto& other : clients) {
@@ -930,6 +930,8 @@ void process_packet(int s_id, unsigned char* p)
 			packet.itemid = itemid;
 			packet.size = sizeof(packet);
 			packet.type = SC_REMOVE_ITEM;
+			packet.id = cl._s_id;
+			packet.itemcount = cl.myItemCount;
 			other.do_send(sizeof(packet), &packet);
 		}
 		break;
@@ -938,6 +940,7 @@ void process_packet(int s_id, unsigned char* p)
 		CS_INCREASE_ITEM_PACKET* packet = reinterpret_cast<CS_INCREASE_ITEM_PACKET*>(p);
 		CLIENT& cl = clients[packet->Increaseid];
 		cl.myItemCount = packet->itemCount;
+		cout << "packet->id : " << packet->Increaseid << "packet->itemcount" << packet->itemCount << endl;
 		send_myitem_count_packet(cl._s_id);
 
 		for (auto& other : clients) {
@@ -1096,6 +1099,27 @@ void process_packet(int s_id, unsigned char* p)
 		}
 		break;
 	}
+	case CS_BOJO_ANIM: {
+		CS_BOJO_ANIM_PACKET* packet = reinterpret_cast<CS_BOJO_ANIM_PACKET*>(p);
+		CLIENT& cl = clients[packet->id];
+		cl.bojoanimtype = packet->bojoanimtype;
+		for (auto& other : clients) {
+			if (other._s_id == cl._s_id) continue;
+			other.state_lock.lock();
+			if (ST_INGAME != other._state) {
+				other.state_lock.unlock();
+				continue;
+			}
+			else other.state_lock.unlock();
+			CS_BOJO_ANIM_PACKET packet;
+			packet.size = sizeof(packet);
+			packet.type = SC_BOJO_ANIM;
+			packet.id = cl._s_id;
+			packet.bojoanimtype = cl.bojoanimtype;
+			other.do_send(sizeof(packet), &packet);
+		}
+		break;
+	}
 	default:
 		cout << " 오류패킷타입 : " << p << endl;
 		break;
@@ -1216,6 +1240,8 @@ void send_move_packet(int _id, int target)
 	packet.vy = clients[target].VY;
 	packet.vz = clients[target].VZ;
 	packet.Max_speed = clients[target].Max_Speed;
+	packet.AO_pitch = clients[target].AO_PITCH;
+	packet.AO_yaw = clients[target].AO_YAW;
 	clients[_id].do_send(sizeof(packet), &packet);
 }
 

@@ -136,7 +136,10 @@ public:
 	int Id = -1;
 	int WinnerID = -1;
 	//int hp;
+	//주무기 타입
 	int weptype;
+	// 보조무기 타입
+	int bojotype = 3;
 	float hp = 100.f;
 	int skilltype;
 	int itemAnimtype = -1;
@@ -144,6 +147,10 @@ public:
 	int deadtype = 2;
 	// 디졸브 상태
 	int	dissolve = 2;
+	// 보조무기 애니메이션
+	int bojoanimtype = 2;
+	// 아이템 개수
+	int itemCount = 0;
 	// 아이디 비번
 	FString    userId = {};
 	FString    userPw = {};
@@ -160,6 +167,10 @@ public:
 	float VeloY = 0;
 	float VeloZ = 0;
 	float Max_Speed = 400;
+	// 에임오프셋
+	float AO_YAW = 0;
+	float AO_PITCH = 0;
+
 	bool  bGetWeapon = false;
 	bool  IsAlive = true;
 	bool  fired = false;
@@ -173,8 +184,6 @@ public:
 	bool  bEndGame = false;
 	bool  bServerReload = false;
 	bool  bFinishSkill = false;
-	// 보조무기 투척
-	bool  bBojo = false;
 	// 나이아가라 슛 이팩트
 	FVector Sshot;
 	FVector Eshot;
@@ -358,7 +367,7 @@ public:
 	void CloseSocket();
 	bool PacketProcess(char* ptr);
 	void Send_Login_Info(char* id, char* pw);
-	void Send_Move_Packet(int sessionID, FVector Location, FRotator Rotation, FVector Velocity, float Max_speed);
+	void Send_Move_Packet(int sessionID, FVector Location, FRotator Rotation, FVector Velocity, float Max_speed, float AO_Yaw, float AO_Pitch);
 	void Send_Character_Type(PlayerType type, int id);
 	void Send_Weapon_Type(WeaponType type, int id);
 	void Send_Ready_Packet(bool ready, int id);
@@ -374,7 +383,7 @@ public:
 	void Send_Signal_packet(int id, int num);
 	void Send_Item_packet(int id, int itemCount);
 	void Send_Alive_packet(int id, int deadtype);
-	void Send_Destroyed_item_packet(int id);
+	void Send_Destroyed_item_packet(int id, int playerid);
 	void Send_Increase_item_count_packet(int id, int itemcount);
 	void Send_Decrease_item_count_packet(int id, int itemcount);
 	void Send_Reload_packet(int id, bool bReload);
@@ -383,6 +392,7 @@ public:
 	void Send_CH2_SKILL_PACKET(int id, PlayerType type, bool bSkill);
 	void Send_My_HP_PACKET(int id, float damaage);
 	void Send_Dissolve_packet(int id, int dissolve);
+	void Send_BojoAnim_packet(int id, int bojo);
 	virtual bool Init() override;
 	virtual uint32 Run() override;
 	virtual void Stop() override;

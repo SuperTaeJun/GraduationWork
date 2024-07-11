@@ -121,6 +121,8 @@ bool ClientSocket::PacketProcess(char* ptr)
 		PlayerInfo.players[packet->id].VeloY = packet->vy;
 		PlayerInfo.players[packet->id].VeloZ = packet->vz;
 		PlayerInfo.players[packet->id].Max_Speed = packet->Max_speed;
+		PlayerInfo.players[packet->id].AO_PITCH = packet->AO_pitch;
+		PlayerInfo.players[packet->id].AO_YAW = packet->AO_yaw;
 		break;
 	}
 	case SC_CHAR_BACK: {
@@ -203,17 +205,19 @@ bool ClientSocket::PacketProcess(char* ptr)
 		break;
 	}
 	case SC_BOJOWEAPON: {
-		CS_EFFECT_PACKET* packet = reinterpret_cast<CS_EFFECT_PACKET*>(ptr);
+		CS_BOJOWEAPON_PACKET* packet = reinterpret_cast<CS_BOJOWEAPON_PACKET*>(ptr);
 		PlayerInfo.players[packet->attack_id].Hshot.X = packet->lx;
 		PlayerInfo.players[packet->attack_id].Hshot.Y = packet->ly;
 		PlayerInfo.players[packet->attack_id].Hshot.Z = packet->lz;
 		PlayerInfo.players[packet->attack_id].FEffect.Pitch = packet->r_pitch;
 		PlayerInfo.players[packet->attack_id].FEffect.Yaw = packet->r_yaw;
 		PlayerInfo.players[packet->attack_id].FEffect.Roll = packet->r_roll;
-		PlayerInfo.players[packet->attack_id].weptype = packet->wep_type;
-		PlayerInfo.players[packet->attack_id].bBojo = true;
-		//MyCharacterController->SetHitEffect(packet->attack_id);
-
+		PlayerInfo.players[packet->attack_id].bojotype = packet->wep_type;
+		break;
+	}
+	case SC_BOJO_ANIM: {
+		CS_BOJO_ANIM_PACKET* packet = reinterpret_cast<CS_BOJO_ANIM_PACKET*>(ptr);
+		PlayerInfo.players[packet->id].bojoanimtype = packet->bojoanimtype;
 		break;
 	}
 	//HP동기화 처리
@@ -283,6 +287,7 @@ bool ClientSocket::PacketProcess(char* ptr)
 	case SC_REMOVE_ITEM: {
 		CS_REMOVE_ITEM_PACKET* packet = reinterpret_cast<CS_REMOVE_ITEM_PACKET*>(ptr);
 		MyCharacterController->SetDestroyItemid(packet->itemid);
+		PlayerInfo.players[packet->id].itemCount = packet->itemcount;
 		break;
 	}
 	case SC_INCREASE_COUNT: {
@@ -342,7 +347,7 @@ void ClientSocket::Send_Login_Info(char* id, char* pw)
 
 }
 
-void ClientSocket::Send_Move_Packet(int sessionID, FVector Location, FRotator Rotation, FVector Velocity, float Max_speed)
+void ClientSocket::Send_Move_Packet(int sessionID, FVector Location, FRotator Rotation, FVector Velocity, float Max_speed, float AO_Yaw, float AO_Pitch)
 {
 	//if (login_cond == true) {
 	CS_MOVE_PACKET packet;
@@ -357,6 +362,8 @@ void ClientSocket::Send_Move_Packet(int sessionID, FVector Location, FRotator Ro
 	packet.vy = Velocity.Y;
 	packet.vz = Velocity.Z;
 	packet.Max_speed = Max_speed;
+	packet.AO_yaw = AO_Yaw;
+	packet.AO_pitch = AO_Pitch;
 	//Send(packet.size, &packet);
 	SendPacket(&packet);
 	//UE_LOG(LogClass, Warning, TEXT("send move"));
@@ -399,6 +406,7 @@ void ClientSocket::Send_Ready_Packet(bool ready, int id)
 	packet.id = id;
 	SendPacket(&packet);
 }
+
 void ClientSocket::Send_Fire_Effect(int attack_id, FVector ImLoc, FRotator ImRot, int wtype)
 {
 	CS_EFFECT_PACKET packet;
@@ -548,12 +556,13 @@ void ClientSocket::Send_Alive_packet(int id, int deadtype)
 	packet.deadtype = deadtype;
 	SendPacket(&packet);
 }
-void ClientSocket::Send_Destroyed_item_packet(int id)
+void ClientSocket::Send_Destroyed_item_packet(int id, int playerid)
 {
 	CS_REMOVE_ITEM_PACKET packet;
 	packet.size = sizeof(packet);
 	packet.type = CS_REMOVE_ITEM;
 	packet.itemid = id;
+	packet.id = playerid;
 	SendPacket(&packet);
 }
 void ClientSocket::Send_Increase_item_count_packet(int id, int itemcount)
@@ -630,6 +639,17 @@ void ClientSocket::Send_Dissolve_packet(int id, int dissolve)
 	packet.dissolve = dissolve;
 	SendPacket(&packet);
 }
+void ClientSocket::Send_BojoAnim_packet(int id, int bojo)
+{
+	CS_BOJO_ANIM_PACKET packet;
+	packet.size = sizeof(packet);
+	packet.type = CS_BOJO_ANIM;
+	packet.id = id;
+	packet.bojoanimtype = bojo;
+	SendPacket(&packet);
+}
+
+
 bool ClientSocket::Init()
 {
 	//UE_LOG(LogTemp, Warning, TEXT("Thread has been initialized"));
