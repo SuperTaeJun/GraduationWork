@@ -769,7 +769,7 @@ bool ACharacterController::UpdateWorld()
 					if (Escapeid == Cast<AEscapeTool>(EscapeTools[i])->ItemID)
 						Cast<AEscapeTool>(EscapeTools[i])->Destroy();
 
-
+				OtherPlayer->SetEscapeToolNum(info->itemCount);
 			}
 
 		}
