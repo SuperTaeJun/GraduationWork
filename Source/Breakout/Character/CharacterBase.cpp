@@ -457,7 +457,7 @@ void ACharacterBase::ReciveDamage(AActor* DamagedActor, float Damage, const UDam
 		MainController->SeverHpSync(Health, inst->GetPlayerID());
 	
 	UpdateHpHUD();
-	ACharacterBase* DamageInsigatorCh= Cast<ACharacterBase>(InstigatorController->GetPawn());
+	ACharacterBase* DamageInsigatorCh= Cast<ACharacterBase>(DamageCauser);
 
 	
 	if (Health <= 0.0f)
