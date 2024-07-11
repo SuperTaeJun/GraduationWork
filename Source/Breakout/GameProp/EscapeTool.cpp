@@ -46,12 +46,16 @@ void AEscapeTool::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if (bOverlap==2)
+	if (bOverlap==2 && Cur>0.f)
 	{
 		TransformMesh(DeltaTime, false,true);
 		UpdatePercent(Cur);
 	}
-
+	else 	if (bOverlap == 1)
+	{
+		TransformMesh(DeltaTime, false, false);
+		UpdatePercent(Cur);
+	}
 
 
 }
@@ -151,7 +155,8 @@ void AEscapeTool::OnSphereEndOverlap(UPrimitiveComponent* OverlappedComponent, A
 		characterbase->SetbCanObtainEscapeTool(false);
 		characterbase->OverlappingEscapeTool = nullptr;
 		bOverlap = 2;
-
+		if (inst)
+			inst->m_Socket->Send_Mopp_Sync_packet(ItemID, 2, inst->GetPlayerID());
 	}
 }
 

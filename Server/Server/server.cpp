@@ -331,6 +331,25 @@ int main()
 
 	for (int i = 0; i < MAX_USER; ++i)
 		clients[i]._s_id = i;
+	for (int i = 0; i < MAX_OBJ; ++i)
+		objects[i].ob_id = i;
+	objects[0].x = 1710.f;
+	objects[0].y = -1080.f;
+	objects[0].z = 120.f;
+
+	objects[1].x = 1800.f;
+	objects[1].y = -570.f;
+	objects[1].z = 80.f;
+
+
+	objects[2].x = 2280.f;
+	objects[2].y = -630.f;
+	objects[2].z = 100.f;
+
+	objects[3].x = 2110.f;
+	objects[3].y = -1080.f;
+	objects[3].z = 120.f;
+
 
 	g_timer = CreateEvent(NULL, FALSE, FALSE, NULL);
 	vector <thread> worker_threads;
@@ -987,7 +1006,7 @@ void process_packet(int s_id, unsigned char* p)
 		CS_ITEM_INFO_PACKET* packet = reinterpret_cast<CS_ITEM_INFO_PACKET*> (p);
 		CLIENT& cl = clients[s_id];
 
-		//send_item_packet(cl._s_id, packet->objid);
+		send_item_packet(cl._s_id, packet->objid);
 		break;
 	}
 	case CS_RELOAD: {
@@ -1116,6 +1135,30 @@ void process_packet(int s_id, unsigned char* p)
 			packet.type = SC_BOJO_ANIM;
 			packet.id = cl._s_id;
 			packet.bojoanimtype = cl.bojoanimtype;
+			other.do_send(sizeof(packet), &packet);
+		}
+		break;
+	}
+	case CS_MOPP: {
+		CS_MOPP_PACKET* packet = reinterpret_cast<CS_MOPP_PACKET*>(p);
+		CLIENT& cl = clients[packet->id];
+		cout << "itemid : " << packet->itemid << endl;
+		int itemid = packet->itemid;
+		int mopptype = packet->mopptype;
+		cout << "mopptype : " << mopptype << endl;
+		for (auto& other : clients) {
+			if (other._s_id == cl._s_id) continue;
+			other.state_lock.lock();
+			if (ST_INGAME != other._state) {
+				other.state_lock.unlock();
+				continue;
+			}
+			else other.state_lock.unlock();
+			CS_MOPP_PACKET packet;
+			packet.itemid = itemid;
+			packet.size = sizeof(packet);
+			packet.type = SC_MOPP;
+			packet.mopptype = mopptype;
 			other.do_send(sizeof(packet), &packet);
 		}
 		break;

@@ -325,6 +325,13 @@ bool ClientSocket::PacketProcess(char* ptr)
 		PlayerInfo.players[packet->id].bFinishSkill = packet->bfinish;
 		break;
 	}
+	case SC_MOPP:
+	{
+		CS_MOPP_PACKET* packet = reinterpret_cast<CS_MOPP_PACKET*>(ptr);
+		MyCharacterController->SetMoppItemID(packet->itemid);
+		MoppType = packet->mopptype;
+		break;
+	}
 	default:
 		break;
 	}
@@ -646,6 +653,17 @@ void ClientSocket::Send_BojoAnim_packet(int id, int bojo)
 	packet.type = CS_BOJO_ANIM;
 	packet.id = id;
 	packet.bojoanimtype = bojo;
+	SendPacket(&packet);
+}
+
+void ClientSocket::Send_Mopp_Sync_packet(int itemid, int mopptype, int id)
+{
+	CS_MOPP_PACKET packet;
+	packet.size = sizeof(packet);
+	packet.type = CS_MOPP;
+	packet.itemid = itemid;
+	packet.id = id;
+	packet.mopptype = mopptype;
 	SendPacket(&packet);
 }
 

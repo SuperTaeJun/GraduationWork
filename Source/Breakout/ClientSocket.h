@@ -393,6 +393,7 @@ public:
 	void Send_My_HP_PACKET(int id, float damaage);
 	void Send_Dissolve_packet(int id, int dissolve);
 	void Send_BojoAnim_packet(int id, int bojo);
+	void Send_Mopp_Sync_packet(int itemid, int mopptype, int id);
 	virtual bool Init() override;
 	virtual uint32 Run() override;
 	virtual void Stop() override;
@@ -430,6 +431,7 @@ public:
 	FString TempPlayerName;
 	bool bAcquire = false;
 	bool bTravel = false;
+	int MoppType = -1;
 	inline float get_hp()
 	{
 		return hp;
