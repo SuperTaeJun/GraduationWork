@@ -436,7 +436,7 @@ void process_packet(int s_id, unsigned char* p)
 {
 	unsigned char packet_type = p[1];
 	//CLIENT& cl = clients[s_id];
-	//cout << "user : " << s_id << "packet type :" << to_string(packet_type) << endl;
+	cout << "user : " << s_id << "packet type :" << to_string(packet_type) << endl;
 	switch (packet_type) {
 	case CS_LOGIN: {
 		CS_LOGIN_PACKET* packet = reinterpret_cast<CS_LOGIN_PACKET*>(p);
@@ -470,7 +470,7 @@ void process_packet(int s_id, unsigned char* p)
 
 		//cout << "¸î¸í µé¾î¿È : " << ingamecount << endl;
 
-		if (ingamecount >= 1)
+		if (ingamecount >= 2)
 		{
 			for (auto& player : clients) {
 				if (ST_INGAME != player._state)
@@ -537,7 +537,7 @@ void process_packet(int s_id, unsigned char* p)
 		//cout << "Ready id" << packet->id;
 		ready_count++;
 		//cout << "ready_count" << ready_count << endl;
-		if (ready_count >= 1)
+		if (ready_count >= 2)
 		{
 			for (auto& player : clients) {
 				if (ST_INGAME != player._state)
