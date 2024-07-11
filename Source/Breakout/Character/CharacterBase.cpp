@@ -465,7 +465,7 @@ void ACharacterBase::ReciveDamage(AActor* DamagedActor, float Damage, const UDam
 		bDissolve = true;
 		/*if (inst)
 			inst->m_Socket->Send_Dissolve_packet(inst->GetPlayerID(), 0);*/
-		if (DamageInsigatorCh)
+		if (DamageInsigatorCh && bAlive)
 		{
 			//¼­¹ö
 			if (ObtainedEscapeToolNum > 0 && 10 > ObtainedEscapeToolNum)
