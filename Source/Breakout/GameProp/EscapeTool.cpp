@@ -66,6 +66,7 @@ void AEscapeTool::Destroyed()
 	if (inst)
 	{
 		inst->m_Socket->Send_Destroyed_item_packet(ItemID, inst->GetPlayerID());
+		inst->m_Socket->Send_item_Anim_packet(inst->GetPlayerID(), 1);
 	}
 }
 
