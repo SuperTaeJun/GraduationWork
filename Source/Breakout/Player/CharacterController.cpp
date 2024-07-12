@@ -1033,8 +1033,7 @@ void ACharacterController::UpdatePlayer()
 	FVector MyCameraLocation;
 	FRotator MyCameraRotation;
 	m_Player->GetActorEyesViewPoint(MyCameraLocation, MyCameraRotation);
-	int itemCount = m_Player->GetEscapeToolNum();
-	inst->m_Socket->Send_Move_Packet(id, MyLocation, MyRotation, MyVelocity, max_speed , AO_Yaw, AO_Pitch, itemCount);
+	inst->m_Socket->Send_Move_Packet(id, MyLocation, MyRotation, MyVelocity, max_speed , AO_Yaw, AO_Pitch);
 	//UE_LOG(LogClass, Warning, TEXT("send move packet"));
 }
 

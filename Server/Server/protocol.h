@@ -121,8 +121,6 @@ struct CS_MOVE_PACKET
 	float vx, vy, vz;
 	float yaw;
 	float AO_yaw, AO_pitch;
-	char cid[MAX_INFO_SIZE];
-	int itemCount;
 };
 struct SC_PLAYER_SYNC {
 	unsigned char size;
