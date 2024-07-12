@@ -453,8 +453,7 @@ void ACharacterBase::SetSpawnGrenade(TSubclassOf<AProjectileBase> Projectile)
 void ACharacterBase::ReciveDamage(AActor* DamagedActor, float Damage, const UDamageType* DamageType, class AController* InstigatorController, AActor* DamageCauser)
 {
 	Health = FMath::Clamp(Health - Damage, 0.f, MaxHealth);
-	if (MainController)
-		MainController->SeverHpSync(Health, inst->GetPlayerID());
+
 	
 	UpdateHpHUD();
 	ACharacterBase* DamageInsigatorCh= Cast<ACharacterBase>(DamageCauser);
@@ -1042,7 +1041,8 @@ void ACharacterBase::Tick(float DeltaTime)
 		GetWorldTimerManager().SetTimer(StartHandle, this, &ACharacterBase::StartGame, 5.f);
 	}
 
-
+	if (MainController)
+		MainController->SeverHpSync(Health, inst->GetPlayerID());
 }
 
 void ACharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)

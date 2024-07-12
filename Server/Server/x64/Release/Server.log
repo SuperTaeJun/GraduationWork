@@ -1,11 +1,6 @@
 ﻿  server.cpp
-C:\Users\sejin\Downloads\GraduationWork\Server\Server\server.cpp(518,28): error C2039: 'itemCount': 'CS_MOVE_PACKET'의 멤버가 아닙니다.
-C:\Users\sejin\Downloads\GraduationWork\Server\Server\protocol.h(114,8): message : 'CS_MOVE_PACKET' 선언을 참조하십시오.
-C:\Users\sejin\Downloads\GraduationWork\Server\Server\server.cpp(1288,18): error C2039: 'cid': 'CS_MOVE_PACKET'의 멤버가 아닙니다.
-C:\Users\sejin\Downloads\GraduationWork\Server\Server\protocol.h(114,8): message : 'CS_MOVE_PACKET' 선언을 참조하십시오.
-C:\Users\sejin\Downloads\GraduationWork\Server\Server\server.cpp(1288,2): error C2660: 'strcpy_s': 함수는 2개의 인수를 사용하지 않습니다.
-C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\ucrt\string.h(32,30): message : 'strcpy_s' 선언을 참조하십시오.
-C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\ucrt\string.h(124,1): message : 'errno_t strcpy_s(char (&)[_Size],const char *) throw()'일 수 있습니다.
-C:\Users\sejin\Downloads\GraduationWork\Server\Server\server.cpp(1288,2): message : 인수 목록 '()'을(를) 일치시키는 동안
-C:\Users\sejin\Downloads\GraduationWork\Server\Server\server.cpp(1289,9): error C2039: 'itemCount': 'CS_MOVE_PACKET'의 멤버가 아닙니다.
-C:\Users\sejin\Downloads\GraduationWork\Server\Server\protocol.h(114,8): message : 'CS_MOVE_PACKET' 선언을 참조하십시오.
+  코드를 생성하고 있습니다.
+  Previous IPDB and IOBJ mismatch, fall back to full compilation.
+  All 474 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  코드를 생성했습니다.
+  Server.vcxproj -> C:\Users\sejin\Downloads\GraduationWork\Server\x64\Release\Server.exe

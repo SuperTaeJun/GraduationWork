@@ -515,8 +515,6 @@ void process_packet(int s_id, unsigned char* p)
 		cl.Max_Speed = packet->Max_speed;
 		cl.AO_PITCH = packet->AO_pitch;
 		cl.AO_YAW = packet->AO_yaw;
-		cl.myItemCount = packet->itemCount;
-		send_myitem_count_packet(cl._s_id);
 		for (auto& other : clients) {
 			if (other._s_id == s_id)
 				continue;
@@ -1285,8 +1283,6 @@ void send_move_packet(int _id, int target)
 	packet.Max_speed = clients[target].Max_Speed;
 	packet.AO_pitch = clients[target].AO_PITCH;
 	packet.AO_yaw = clients[target].AO_YAW;
-	strcpy_s(packet.cid, clients[target].name);
-	packet.itemCount = clients[target].myItemCount;
 	clients[_id].do_send(sizeof(packet), &packet);
 }
 
