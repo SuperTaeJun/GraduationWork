@@ -1042,7 +1042,7 @@ void ACharacterBase::Tick(float DeltaTime)
 	}
 
 	if (MainController)
-		MainController->SeverHpSync(Health, inst->GetPlayerID());
+		MainController->SeverHpSync(bAlive, Health, inst->GetPlayerID());
 }
 
 void ACharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)

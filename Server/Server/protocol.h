@@ -211,6 +211,7 @@ struct CS_DAMAGE_PACKET {
 	unsigned char type;
 	int id;
 	float hp;
+	bool bAlive;
 };
 struct SC_HP_CHANGE_PACKET
 {
@@ -218,6 +219,7 @@ struct SC_HP_CHANGE_PACKET
 	unsigned char type;
 	int id;
 	float HP;
+	bool bAlive;
 };
 struct CS_SIGNAL_PACKET
 {

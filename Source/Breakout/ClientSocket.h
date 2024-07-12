@@ -170,7 +170,8 @@ public:
 	// 에임오프셋
 	float AO_YAW = 0;
 	float AO_PITCH = 0;
-
+	//
+	bool  bAlive = true;
 	bool  bGetWeapon = false;
 	bool  IsAlive = true;
 	bool  fired = false;
@@ -390,7 +391,7 @@ public:
 	void Send_item_Anim_packet(int id, int num);
 	void Send_Remove_Weapon(int id, bool bWeapon);
 	void Send_CH2_SKILL_PACKET(int id, PlayerType type, bool bSkill);
-	void Send_My_HP_PACKET(int id, float damaage);
+	void Send_My_HP_PACKET(int id, float damaage ,bool bAlive);
 	void Send_Dissolve_packet(int id, int dissolve);
 	void Send_BojoAnim_packet(int id, int bojo);
 	void Send_Mopp_Sync_packet(int itemid, int mopptype, int id);

@@ -107,6 +107,8 @@ public:
 	bool bGetWeapon = false;
 	bool bCancel;
 	bool bEndGame = false;
+	// bAlive
+	bool bAlive = true;
 	WeaponType w_type;
 	PlayerType p_type;
 	float s_x, s_y, s_z;
@@ -515,6 +517,7 @@ void process_packet(int s_id, unsigned char* p)
 		cl.Max_Speed = packet->Max_speed;
 		cl.AO_PITCH = packet->AO_pitch;
 		cl.AO_YAW = packet->AO_yaw;
+
 		for (auto& other : clients) {
 			if (other._s_id == s_id)
 				continue;
@@ -1099,6 +1102,8 @@ void process_packet(int s_id, unsigned char* p)
 		CS_DAMAGE_PACKET* packet = reinterpret_cast<CS_DAMAGE_PACKET*>(p);
 		CLIENT& cl = clients[packet->id];
 		cl._hp = packet->hp;
+		cl.bAlive = packet->bAlive;
+		cout << " cl.s_id : " << cl._s_id << "cl.hp : " << cl._hp << endl;
 		for (auto& other : clients) {
 			if (other._s_id == cl._s_id) continue;
 			other.state_lock.lock();
@@ -1112,6 +1117,7 @@ void process_packet(int s_id, unsigned char* p)
 			packet.type = SC_HP_CHANGE;
 			packet.id = cl._s_id;
 			packet.HP = cl._hp;
+			packet.bAlive = cl.bAlive;
 			other.do_send(sizeof(packet), &packet);
 		}
 		break;

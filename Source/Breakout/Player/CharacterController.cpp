@@ -531,6 +531,8 @@ bool ACharacterController::UpdateWorld()
 			OtherPlayer->GetCharacterMovement()->MaxWalkSpeed = info->Max_Speed;
 			
 			OtherPlayer->SetHealth(SyncHP);
+			OtherPlayer->bAlive = info->bAlive;
+
 			if (info->bGetWeapon == true)
 			{
 				OtherPlayer->CurWeapon->Destroy();
@@ -1076,10 +1078,10 @@ void ACharacterController::OnPossess(APawn* InPawn)
 	}
 }
 
-void ACharacterController::SeverHpSync(float hp, int myid)
+void ACharacterController::SeverHpSync(bool bAlive, float hp, int myid)
 {
 	if (inst)
-		inst->m_Socket->Send_My_HP_PACKET(myid, hp);
+		inst->m_Socket->Send_My_HP_PACKET(myid, hp, bAlive);
 
 }
 

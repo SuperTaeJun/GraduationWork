@@ -224,6 +224,7 @@ bool ClientSocket::PacketProcess(char* ptr)
 	case SC_HP_CHANGE: {
 		SC_HP_CHANGE_PACKET* packet = reinterpret_cast<SC_HP_CHANGE_PACKET*>(ptr);
 		PlayerInfo.players[packet->id].hp = packet->HP;
+		PlayerInfo.players[packet->id].bAlive = packet->bAlive;
 		//hp = packet->HP;
 		break;
 	}
@@ -645,13 +646,14 @@ void ClientSocket::Send_CH2_SKILL_PACKET(int id, PlayerType type, bool bSkill)
 	packet.bfinish = bSkill;
 	SendPacket(&packet);
 }
-void ClientSocket::Send_My_HP_PACKET(int id, float damaage)
+void ClientSocket::Send_My_HP_PACKET(int id, float damaage, bool bAlive)
 {
 	CS_DAMAGE_PACKET packet;
 	packet.size = sizeof(packet);
 	packet.type = CS_DAMAGE;
 	packet.id = id;
 	packet.hp = damaage;
+	packet.bAlive = bAlive;
 	SendPacket(&packet);
 }
 void ClientSocket::Send_Dissolve_packet(int id, int dissolve)
