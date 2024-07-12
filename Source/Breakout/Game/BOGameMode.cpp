@@ -96,19 +96,19 @@ void ABOGameMode::SetDamageInsigator(ACharacterBase* DamageInsigatorCh)
 void ABOGameMode::Respawn(ACharacter* RespawnedCh, AController* RespawnedController, FName TagName)
 {
 	ACharacterBase* MyCharacter=Cast<ACharacterBase>(RespawnedCh);
-	if (DamageInsigator)
-	{
-		if (MyCharacter->GetEscapeToolNum() >= 10)
-		{
-			DamageInsigator->SetEscapeToolNum(DamageInsigator->GetEscapeToolNum() + 3);
-			MyCharacter->SetEscapeToolNum(MyCharacter->GetEscapeToolNum() - 3);
-		}
-		else if(MyCharacter->GetEscapeToolNum()>0)
-		{
-			DamageInsigator->SetEscapeToolNum(DamageInsigator->GetEscapeToolNum() + 1);
-			MyCharacter->SetEscapeToolNum(MyCharacter->GetEscapeToolNum() - 1);
-		}
-	}
+	//if (DamageInsigator)
+	//{
+	//	if (MyCharacter->GetEscapeToolNum() >= 10)
+	//	{
+	//		DamageInsigator->SetEscapeToolNum(DamageInsigator->GetEscapeToolNum() + 3);
+	//		MyCharacter->SetEscapeToolNum(MyCharacter->GetEscapeToolNum() - 3);
+	//	}
+	//	else if(MyCharacter->GetEscapeToolNum()>0)
+	//	{
+	//		DamageInsigator->SetEscapeToolNum(DamageInsigator->GetEscapeToolNum() + 1);
+	//		MyCharacter->SetEscapeToolNum(MyCharacter->GetEscapeToolNum() - 1);
+	//	}
+	//}
 
 	if (MyCharacter && RespawnedController)
 	{

@@ -961,8 +961,8 @@ void process_packet(int s_id, unsigned char* p)
 	case CS_INCREASE_COUNT: {
 		CS_INCREASE_ITEM_PACKET* packet = reinterpret_cast<CS_INCREASE_ITEM_PACKET*>(p);
 		CLIENT& cl = clients[packet->Increaseid];
-		cl.myItemCount = packet->itemCount;
-		cout << "packet->id : " << packet->Increaseid << "packet->itemcount" << packet->itemCount << endl;
+		cl.myItemCount += packet->itemCount;
+		cout << "packet->id : " << packet->Increaseid << "packet->itemcount" << cl.myItemCount << endl;
 		send_myitem_count_packet(cl._s_id);
 
 		for (auto& other : clients) {
@@ -1103,7 +1103,7 @@ void process_packet(int s_id, unsigned char* p)
 		CLIENT& cl = clients[packet->id];
 		cl._hp = packet->hp;
 		cl.bAlive = packet->bAlive;
-		cout << " cl.s_id : " << cl._s_id << "cl.hp : " << cl._hp << endl;
+		//cout << " cl.s_id : " << cl._s_id << "cl.hp : " << cl._hp << endl;
 		for (auto& other : clients) {
 			if (other._s_id == cl._s_id) continue;
 			other.state_lock.lock();

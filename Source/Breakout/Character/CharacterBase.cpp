@@ -473,9 +473,9 @@ void ACharacterBase::ReciveDamage(AActor* DamagedActor, float Damage, const UDam
 				ObtainedEscapeToolNum -= 1;
 				if (inst) {
 					//ui에서 상대방의 아이템 개수 늘려주고
-					Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Increase_item_count_packet(DamageInsigatorCh->_SessionId, DamageInsigatorCh->GetEscapeToolNum());
+					//Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Increase_item_count_packet(DamageInsigatorCh->_SessionId, DamageInsigatorCh->GetEscapeToolNum());
 					//// 내꺼는 줄여줌 
-					Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Decrease_item_count_packet(inst->GetPlayerID(), ObtainedEscapeToolNum);
+					//Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Decrease_item_count_packet(inst->GetPlayerID(), ObtainedEscapeToolNum);
 					//UE_LOG(LogTemp, Warning, TEXT("packet"));
 				}
 			
@@ -1003,6 +1003,7 @@ void ACharacterBase::Tick(float DeltaTime)
 	}
 
 	UpdateStamina(DeltaTime);
+	AimOffset(DeltaTime);
 	AimOffset(DeltaTime);
 
 	SetHUDCrosshair(DeltaTime);
