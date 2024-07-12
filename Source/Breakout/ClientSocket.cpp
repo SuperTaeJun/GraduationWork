@@ -123,6 +123,11 @@ bool ClientSocket::PacketProcess(char* ptr)
 		PlayerInfo.players[packet->id].Max_Speed = packet->Max_speed;
 		PlayerInfo.players[packet->id].AO_PITCH = packet->AO_pitch;
 		PlayerInfo.players[packet->id].AO_YAW = packet->AO_yaw;
+		TempPlayerName = packet->cid;
+		Tempcnt2 = packet->itemCount;
+		bAcquire = true;
+		PlayerInfo.players[packet->id].itemCount = packet->itemCount;
+		bitemcount = true;
 		break;
 	}
 	case SC_CHAR_BACK: {
@@ -328,6 +333,8 @@ bool ClientSocket::PacketProcess(char* ptr)
 	case SC_MYNEW_COUNT: {
 		SC_MYNEW_ITEM_COUNT* packet = reinterpret_cast<SC_MYNEW_ITEM_COUNT*>(ptr);
 		//UE_LOG(LogTemp, Warning, TEXT("packet->mynewcount  : %d"), packet->MyITEMCount);
+
+		// 화면 하단 UI
 		MyItemCount = packet->MyITEMCount;
 		itemflag = true;
 		break;
@@ -367,7 +374,7 @@ void ClientSocket::Send_Login_Info(char* id, char* pw)
 
 }
 
-void ClientSocket::Send_Move_Packet(int sessionID, FVector Location, FRotator Rotation, FVector Velocity, float Max_speed, float AO_Yaw, float AO_Pitch)
+void ClientSocket::Send_Move_Packet(int sessionID, FVector Location, FRotator Rotation, FVector Velocity, float Max_speed, float AO_Yaw, float AO_Pitch, int itemCount)
 {
 	//if (login_cond == true) {
 	CS_MOVE_PACKET packet;
@@ -384,6 +391,7 @@ void ClientSocket::Send_Move_Packet(int sessionID, FVector Location, FRotator Ro
 	packet.Max_speed = Max_speed;
 	packet.AO_yaw = AO_Yaw;
 	packet.AO_pitch = AO_Pitch;
+	packet.itemCount = itemCount;
 	//Send(packet.size, &packet);
 	SendPacket(&packet);
 	//UE_LOG(LogClass, Warning, TEXT("send move"));

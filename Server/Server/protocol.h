@@ -1,6 +1,6 @@
 #pragma once
 #define SERVER_PORT		8001
-#define SERVER_IP		"192.168.219.101"
+#define SERVER_IP		"192.168.54.28"
 #define MAX_INFO_SIZE   20
 #include <vector>
 #include <array>
@@ -121,6 +121,8 @@ struct CS_MOVE_PACKET
 	float vx, vy, vz;
 	float yaw;
 	float AO_yaw, AO_pitch;
+	char cid[MAX_INFO_SIZE];
+	int itemCount;
 };
 struct SC_PLAYER_SYNC {
 	unsigned char size;
