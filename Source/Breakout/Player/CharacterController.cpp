@@ -761,7 +761,11 @@ bool ACharacterController::UpdateWorld()
 							Cast<AEscapeTool>(m_GameMode->EscapeTools[i])->Destroy();
 				}
 			}
-
+			if (inst->m_Socket->bitemcount == true) {
+				OtherPlayer->SetEscapeToolNum(info->itemCount);
+				UE_LOG(LogTemp, Warning, TEXT("id : %d, itemcount : %d"), OtherPlayer->_SessionId, info->itemCount);
+				inst->m_Socket->bitemcount = false;
+			}
 			// 모프 동기화
 			if (inst->m_Socket->MoppType == 0) {
 				//Cast<AEscapeTool>(m_GameMode->EscapeTools[MoppID])->TransformMesh(inst->m_Socket->TempMoppTime, false, false);

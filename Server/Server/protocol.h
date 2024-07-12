@@ -88,6 +88,7 @@ const char SC_DISSOLVE = 30;
 const char SC_BOJOWEAPON = 31;
 const char SC_BOJO_ANIM = 32;
 const char SC_MOPP = 33;
+const char SC_DECREASE = 34;
 
 
 
@@ -340,6 +341,13 @@ struct SC_MY_ITEM_COUNT {
 	int MyITEMCount;
 };
 struct CS_INCREASE_ITEM_PACKET {
+	unsigned char size;
+	unsigned char type;
+	char cid[MAX_INFO_SIZE];
+	int Increaseid;
+	int itemCount;
+};
+struct CS_DECREASE_ITEM_PACKET {
 	unsigned char size;
 	unsigned char type;
 	char cid[MAX_INFO_SIZE];

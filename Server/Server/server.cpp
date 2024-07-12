@@ -856,10 +856,10 @@ void process_packet(int s_id, unsigned char* p)
 	}
 	case CS_GETITEM: {
 		CS_ITEM_PACKET* packet = reinterpret_cast<CS_ITEM_PACKET*>(p);
-
+		cout << "이거 언제 들어옴?" << endl;
 		CLIENT& cl = clients[packet->id];
 		cl.myItemCount = packet->itemCount;
-		send_myitem_packet(cl._s_id);
+		//send_myitem_packet(cl._s_id);
 
 	//	cout << "내가 획득한 아이템 개수" << cl._s_id << " : " << cl.myItemCount << endl;
 		for (auto& other : clients) {
@@ -934,7 +934,7 @@ void process_packet(int s_id, unsigned char* p)
 	case CS_REMOVE_ITEM: {
 		CS_REMOVE_ITEM_PACKET* packet = reinterpret_cast<CS_REMOVE_ITEM_PACKET*>(p);
 		CLIENT& cl = clients[s_id];
-		cl.myItemCount += 1;
+		//cl.myItemCount += 1;
 		//cout << "itemid : " << packet->itemid << endl;
 		int itemid = packet->itemid;
 		for (auto& other : clients) {
@@ -950,7 +950,7 @@ void process_packet(int s_id, unsigned char* p)
 			packet.size = sizeof(packet);
 			packet.type = SC_REMOVE_ITEM;
 			packet.id = cl._s_id;
-			packet.itemcount = cl.myItemCount;
+			//packet.itemcount = cl.myItemCount;
 			other.do_send(sizeof(packet), &packet);
 		}
 		break;
@@ -981,7 +981,7 @@ void process_packet(int s_id, unsigned char* p)
 		break;
 	}
 	case CS_DECREASE_COUNT: {
-		CS_INCREASE_ITEM_PACKET* packet = reinterpret_cast<CS_INCREASE_ITEM_PACKET*>(p);
+		CS_DECREASE_ITEM_PACKET* packet = reinterpret_cast<CS_DECREASE_ITEM_PACKET*>(p);
 		CLIENT& cl = clients[packet->Increaseid];
 		cl.myItemCount = packet->itemCount;
 		for (auto& other : clients) {
@@ -992,12 +992,12 @@ void process_packet(int s_id, unsigned char* p)
 				continue;
 			}
 			else other.state_lock.unlock();
-			CS_INCREASE_ITEM_PACKET packet;
+			CS_DECREASE_ITEM_PACKET packet;
 			packet.Increaseid = cl._s_id;
 			strcpy_s(packet.cid, cl.name);
 			packet.itemCount = cl.myItemCount;
 			packet.size = sizeof(packet);
-			packet.type = SC_INCREASE_COUNT;
+			packet.type = SC_DECREASE;
 			other.do_send(sizeof(packet), &packet);
 		}
 		break;
@@ -1099,8 +1099,6 @@ void process_packet(int s_id, unsigned char* p)
 		CS_DAMAGE_PACKET* packet = reinterpret_cast<CS_DAMAGE_PACKET*>(p);
 		CLIENT& cl = clients[packet->id];
 		cl._hp = packet->hp;
-		//cout << "my hp : " << cl._hp << endl;
-		//send_change_hp(packet->id);
 		for (auto& other : clients) {
 			if (other._s_id == cl._s_id) continue;
 			other.state_lock.lock();

@@ -432,6 +432,8 @@ public:
 	bool bAcquire = false;
 	bool bTravel = false;
 	int MoppType = -1;
+
+	bool bitemcount = false;
 	inline float get_hp()
 	{
 		return hp;
