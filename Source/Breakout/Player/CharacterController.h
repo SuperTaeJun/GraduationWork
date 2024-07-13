@@ -186,7 +186,7 @@ public:
 
 	TObjectPtr<class AMainHUD> MainHUD;
 	int id;
-	int Escapeid;
+	int Escapeid = -1;
 	int MoppID;
 	bool bNewPlayerEntered = false;
 	bool bNewWeaponEntered = false;
