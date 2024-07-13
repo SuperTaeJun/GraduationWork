@@ -453,8 +453,7 @@ void ACharacterBase::SetSpawnGrenade(TSubclassOf<AProjectileBase> Projectile)
 void ACharacterBase::ReciveDamage(AActor* DamagedActor, float Damage, const UDamageType* DamageType, class AController* InstigatorController, AActor* DamageCauser)
 {
 	Health = FMath::Clamp(Health - Damage, 0.f, MaxHealth);
-	if (MainController)
-		MainController->SeverHpSync(Health, inst->GetPlayerID());
+
 	
 	UpdateHpHUD();
 	ACharacterBase* DamageInsigatorCh= Cast<ACharacterBase>(DamageCauser);
@@ -465,19 +464,19 @@ void ACharacterBase::ReciveDamage(AActor* DamagedActor, float Damage, const UDam
 		bDissolve = true;
 		/*if (inst)
 			inst->m_Socket->Send_Dissolve_packet(inst->GetPlayerID(), 0);*/
-		if (DamageInsigatorCh && bAlive)
+		if (DamageInsigatorCh && bAlive && MainController)
 		{
 			//서버
 			if (ObtainedEscapeToolNum > 0 && 10 > ObtainedEscapeToolNum)
 			{
-				DamageInsigatorCh->SetEscapeToolNum(DamageInsigatorCh->ObtainedEscapeToolNum + 1);
+				//DamageInsigatorCh->SetEscapeToolNum(DamageInsigatorCh->ObtainedEscapeToolNum + 1);
 				ObtainedEscapeToolNum -= 1;
 				if (inst) {
 					//ui에서 상대방의 아이템 개수 늘려주고
-					Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Increase_item_count_packet(DamageInsigatorCh->_SessionId, DamageInsigatorCh->GetEscapeToolNum());
-					// 내꺼는 줄여줌 
+					Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Increase_item_count_packet(DamageInsigatorCh->_SessionId, 1);
+					//// 내꺼는 줄여줌 
 					Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Decrease_item_count_packet(inst->GetPlayerID(), ObtainedEscapeToolNum);
-					
+					//UE_LOG(LogTemp, Warning, TEXT("packet"));
 				}
 			
 			}
@@ -1005,6 +1004,7 @@ void ACharacterBase::Tick(float DeltaTime)
 
 	UpdateStamina(DeltaTime);
 	AimOffset(DeltaTime);
+	AimOffset(DeltaTime);
 
 	SetHUDCrosshair(DeltaTime);
 	FHitResult HitResult;
@@ -1042,7 +1042,8 @@ void ACharacterBase::Tick(float DeltaTime)
 		GetWorldTimerManager().SetTimer(StartHandle, this, &ACharacterBase::StartGame, 5.f);
 	}
 
-
+	if (MainController)
+		MainController->SeverHpSync(bAlive, Health, inst->GetPlayerID());
 }
 
 void ACharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)

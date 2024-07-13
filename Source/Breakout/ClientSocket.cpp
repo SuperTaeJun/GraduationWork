@@ -224,6 +224,7 @@ bool ClientSocket::PacketProcess(char* ptr)
 	case SC_HP_CHANGE: {
 		SC_HP_CHANGE_PACKET* packet = reinterpret_cast<SC_HP_CHANGE_PACKET*>(ptr);
 		PlayerInfo.players[packet->id].hp = packet->HP;
+		PlayerInfo.players[packet->id].bAlive = packet->bAlive;
 		//hp = packet->HP;
 		break;
 	}
@@ -262,8 +263,9 @@ bool ClientSocket::PacketProcess(char* ptr)
 		break;
 	}
 	case SC_MYITEM_COUNT:{
+		//필요 없는 패킷
 		SC_MY_ITEM_COUNT* packet = reinterpret_cast<SC_MY_ITEM_COUNT*>(ptr);
-		Tempcnt = packet->MyITEMCount;
+		//Tempcnt = packet->MyITEMCount;
 		bAcquire = true;
 		break;
 	}
@@ -272,6 +274,8 @@ bool ClientSocket::PacketProcess(char* ptr)
 		TempPlayerName = packet->cid;
 		Tempcnt2 = packet->itemCount;
 		bAcquire = true;
+		PlayerInfo.players[packet->id].itemCount = packet->itemCount;
+		bitemcount = true;
 		break;
 	}
 	case SC_ALIVE: {
@@ -287,7 +291,6 @@ bool ClientSocket::PacketProcess(char* ptr)
 	case SC_REMOVE_ITEM: {
 		CS_REMOVE_ITEM_PACKET* packet = reinterpret_cast<CS_REMOVE_ITEM_PACKET*>(ptr);
 		MyCharacterController->SetDestroyItemid(packet->itemid);
-		PlayerInfo.players[packet->id].itemCount = packet->itemcount;
 		break;
 	}
 	case SC_INCREASE_COUNT: {
@@ -295,6 +298,17 @@ bool ClientSocket::PacketProcess(char* ptr)
 		TempPlayerName = packet->cid;
 		Tempcnt2 = packet->itemCount;
 		bAcquire = true;
+		PlayerInfo.players[packet->Increaseid].itemCount = packet->itemCount;
+		bitemcount = true;
+		break;
+	}
+	case SC_DECREASE: {
+		CS_DECREASE_ITEM_PACKET* packet = reinterpret_cast<CS_DECREASE_ITEM_PACKET*>(ptr);
+		TempPlayerName = packet->cid;
+		Tempcnt2 = packet->itemCount;
+		bAcquire = true;
+		PlayerInfo.players[packet->Increaseid].itemCount = packet->itemCount;
+		bitemcount = true;
 		break;
 	}
 	case SC_RELOAD: {
@@ -314,7 +328,9 @@ bool ClientSocket::PacketProcess(char* ptr)
 	}
 	case SC_MYNEW_COUNT: {
 		SC_MYNEW_ITEM_COUNT* packet = reinterpret_cast<SC_MYNEW_ITEM_COUNT*>(ptr);
-		UE_LOG(LogTemp, Warning, TEXT("packet->mynewcount  : %d"), packet->MyITEMCount);
+		//UE_LOG(LogTemp, Warning, TEXT("packet->mynewcount  : %d"), packet->MyITEMCount);
+
+		// 화면 하단 UI
 		MyItemCount = packet->MyITEMCount;
 		itemflag = true;
 		break;
@@ -371,6 +387,7 @@ void ClientSocket::Send_Move_Packet(int sessionID, FVector Location, FRotator Ro
 	packet.Max_speed = Max_speed;
 	packet.AO_yaw = AO_Yaw;
 	packet.AO_pitch = AO_Pitch;
+
 	//Send(packet.size, &packet);
 	SendPacket(&packet);
 	//UE_LOG(LogClass, Warning, TEXT("send move"));
@@ -547,6 +564,7 @@ void ClientSocket::Send_Signal_packet(int id, int num)
 }
 void ClientSocket::Send_Item_packet(int id, int itemCount)
 {
+	//내가 아이템 먹었을 때
 	CS_ITEM_PACKET packet;
 	packet.size = sizeof(packet);
 	packet.type = CS_GETITEM;
@@ -583,7 +601,7 @@ void ClientSocket::Send_Increase_item_count_packet(int id, int itemcount)
 }
 void ClientSocket::Send_Decrease_item_count_packet(int id, int itemcount)
 {
-	CS_INCREASE_ITEM_PACKET packet;
+	CS_DECREASE_ITEM_PACKET packet;
 	packet.size = sizeof(packet);
 	packet.type = CS_DECREASE_COUNT;
 	packet.Increaseid = id;
@@ -628,13 +646,14 @@ void ClientSocket::Send_CH2_SKILL_PACKET(int id, PlayerType type, bool bSkill)
 	packet.bfinish = bSkill;
 	SendPacket(&packet);
 }
-void ClientSocket::Send_My_HP_PACKET(int id, float damaage)
+void ClientSocket::Send_My_HP_PACKET(int id, float damaage, bool bAlive)
 {
 	CS_DAMAGE_PACKET packet;
 	packet.size = sizeof(packet);
 	packet.type = CS_DAMAGE;
 	packet.id = id;
 	packet.hp = damaage;
+	packet.bAlive = bAlive;
 	SendPacket(&packet);
 }
 void ClientSocket::Send_Dissolve_packet(int id, int dissolve)

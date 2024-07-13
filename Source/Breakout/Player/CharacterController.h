@@ -206,6 +206,6 @@ public:
 	class ABOGameMode* m_GameMode;
 
 
-	void SeverHpSync(float hp, int myid);
+	void SeverHpSync(bool bAlive, float hp, int myid);
 	void ServerSetDissolve(bool dissolve, class ACharacterBase* player);
 };

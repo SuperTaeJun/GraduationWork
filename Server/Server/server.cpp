@@ -107,6 +107,8 @@ public:
 	bool bGetWeapon = false;
 	bool bCancel;
 	bool bEndGame = false;
+	// bAlive
+	bool bAlive = true;
 	WeaponType w_type;
 	PlayerType p_type;
 	float s_x, s_y, s_z;
@@ -489,7 +491,7 @@ void process_packet(int s_id, unsigned char* p)
 
 		//cout << "몇명 들어옴 : " << ingamecount << endl;
 
-		if (ingamecount >= 2)
+		if (ingamecount >= 3)
 		{
 			for (auto& player : clients) {
 				if (ST_INGAME != player._state)
@@ -515,6 +517,7 @@ void process_packet(int s_id, unsigned char* p)
 		cl.Max_Speed = packet->Max_speed;
 		cl.AO_PITCH = packet->AO_pitch;
 		cl.AO_YAW = packet->AO_yaw;
+
 		for (auto& other : clients) {
 			if (other._s_id == s_id)
 				continue;
@@ -556,7 +559,7 @@ void process_packet(int s_id, unsigned char* p)
 		//cout << "Ready id" << packet->id;
 		ready_count++;
 		//cout << "ready_count" << ready_count << endl;
-		if (ready_count >= 2)
+		if (ready_count >= 3)
 		{
 			for (auto& player : clients) {
 				if (ST_INGAME != player._state)
@@ -856,10 +859,10 @@ void process_packet(int s_id, unsigned char* p)
 	}
 	case CS_GETITEM: {
 		CS_ITEM_PACKET* packet = reinterpret_cast<CS_ITEM_PACKET*>(p);
-
+		cout << "이거 언제 들어옴?" << endl;
 		CLIENT& cl = clients[packet->id];
 		cl.myItemCount = packet->itemCount;
-		send_myitem_packet(cl._s_id);
+		//send_myitem_packet(cl._s_id);
 
 	//	cout << "내가 획득한 아이템 개수" << cl._s_id << " : " << cl.myItemCount << endl;
 		for (auto& other : clients) {
@@ -934,7 +937,7 @@ void process_packet(int s_id, unsigned char* p)
 	case CS_REMOVE_ITEM: {
 		CS_REMOVE_ITEM_PACKET* packet = reinterpret_cast<CS_REMOVE_ITEM_PACKET*>(p);
 		CLIENT& cl = clients[s_id];
-		cl.myItemCount += 1;
+		//cl.myItemCount += 1;
 		//cout << "itemid : " << packet->itemid << endl;
 		int itemid = packet->itemid;
 		for (auto& other : clients) {
@@ -950,7 +953,7 @@ void process_packet(int s_id, unsigned char* p)
 			packet.size = sizeof(packet);
 			packet.type = SC_REMOVE_ITEM;
 			packet.id = cl._s_id;
-			packet.itemcount = cl.myItemCount;
+			//packet.itemcount = cl.myItemCount;
 			other.do_send(sizeof(packet), &packet);
 		}
 		break;
@@ -958,8 +961,8 @@ void process_packet(int s_id, unsigned char* p)
 	case CS_INCREASE_COUNT: {
 		CS_INCREASE_ITEM_PACKET* packet = reinterpret_cast<CS_INCREASE_ITEM_PACKET*>(p);
 		CLIENT& cl = clients[packet->Increaseid];
-		cl.myItemCount = packet->itemCount;
-		cout << "packet->id : " << packet->Increaseid << "packet->itemcount" << packet->itemCount << endl;
+		cl.myItemCount += packet->itemCount;
+		cout << "packet->id : " << packet->Increaseid << "packet->itemcount" << cl.myItemCount << endl;
 		send_myitem_count_packet(cl._s_id);
 
 		for (auto& other : clients) {
@@ -981,7 +984,7 @@ void process_packet(int s_id, unsigned char* p)
 		break;
 	}
 	case CS_DECREASE_COUNT: {
-		CS_INCREASE_ITEM_PACKET* packet = reinterpret_cast<CS_INCREASE_ITEM_PACKET*>(p);
+		CS_DECREASE_ITEM_PACKET* packet = reinterpret_cast<CS_DECREASE_ITEM_PACKET*>(p);
 		CLIENT& cl = clients[packet->Increaseid];
 		cl.myItemCount = packet->itemCount;
 		for (auto& other : clients) {
@@ -992,12 +995,12 @@ void process_packet(int s_id, unsigned char* p)
 				continue;
 			}
 			else other.state_lock.unlock();
-			CS_INCREASE_ITEM_PACKET packet;
+			CS_DECREASE_ITEM_PACKET packet;
 			packet.Increaseid = cl._s_id;
 			strcpy_s(packet.cid, cl.name);
 			packet.itemCount = cl.myItemCount;
 			packet.size = sizeof(packet);
-			packet.type = SC_INCREASE_COUNT;
+			packet.type = SC_DECREASE;
 			other.do_send(sizeof(packet), &packet);
 		}
 		break;
@@ -1099,8 +1102,8 @@ void process_packet(int s_id, unsigned char* p)
 		CS_DAMAGE_PACKET* packet = reinterpret_cast<CS_DAMAGE_PACKET*>(p);
 		CLIENT& cl = clients[packet->id];
 		cl._hp = packet->hp;
-		//cout << "my hp : " << cl._hp << endl;
-		//send_change_hp(packet->id);
+		cl.bAlive = packet->bAlive;
+		//cout << " cl.s_id : " << cl._s_id << "cl.hp : " << cl._hp << endl;
 		for (auto& other : clients) {
 			if (other._s_id == cl._s_id) continue;
 			other.state_lock.lock();
@@ -1114,6 +1117,7 @@ void process_packet(int s_id, unsigned char* p)
 			packet.type = SC_HP_CHANGE;
 			packet.id = cl._s_id;
 			packet.HP = cl._hp;
+			packet.bAlive = cl.bAlive;
 			other.do_send(sizeof(packet), &packet);
 		}
 		break;

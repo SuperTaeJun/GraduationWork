@@ -1,6 +1,6 @@
 #pragma once
 #define SERVER_PORT		8001
-#define SERVER_IP		"192.168.219.101"
+#define SERVER_IP		"192.168.54.28"
 #define MAX_INFO_SIZE   20
 #include <vector>
 #include <array>
@@ -22,7 +22,7 @@ enum WeaponType
 
 constexpr int BUFSIZE = 1048;
 const int  MAX_NAME_SIZE = 20;
-const int  MAX_USER = 1000;
+const int  MAX_USER = 5000;
 const int  MAX_OBJ = 11;
 
 
@@ -88,6 +88,7 @@ const char SC_DISSOLVE = 30;
 const char SC_BOJOWEAPON = 31;
 const char SC_BOJO_ANIM = 32;
 const char SC_MOPP = 33;
+const char SC_DECREASE = 34;
 
 
 
@@ -210,6 +211,7 @@ struct CS_DAMAGE_PACKET {
 	unsigned char type;
 	int id;
 	float hp;
+	bool bAlive;
 };
 struct SC_HP_CHANGE_PACKET
 {
@@ -217,6 +219,7 @@ struct SC_HP_CHANGE_PACKET
 	unsigned char type;
 	int id;
 	float HP;
+	bool bAlive;
 };
 struct CS_SIGNAL_PACKET
 {
@@ -340,6 +343,13 @@ struct SC_MY_ITEM_COUNT {
 	int MyITEMCount;
 };
 struct CS_INCREASE_ITEM_PACKET {
+	unsigned char size;
+	unsigned char type;
+	char cid[MAX_INFO_SIZE];
+	int Increaseid;
+	int itemCount;
+};
+struct CS_DECREASE_ITEM_PACKET {
 	unsigned char size;
 	unsigned char type;
 	char cid[MAX_INFO_SIZE];

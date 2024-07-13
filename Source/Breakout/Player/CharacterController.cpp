@@ -531,6 +531,8 @@ bool ACharacterController::UpdateWorld()
 			OtherPlayer->GetCharacterMovement()->MaxWalkSpeed = info->Max_Speed;
 			
 			OtherPlayer->SetHealth(SyncHP);
+			OtherPlayer->bAlive = info->bAlive;
+
 			if (info->bGetWeapon == true)
 			{
 				OtherPlayer->CurWeapon->Destroy();
@@ -753,15 +755,19 @@ bool ACharacterController::UpdateWorld()
 				info->itemAnimtype = -1;
 			}
 
-			if (m_GameMode) {
-				for (int i = 0; i < m_GameMode->EscapeTools.Num(); i++)
-				{
-					if (Cast<AEscapeTool>(m_GameMode->EscapeTools[i]))
-						if (Escapeid == Cast<AEscapeTool>(m_GameMode->EscapeTools[i])->ItemID)
-							Cast<AEscapeTool>(m_GameMode->EscapeTools[i])->Destroy();
-				}
+			//if (m_GameMode) {
+			//	for (int i = 0; i < m_GameMode->EscapeTools.Num(); i++)
+			//	{
+			//		if (Cast<AEscapeTool>(m_GameMode->EscapeTools[i]))
+			//			if (Escapeid == Cast<AEscapeTool>(m_GameMode->EscapeTools[i])->ItemID)
+			//				Cast<AEscapeTool>(m_GameMode->EscapeTools[i])->Destroy();
+			//	}
+			//}
+			if (inst->m_Socket->bitemcount == true) {
+				OtherPlayer->SetEscapeToolNum(info->itemCount);
+				UE_LOG(LogTemp, Warning, TEXT("id : %d, itemcount : %d"), OtherPlayer->_SessionId, info->itemCount);
+				inst->m_Socket->bitemcount = false;
 			}
-
 			// 모프 동기화
 			if (inst->m_Socket->MoppType == 0) {
 				//Cast<AEscapeTool>(m_GameMode->EscapeTools[MoppID])->TransformMesh(inst->m_Socket->TempMoppTime, false, false);
@@ -1072,10 +1078,10 @@ void ACharacterController::OnPossess(APawn* InPawn)
 	}
 }
 
-void ACharacterController::SeverHpSync(float hp, int myid)
+void ACharacterController::SeverHpSync(bool bAlive, float hp, int myid)
 {
 	if (inst)
-		inst->m_Socket->Send_My_HP_PACKET(myid, hp);
+		inst->m_Socket->Send_My_HP_PACKET(myid, hp, bAlive);
 
 }
 
