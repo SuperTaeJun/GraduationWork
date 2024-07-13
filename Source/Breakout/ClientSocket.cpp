@@ -295,6 +295,7 @@ bool ClientSocket::PacketProcess(char* ptr)
 	}
 	case SC_INCREASE_COUNT: {
 		CS_INCREASE_ITEM_PACKET* packet = reinterpret_cast<CS_INCREASE_ITEM_PACKET*>(ptr);
+		// cid 굳이 보낼 필요 없을 듯 그냥 players[packet-cid].name 으로 하면 될듯
 		TempPlayerName = packet->cid;
 		Tempcnt2 = packet->itemCount;
 		bAcquire = true;
