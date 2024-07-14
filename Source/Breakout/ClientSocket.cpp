@@ -107,6 +107,7 @@ bool ClientSocket::PacketProcess(char* ptr)
 		info->p_type = packet->p_type;
 		info->userId =  packet->name;
 		Tempname.push(packet->name);
+		UE_LOG(LogTemp, Warning, TEXT("other name : %s"), packet->name);
 		MyCharacterController->SetNewCharacterInfo(info);
 		break;
 	}
