@@ -755,14 +755,14 @@ bool ACharacterController::UpdateWorld()
 				info->itemAnimtype = -1;
 			}
 
-			//if (m_GameMode) {
-			//	for (int i = 0; i < m_GameMode->EscapeTools.Num(); i++)
-			//	{
-			//		if (Cast<AEscapeTool>(m_GameMode->EscapeTools[i]))
-			//			if (Escapeid == Cast<AEscapeTool>(m_GameMode->EscapeTools[i])->ItemID)
-			//				Cast<AEscapeTool>(m_GameMode->EscapeTools[i])->Destroy();
-			//	}
-			//}
+			if (m_GameMode) {
+				for (int i = 0; i < m_GameMode->EscapeTools.Num(); i++)
+				{
+					if (Cast<AEscapeTool>(m_GameMode->EscapeTools[i]))
+						if (Escapeid == Cast<AEscapeTool>(m_GameMode->EscapeTools[i])->ItemID)
+							Cast<AEscapeTool>(m_GameMode->EscapeTools[i])->Destroy();
+				}
+			}
 			if (inst->m_Socket->bitemcount == true) {
 				OtherPlayer->SetEscapeToolNum(info->itemCount);
 				UE_LOG(LogTemp, Warning, TEXT("id : %d, itemcount : %d"), OtherPlayer->_SessionId, info->itemCount);

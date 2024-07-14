@@ -31,6 +31,7 @@
 #include "Materials/MaterialInstance.h"
 #include "Materials/MaterialInstanceDynamic.h"
 #include "Sound/SoundCue.h"
+#include "Components/SpotLightComponent.h"
 
 ACharacterBase::ACharacterBase()
 {
@@ -48,6 +49,8 @@ ACharacterBase::ACharacterBase()
 	Movement = GetCharacterMovement();
 	Movement->MaxWalkSpeed = 400.f;
 	Movement->bOrientRotationToMovement = true;
+	Movement->JumpZVelocity = 480.f;
+	Movement->AirControl = 0.2f;
 	bUseControllerRotationYaw = false;
 
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
@@ -955,8 +958,22 @@ void ACharacterBase::Detect_E(const FInputActionValue& Value)
 	}
 }
 
+void ACharacterBase::LightOnOff(const FInputActionValue& Value)
+{
+	if (CurWeapon && CurWeapon->GetSpotLight())
+	{
+		UE_LOG(LogTemp, Log, TEXT("ONOFF"));
+
+		if (CurWeapon->GetSpotLight()->IsVisible())
+			CurWeapon->GetSpotLight()->SetVisibility(false);
+		else
+			CurWeapon->GetSpotLight()->SetVisibility(true);
+	}
+}
+
 void ACharacterBase::Detect_S(const FInputActionValue& Value)
 {
+	quick_exit(0);
 	if (CurWeapon)
 	{
 		CurWeapon->DetectTool(HitTarget);
@@ -1071,6 +1088,7 @@ void ACharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 		EnhancedInputComponent->BindAction(SelectTrapAction, ETriggerEvent::Triggered, this, &ACharacterBase::SelectTrap);
 		EnhancedInputComponent->BindAction(DetectAction, ETriggerEvent::Triggered, this, &ACharacterBase::Detect_S);
 		EnhancedInputComponent->BindAction(DetectAction, ETriggerEvent::Completed, this, &ACharacterBase::Detect_E);
+		EnhancedInputComponent->BindAction(LightAction, ETriggerEvent::Started, this, &ACharacterBase::LightOnOff);
 	}
 }
 

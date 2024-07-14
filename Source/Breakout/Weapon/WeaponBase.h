@@ -36,6 +36,8 @@ protected:
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class AProjectileBullet> ProjectileBulletClass;
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<class USpotLightComponent> SpotLight;
 
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<class USoundCue> FireSound;
@@ -76,5 +78,5 @@ public:
 public:
 	FORCEINLINE USkeletalMeshComponent* GetWeaponMesh() const { return WeaponMesh; }
 	void SetDetectNiagara(bool bUse);
-
+	class USpotLightComponent* GetSpotLight() { return SpotLight; }
 };
