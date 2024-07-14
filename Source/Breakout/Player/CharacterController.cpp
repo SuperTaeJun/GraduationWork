@@ -351,7 +351,7 @@ void ACharacterController::Tick(float DeltaTime)
 		SetNum();
 		inst->m_Socket->bAcquire = false;
 	}
-	if (MainHUD) {
+	if (MainHUD && inst->m_Socket->bName) {
 		SetChName();
 	}
 

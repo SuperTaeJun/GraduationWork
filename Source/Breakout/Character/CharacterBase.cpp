@@ -1137,7 +1137,8 @@ void ACharacterBase::StartGame()
 		//bStarted = false;
 		EnableInput(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 		SetWeaponUi();
-	
+		if (inst)
+			inst->m_Socket->bName = true;
 	}
 
 }
