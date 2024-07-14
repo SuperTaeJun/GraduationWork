@@ -33,6 +33,9 @@ void ABulletHoleWall::BeginPlay()
 	UE_LOG(LogTemp, Warning, TEXT("HP: %f"), Hp);
 	Hp = 50.f;
 	bDestroyed = false;
+
+	TArray<FProcMeshTangent> Tangents = {};
+	ProceduralMesh->CreateMeshSection_LinearColor(0, MeshDataA.Verts, MeshDataA.Tris, MeshDataA.Normals, MeshDataA.UVs, MeshDataA.Colors, Tangents, true);
 }
 void ABulletHoleWall::ReciveDamage(AActor* DamagedActor, float Damage, const UDamageType* DamageType, AController* InstigatorController, AActor* DamageCauser)
 {
