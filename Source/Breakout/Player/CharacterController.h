@@ -208,6 +208,9 @@ public:
 	void SeverHpSync(bool bAlive, float hp, int myid);
 	void ServerSetDissolve(bool dissolve, class ACharacterBase* player);
 
+	private:
+		UPROPERTY(EditAnywhere)
+		TSubclassOf<class ABulletHoleWall> WallClass;
 private:
 	bool bSetBulletHole = false;
 

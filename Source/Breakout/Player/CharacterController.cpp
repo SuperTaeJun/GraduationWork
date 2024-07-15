@@ -364,13 +364,16 @@ void ACharacterController::Tick(float DeltaTime)
 	
 	if (bSetBulletHole == false) {
 		TArray<AActor*> TempActors;
-		UGameplayStatics::GetAllActorsOfClass(GetWorld(), ABulletHoleWall::StaticClass(), TempActors);
+		UGameplayStatics::GetAllActorsOfClass(GetWorld(), WallClass, TempActors);
+		UE_LOG(LogTemp, Warning, TEXT("NUM %d"), TempActors.Num());
 		if (TempActors[0]) {
-			for (int i = 0; i < TempActors.Num(); i++)
+			int i = 0;
+			for (auto TempActor : TempActors)
 			{
-				BulletWalls[i] = Cast<ABulletHoleWall>(TempActors[i]);
-				if(BulletWalls[i])
-					BulletWalls[i]->ID = i;
+				++i;
+				ABulletHoleWall* BulletWall = Cast<ABulletHoleWall>(TempActor);
+				if (BulletWall)
+					BulletWalls[i] = BulletWall;
 			}
 			bSetBulletHole = true;
 		}
