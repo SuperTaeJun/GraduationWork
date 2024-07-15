@@ -873,10 +873,10 @@ void ACharacterController::UpdateSyncPlayer()
 						SpawnCharacter->SpawnDefaultController();
 						SpawnCharacter->_SessionId = NewPlayer.front()->Id;
 						SpawnCharacter->GetMesh()->SetSkeletalMesh(SkMeshAsset1);
+						if (Anim1)
+							SpawnCharacter->GetMesh()->SetAnimClass(Anim1);
+						SpawnCharacter->SetHealth(100.f);
 					}
-					if (Anim1)
-						SpawnCharacter->GetMesh()->SetAnimClass(Anim1);
-					SpawnCharacter->SetHealth(100.f);
 				}
 			}
 			break;

@@ -321,7 +321,7 @@ int main()
 	server_addr.sin_addr.s_addr = htonl(INADDR_ANY);
 	bind(sever_socket, reinterpret_cast<sockaddr*>(&server_addr), sizeof(server_addr));
 	listen(sever_socket, SOMAXCONN);
-	cout << "서버 시작" << endl;
+	cout << "서버 시작da" << endl;
 	g_h_iocp = CreateIoCompletionPort(INVALID_HANDLE_VALUE, NULL, NULL, 0);
 	CreateIoCompletionPort(reinterpret_cast<HANDLE>(sever_socket), g_h_iocp, 0, 0);
 
@@ -339,24 +339,38 @@ int main()
 		clients[i]._s_id = i;
 	for (int i = 0; i < MAX_OBJ; ++i)
 		objects[i].ob_id = i;
-	objects[0].x = 1710.f;
-	objects[0].y = -1080.f;
-	objects[0].z = 120.f;
+	objects[0].x = 1785.f;
+	objects[0].y = -5210.f;
+	objects[0].z = 65.f;
 
-	objects[1].x = 1800.f;
-	objects[1].y = -570.f;
-	objects[1].z = 80.f;
-
-
-	objects[2].x = 2280.f;
-	objects[2].y = -630.f;
-	objects[2].z = 100.f;
-
-	objects[3].x = 2110.f;
-	objects[3].y = -1080.f;
-	objects[3].z = 120.f;
+	objects[1].x = 4800.f;
+	objects[1].y = -6120.f;
+	objects[1].z = -20.f;
 
 
+	objects[2].x = -240.f;
+	objects[2].y = -5555.f;
+	objects[2].z = 1210.f;
+
+	objects[3].x = 4935.f;
+	objects[3].y = -390.f;
+	objects[3].z = 15.f;
+
+	objects[4].x = 80.f;
+	objects[4].y = 3830.f;
+	objects[4].z = 100.f;
+
+	objects[5].x = 4765.f;
+	objects[5].y = -1645.f;
+	objects[5].z = 60.f;
+
+	objects[6].x = -1105.f;
+	objects[6].y = -4700.f;
+	objects[6].z = 1255.f;
+
+	objects[7].x = 5640.f;
+	objects[7].y = -6360.f;
+	objects[7].z = 25.f;
 	g_timer = CreateEvent(NULL, FALSE, FALSE, NULL);
 	vector <thread> worker_threads;
 	thread servertherad{ ev_timer };
@@ -523,7 +537,7 @@ void process_packet(int s_id, unsigned char* p)
 
 		//cout << "몇명 들어옴 : " << ingamecount << endl;
 
-		if (ingamecount >= 2)
+		if (ingamecount >= 3)
 		{
 			for (auto& player : clients) {
 				if (ST_INGAME != player._state)
@@ -591,7 +605,7 @@ void process_packet(int s_id, unsigned char* p)
 		//cout << "Ready id" << packet->id;
 		ready_count++;
 		//cout << "ready_count" << ready_count << endl;
-		if (ready_count >= 2)
+		if (ready_count >= 3)
 		{
 			for (auto& player : clients) {
 				if (ST_INGAME != player._state)
@@ -1047,7 +1061,8 @@ void process_packet(int s_id, unsigned char* p)
 	}
 	case CS_BULLET_WALL: {
 		CS_WALL_PACKET* packet = reinterpret_cast<CS_WALL_PACKET*> (p);
-		CLIENT& cl = clients[s_id];
+		CLIENT& cl = clients[packet->id];
+		cout << "wall id : " << packet->wall_id << endl;
 		walls[packet->wall_id].ob_id = packet->wall_id;
 		walls[packet->wall_id].x = packet->lx;
 		walls[packet->wall_id].y = packet->ly;
@@ -1401,13 +1416,13 @@ void send_bullet_wall(int _s_id, int wall_index)
 	packet.size = sizeof(packet);
 	packet.type = SC_WALL;
 
-	packet.lx = objects[wall_index].x;
-	packet.ly = objects[wall_index].y;
-	packet.lz = objects[wall_index].z;
-	packet.r_pitch = objects[wall_index].pitch;
-	packet.r_yaw = objects[wall_index].yaw;
-	packet.r_roll = objects[wall_index].roll;
-	packet.wall_id = objects[wall_index].ob_id; 
+	packet.lx = walls[wall_index].x;
+	packet.ly = walls[wall_index].y;
+	packet.lz = walls[wall_index].z;
+	packet.r_pitch = walls[wall_index].pitch;
+	packet.r_yaw = walls[wall_index].yaw;
+	packet.r_roll = walls[wall_index].roll;
+	packet.wall_id = walls[wall_index].ob_id;
 
 	clients[_s_id].do_send(sizeof(packet), &packet);
 }
