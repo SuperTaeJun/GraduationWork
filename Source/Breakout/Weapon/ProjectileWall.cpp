@@ -3,6 +3,7 @@
 
 #include "Weapon/ProjectileWall.h"
 #include "GameProp/Wall.h"
+#include "Kismet/GameplayStatics.h"
 #include "GameProp/BulletHoleWall.h"
 AProjectileWall::AProjectileWall()
 {
@@ -31,7 +32,20 @@ void AProjectileWall::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActo
 		{
 			FVector ConvertLoc = Hit.Location;
 			ConvertLoc.Z += 100.f;
-			World->SpawnActor<ABulletHoleWall>(WallClass, ConvertLoc, Rotation, SpawnParameters);
+			TArray<AActor*> Walls;
+			UGameplayStatics::GetAllActorsOfClass(World, WallClass, Walls);
+
+			for (auto wall:Walls)
+			{
+				ABulletHoleWall* BulletWall = Cast<ABulletHoleWall>(wall);
+				if (BulletWall && BulletWall->bUsing)
+				{
+					BulletWall->SetActorLocationAndRotation(ConvertLoc, Rotation);
+					BulletWall->bUsing = false;
+				}
+			}
+
+			//World->SpawnActor<ABulletHoleWall>(WallClass, ConvertLoc, Rotation, SpawnParameters);
 		}
 
 		Destroy();

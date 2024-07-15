@@ -32,7 +32,7 @@ AProjectileBase::AProjectileBase()
 	ProjectileMovementComponent = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileMovementComponent"));
 	ProjectileMovementComponent->bRotationFollowsVelocity = true;
 
-	ImpactNiagara = ConstructorHelpers::FObjectFinder<UNiagaraSystem>(TEXT("/Script/Niagara.NiagaraSystem'/Game/Niagara/Weapon/Lancher/NS_Explosion.NS_Explosion'")).Object;
+	//ImpactNiagara = ConstructorHelpers::FObjectFinder<UNiagaraSystem>(TEXT("/Script/Niagara.NiagaraSystem'/Game/Niagara/Weapon/Lancher/NS_Explosion.NS_Explosion'")).Object;
 
 	Damage = 50.f;
 }

@@ -27,6 +27,8 @@ public:
 	FMeshData ConverToFMeshData(UE::Geometry::FDynamicMesh3& Input, FMeshData& Output);
 
 	FTransform3d ConvertToFTransform3d(FTransform Input);
+
+	bool bUsing = true;
 protected:
 	virtual void BeginPlay() override;
 	UFUNCTION()
@@ -38,12 +40,15 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite,Category = "Mesh")
 	TObjectPtr<class UStaticMeshComponent > Sphere;
 
-	UPROPERTY(BlueprintReadWrite)
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 	FMeshData MeshDataA;
-	UPROPERTY(BlueprintReadWrite)
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 	FMeshData MeshDataB;
-	UPROPERTY(BlueprintReadWrite)
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 	FMeshData SculptureData;
+
+	FMeshData ResetMeshData;
+
 	FVector HitLoc;
 	FVector HitNomal;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)

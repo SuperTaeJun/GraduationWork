@@ -33,7 +33,7 @@ void ABulletHoleWall::BeginPlay()
 	UE_LOG(LogTemp, Warning, TEXT("HP: %f"), Hp);
 	Hp = 50.f;
 	bDestroyed = false;
-
+	ResetMeshData = MeshDataA;
 	TArray<FProcMeshTangent> Tangents = {};
 	ProceduralMesh->CreateMeshSection_LinearColor(0, MeshDataA.Verts, MeshDataA.Tris, MeshDataA.Normals, MeshDataA.UVs, MeshDataA.Colors, Tangents, true);
 }
@@ -80,17 +80,17 @@ void ABulletHoleWall::ReciveDamage(AActor* DamagedActor, float Damage, const UDa
 				MeshSculptures[i]->SetSimulatePhysics(true);
 				MeshSculptures[i]->AddCollisionConvexMesh(MeshDataStorage[i].Verts);
 				MeshSculptures[i]->CreateMeshSection_LinearColor(0, MeshDataStorage[i].Verts, MeshDataStorage[i].Tris, MeshDataStorage[i].Normals, MeshDataStorage[i].UVs, MeshDataStorage[i].Colors, Tangents, true);
-
-				ProceduralMesh->DestroyComponent();
-
-				GetWorldTimerManager().SetTimer(
-					DestroyTimer,
-					this,
-					&ABulletHoleWall::AllDestroy,
-					4.f
-				);
+				//ProceduralMesh->DestroyComponent();
+				ProceduralMesh->SetHiddenInGame(true);
 			}
 		}
+		GetWorldTimerManager().SetTimer
+		(
+			DestroyTimer,
+			this,
+			&ABulletHoleWall::AllDestroy,
+			4.f
+		);
 		bDissolve = true;
 		Hp = 999999;
 	}
@@ -382,7 +382,24 @@ FMeshData ABulletHoleWall::TransformMeshData(UPARAM(ref) FMeshData& Data, FTrans
 
 void ABulletHoleWall::AllDestroy()
 {
-	Destroy();
+	for (int i = 0; i < MeshDataStorage.Num(); ++i)
+	{
+		if (MeshSculptures[i])
+		{
+			MeshSculptures[i]->DestroyComponent();
+			MeshSculptures[i] = nullptr;
+		}
+	}
+	MeshDataStorage.Empty();
+	bDissolve = false;
+	DissolvePercent = -3.f;
+	Hp = 50.f;
+	SetActorLocation(FVector(0.f, 0.f, -1000.f));
+	ProceduralMesh->SetHiddenInGame(false);
+	MeshDataA = ResetMeshData;
+	TArray<FProcMeshTangent> Tangents = {};
+	ProceduralMesh->CreateMeshSection_LinearColor(0, MeshDataA.Verts, MeshDataA.Tris, MeshDataA.Normals, MeshDataA.UVs, MeshDataA.Colors, Tangents, true);
+	bUsing = true;
 }
 
 void ABulletHoleWall::GetMeshDataFromStaticMesh(UStaticMesh* Mesh, UPARAM(ref) FMeshData& Data, int32 LODIndex, int32 SectionIndex, bool GetAllSections)
