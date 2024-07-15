@@ -86,14 +86,13 @@ void ACharacterController::BeginPlay()
 
 	TArray<AActor*> TempActors;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), WallClass, TempActors);
-	int i = 0;
-	for (auto TempActor : TempActors)
+	for (int i = 0; i< TempActors.Num();++i)
 	{
-		++i;
-		ABulletHoleWall* BulletWall = Cast<ABulletHoleWall>(TempActor);
+		ABulletHoleWall* BulletWall = Cast<ABulletHoleWall>(TempActors[i]);
 		if (BulletWall)
 		{
 			BulletWalls.Add(BulletWall);
+			BulletWalls[i]->ID = i;
 		}
 	}
 	bSetBulletHole = true;
