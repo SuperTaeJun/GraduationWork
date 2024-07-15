@@ -83,14 +83,7 @@ void ACharacterController::BeginPlay()
 		}
 	}
 
-	TArray<AActor*> TempActors;
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ABulletHoleWall::StaticClass(), TempActors);
-	for (int i = 0; i < TempActors.Num(); i++)
-	{
-		BulletWalls[i] = Cast<ABulletHoleWall>(TempActors[i]);
-		BulletWalls[i]->ID = i;
-	}
-	
+
 }
 
 void ACharacterController::SetChName()
@@ -369,6 +362,19 @@ void ACharacterController::Tick(float DeltaTime)
 		inst->m_Socket->itemflag = false;
 	}
 	
+	if (bSetBulletHole == false) {
+		TArray<AActor*> TempActors;
+		UGameplayStatics::GetAllActorsOfClass(GetWorld(), ABulletHoleWall::StaticClass(), TempActors);
+		if (TempActors[0]) {
+			for (int i = 0; i < TempActors.Num(); i++)
+			{
+				BulletWalls[i] = Cast<ABulletHoleWall>(TempActors[i]);
+				BulletWalls[i]->ID = i;
+			}
+			bSetBulletHole = true;
+		}
+		
+	}
 }
 
 void ACharacterController::EndPlay(const EEndPlayReason::Type EndPlayReason)

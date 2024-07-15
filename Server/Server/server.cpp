@@ -523,7 +523,7 @@ void process_packet(int s_id, unsigned char* p)
 
 		//cout << "¸î¸í µé¾î¿È : " << ingamecount << endl;
 
-		if (ingamecount >= 3)
+		if (ingamecount >= 2)
 		{
 			for (auto& player : clients) {
 				if (ST_INGAME != player._state)
@@ -591,7 +591,7 @@ void process_packet(int s_id, unsigned char* p)
 		//cout << "Ready id" << packet->id;
 		ready_count++;
 		//cout << "ready_count" << ready_count << endl;
-		if (ready_count >= 3)
+		if (ready_count >= 2)
 		{
 			for (auto& player : clients) {
 				if (ST_INGAME != player._state)

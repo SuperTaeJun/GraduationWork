@@ -207,4 +207,8 @@ public:
 	TArray<class ABulletHoleWall*> BulletWalls;
 	void SeverHpSync(bool bAlive, float hp, int myid);
 	void ServerSetDissolve(bool dissolve, class ACharacterBase* player);
+
+private:
+	bool bSetBulletHole = false;
+
 };
