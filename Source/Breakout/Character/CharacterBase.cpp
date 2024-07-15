@@ -82,9 +82,9 @@ ACharacterBase::ACharacterBase()
 	Stamina = MaxStamina;
 	StaminaExhaustionState = false;
 	bCanFire = true;
-	GrendeNum = 5;
-	WallGrendeNum = 5;
-	BoobyTrapNum = 5;
+	GrendeNum = 3;
+	WallGrendeNum = 3;
+	BoobyTrapNum = 3;
 	//bShowSelectUi = false;
 	ObtainedEscapeToolNum = 0;
 	CurWeaponType = EWeaponType::ECS_DEFAULT;
