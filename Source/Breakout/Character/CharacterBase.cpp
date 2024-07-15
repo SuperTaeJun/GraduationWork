@@ -973,7 +973,7 @@ void ACharacterBase::LightOnOff(const FInputActionValue& Value)
 
 void ACharacterBase::Detect_S(const FInputActionValue& Value)
 {
-	quick_exit(0);
+	//quick_exit(0);
 	if (CurWeapon)
 	{
 		CurWeapon->DetectTool(HitTarget);
