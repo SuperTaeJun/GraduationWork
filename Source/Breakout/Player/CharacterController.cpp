@@ -367,9 +367,9 @@ void ACharacterController::Tick(float DeltaTime)
 		SetNum();
 		inst->m_Socket->bAcquire = false;
 	}
-	if (MainHUD && inst->m_Socket->bName) {
+	/*if (MainHUD && inst->m_Socket->bName) {
 		SetChName();
-	}
+	}*/
 
 	if (MainHUD && inst->m_Socket->itemflag) {
 		BaseCharacter->SetEscapeToolNum(inst->m_Socket->MyItemCount);
