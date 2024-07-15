@@ -432,6 +432,7 @@ public:
 	FString TempPlayerName;
 	bool bAcquire = false;
 	bool bTravel = false;
+	bool bName = false;
 	int MoppType = -1;
 
 	bool bitemcount = false;
