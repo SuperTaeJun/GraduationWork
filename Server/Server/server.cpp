@@ -1056,7 +1056,8 @@ void process_packet(int s_id, unsigned char* p)
 		CS_ITEM_INFO_PACKET* packet = reinterpret_cast<CS_ITEM_INFO_PACKET*> (p);
 		CLIENT& cl = clients[s_id];
 
-		send_item_packet(cl._s_id, packet->objid);
+		//sen
+		// d_item_packet(cl._s_id, packet->objid);
 		break;
 	}
 	case CS_BULLET_WALL: {

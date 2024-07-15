@@ -42,10 +42,11 @@ void ABOGameMode::BeginPlay()
 	{
 		if (Cast<AEscapeTool>(Actors[i]) && inst)
 		{
-			int objid = Cast<AEscapeTool>(Actors[i])->ItemID;
-			inst->m_Socket->Send_item_info_packet(objid);
+			//int objid = Cast<AEscapeTool>(Actors[i])->ItemID;
+			//inst->m_Socket->Send_item_info_packet(objid);
 
 			EscapeTools.Add(Cast<AEscapeTool>(Actors[i]));
+		
 		}
 	}
 }
@@ -72,18 +73,18 @@ void ABOGameMode::Tick(float DeltaTime)
 	//	inst->m_Socket->ItemQueue.pop();
 	//}
 	//}
-	if (inst->m_Socket->ItemQueue.size())
-	{
-		FVector itemLoc;
-		itemLoc.X = inst->m_Socket->ItemQueue.front()->X;
-		itemLoc.Y = inst->m_Socket->ItemQueue.front()->Y;
-		itemLoc.Z = inst->m_Socket->ItemQueue.front()->Z;
+	//if (inst->m_Socket->ItemQueue.size())
+	//{
+	//	FVector itemLoc;
+	//	itemLoc.X = inst->m_Socket->ItemQueue.front()->X;
+	//	itemLoc.Y = inst->m_Socket->ItemQueue.front()->Y;
+	//	itemLoc.Z = inst->m_Socket->ItemQueue.front()->Z;
 
-		EscapeTools[inst->m_Socket->ItemQueue.front()->Id]->ItemID = inst->m_Socket->ItemQueue.front()->Id;
-		EscapeTools[inst->m_Socket->ItemQueue.front()->Id]->SetActorLocation(itemLoc);
-		inst->m_Socket->ItemQueue.front() = nullptr;
-		inst->m_Socket->ItemQueue.pop();
-	}
+	//	EscapeTools[inst->m_Socket->ItemQueue.front()->Id]->ItemID = inst->m_Socket->ItemQueue.front()->Id;
+	//	EscapeTools[inst->m_Socket->ItemQueue.front()->Id]->SetActorLocation(itemLoc);
+	//	inst->m_Socket->ItemQueue.front() = nullptr;
+	//	inst->m_Socket->ItemQueue.pop();
+	//}
 }
 
 
