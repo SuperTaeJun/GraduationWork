@@ -369,7 +369,8 @@ void ACharacterController::Tick(float DeltaTime)
 			for (int i = 0; i < TempActors.Num(); i++)
 			{
 				BulletWalls[i] = Cast<ABulletHoleWall>(TempActors[i]);
-				BulletWalls[i]->ID = i;
+				if(BulletWalls[i])
+					BulletWalls[i]->ID = i;
 			}
 			bSetBulletHole = true;
 		}
