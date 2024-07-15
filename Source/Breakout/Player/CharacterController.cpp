@@ -84,6 +84,22 @@ void ACharacterController::BeginPlay()
 	}
 
 
+	TArray<AActor*> TempActors;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), WallClass, TempActors);
+	int i = 0;
+	for (auto TempActor : TempActors)
+	{
+		++i;
+		ABulletHoleWall* BulletWall = Cast<ABulletHoleWall>(TempActor);
+		if (BulletWall)
+		{
+			BulletWalls.Add(BulletWall);
+		}
+	}
+	bSetBulletHole = true;
+
+
+	
 }
 
 void ACharacterController::SetChName()
@@ -360,26 +376,6 @@ void ACharacterController::Tick(float DeltaTime)
 		BaseCharacter->SetEscapeToolNum(inst->m_Socket->MyItemCount);
 		BaseCharacter->UpdateObtainedEscapeTool();
 		inst->m_Socket->itemflag = false;
-	}
-	
-	if (bSetBulletHole == false) {
-		TArray<AActor*> TempActors;
-		UGameplayStatics::GetAllActorsOfClass(GetWorld(), WallClass, TempActors);
-		UE_LOG(LogTemp, Warning, TEXT("NUM %d"), TempActors.Num());
-		if (TempActors[0]) {
-			int i = 0;
-			for (auto TempActor : TempActors)
-			{
-				++i;
-				ABulletHoleWall* BulletWall = Cast<ABulletHoleWall>(TempActor);
-				if (BulletWall)
-				{
-					BulletWalls.Add(BulletWall);
-				}
-			}
-			bSetBulletHole = true;
-		}
-		
 	}
 }
 
