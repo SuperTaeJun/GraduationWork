@@ -965,9 +965,14 @@ void ACharacterBase::LightOnOff(const FInputActionValue& Value)
 		UE_LOG(LogTemp, Log, TEXT("ONOFF"));
 
 		if (CurWeapon->GetSpotLight()->IsVisible())
+		{	//라이트 패킷 ID랑,false보내기 그 후 컨트롤러에서 밑에줄 실행
 			CurWeapon->GetSpotLight()->SetVisibility(false);
+
+		}
 		else
+		{			//라이트 패킷 ID,랑true보내기 그 후 컨트롤러에서 밑에줄 실행
 			CurWeapon->GetSpotLight()->SetVisibility(true);
+		}
 	}
 }
 
