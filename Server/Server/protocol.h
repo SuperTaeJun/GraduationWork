@@ -1,6 +1,6 @@
 #pragma once
 #define SERVER_PORT		8001
-#define SERVER_IP		"192.168.219.101"
+#define SERVER_IP		"192.168.54.28"
 #define MAX_INFO_SIZE   20
 #include <vector>
 #include <array>
@@ -55,6 +55,7 @@ const char CS_DISSOLVE = 28;
 const char CS_BOJO_ANIM = 29;
 const char CS_MOPP = 30;
 const char CS_ACCOUNT = 31;
+const char CS_BULLET_WALL = 32;
 
 const char SC_LOGIN_OK = 1;
 const char SC_OTHER_PLAYER = 2;
@@ -91,7 +92,7 @@ const char SC_BOJO_ANIM = 32;
 const char SC_MOPP = 33;
 const char SC_DECREASE = 34;
 const char SC_LOGIN_FAIL = 35;
-
+const char SC_WALL = 36;
 
 #pragma pack (push, 1)
 struct CS_LOGIN_PACKET
@@ -432,5 +433,12 @@ struct CS_MOPP_PACKET {
 	// 모프 변환 상태
 	int mopptype;
 };
-
+struct CS_WALL_PACKET {
+	unsigned char size;
+	unsigned char type;
+	int wall_id;
+	float lx, ly, lz;
+	float r_pitch, r_yaw, r_roll;
+	int id;
+};
 #pragma pack(pop)

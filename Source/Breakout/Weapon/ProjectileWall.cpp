@@ -5,6 +5,8 @@
 #include "GameProp/Wall.h"
 #include "Kismet/GameplayStatics.h"
 #include "GameProp/BulletHoleWall.h"
+#include "Game/BOGameInstance.h"
+#include "ClientSocket.h"
 AProjectileWall::AProjectileWall()
 {
 	ImpactNiagara = nullptr;
@@ -13,6 +15,7 @@ AProjectileWall::AProjectileWall()
 void AProjectileWall::BeginPlay()
 {
 	Super::BeginPlay();
+	inst = Cast<UBOGameInstance>(GetGameInstance());
 }
 
 void AProjectileWall::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NomalImpulse, const FHitResult& Hit)
@@ -41,6 +44,8 @@ void AProjectileWall::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActo
 				if (BulletWall && BulletWall->bUsing)
 				{
 					//벽 생성 패킷 BulletWall->ID랑 ConvertLoc, Rotation 이거 3개 패킷으로 보내기 그후에 밑에 2줄 컨트롤러에서 실행
+					if(inst)
+						inst->m_Socket->Send_BulletWall_packet(inst->GetPlayerID(), BulletWall->ID, ConvertLoc, Rotation);
 					BulletWall->SetActorLocationAndRotation(ConvertLoc, Rotation);
 					BulletWall->bUsing = false;
 					Destroy();

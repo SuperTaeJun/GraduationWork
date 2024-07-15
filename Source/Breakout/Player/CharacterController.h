@@ -204,8 +204,7 @@ public:
 	UBOGameInstance* inst;
 	bool bSync = false;
 	class ABOGameMode* m_GameMode;
-
-
+	TArray<class ABulletHoleWall*> BulletWalls;
 	void SeverHpSync(bool bAlive, float hp, int myid);
 	void ServerSetDissolve(bool dissolve, class ACharacterBase* player);
 };

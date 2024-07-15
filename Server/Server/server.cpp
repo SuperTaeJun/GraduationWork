@@ -200,6 +200,28 @@ public:
 		//삭제되었을 때 배열을 밀지말고 돌려야함 삭제된 아이템 정보를 상대들에게 동기화
 	}
 };
+class BulletWall
+{
+public:
+	float x, y, z;
+	float pitch, yaw, roll;
+	int ob_id;
+	int currentGameRoom;
+public:
+	BulletWall() {}
+	~BulletWall() {}
+
+	void setPosition(float x_val, float y_val, float z_val) {
+		x = x_val;
+		y = y_val;
+		z = z_val;
+	}
+
+	void removeOBJ() {
+		//삭제되었을 때 배열을 밀지말고 돌려야함 삭제된 아이템 정보를 상대들에게 동기화
+	}
+};
+
 template<typename T>
 class LockQueue
 {
@@ -261,7 +283,8 @@ HANDLE g_timer;
 SOCKET sever_socket;
 LockQueue<timer_ev> timer_q;
 array <CLIENT, MAX_USER> clients;
-array<EscapeObject, 11> objects;
+array<EscapeObject, 8> objects;
+array<BulletWall, 9> walls;
 condition_variable cv;
 atomic<int> ready_count = 0;
 atomic<int> ingamecount = 0;
@@ -281,6 +304,7 @@ void send_endgame_packet(int _s_id);
 void send_myitem_count_packet(int _s_id);
 void send_item_packet(int _s_id, int item_index);
 void send_myitem_packet(int _s_id);
+void send_bullet_wall(int _s_id, int wall_index);
 void worker_thread();
 
 
@@ -1021,6 +1045,28 @@ void process_packet(int s_id, unsigned char* p)
 		send_item_packet(cl._s_id, packet->objid);
 		break;
 	}
+	case CS_BULLET_WALL: {
+		CS_WALL_PACKET* packet = reinterpret_cast<CS_WALL_PACKET*> (p);
+		CLIENT& cl = clients[s_id];
+		walls[packet->wall_id].ob_id = packet->wall_id;
+		walls[packet->wall_id].x = packet->lx;
+		walls[packet->wall_id].y = packet->ly;
+		walls[packet->wall_id].z = packet->lz;
+		walls[packet->wall_id].roll = packet->r_roll;
+		walls[packet->wall_id].pitch = packet->r_pitch;
+		walls[packet->wall_id].yaw = packet->r_yaw;
+		for (auto& other : clients) {
+			if (other._s_id == cl._s_id) continue;
+			other.state_lock.lock();
+			if (ST_INGAME != other._state) {
+				other.state_lock.unlock();
+				continue;
+			}
+			else other.state_lock.unlock();
+			send_bullet_wall(other._s_id, packet->wall_id);
+		}
+		break;
+	}
 	case CS_RELOAD: {
 		CS_RELOAD_PACKET* packet = reinterpret_cast<CS_RELOAD_PACKET*>(p);
 		CLIENT& cl = clients[packet->id];
@@ -1347,6 +1393,22 @@ void send_myitem_packet(int _s_id)
 	packet.type = SC_MYITEM_COUNT;
 	packet.id = _s_id;
 	packet.MyITEMCount = clients[_s_id].myItemCount;
+	clients[_s_id].do_send(sizeof(packet), &packet);
+}
+void send_bullet_wall(int _s_id, int wall_index)
+{
+	CS_WALL_PACKET packet;
+	packet.size = sizeof(packet);
+	packet.type = SC_WALL;
+
+	packet.lx = objects[wall_index].x;
+	packet.ly = objects[wall_index].y;
+	packet.lz = objects[wall_index].z;
+	packet.r_pitch = objects[wall_index].pitch;
+	packet.r_yaw = objects[wall_index].yaw;
+	packet.r_roll = objects[wall_index].roll;
+	packet.wall_id = objects[wall_index].ob_id; 
+
 	clients[_s_id].do_send(sizeof(packet), &packet);
 }
 void send_myitem_count_packet(int _s_id)

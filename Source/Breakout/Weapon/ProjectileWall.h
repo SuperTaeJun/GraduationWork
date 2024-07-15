@@ -27,4 +27,5 @@ protected:
 private:
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class ABulletHoleWall> WallClass;
+	class UBOGameInstance* inst;
 };

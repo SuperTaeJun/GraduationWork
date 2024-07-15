@@ -33,6 +33,7 @@
 #include "ClientSocket.h"
 #include"Animatiom/BOAnimInstance.h"
 #include "Game/BOGameMode.h"
+#include "GameProp/BulletHoleWall.h"
 
 ACharacterController::ACharacterController()
 {
@@ -82,7 +83,14 @@ void ACharacterController::BeginPlay()
 		}
 	}
 
-
+	TArray<AActor*> TempActors;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ABulletHoleWall::StaticClass(), TempActors);
+	for (int i = 0; i < TempActors.Num(); i++)
+	{
+		BulletWalls[i] = Cast<ABulletHoleWall>(TempActors[i]);
+		BulletWalls[i]->ID = i;
+	}
+	
 }
 
 void ACharacterController::SetChName()
@@ -493,6 +501,30 @@ bool ACharacterController::UpdateWorld()
 			EffectRot.Roll = info->FEffect.Roll;
 
 			float SyncHP = info->hp;
+			//------------------------
+			// 벽 수류탄 관련 
+			FVector bulletWallLoc;
+			bulletWallLoc.X = info->BulletLoc.X;
+			bulletWallLoc.Y = info->BulletLoc.Y;
+			bulletWallLoc.Z = info->BulletLoc.Z;
+
+			FRotator bulletWallRot;
+			bulletWallRot.Yaw = info->BulletRot.Yaw;
+			bulletWallRot.Pitch = info->BulletRot.Pitch;
+			bulletWallRot.Roll = info->BulletRot.Roll;
+			if (info->bBulletWall)
+			{
+				for (int i = 0; i < BulletWalls.Num(); i++)
+				{
+					if (BulletWalls[i]->bUsing == false)
+					{
+						BulletWalls[i]->bUsing = true;
+						BulletWalls[i]->SetActorLocationAndRotation(bulletWallLoc, bulletWallRot);
+						break;
+					}
+				}
+				info->bBulletWall = false;
+			}
 			//------------------------
 			if (!OtherPlayer->GetCurWeapon() && info->bselectweapon)
 			{

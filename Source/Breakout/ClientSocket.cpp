@@ -314,6 +314,18 @@ bool ClientSocket::PacketProcess(char* ptr)
 		bitemcount = true;
 		break;
 	}
+	case SC_WALL: {
+		CS_WALL_PACKET* packet = reinterpret_cast<CS_WALL_PACKET*>(ptr);
+		PlayerInfo.players[packet->id].bulletWallid = packet->wall_id;
+		PlayerInfo.players[packet->id].BulletLoc.X = packet->lx;
+		PlayerInfo.players[packet->id].BulletLoc.Y = packet->ly;
+		PlayerInfo.players[packet->id].BulletLoc.Z = packet->lz;
+		PlayerInfo.players[packet->id].BulletRot.Roll = packet->r_roll;
+		PlayerInfo.players[packet->id].BulletRot.Pitch = packet->r_pitch;
+		PlayerInfo.players[packet->id].BulletRot.Yaw = packet->r_yaw;
+		PlayerInfo.players[packet->id].bBulletWall = true;
+		break;
+	}
 	case SC_RELOAD: {
 		CS_RELOAD_PACKET* packet = reinterpret_cast<CS_RELOAD_PACKET*>(ptr);
 		PlayerInfo.players[packet->id].bServerReload = packet->bReload;
@@ -686,6 +698,22 @@ void ClientSocket::Send_Mopp_Sync_packet(int itemid, int mopptype, int id)
 	packet.itemid = itemid;
 	packet.id = id;
 	packet.mopptype = mopptype;
+	SendPacket(&packet);
+}
+
+void ClientSocket::Send_BulletWall_packet(int id, int Wallid, FVector WLoc, FRotator WRot)
+{
+	CS_WALL_PACKET packet;
+	packet.size = sizeof(packet);
+	packet.type = CS_BULLET_WALL;
+	packet.wall_id = Wallid;
+	packet.lx = WLoc.X;
+	packet.ly = WLoc.Y;
+	packet.lz = WLoc.Z;
+	packet.r_pitch = WRot.Pitch;
+	packet.r_yaw = WRot.Yaw;
+	packet.r_roll = WRot.Roll;
+	packet.id = id;
 	SendPacket(&packet);
 }
 

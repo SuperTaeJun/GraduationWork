@@ -201,7 +201,11 @@ public:
 	FRotator sEshot6;
 	FRotator sEshot7;
 	FRotator sEshot8;
-
+	// 부수는 벽 관련 
+	FVector BulletLoc;
+	FRotator BulletRot;
+	int		bulletWallid;
+	bool	bBulletWall = false;
 	/////////////////
 	FVector FMyLocation;
 	FVector FMyDirection;
@@ -395,6 +399,7 @@ public:
 	void Send_Dissolve_packet(int id, int dissolve);
 	void Send_BojoAnim_packet(int id, int bojo);
 	void Send_Mopp_Sync_packet(int itemid, int mopptype, int id);
+	void Send_BulletWall_packet(int id, int Wallid, FVector WLoc, FRotator WRot);
 	virtual bool Init() override;
 	virtual uint32 Run() override;
 	virtual void Stop() override;
