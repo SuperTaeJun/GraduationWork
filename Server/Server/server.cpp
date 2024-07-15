@@ -1,27 +1,5 @@
-#include "protocol.h"
-#include <vector>
-#include <list>
-#include <queue>
-#include <stack>
-#include <map>
-#include <set>
-#include <thread>
-#include <string>
-#include <atomic>
-#include <unordered_map>
-#include <unordered_set>
-#include <thread>
-#include <array>
-#include <chrono>
-#include <mutex>
-#include <WS2tcpip.h>
-#include <MSWSock.h>
-#include <concurrent_priority_queue.h>
-#include <iostream>
-using namespace std;
-#pragma comment (lib, "WS2_32.LIB")
-#pragma comment (lib, "MSWSock.LIB")
-
+#include "pch.h"
+#include "DB.h"
 enum EVENT_TYPE { ET_RELOAD, ET_HEAL };
 enum IO_type
 {
@@ -80,6 +58,8 @@ public:
 	int _s_id; //플레이어 배열 넘버
 	char name[MAX_NAME_SIZE]; //플레이어 nick
 	char _pw[MAX_NAME_SIZE];  // pw
+	//로그인 상태
+	bool bLogin = false;
 	// 위치
 	float	x;
 	float	y;
@@ -291,9 +271,9 @@ void ev_timer();
 int get_id();
 void send_select_character_type_packet(int _s_id);
 void send_login_ok_packet(int _s_id);
+void send_login_fail_packet(int _s_id);
 void send_move_packet(int _id, int target);
 void send_change_hp(int _s_id);
-void send_put_object(int _s_id, int target);
 void Disconnect(int _s_id);
 void send_ready_packet(int _s_id);
 void send_travel_ready_packet(int _s_id);
@@ -418,8 +398,19 @@ void send_login_ok_packet(int _s_id)
 	packet.size = sizeof(packet);
 	packet.type = SC_LOGIN_OK;
 	packet.id = _s_id;
+	packet.bLogin = clients[_s_id].bLogin;
 	strcpy_s(packet.cid, clients[_s_id].name);
 	cout << "_s_id" << _s_id << endl;
+
+	clients[_s_id].do_send(sizeof(packet), &packet);
+}
+void send_login_fail_packet(int _s_id)
+{
+	SC_LOGIN_FAIL_PACKET packet;
+	packet.size = sizeof(packet);
+	packet.type = SC_LOGIN_FAIL;
+	packet.id = _s_id;
+	strcpy_s(packet.failreason, "fail");
 
 	clients[_s_id].do_send(sizeof(packet), &packet);
 }
@@ -467,14 +458,31 @@ void process_packet(int s_id, unsigned char* p)
 		cl.state_lock.lock();
 		cl._state = ST_INGAME;
 		cl.state_lock.unlock();
-		cout << "cl.sid : " << cl._s_id << endl;
 		strcpy_s(cl.name, packet->id);
-		cout << "czc : " << cl.name << endl;
-		send_login_ok_packet(cl._s_id);
+		strcpy_s(cl._pw, packet->pw);
+		cl.bLogin = true;
 		cout << "플레이어[" << s_id << "]" << " 로그인 성공" << endl;
+		//if (DB_odbc(packet->id, packet->pw))
+		//{
+		//strcpy_s(cl.name, packet->id);
+		//strcpy_s(cl._pw, packet->pw);
+		//cl.bLogin = true;
+		//send_login_ok_packet(cl._s_id);
+		//cout << "플레이어[" << s_id << "]" << " 로그인 성공" << endl;
+		////matchClientToGameRoom(cl._s_id);
+		//}
+		//else send_login_fail_packet(s_id);
+		send_login_ok_packet(cl._s_id);
 
 		break;
 
+	}
+	case CS_ACCOUNT: {
+		CS_ACCOUNT_PACKET* packet = reinterpret_cast<CS_ACCOUNT_PACKET*>(p);
+		CLIENT& cl = clients[s_id];
+		save_data(packet->id, packet->pw);
+		cout << "계정 생성 완료" << endl;
+		break;
 	}
 	case CS_SELECT_CHAR: {
 
@@ -567,6 +575,7 @@ void process_packet(int s_id, unsigned char* p)
 				send_travel_ready_packet(player._s_id);
 			//	cout << "보낼 플레이어" << player._s_id << endl;
 			}
+			ready_count = 0;
 		}
 		break;
 	}

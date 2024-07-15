@@ -54,6 +54,7 @@ const char CS_DAMAGE = 27;
 const char CS_DISSOLVE = 28;
 const char CS_BOJO_ANIM = 29;
 const char CS_MOPP = 30;
+const char CS_ACCOUNT = 31;
 
 const char SC_LOGIN_OK = 1;
 const char SC_OTHER_PLAYER = 2;
@@ -89,7 +90,7 @@ const char SC_BOJOWEAPON = 31;
 const char SC_BOJO_ANIM = 32;
 const char SC_MOPP = 33;
 const char SC_DECREASE = 34;
-
+const char SC_LOGIN_FAIL = 35;
 
 
 #pragma pack (push, 1)
@@ -105,7 +106,19 @@ struct SC_LOGIN_BACK {
 	unsigned char type;
 	int id;
 	char cid[MAX_INFO_SIZE];
-
+	bool bLogin;
+};
+struct SC_LOGIN_FAIL_PACKET {
+	unsigned char size;
+	unsigned char type;
+	int id;
+	char failreason[MAX_INFO_SIZE];
+};
+struct CS_ACCOUNT_PACKET {
+	unsigned char size;
+	unsigned char type;
+	char id[MAX_INFO_SIZE];
+	char pw[MAX_INFO_SIZE];
 };
 #pragma pack(pop)
 
