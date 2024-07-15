@@ -40,6 +40,7 @@ void AProjectileWall::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActo
 				ABulletHoleWall* BulletWall = Cast<ABulletHoleWall>(wall);
 				if (BulletWall && BulletWall->bUsing)
 				{
+					//벽 생성 패킷 BulletWall->ID랑 ConvertLoc, Rotation 이거 3개 패킷으로 보내기 그후에 밑에 2줄 컨트롤러에서 실행
 					BulletWall->SetActorLocationAndRotation(ConvertLoc, Rotation);
 					BulletWall->bUsing = false;
 					Destroy();

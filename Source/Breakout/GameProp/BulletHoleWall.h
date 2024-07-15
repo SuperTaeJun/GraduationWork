@@ -29,6 +29,8 @@ public:
 	FTransform3d ConvertToFTransform3d(FTransform Input);
 
 	bool bUsing = true;
+
+	int32 ID = -1;
 protected:
 	virtual void BeginPlay() override;
 	UFUNCTION()
