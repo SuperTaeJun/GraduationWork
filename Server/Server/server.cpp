@@ -504,7 +504,7 @@ void process_packet(int s_id, unsigned char* p)
 
 		//cout << "¸î¸í µé¾î¿È : " << ingamecount << endl;
 
-		if (ingamecount >= 3)
+		if (ingamecount >= 2)
 		{
 			for (auto& player : clients) {
 				if (ST_INGAME != player._state)
@@ -572,7 +572,7 @@ void process_packet(int s_id, unsigned char* p)
 		//cout << "Ready id" << packet->id;
 		ready_count++;
 		//cout << "ready_count" << ready_count << endl;
-		if (ready_count >=3)
+		if (ready_count >=2)
 		{
 			for (auto& player : clients) {
 				if (ST_INGAME != player._state)
@@ -658,7 +658,7 @@ void process_packet(int s_id, unsigned char* p)
 
 			SC_PLAYER_SYNC packet;
 			packet.id = cl._s_id;
-			//strcpy_s(packet.name, cl.name);
+			strcpy_s(packet.name, cl.name);
 			packet.size = sizeof(packet);
 			packet.type = SC_OTHER_PLAYER;
 			packet.x = cl.x;
@@ -973,7 +973,7 @@ void process_packet(int s_id, unsigned char* p)
 		break;
 	}
 	case CS_INCREASE_COUNT: {
-		/*CS_INCREASE_ITEM_PACKET* packet = reinterpret_cast<CS_INCREASE_ITEM_PACKET*>(p);
+		CS_INCREASE_ITEM_PACKET* packet = reinterpret_cast<CS_INCREASE_ITEM_PACKET*>(p);
 		CLIENT& cl = clients[packet->Increaseid];
 		cl.myItemCount += packet->itemCount;
 		cout << "packet->id : " << packet->Increaseid << "packet->itemcount" << cl.myItemCount << endl;
@@ -994,11 +994,11 @@ void process_packet(int s_id, unsigned char* p)
 			packet.size = sizeof(packet);
 			packet.type = SC_INCREASE_COUNT;
 			other.do_send(sizeof(packet), &packet);
-		}*/
+		}
 		break;
 	}
 	case CS_DECREASE_COUNT: {
-		/*CS_DECREASE_ITEM_PACKET* packet = reinterpret_cast<CS_DECREASE_ITEM_PACKET*>(p);
+		CS_DECREASE_ITEM_PACKET* packet = reinterpret_cast<CS_DECREASE_ITEM_PACKET*>(p);
 		CLIENT& cl = clients[packet->Increaseid];
 		cl.myItemCount = packet->itemCount;
 		for (auto& other : clients) {
@@ -1016,7 +1016,7 @@ void process_packet(int s_id, unsigned char* p)
 			packet.size = sizeof(packet);
 			packet.type = SC_DECREASE;
 			other.do_send(sizeof(packet), &packet);
-		}*/
+		}
 		break;
 	}
 	case CS_ITEM_INFO: {

@@ -824,15 +824,15 @@ bool ACharacterController::UpdateWorld()
 			// 모프 동기화
 			if (inst->m_Socket->MoppType == 0) {
 				//Cast<AEscapeTool>(m_GameMode->EscapeTools[MoppID])->TransformMesh(inst->m_Socket->TempMoppTime, false, false);
-				Cast<AEscapeTool>(m_GameMode->EscapeTools[MoppID])->bOverlap = 0;
+				EscapeTools[MoppID]->bOverlap = 0;
 				inst->m_Socket->MoppType = -1;
 			}
 			else if (inst->m_Socket->MoppType == 1) {
-				Cast<AEscapeTool>(m_GameMode->EscapeTools[MoppID])->bOverlap = 1;
+				EscapeTools[MoppID]->bOverlap = 1;
 				inst->m_Socket->MoppType = -1;
 			}
 			else if (inst->m_Socket->MoppType == 2) {
-				Cast<AEscapeTool>(m_GameMode->EscapeTools[MoppID])->bOverlap = 2;
+				EscapeTools[MoppID]->bOverlap = 2;
 				inst->m_Socket->MoppType = -1;
 			}
 
