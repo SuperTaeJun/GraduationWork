@@ -54,7 +54,7 @@ bool ClientSocket::Connect()
 	::memset(&stServerAddr, 0, sizeof(stServerAddr));
 	// 접속할 서버 포트 및 IP
 	stServerAddr.sin_family = AF_INET;
-	::inet_pton(AF_INET, SERVER_IP, &stServerAddr.sin_addr);
+	::inet_pton(AF_INET, IP_addr, &stServerAddr.sin_addr);
 	stServerAddr.sin_port = htons(SERVER_PORT);
 	//stServerAddr.sin_addr.s_addr = inet_addr(SERVER_IP);
 

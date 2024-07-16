@@ -445,6 +445,9 @@ public:
 	{
 		return hp;
 	}
+
+	char* IP_addr = nullptr;
+
 private:
 	ACharacterController* MyCharacterController;
 	CPlayerInfo PlayerInfo;
