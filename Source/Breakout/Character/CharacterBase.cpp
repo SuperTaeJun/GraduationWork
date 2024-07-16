@@ -781,8 +781,12 @@ void ACharacterBase::Inter(const FInputActionValue& Value)
 	{
 		ObtainedEscapeToolNum += 1;
 		//패킷(id, num)
-		if (inst)
+		if (inst && MainController)
+		{
 			Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Item_packet(inst->GetPlayerID(), ObtainedEscapeToolNum);
+			inst->m_Socket->Send_Destroyed_item_packet(OverlappingEscapeTool->ItemID, inst->GetPlayerID());
+			inst->m_Socket->Send_item_Anim_packet(inst->GetPlayerID(), 1);
+		}
 		UpdateObtainedEscapeTool();
 		OverlappingEscapeTool->SetHideMesh();
 		OverlappingEscapeTool = nullptr;
@@ -809,7 +813,7 @@ void ACharacterBase::Inter_Start(const FInputActionValue& Value)
 			Cast<UBOAnimInstance>(AnimInstance)->bUseLeftHand = false;
 			if (InterMontage) {
 				PlayAnimMontage(InterMontage);
-				if (inst) {
+				if (inst && MainController) {
 					inst->m_Socket->Send_item_Anim_packet(inst->GetPlayerID(), 0);
 					inst->m_Socket->Send_Mopp_Sync_packet(OverlappingEscapeTool->ItemID, 1, inst->GetPlayerID());
 				}
@@ -825,7 +829,7 @@ void ACharacterBase::Inter_End(const FInputActionValue& Value)
 	if (OverlappingEscapeTool)
 	{
 		OverlappingEscapeTool->bOverlap = 0;
-		if (inst) {
+		if (inst && MainController) {
 			inst->m_Socket->Send_Mopp_Sync_packet(OverlappingEscapeTool->ItemID, 0, inst->GetPlayerID());
 			inst->m_Socket->Send_item_Anim_packet(inst->GetPlayerID(), 1);
 		}
@@ -966,6 +970,7 @@ void ACharacterBase::LightOnOff(const FInputActionValue& Value)
 
 		if (CurWeapon->GetSpotLight()->IsVisible())
 		{	//라이트 패킷 ID랑,false보내기 그 후 컨트롤러에서 밑에줄 실행
+
 			CurWeapon->GetSpotLight()->SetVisibility(false);
 
 		}

@@ -37,8 +37,6 @@ public:
 	TSubclassOf<class ACharacterBase>Character4;
 
 	FTimerHandle StartTimeHandle;
-
-	TArray<class AEscapeTool*> EscapeTools;
 	void StartGame();
 	bool bStarted;
 	class UBOGameInstance* inst;

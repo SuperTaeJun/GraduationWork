@@ -1,6 +1,6 @@
 #pragma once
 #define SERVER_PORT		8001
-#define SERVER_IP		"192.168.219.100"
+#define SERVER_IP		"192.168.54.28"
 #define MAX_INFO_SIZE   20
 #include <vector>
 #include <array>
@@ -56,6 +56,7 @@ const char CS_BOJO_ANIM = 29;
 const char CS_MOPP = 30;
 const char CS_ACCOUNT = 31;
 const char CS_BULLET_WALL = 32;
+const char CS_ = 32;
 
 const char SC_LOGIN_OK = 1;
 const char SC_OTHER_PLAYER = 2;

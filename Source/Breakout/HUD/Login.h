@@ -25,10 +25,14 @@ public:
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<class UEditableText>Password;
 
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<class UEditableText>IP;
+
 	UFUNCTION()
 	void PressLogin();
 private:
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<class USoundCue> ClickSound;
-
+	bool connect = false;
+	bool bConnect = false;
 };

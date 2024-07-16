@@ -23,8 +23,10 @@ void ULogin::PressLogin()
 
 	FString IDToString = ID->GetText().ToString();
 	FString PasswordToString = Password->GetText().ToString();
+	FString IDToIP = IP->GetText().ToString();
 
-	if(Cast<UBOGameInstance>(GetGameInstance())->m_Socket)
+
+	if (Cast<UBOGameInstance>(GetGameInstance())->m_Socket)
 		Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Login_Info(TCHAR_TO_UTF8(*IDToString), TCHAR_TO_UTF8(*PasswordToString));
 
 	if (ClickSound)

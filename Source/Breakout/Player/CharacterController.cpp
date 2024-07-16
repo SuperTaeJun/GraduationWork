@@ -95,8 +95,17 @@ void ACharacterController::BeginPlay()
 			BulletWalls[i]->ID = i;
 		}
 	}
-	bSetBulletHole = true;
-
+	TempActors.Empty();
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AEscapeTool::StaticClass(), TempActors);
+	for (int i = 0; i < TempActors.Num(); i++)
+	{
+		AEscapeTool* EscapeWall = Cast<AEscapeTool>(TempActors[i]);
+		if (EscapeWall)
+		{
+			EscapeTools.Add(EscapeWall);
+			EscapeTools[i]->ItemID = i;
+		}
+	}
 
 	
 }
@@ -798,13 +807,17 @@ bool ACharacterController::UpdateWorld()
 				info->itemAnimtype = -1;
 			}
 
-			if (m_GameMode) {
-				for (int i = 0; i < m_GameMode->EscapeTools.Num(); i++)
+			if (info->bDestroyItem) {
+				for (int i = 0; i < EscapeTools.Num(); i++)
 				{
-					if (Cast<AEscapeTool>(m_GameMode->EscapeTools[i]))
-						if (Escapeid == Cast<AEscapeTool>(m_GameMode->EscapeTools[i])->ItemID)
-							Cast<AEscapeTool>(m_GameMode->EscapeTools[i])->Destroy();
+					if (EscapeTools[i])
+						if (Escapeid == EscapeTools[i]->ItemID)
+						{
+							Cast<AEscapeTool>(EscapeTools[i])->Destroy();
+							EscapeTools[i] = nullptr;
+						}
 				}
+				info->bDestroyItem = false;
 			}
 			if (inst->m_Socket->bitemcount == true) {
 				OtherPlayer->SetEscapeToolNum(info->itemCount);
@@ -814,16 +827,18 @@ bool ACharacterController::UpdateWorld()
 			// 모프 동기화
 			if (inst->m_Socket->MoppType == 0) {
 				//Cast<AEscapeTool>(m_GameMode->EscapeTools[MoppID])->TransformMesh(inst->m_Socket->TempMoppTime, false, false);
-				Cast<AEscapeTool>(m_GameMode->EscapeTools[MoppID])->bOverlap = 0;
+				EscapeTools[MoppID]->bOverlap = 0;
 				inst->m_Socket->MoppType = -1;
 			}
 			else if (inst->m_Socket->MoppType == 1) {
-				Cast<AEscapeTool>(m_GameMode->EscapeTools[MoppID])->bOverlap = 1;
+				EscapeTools[MoppID]->bOverlap = 1;
 				inst->m_Socket->MoppType = -1;
 			}
 			else if (inst->m_Socket->MoppType == 2) {
-				Cast<AEscapeTool>(m_GameMode->EscapeTools[MoppID])->bOverlap = 2;
-				inst->m_Socket->MoppType = -1;
+				if (EscapeTools[MoppID]) {
+					EscapeTools[MoppID]->bOverlap = 2;
+					inst->m_Socket->MoppType = -1;
+				}
 			}
 
 		}
