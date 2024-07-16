@@ -835,8 +835,10 @@ bool ACharacterController::UpdateWorld()
 				inst->m_Socket->MoppType = -1;
 			}
 			else if (inst->m_Socket->MoppType == 2) {
-				EscapeTools[MoppID]->bOverlap = 2;
-				inst->m_Socket->MoppType = -1;
+				if (EscapeTools[MoppID]) {
+					EscapeTools[MoppID]->bOverlap = 2;
+					inst->m_Socket->MoppType = -1;
+				}
 			}
 
 		}

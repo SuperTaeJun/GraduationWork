@@ -504,7 +504,7 @@ void process_packet(int s_id, unsigned char* p)
 
 		//cout << "¸î¸í µé¾î¿È : " << ingamecount << endl;
 
-		if (ingamecount >= 2)
+		if (ingamecount >=2)
 		{
 			for (auto& player : clients) {
 				if (ST_INGAME != player._state)
