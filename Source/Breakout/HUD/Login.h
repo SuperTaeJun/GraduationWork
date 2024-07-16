@@ -34,4 +34,5 @@ private:
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<class USoundCue> ClickSound;
 	bool connect = false;
+	bool bConnect = false;
 };

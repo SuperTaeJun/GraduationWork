@@ -23,23 +23,11 @@ void ULogin::PressLogin()
 
 	FString IDToString = ID->GetText().ToString();
 	FString PasswordToString = Password->GetText().ToString();
-	if (Cast<UBOGameInstance>(GetGameInstance())) {
-
-		FString IDToIP = IP->GetText().ToString();
-		Cast<UBOGameInstance>(GetGameInstance())->m_Socket->IP_addr = TCHAR_TO_UTF8(*IDToIP);
+	FString IDToIP = IP->GetText().ToString();
 
 
-		connect = Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Connect();
-		if (connect)
-		{
-			Cast<UBOGameInstance>(GetGameInstance())->m_Socket->StartListen();
-
-			UE_LOG(LogClass, Warning, TEXT("IOCP Server connect success!"));
-			if (Cast<UBOGameInstance>(GetGameInstance())->m_Socket)
-				Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Login_Info(TCHAR_TO_UTF8(*IDToString), TCHAR_TO_UTF8(*PasswordToString));
-		}
-		else { UE_LOG(LogClass, Warning, TEXT("IOCP Server connect fail!")) };
-	}
+	if (Cast<UBOGameInstance>(GetGameInstance())->m_Socket)
+		Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Login_Info(TCHAR_TO_UTF8(*IDToString), TCHAR_TO_UTF8(*PasswordToString));
 
 	if (ClickSound)
 	{
