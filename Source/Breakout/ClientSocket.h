@@ -206,6 +206,8 @@ public:
 	FRotator BulletRot;
 	int		bulletWallid;
 	bool	bBulletWall = false;
+	// 아이템 삭제 여부
+	bool	bDestroyItem = false;
 	/////////////////
 	FVector FMyLocation;
 	FVector FMyDirection;

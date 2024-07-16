@@ -293,6 +293,7 @@ bool ClientSocket::PacketProcess(char* ptr)
 	case SC_REMOVE_ITEM: {
 		CS_REMOVE_ITEM_PACKET* packet = reinterpret_cast<CS_REMOVE_ITEM_PACKET*>(ptr);
 		MyCharacterController->SetDestroyItemid(packet->itemid);
+		PlayerInfo.players[packet->id].bDestroyItem = true;
 		break;
 	}
 	case SC_INCREASE_COUNT: {
