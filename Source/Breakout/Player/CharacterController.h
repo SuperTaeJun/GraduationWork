@@ -205,13 +205,12 @@ public:
 	bool bSync = false;
 	class ABOGameMode* m_GameMode;
 	TArray<class ABulletHoleWall*> BulletWalls;
+	TArray<class AEscapeTool*> EscapeTools;
 	void SeverHpSync(bool bAlive, float hp, int myid);
 	void ServerSetDissolve(bool dissolve, class ACharacterBase* player);
 
 	private:
 		UPROPERTY(EditAnywhere)
 		TSubclassOf<class ABulletHoleWall> WallClass;
-private:
-	bool bSetBulletHole = false;
 
 };

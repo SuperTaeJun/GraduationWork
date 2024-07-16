@@ -95,8 +95,17 @@ void ACharacterController::BeginPlay()
 			BulletWalls[i]->ID = i;
 		}
 	}
-	bSetBulletHole = true;
-
+	TempActors.Empty();
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AEscapeTool::StaticClass(), TempActors);
+	for (int i = 0; i < TempActors.Num(); i++)
+	{
+		AEscapeTool* EscapeWall = Cast<AEscapeTool>(TempActors[i]);
+		if (EscapeWall)
+		{
+			EscapeTools.Add(EscapeWall);
+			EscapeTools[i]->ItemID = i;
+		}
+	}
 
 	
 }
