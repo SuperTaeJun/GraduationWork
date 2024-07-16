@@ -784,7 +784,7 @@ void ACharacterBase::Inter(const FInputActionValue& Value)
 		if (inst && MainController)
 		{
 			Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Item_packet(inst->GetPlayerID(), ObtainedEscapeToolNum);
-			inst->m_Socket->Send_Destroyed_item_packet(OverlappingEscapeTool->ItemID, inst->GetPlayerID());
+			//inst->m_Socket->Send_Destroyed_item_packet(OverlappingEscapeTool->ItemID, inst->GetPlayerID());
 			inst->m_Socket->Send_item_Anim_packet(inst->GetPlayerID(), 1);
 		}
 		UpdateObtainedEscapeTool();
