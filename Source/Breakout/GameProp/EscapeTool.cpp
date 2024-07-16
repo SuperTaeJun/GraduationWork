@@ -156,7 +156,7 @@ void AEscapeTool::OnSphereEndOverlap(UPrimitiveComponent* OverlappedComponent, A
 		characterbase->SetbCanObtainEscapeTool(false);
 		characterbase->OverlappingEscapeTool = nullptr;
 		bOverlap = 2;
-		if (inst)
+		if (inst && characterbase->GetMainController())
 			inst->m_Socket->Send_Mopp_Sync_packet(ItemID, 2, inst->GetPlayerID());
 	}
 }
