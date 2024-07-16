@@ -810,9 +810,12 @@ bool ACharacterController::UpdateWorld()
 			if (info->bDestroyItem) {
 				for (int i = 0; i < EscapeTools.Num(); i++)
 				{
-					if (Cast<AEscapeTool>(EscapeTools[i]))
+					if (EscapeTools[i])
 						if (Escapeid == EscapeTools[i]->ItemID)
+						{
 							Cast<AEscapeTool>(EscapeTools[i])->Destroy();
+							EscapeTools[i] = nullptr;
+						}
 				}
 				info->bDestroyItem = false;
 			}
