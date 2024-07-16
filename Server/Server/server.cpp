@@ -337,40 +337,7 @@ int main()
 
 	for (int i = 0; i < MAX_USER; ++i)
 		clients[i]._s_id = i;
-	for (int i = 0; i < MAX_OBJ; ++i)
-		objects[i].ob_id = i;
-	//objects[0].x = 1785.f;
-	//objects[0].y = -5210.f;
-	//objects[0].z = 65.f;
 
-	//objects[1].x = 4800.f;
-	//objects[1].y = -6120.f;
-	//objects[1].z = -20.f;
-
-
-	//objects[2].x = -240.f;
-	//objects[2].y = -5555.f;
-	//objects[2].z = 1210.f;
-
-	//objects[3].x = 4935.f;
-	//objects[3].y = -390.f;
-	//objects[3].z = 15.f;
-
-	//objects[4].x = 80.f;
-	//objects[4].y = 3830.f;
-	//objects[4].z = 100.f;
-
-	//objects[5].x = 4765.f;
-	//objects[5].y = -1645.f;
-	//objects[5].z = 60.f;
-
-	//objects[6].x = -1105.f;
-	//objects[6].y = -4700.f;
-	//objects[6].z = 1255.f;
-
-	//objects[7].x = 5640.f;
-	//objects[7].y = -6360.f;
-	//objects[7].z = 25.f;
 	g_timer = CreateEvent(NULL, FALSE, FALSE, NULL);
 	vector <thread> worker_threads;
 	thread servertherad{ ev_timer };
@@ -605,7 +572,7 @@ void process_packet(int s_id, unsigned char* p)
 		//cout << "Ready id" << packet->id;
 		ready_count++;
 		//cout << "ready_count" << ready_count << endl;
-		if (ready_count >= 3)
+		if (ready_count >=3)
 		{
 			for (auto& player : clients) {
 				if (ST_INGAME != player._state)
@@ -691,7 +658,7 @@ void process_packet(int s_id, unsigned char* p)
 
 			SC_PLAYER_SYNC packet;
 			packet.id = cl._s_id;
-			strcpy_s(packet.name, cl.name);
+			//strcpy_s(packet.name, cl.name);
 			packet.size = sizeof(packet);
 			packet.type = SC_OTHER_PLAYER;
 			packet.x = cl.x;
@@ -906,7 +873,7 @@ void process_packet(int s_id, unsigned char* p)
 	}
 	case CS_GETITEM: {
 		CS_ITEM_PACKET* packet = reinterpret_cast<CS_ITEM_PACKET*>(p);
-		cout << "이거 언제 들어옴?" << endl;
+		cout << "getitempacket->id" << packet->id << endl;
 		CLIENT& cl = clients[packet->id];
 		cl.myItemCount = packet->itemCount;
 		//send_myitem_packet(cl._s_id);
@@ -983,9 +950,9 @@ void process_packet(int s_id, unsigned char* p)
 	}
 	case CS_REMOVE_ITEM: {
 		CS_REMOVE_ITEM_PACKET* packet = reinterpret_cast<CS_REMOVE_ITEM_PACKET*>(p);
-		CLIENT& cl = clients[s_id];
-		//cl.myItemCount += 1;
-		//cout << "itemid : " << packet->itemid << endl;
+		CLIENT& cl = clients[packet->id];
+		cl.myItemCount += 1;
+		cout << "리무브packet->id" << packet->id << endl;
 		int itemid = packet->itemid;
 		for (auto& other : clients) {
 			if (other._s_id == cl._s_id) continue;
@@ -1006,7 +973,7 @@ void process_packet(int s_id, unsigned char* p)
 		break;
 	}
 	case CS_INCREASE_COUNT: {
-		CS_INCREASE_ITEM_PACKET* packet = reinterpret_cast<CS_INCREASE_ITEM_PACKET*>(p);
+		/*CS_INCREASE_ITEM_PACKET* packet = reinterpret_cast<CS_INCREASE_ITEM_PACKET*>(p);
 		CLIENT& cl = clients[packet->Increaseid];
 		cl.myItemCount += packet->itemCount;
 		cout << "packet->id : " << packet->Increaseid << "packet->itemcount" << cl.myItemCount << endl;
@@ -1027,11 +994,11 @@ void process_packet(int s_id, unsigned char* p)
 			packet.size = sizeof(packet);
 			packet.type = SC_INCREASE_COUNT;
 			other.do_send(sizeof(packet), &packet);
-		}
+		}*/
 		break;
 	}
 	case CS_DECREASE_COUNT: {
-		CS_DECREASE_ITEM_PACKET* packet = reinterpret_cast<CS_DECREASE_ITEM_PACKET*>(p);
+		/*CS_DECREASE_ITEM_PACKET* packet = reinterpret_cast<CS_DECREASE_ITEM_PACKET*>(p);
 		CLIENT& cl = clients[packet->Increaseid];
 		cl.myItemCount = packet->itemCount;
 		for (auto& other : clients) {
@@ -1049,7 +1016,7 @@ void process_packet(int s_id, unsigned char* p)
 			packet.size = sizeof(packet);
 			packet.type = SC_DECREASE;
 			other.do_send(sizeof(packet), &packet);
-		}
+		}*/
 		break;
 	}
 	case CS_ITEM_INFO: {
@@ -1108,6 +1075,7 @@ void process_packet(int s_id, unsigned char* p)
 		CS_ITEM_ANIM_PACKET* packet = reinterpret_cast<CS_ITEM_ANIM_PACKET*>(p);
 		CLIENT& cl = clients[packet->id];
 		cl.itemAnimNum = packet->num;
+		cout << "애님packet->id" << packet->id << endl;
 		for (auto& other : clients) {
 			if (other._s_id == cl._s_id) continue;
 			other.state_lock.lock();
@@ -1217,7 +1185,6 @@ void process_packet(int s_id, unsigned char* p)
 	case CS_MOPP: {
 		CS_MOPP_PACKET* packet = reinterpret_cast<CS_MOPP_PACKET*>(p);
 		CLIENT& cl = clients[packet->id];
-		cout << "itemid : " << packet->itemid << endl;
 		int itemid = packet->itemid;
 		int mopptype = packet->mopptype;
 		cout << "mopptype : " << mopptype << endl;

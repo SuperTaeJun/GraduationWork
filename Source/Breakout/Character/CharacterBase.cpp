@@ -784,7 +784,7 @@ void ACharacterBase::Inter(const FInputActionValue& Value)
 		if (inst && MainController)
 		{
 			Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Item_packet(inst->GetPlayerID(), ObtainedEscapeToolNum);
-			//inst->m_Socket->Send_Destroyed_item_packet(OverlappingEscapeTool->ItemID, inst->GetPlayerID());
+			inst->m_Socket->Send_Destroyed_item_packet(OverlappingEscapeTool->ItemID, inst->GetPlayerID());
 			inst->m_Socket->Send_item_Anim_packet(inst->GetPlayerID(), 1);
 		}
 		UpdateObtainedEscapeTool();
@@ -970,6 +970,7 @@ void ACharacterBase::LightOnOff(const FInputActionValue& Value)
 
 		if (CurWeapon->GetSpotLight()->IsVisible())
 		{	//라이트 패킷 ID랑,false보내기 그 후 컨트롤러에서 밑에줄 실행
+
 			CurWeapon->GetSpotLight()->SetVisibility(false);
 
 		}

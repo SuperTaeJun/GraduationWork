@@ -56,6 +56,7 @@ const char CS_BOJO_ANIM = 29;
 const char CS_MOPP = 30;
 const char CS_ACCOUNT = 31;
 const char CS_BULLET_WALL = 32;
+const char CS_ = 32;
 
 const char SC_LOGIN_OK = 1;
 const char SC_OTHER_PLAYER = 2;
