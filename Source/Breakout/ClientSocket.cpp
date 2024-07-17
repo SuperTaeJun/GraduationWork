@@ -364,6 +364,11 @@ bool ClientSocket::PacketProcess(char* ptr)
 		MoppType = packet->mopptype;
 		break;
 	}
+	case SC_LIGHT: {
+		CS_LIGHT_ON_PACKET* packet = reinterpret_cast<CS_LIGHT_ON_PACKET*>(ptr);
+		PlayerInfo.players[packet->id].bLightOn = packet->bLight;
+		break;
+	}
 	default:
 		break;
 	}
@@ -715,6 +720,16 @@ void ClientSocket::Send_BulletWall_packet(int id, int Wallid, FVector WLoc, FRot
 	packet.r_yaw = WRot.Yaw;
 	packet.r_roll = WRot.Roll;
 	packet.id = id;
+	SendPacket(&packet);
+}
+
+void ClientSocket::Send_Light_On_packet(int id, bool bLight)
+{
+	CS_LIGHT_ON_PACKET packet;
+	packet.size = sizeof(packet);
+	packet.type = CS_LIGHT;
+	packet.id = id;
+	packet.bLight = bLight;
 	SendPacket(&packet);
 }
 

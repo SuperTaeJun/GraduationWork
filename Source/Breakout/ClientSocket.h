@@ -208,6 +208,8 @@ public:
 	bool	bBulletWall = false;
 	// 아이템 삭제 여부
 	bool	bDestroyItem = false;
+	// 라이트 on/off
+	bool	bLightOn = false;
 	/////////////////
 	FVector FMyLocation;
 	FVector FMyDirection;
@@ -402,6 +404,7 @@ public:
 	void Send_BojoAnim_packet(int id, int bojo);
 	void Send_Mopp_Sync_packet(int itemid, int mopptype, int id);
 	void Send_BulletWall_packet(int id, int Wallid, FVector WLoc, FRotator WRot);
+	void Send_Light_On_packet(int id, bool bLight);
 	virtual bool Init() override;
 	virtual uint32 Run() override;
 	virtual void Stop() override;

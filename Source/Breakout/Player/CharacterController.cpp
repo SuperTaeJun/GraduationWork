@@ -806,6 +806,15 @@ bool ACharacterController::UpdateWorld()
 				OtherPlayer->StopAnimMontage(SyncInterMontage);
 				info->itemAnimtype = -1;
 			}
+			if (info->bLightOn == true)
+			{
+
+			}
+			else if (info->bLightOn == false)
+			{
+
+			}
+
 
 			if (info->bDestroyItem) {
 				for (int i = 0; i < EscapeTools.Num(); i++)
