@@ -34,6 +34,7 @@
 #include"Animatiom/BOAnimInstance.h"
 #include "Game/BOGameMode.h"
 #include "GameProp/BulletHoleWall.h"
+#include "Components/SpotLightComponent.h"
 
 ACharacterController::ACharacterController()
 {
@@ -806,15 +807,16 @@ bool ACharacterController::UpdateWorld()
 				OtherPlayer->StopAnimMontage(SyncInterMontage);
 				info->itemAnimtype = -1;
 			}
-			if (info->bLightOn == true)
-			{
-
+			if (OtherPlayer->GetCurWeapon()) {
+				if (info->bLightOn == true)
+				{
+					OtherPlayer->CurWeapon->GetSpotLight()->SetVisibility(true);
+				}
+				else if (info->bLightOn == false)
+				{
+					OtherPlayer->CurWeapon->GetSpotLight()->SetVisibility(false);
+				}
 			}
-			else if (info->bLightOn == false)
-			{
-
-			}
-
 
 			if (info->bDestroyItem) {
 				for (int i = 0; i < EscapeTools.Num(); i++)
