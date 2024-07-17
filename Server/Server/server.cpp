@@ -89,6 +89,8 @@ public:
 	bool bEndGame = false;
 	// bAlive
 	bool bAlive = true;
+	// 라이트 온/오프
+	bool bLightOn = false;
 	WeaponType w_type;
 	PlayerType p_type;
 	float s_x, s_y, s_z;
@@ -1201,6 +1203,27 @@ void process_packet(int s_id, unsigned char* p)
 			packet.size = sizeof(packet);
 			packet.type = SC_MOPP;
 			packet.mopptype = mopptype;
+			other.do_send(sizeof(packet), &packet);
+		}
+		break;
+	}
+	case CS_LIGHT: {
+		CS_LIGHT_ON_PACKET* packet = reinterpret_cast<CS_LIGHT_ON_PACKET*>(p);
+		CLIENT& cl = clients[packet->id];
+		cl.bLightOn = packet->bLight;
+		for (auto& other : clients) {
+			if (other._s_id == cl._s_id) continue;
+			other.state_lock.lock();
+			if (ST_INGAME != other._state) {
+				other.state_lock.unlock();
+				continue;
+			}
+			else other.state_lock.unlock();
+			CS_LIGHT_ON_PACKET packet;
+			packet.id = cl._s_id;
+			packet.size = sizeof(packet);
+			packet.type = SC_LIGHT;
+			packet.bLight = cl.bLightOn;
 			other.do_send(sizeof(packet), &packet);
 		}
 		break;

@@ -56,7 +56,7 @@ const char CS_BOJO_ANIM = 29;
 const char CS_MOPP = 30;
 const char CS_ACCOUNT = 31;
 const char CS_BULLET_WALL = 32;
-const char CS_ = 32;
+const char CS_LIGHT = 33;
 
 const char SC_LOGIN_OK = 1;
 const char SC_OTHER_PLAYER = 2;
@@ -94,6 +94,7 @@ const char SC_MOPP = 33;
 const char SC_DECREASE = 34;
 const char SC_LOGIN_FAIL = 35;
 const char SC_WALL = 36;
+const char SC_LIGHT = 37;
 
 #pragma pack (push, 1)
 struct CS_LOGIN_PACKET
@@ -441,5 +442,11 @@ struct CS_WALL_PACKET {
 	float lx, ly, lz;
 	float r_pitch, r_yaw, r_roll;
 	int id;
+};
+struct CS_LIGHT_ON_PACKET {
+	unsigned char size;
+	unsigned char type;
+	int id;
+	bool bLight;
 };
 #pragma pack(pop)
