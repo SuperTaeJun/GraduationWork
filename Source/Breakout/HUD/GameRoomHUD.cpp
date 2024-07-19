@@ -5,10 +5,11 @@
 #include "HUD/SelectCharacterUi.h"
 #include "Game/BOGameInstance.h"
 #include "HUD/Login.h"
-
+#include"RoomListUi.h"
 void AGameRoomHUD::BeginPlay()
 {
 	AddSelectCharacter();
+	AddRoomListUi();
 	AddLoginUi();
 
 }
@@ -40,5 +41,18 @@ void AGameRoomHUD::AddSelectCharacter()
 		PlayerController->SetInputMode(UiGameInput);
 		if(SelectCharacter)
 			SelectCharacter->AddToViewport();
+	}
+}
+
+void AGameRoomHUD::AddRoomListUi()
+{
+	APlayerController* PlayerController = GetOwningPlayerController();
+	if (PlayerController)
+	{
+		PlayerController->bShowMouseCursor = true;
+		RoomListUi = CreateWidget<URoomListUi>(PlayerController, RoomListUiClass);
+
+		if (RoomListUi)
+			RoomListUi->AddToViewport();
 	}
 }

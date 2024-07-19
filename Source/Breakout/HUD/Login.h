@@ -28,6 +28,7 @@ public:
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<class UEditableText>IP;
 
+
 	UFUNCTION()
 	void PressLogin();
 private:
