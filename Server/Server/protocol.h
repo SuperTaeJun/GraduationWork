@@ -1,6 +1,6 @@
 #pragma once
 #define SERVER_PORT		8001
-#define SERVER_IP		"192.168.0.102"
+#define SERVER_IP		"192.168.219.101"
 #define MAX_INFO_SIZE   20
 #include <vector>
 #include <array>
@@ -95,6 +95,7 @@ const char SC_DECREASE = 34;
 const char SC_LOGIN_FAIL = 35;
 const char SC_WALL = 36;
 const char SC_LIGHT = 37;
+const char SC_LOBBY_ROOM = 38;
 
 #pragma pack (push, 1)
 struct CS_LOGIN_PACKET
@@ -448,5 +449,11 @@ struct CS_LIGHT_ON_PACKET {
 	unsigned char type;
 	int id;
 	bool bLight;
+};
+struct SC_LOBBY_PACKET {
+	unsigned char size;
+	unsigned char type;
+	int id;
+	bool bLobby;
 };
 #pragma pack(pop)
