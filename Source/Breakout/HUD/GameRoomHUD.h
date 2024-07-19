@@ -27,8 +27,12 @@ public:
 
 	TObjectPtr<class ULogin> LoginUi;
 
+	UPROPERTY(EditAnywhere, Category = "Player State")
+	TSubclassOf<class UUserWidget>RoomListUiClass;
+	TObjectPtr<class URoomListUi> RoomListUi;
 	void AddLoginUi();
 	void AddSelectCharacter();
+	void AddRoomListUi();
 protected:
 	virtual void BeginPlay() override;
 };

@@ -72,6 +72,8 @@ protected:
 	FVector SWAimLastLoc;
 	FTransform StartTransform;
 	bool bSkillUsing = false;
+	UPROPERTY(EditAnywhere)
+	class ULevelSequence* EndGameSine;
 public:
 	void SetResetState();
 
@@ -285,6 +287,8 @@ protected:
 
 public:
 	//서버랑 연동하는 함수들
+	UFUNCTION()
+	void SendEnd();
 	void SpawnBeam(FVector StartBeam, FVector EndBeam);
 	void SpawnHitImpact(FVector HitLoc, FRotator HitRot);
 	bool bStarted;

@@ -11,6 +11,8 @@ void ULogin::NativeConstruct()
 {
 	Super::NativeConstruct();
 
+
+
 	if (Login)
 		Login->OnClicked.AddDynamic(this, &ULogin::PressLogin);
 

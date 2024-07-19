@@ -21,5 +21,7 @@ void UBOGameInstance::Init()
 		UE_LOG(LogClass, Warning, TEXT("IOCP Server connect success!"));
 	}
 	else { UE_LOG(LogClass, Warning, TEXT("IOCP Server connect fail!")) };
+
+
 }
 

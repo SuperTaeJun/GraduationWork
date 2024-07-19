@@ -32,7 +32,8 @@
 #include "Materials/MaterialInstanceDynamic.h"
 #include "Sound/SoundCue.h"
 #include "Components/SpotLightComponent.h"
-
+#include "LevelSequence.h"
+#include "LevelSequencePlayer.h"
 ACharacterBase::ACharacterBase()
 {
 	PrimaryActorTick.bCanEverTick = true;
@@ -800,8 +801,20 @@ void ACharacterBase::Inter(const FInputActionValue& Value)
 
 	if (bCanEscape)
 	{
-		if (inst)
-			Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_End_Game_packet(inst->GetPlayerID());
+		if (EndGameSine) 
+		{
+			//FMovieSceneSequencePlaybackSettings PlaybackSettings;
+			//ALevelSequenceActor* SequenceActor;
+			//ULevelSequencePlayer* LevelSequencePlayer = ULevelSequencePlayer::CreateLevelSequencePlayer(
+			//	GetWorld(),
+			//	EndGameSine,
+			//	PlaybackSettings,
+			//	SequenceActor
+			//);
+			//LevelSequencePlayer->OnFinished.AddDynamic(this, &ACharacterBase::SendEnd);
+		}
+		/*if (inst)
+			Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_End_Game_packet(inst->GetPlayerID());*/
 		//GetWorld()->ServerTravel(FString("/Game/Maps/GameRoom"), false,true);
 	}
 }
@@ -1103,6 +1116,12 @@ void ACharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 		EnhancedInputComponent->BindAction(DetectAction, ETriggerEvent::Completed, this, &ACharacterBase::Detect_E);
 		EnhancedInputComponent->BindAction(LightAction, ETriggerEvent::Started, this, &ACharacterBase::LightOnOff);
 	}
+}
+
+void ACharacterBase::SendEnd()
+{
+	if (inst)
+		Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_End_Game_packet(inst->GetPlayerID());
 }
 
 void ACharacterBase::SpawnBeam(FVector StartBeam, FVector EndBeam)
