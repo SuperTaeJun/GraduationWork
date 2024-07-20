@@ -73,7 +73,7 @@ protected:
 	FTransform StartTransform;
 	bool bSkillUsing = false;
 	UPROPERTY(EditAnywhere)
-	class ULevelSequence* EndGameSine;
+	TObjectPtr<class ULevelSequence> EndGameSine;
 public:
 	void SetResetState();
 
