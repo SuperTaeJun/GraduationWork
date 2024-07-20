@@ -18,6 +18,7 @@ void URoomListUi::NativeConstruct()
 
 void URoomListUi::SlotOnePress()
 {
+	//패킷 보낼 곳(id, game방 번호)
 	RemoveFromParent();
 }
 

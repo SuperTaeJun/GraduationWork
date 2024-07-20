@@ -103,6 +103,8 @@ public:
 	int deadtype;
 	// 디졸브 타입
 	int dissolve;
+	// 입장한 게임룸 번호
+	int currentRoom = -1;
 	unordered_set   <int>  viewlist; // 시야 안 오브젝트
 	mutex vl;
 	mutex hp_lock;
@@ -291,7 +293,8 @@ condition_variable cv;
 atomic<int> ready_count = 0;
 atomic<int> ingamecount = 0;
 using namespace chrono;
-
+mutex mtx;
+vector<vector<int>> gameRooms; // 게임룸 컨테이너
 void ev_timer();
 int get_id();
 void send_select_character_type_packet(int _s_id);
@@ -308,7 +311,7 @@ void send_item_packet(int _s_id, int item_index);
 void send_myitem_packet(int _s_id);
 void send_bullet_wall(int _s_id, int wall_index);
 void worker_thread();
-
+void SendLobbyPacket(int clientId);
 
 int main()
 {
@@ -433,7 +436,15 @@ void send_select_character_type_packet(int _s_id)
 	packet.p_type = clients[_s_id].p_type;
 	clients[_s_id].do_send(sizeof(packet), &packet);
 }
-
+void SendLobbyPacket(int clientId)
+{
+	SC_LOBBY_PACKET packet;
+	packet.size = sizeof(packet);
+	packet.type = SC_LOBBY_ROOM;
+	packet.id = clientId;
+	packet.bLobby = true;
+	clients[clientId].do_send(sizeof(packet), &packet);
+}
 
 //로그인 실패
 
@@ -447,6 +458,39 @@ void Disconnect(int _s_id)
 	clients[_s_id].state_lock.unlock();
 	closesocket(clients[_s_id]._socket);
 	cout << "------------연결 종료------------" << endl;
+}
+
+void createGameRoom(int clientId) {
+	gameRooms.emplace_back();  // 새로운 게임룸 생성
+	gameRooms.back().push_back(clientId);  // 첫 번째 클라이언트 추가
+	clients[clientId].currentRoom = gameRooms.size() - 1;
+	cout << "Client " << clientId << " created and joined room " << (gameRooms.size() - 1) << endl;
+}
+
+void matchClientToGameRoom(int clientId) {
+	unique_lock<mutex> lock(mtx);
+
+	// 현재 생성된 게임룸들 중에서 빈 자리가 있는 곳에 클라이언트 매칭
+	for (auto& room : gameRooms) {
+		if (room.size() < 2) {  // 방의 최대 인원수는 3명
+			room.push_back(clientId);
+			clients[clientId].currentRoom = (&room - &gameRooms[0]);
+			cout << "Client " << clientId << " matched to room " << (&room - &gameRooms[0]) << endl;
+			cout << "clients[clientId].currentRoom : " << clients[clientId].currentRoom << endl;
+			// 만약 최대 인원에 도달했다면 게임 시작
+			if (room.size() == 2) {
+				//게임 넘어가도록 패킷 보내기 <- 여기서
+				cout << "Room " << (&room - &gameRooms[0]) << " is full. Game starting!" << endl;
+				for (int id : room)
+					SendLobbyPacket(id);
+			}
+
+			return;  // 클라이언트 매칭 후 함수 종료
+		}
+	}
+
+	// 모든 게임룸이 가득 찬 경우
+	createGameRoom(clientId);
 }
 
 

@@ -42,5 +42,5 @@ private:
 	void SetLocation();
 public:
 	void SaveCurLocation();
-	class UBOGameInstance* inst;
+	//class UBOGameInstance* inst;
 };

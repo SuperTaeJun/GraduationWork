@@ -801,19 +801,20 @@ void ACharacterBase::Inter(const FInputActionValue& Value)
 
 	if (bCanEscape)
 	{
-		if (EndGameSine) 
-		{
-			//FMovieSceneSequencePlaybackSettings PlaybackSettings;
-			//ALevelSequenceActor* SequenceActor;
-			//ULevelSequencePlayer* LevelSequencePlayer = ULevelSequencePlayer::CreateLevelSequencePlayer(
-			//	GetWorld(),
-			//	EndGameSine,
-			//	PlaybackSettings,
-			//	SequenceActor
-			//);
-			//LevelSequencePlayer->OnFinished.AddDynamic(this, &ACharacterBase::SendEnd);
-		}
-		/*if (inst)
+		UE_LOG(LogTemp, Warning, TEXT("endgame"));
+		FMovieSceneSequencePlaybackSettings PlaybackSettings;
+		ALevelSequenceActor* SequenceActor;
+		ULevelSequencePlayer* LevelSequencePlayer = ULevelSequencePlayer::CreateLevelSequencePlayer(
+			GetWorld(),
+			EndGameSine,
+			PlaybackSettings,
+			SequenceActor
+		);
+		if (LevelSequencePlayer)
+			LevelSequencePlayer->Play();
+		LevelSequencePlayer->OnFinished.AddDynamic(this, &ACharacterBase::SendEnd);
+
+	/*	if (inst)
 			Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_End_Game_packet(inst->GetPlayerID());*/
 		//GetWorld()->ServerTravel(FString("/Game/Maps/GameRoom"), false,true);
 	}
@@ -1120,6 +1121,7 @@ void ACharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 
 void ACharacterBase::SendEnd()
 {
+	UE_LOG(LogTemp, Warning, TEXT("END"));
 	if (inst)
 		Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_End_Game_packet(inst->GetPlayerID());
 }
