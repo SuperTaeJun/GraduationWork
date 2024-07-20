@@ -21,7 +21,7 @@ public:
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent);
 
-	class UBOGameInstance* inst;
+	//class UBOGameInstance* inst;
 protected:
 	virtual void Skill_S(const FInputActionValue& Value) override;
 	virtual void Skill_E(const FInputActionValue& Value) override;

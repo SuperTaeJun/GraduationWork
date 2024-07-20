@@ -813,8 +813,8 @@ void ACharacterBase::Inter(const FInputActionValue& Value)
 			//);
 			//LevelSequencePlayer->OnFinished.AddDynamic(this, &ACharacterBase::SendEnd);
 		}
-		/*if (inst)
-			Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_End_Game_packet(inst->GetPlayerID());*/
+		if (inst)
+			Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_End_Game_packet(inst->GetPlayerID());
 		//GetWorld()->ServerTravel(FString("/Game/Maps/GameRoom"), false,true);
 	}
 }
