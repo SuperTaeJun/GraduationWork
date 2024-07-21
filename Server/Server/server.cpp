@@ -568,7 +568,8 @@ void process_packet(int s_id, unsigned char* p)
 			for (auto& player : clients) {
 				if (ST_INGAME != player._state)
 					continue;
-
+				if (player.currentRoom != cl.currentRoom)
+					continue;
 				send_ready_packet(player._s_id);
 				//cout << "보낼 플레이어" << player._s_id << endl;
 
@@ -595,6 +596,8 @@ void process_packet(int s_id, unsigned char* p)
 				continue;
 			if (ST_INGAME != other._state)
 				continue;
+			if (other.currentRoom != cl.currentRoom)
+				continue;
 			send_move_packet(other._s_id, cl._s_id);
 		}
 		break;
@@ -614,6 +617,8 @@ void process_packet(int s_id, unsigned char* p)
 				continue;
 			}
 			else other.state_lock.unlock();
+			if (other.currentRoom != cl.currentRoom)
+				continue;
 			SC_SYNC_WEAPO packet;
 			packet.id = cl._s_id;
 			packet.size = sizeof(packet);
@@ -635,6 +640,8 @@ void process_packet(int s_id, unsigned char* p)
 		{
 			for (auto& player : clients) {
 				if (ST_INGAME != player._state)
+					continue;
+				if (player.currentRoom != cl.currentRoom)
 					continue;
 				send_travel_ready_packet(player._s_id);
 			//	cout << "보낼 플레이어" << player._s_id << endl;
@@ -714,7 +721,7 @@ void process_packet(int s_id, unsigned char* p)
 				continue;
 			}
 			else other.state_lock.unlock();
-
+			if (other.currentRoom != cl.currentRoom) continue;
 			SC_PLAYER_SYNC packet;
 			packet.id = cl._s_id;
 			strcpy_s(packet.name, cl.name);
@@ -1212,6 +1219,7 @@ void process_packet(int s_id, unsigned char* p)
 				continue;
 			}
 			else other.state_lock.unlock();
+			if (other.currentRoom != cl.currentRoom) continue;
 			SC_HP_CHANGE_PACKET packet;
 			packet.size = sizeof(packet);
 			packet.type = SC_HP_CHANGE;
