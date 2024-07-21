@@ -281,6 +281,13 @@ private:
 	condition_variable _condVar;
 };
 
+struct GameRoom {
+	vector<int> players;  // 게임룸 내 클라이언트 ID 목록
+
+	void clear() {
+		players.clear();
+	}
+};
 
 HANDLE g_h_iocp;
 HANDLE g_timer;
@@ -292,9 +299,10 @@ array<BulletWall, 9> walls;
 condition_variable cv;
 atomic<int> ready_count = 0;
 atomic<int> ingamecount = 0;
-using namespace chrono;
+
 mutex mtx;
-vector<vector<int>> gameRooms; // 게임룸 컨테이너
+vector<GameRoom> gameRooms(4); // 게임룸 컨테이너 
+
 void ev_timer();
 int get_id();
 void send_select_character_type_packet(int _s_id);
@@ -340,6 +348,10 @@ int main()
 	AcceptEx(sever_socket, c_socket, accept_buf, 0, sizeof(SOCKADDR_IN) + 16,
 		sizeof(SOCKADDR_IN) + 16, NULL, &accept_ex._wsa_over);
 
+	for (int i = 0; i < 4; ++i) {
+		gameRooms.emplace_back();
+	}
+
 	for (int i = 0; i < MAX_USER; ++i)
 		clients[i]._s_id = i;
 
@@ -382,6 +394,16 @@ void Timer_Event(int np_s_id, int user_id, EVENT_TYPE ev, std::chrono::milliseco
 	timer_q.Push(order);
 }
 
+//해제
+void Disconnect(int _s_id)
+{
+	CLIENT& cl = clients[_s_id];
+	clients[_s_id].state_lock.lock();
+	clients[_s_id]._state = ST_FREE;
+	clients[_s_id].state_lock.unlock();
+	closesocket(clients[_s_id]._socket);
+	cout << "------------연결 종료------------" << endl;
+}
 
 //새로운 id(인덱스) 할당
 int get_id()
@@ -446,53 +468,36 @@ void SendLobbyPacket(int clientId)
 	clients[clientId].do_send(sizeof(packet), &packet);
 }
 
-//로그인 실패
 
 
-//해제
-void Disconnect(int _s_id)
-{
-	CLIENT& cl = clients[_s_id];
-	clients[_s_id].state_lock.lock();
-	clients[_s_id]._state = ST_FREE;
-	clients[_s_id].state_lock.unlock();
-	closesocket(clients[_s_id]._socket);
-	cout << "------------연결 종료------------" << endl;
-}
-
-void createGameRoom(int clientId) {
-	gameRooms.emplace_back();  // 새로운 게임룸 생성
-	gameRooms.back().push_back(clientId);  // 첫 번째 클라이언트 추가
-	clients[clientId].currentRoom = gameRooms.size() - 1;
-	cout << "Client " << clientId << " created and joined room " << (gameRooms.size() - 1) << endl;
-}
-
-void matchClientToGameRoom(int clientId) {
+// 클라이언트를 지정된 게임룸에 매칭
+void assignClientToRoom(int clientId, int roomNum) {
 	unique_lock<mutex> lock(mtx);
 
-	// 현재 생성된 게임룸들 중에서 빈 자리가 있는 곳에 클라이언트 매칭
-	for (auto& room : gameRooms) {
-		if (room.size() < 2) {  // 방의 최대 인원수는 3명
-			room.push_back(clientId);
-			clients[clientId].currentRoom = (&room - &gameRooms[0]);
-			cout << "Client " << clientId << " matched to room " << (&room - &gameRooms[0]) << endl;
-			cout << "clients[clientId].currentRoom : " << clients[clientId].currentRoom << endl;
-			// 만약 최대 인원에 도달했다면 게임 시작
-			if (room.size() == 2) {
-				//게임 넘어가도록 패킷 보내기 <- 여기서
-				cout << "Room " << (&room - &gameRooms[0]) << " is full. Game starting!" << endl;
-				for (int id : room)
-					SendLobbyPacket(id);
-			}
-
-			return;  // 클라이언트 매칭 후 함수 종료
-		}
+	// 지정된 방 번호가 유효한지 확인
+	if (roomNum < 0 || roomNum >= gameRooms.size()) {
+		cout << "Invalid room number: " << roomNum << endl;
+		return;
 	}
 
-	// 모든 게임룸이 가득 찬 경우
-	createGameRoom(clientId);
-}
+	// 지정된 방이 가득 찼는지 확인
+	if (gameRooms[roomNum].players.size() >= 2) {  // 방의 최대 인원수는 2명
+		cout << "Room " << roomNum << " is full." << endl;
+		return;
+	}
 
+	// 클라이언트를 지정된 방에 추가
+	gameRooms[roomNum].players.push_back(clientId);
+	clients[clientId].currentRoom = roomNum;
+	cout << "Client " << clientId << " assigned to room " << roomNum << endl;
+
+	//// 만약 최대 인원에 도달했다면 게임 시작
+	//if (gameRooms[roomNum].players.size() == 2) {
+	//	cout << "Room " << roomNum << " is full. Game starting!" << endl;
+	//	for (int id : gameRooms[roomNum].players)
+	//		SendLobbyPacket(id);
+	//}
+}
 
 //패킷 판별
 void process_packet(int s_id, unsigned char* p)
@@ -533,6 +538,14 @@ void process_packet(int s_id, unsigned char* p)
 		CLIENT& cl = clients[s_id];
 		save_data(packet->id, packet->pw);
 		cout << "계정 생성 완료" << endl;
+		break;
+	}
+	case CS_ROOM:
+	{
+		CS_LOBBY_PACKET* packet = reinterpret_cast<CS_LOBBY_PACKET*>(p);
+		CLIENT& cl = clients[packet->id];
+		cl.currentRoom = packet->RoomNum;
+		assignClientToRoom(cl._s_id, cl.currentRoom);
 		break;
 	}
 	case CS_SELECT_CHAR: {
@@ -897,7 +910,7 @@ void process_packet(int s_id, unsigned char* p)
 	case CS_END_GAME: {
 		CS_END_GAME_PACKET* packet = reinterpret_cast<CS_END_GAME_PACKET*>(p);
 		CLIENT& cl = clients[packet->id];
-
+		int RoomNum = cl.currentRoom;
 	//	cout << "누가 이김 " << packet->id << endl;
 		for (auto& other : clients) {
 			other.state_lock.lock();
@@ -906,6 +919,7 @@ void process_packet(int s_id, unsigned char* p)
 				continue;
 			}
 			else other.state_lock.unlock();
+			other.currentRoom = -1;
 			CS_END_GAME_PACKET packet;
 
 			packet.id = cl._s_id;
@@ -915,6 +929,7 @@ void process_packet(int s_id, unsigned char* p)
 			packet.bEND = true;
 			other.do_send(sizeof(packet), &packet);
 		}
+		gameRooms[RoomNum].clear();
 		break;
 	}
 	case CS_GETITEM: {

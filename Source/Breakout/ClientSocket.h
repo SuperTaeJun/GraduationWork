@@ -405,6 +405,7 @@ public:
 	void Send_Mopp_Sync_packet(int itemid, int mopptype, int id);
 	void Send_BulletWall_packet(int id, int Wallid, FVector WLoc, FRotator WRot);
 	void Send_Light_On_packet(int id, bool bLight);
+	void Send_Lobby_Room_pakcet(int id, int RoomNum);
 	virtual bool Init() override;
 	virtual uint32 Run() override;
 	virtual void Stop() override;

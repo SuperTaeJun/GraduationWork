@@ -733,6 +733,16 @@ void ClientSocket::Send_Light_On_packet(int id, bool bLight)
 	SendPacket(&packet);
 }
 
+void ClientSocket::Send_Lobby_Room_pakcet(int id, int RoomNum)
+{
+	CS_LOBBY_PACKET packet;
+	packet.size = sizeof(packet);
+	packet.type = CS_ROOM;
+	packet.id = id;
+	packet.RoomNum = RoomNum;
+	SendPacket(&packet);
+}
+
 
 bool ClientSocket::Init()
 {
