@@ -674,6 +674,8 @@ void process_packet(int s_id, unsigned char* p)
 				continue;
 			}
 			else other.state_lock.unlock();
+			if (other.currentRoom != cl.currentRoom)
+				continue;
 			CS_SHOTGUN_BEAM_PACKET packet;
 			packet.attackid = cl._s_id;
 			packet.size = sizeof(packet);
@@ -749,6 +751,8 @@ void process_packet(int s_id, unsigned char* p)
 				continue;
 			}
 			else other.state_lock.unlock();
+			if (other.currentRoom != cl.currentRoom)
+				continue;
 			CS_EFFECT_PACKET packet;
 			packet.attack_id = cl._s_id;
 			packet.size = sizeof(packet);
@@ -785,6 +789,8 @@ void process_packet(int s_id, unsigned char* p)
 				continue;
 			}
 			else other.state_lock.unlock();
+			if (other.currentRoom != cl.currentRoom)
+				continue;
 			CS_BOJOWEAPON_PACKET packet;
 			packet.attack_id = cl._s_id;
 			packet.size = sizeof(packet);
@@ -815,6 +821,8 @@ void process_packet(int s_id, unsigned char* p)
 				continue;
 			}
 			else other.state_lock.unlock();
+			if (other.currentRoom != cl.currentRoom)
+				continue;
 			CS_NIAGARA_SYNC_PACKET packet;
 			packet.id = cl._s_id;
 			packet.size = sizeof(packet);
@@ -841,6 +849,8 @@ void process_packet(int s_id, unsigned char* p)
 				continue;
 			}
 			else other.state_lock.unlock();
+			if (other.currentRoom != cl.currentRoom)
+				continue;
 			CS_NIAGARA_CANCEL_PACKET packet;
 			packet.id = cl._s_id;
 			packet.size = sizeof(packet);
@@ -868,6 +878,8 @@ void process_packet(int s_id, unsigned char* p)
 				continue;
 			}
 			else other.state_lock.unlock();
+			if (other.currentRoom != cl.currentRoom)
+				continue;
 			CS_NIAGARA_PACKETCH1 packet;
 			packet.id = cl._s_id;
 			packet.size = sizeof(packet);
@@ -895,6 +907,8 @@ void process_packet(int s_id, unsigned char* p)
 				continue;
 			}
 			else other.state_lock.unlock();
+			if (other.currentRoom != cl.currentRoom)
+				continue;
 			CS_SIGNAL_PACKET packet;
 			packet.id = cl._s_id;
 			packet.size = sizeof(packet);
@@ -917,6 +931,8 @@ void process_packet(int s_id, unsigned char* p)
 				continue;
 			}
 			else other.state_lock.unlock();
+			if (other.currentRoom != cl.currentRoom)
+				continue;
 			other.currentRoom = -1;
 			CS_END_GAME_PACKET packet;
 
@@ -946,6 +962,8 @@ void process_packet(int s_id, unsigned char* p)
 				continue;
 			}
 			else other.state_lock.unlock();
+			if (other.currentRoom != cl.currentRoom)
+				continue;
 			SC_ITEM_ACQUIRE_PACKET packet;
 			packet.size = sizeof(packet);
 			packet.type = SC_ITEM_ACQUIRE;
@@ -970,6 +988,8 @@ void process_packet(int s_id, unsigned char* p)
 				continue;
 			}
 			else other.state_lock.unlock();
+			if (other.currentRoom != cl.currentRoom)
+				continue;
 			CS_ALIVE_PACKET packet;
 
 
@@ -997,6 +1017,8 @@ void process_packet(int s_id, unsigned char* p)
 				continue;
 			}
 			else other.state_lock.unlock();
+			if (other.currentRoom != cl.currentRoom)
+				continue;
 			CS_DISSOLVE_PACKET packet;
 
 			packet.size = sizeof(packet);
@@ -1021,6 +1043,8 @@ void process_packet(int s_id, unsigned char* p)
 				continue;
 			}
 			else other.state_lock.unlock();
+			if (other.currentRoom != cl.currentRoom)
+				continue;
 			CS_REMOVE_ITEM_PACKET packet;
 			packet.itemid = itemid;
 			packet.size = sizeof(packet);
@@ -1046,6 +1070,8 @@ void process_packet(int s_id, unsigned char* p)
 				continue;
 			}
 			else other.state_lock.unlock();
+			if (other.currentRoom != cl.currentRoom)
+				continue;
 			CS_INCREASE_ITEM_PACKET packet;
 			packet.Increaseid = cl._s_id;
 			strcpy_s(packet.cid, cl.name);
@@ -1068,6 +1094,8 @@ void process_packet(int s_id, unsigned char* p)
 				continue;
 			}
 			else other.state_lock.unlock();
+			if (other.currentRoom != cl.currentRoom)
+				continue;
 			CS_DECREASE_ITEM_PACKET packet;
 			packet.Increaseid = cl._s_id;
 			strcpy_s(packet.cid, cl.name);
@@ -1105,6 +1133,8 @@ void process_packet(int s_id, unsigned char* p)
 				continue;
 			}
 			else other.state_lock.unlock();
+			if (other.currentRoom != cl.currentRoom)
+				continue;
 			send_bullet_wall(other._s_id, packet->wall_id);
 		}
 		break;
@@ -1121,6 +1151,8 @@ void process_packet(int s_id, unsigned char* p)
 				continue;
 			}
 			else other.state_lock.unlock();
+			if (other.currentRoom != cl.currentRoom)
+				continue;
 			CS_RELOAD_PACKET packet;
 			packet.size = sizeof(packet);
 			packet.type = SC_RELOAD;
@@ -1143,6 +1175,8 @@ void process_packet(int s_id, unsigned char* p)
 				continue;
 			}
 			else other.state_lock.unlock();
+			if (other.currentRoom != cl.currentRoom)
+				continue;
 			CS_ITEM_ANIM_PACKET packet;
 			packet.size = sizeof(packet);
 			packet.type = SC_ITEM_ANIM;
@@ -1164,6 +1198,8 @@ void process_packet(int s_id, unsigned char* p)
 				continue;
 			}
 			else other.state_lock.unlock();
+			if (other.currentRoom != cl.currentRoom)
+				continue;
 			CS_REMOVE_WEAPON_PACKET packet;
 			packet.size = sizeof(packet);
 			packet.type = SC_REMOVE_WEAPON;
@@ -1186,6 +1222,8 @@ void process_packet(int s_id, unsigned char* p)
 				continue;
 			}
 			else other.state_lock.unlock();
+			if (other.currentRoom != cl.currentRoom)
+				continue;
 			SC_CH2_SKILL_PACKET packet;
 			packet.size = sizeof(packet);
 			packet.type = SC_CH2_SKILL;
@@ -1233,6 +1271,8 @@ void process_packet(int s_id, unsigned char* p)
 				continue;
 			}
 			else other.state_lock.unlock();
+			if (other.currentRoom != cl.currentRoom)
+				continue;
 			CS_BOJO_ANIM_PACKET packet;
 			packet.size = sizeof(packet);
 			packet.type = SC_BOJO_ANIM;
@@ -1256,6 +1296,8 @@ void process_packet(int s_id, unsigned char* p)
 				continue;
 			}
 			else other.state_lock.unlock();
+			if (other.currentRoom != cl.currentRoom)
+				continue;
 			CS_MOPP_PACKET packet;
 			packet.itemid = itemid;
 			packet.size = sizeof(packet);
@@ -1277,6 +1319,8 @@ void process_packet(int s_id, unsigned char* p)
 				continue;
 			}
 			else other.state_lock.unlock();
+			if (other.currentRoom != cl.currentRoom)
+				continue;
 			CS_LIGHT_ON_PACKET packet;
 			packet.id = cl._s_id;
 			packet.size = sizeof(packet);
