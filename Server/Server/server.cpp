@@ -481,8 +481,9 @@ void assignClientToRoom(int clientId, int roomNum) {
 	}
 
 	// 지정된 방이 가득 찼는지 확인
-	if (gameRooms[roomNum].players.size() >= 2) {  // 방의 최대 인원수는 2명
+	if (gameRooms[roomNum].players.size() >= ENTER_CLIENT) {  // 방의 최대 인원수는 2명
 		cout << "Room " << roomNum << " is full." << endl;
+		// 못들어간다 패킷 보내기 
 		return;
 	}
 
@@ -552,7 +553,6 @@ void process_packet(int s_id, unsigned char* p)
 
 		CS_SELECT_CHARACTER* packet = reinterpret_cast<CS_SELECT_CHARACTER*>(p);
 		CLIENT& cl = clients[packet->id];
-		//cout << "cl.sid?= " << packet->id << ", 00 , " << cl._s_id << endl;
 		cl.x = packet->x;
 		cl.y = packet->y;
 		cl.z = packet->z;
@@ -561,9 +561,7 @@ void process_packet(int s_id, unsigned char* p)
 		ingamecount++;
 		send_select_character_type_packet(cl._s_id);
 
-		//cout << "몇명 들어옴 : " << ingamecount << endl;
-
-		if (ingamecount >=2)
+		if (ingamecount >= ENTER_CLIENT)
 		{
 			for (auto& player : clients) {
 				if (ST_INGAME != player._state)
@@ -608,7 +606,6 @@ void process_packet(int s_id, unsigned char* p)
 		CLIENT& cl = clients[packet->id];
 		cl.w_type = packet->weapon_type;
 		cl.selectweapon = packet->bselectwep;
-		//cout << "플레이어 : " << cl._s_id << "무기 타입" << cl.w_type << endl;
 		for (auto& other : clients) {
 			if (other._s_id == cl._s_id) continue;
 			other.state_lock.lock();
@@ -625,7 +622,6 @@ void process_packet(int s_id, unsigned char* p)
 			packet.type = SC_OTHER_WEAPO;
 			packet.weapon_type = cl.w_type;
 			packet.bselectwep = cl.selectweapon;
-		//	cout << "이거 누구한테 감 :  ?" << other._s_id << endl;
 			other.do_send(sizeof(packet), &packet);
 		}
 		break;
@@ -633,10 +629,8 @@ void process_packet(int s_id, unsigned char* p)
 	case CS_READY: {
 		CS_READY_PACKET* packet = reinterpret_cast<CS_READY_PACKET*>(p);
 		CLIENT& cl = clients[packet->id];
-		//cout << "Ready id" << packet->id;
 		ready_count++;
-		//cout << "ready_count" << ready_count << endl;
-		if (ready_count >=2)
+		if (ready_count >= ENTER_CLIENT)
 		{
 			for (auto& player : clients) {
 				if (ST_INGAME != player._state)
@@ -644,7 +638,6 @@ void process_packet(int s_id, unsigned char* p)
 				if (player.currentRoom != cl.currentRoom)
 					continue;
 				send_travel_ready_packet(player._s_id);
-			//	cout << "보낼 플레이어" << player._s_id << endl;
 			}
 			ready_count = 0;
 		}
@@ -703,8 +696,6 @@ void process_packet(int s_id, unsigned char* p)
 			packet.pitch4 = cl.pitch4;
 			packet.yaw4 = cl.yaw4;
 			packet.roll4 = cl.roll4;
-
-		//	cout << "이거 누구한테 감 :  ?" << other._s_id << endl;
 			other.do_send(sizeof(packet), &packet);
 
 		}

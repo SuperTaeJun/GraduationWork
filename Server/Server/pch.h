@@ -23,3 +23,5 @@ using namespace std;
 
 #pragma comment (lib, "WS2_32.LIB")
 #pragma comment (lib, "MSWSock.LIB")
+
+#define ENTER_CLIENT 2
