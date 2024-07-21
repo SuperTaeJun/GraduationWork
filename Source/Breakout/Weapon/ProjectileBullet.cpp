@@ -23,12 +23,13 @@ AProjectileBullet::AProjectileBullet()
 
 	CollisionBox = CreateDefaultSubobject<UBoxComponent>(TEXT("CollisionBox"));
 	SetRootComponent(CollisionBox);
-	CollisionBox->SetCollisionObjectType(ECollisionChannel::ECC_WorldDynamic);
+	CollisionBox->SetCollisionObjectType(ECollisionChannel::ECC_EngineTraceChannel2);
 	CollisionBox->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 	CollisionBox->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
 	CollisionBox->SetCollisionResponseToChannel(ECollisionChannel::ECC_Visibility, ECollisionResponse::ECR_Block);
 	CollisionBox->SetCollisionResponseToChannel(ECollisionChannel::ECC_WorldStatic, ECollisionResponse::ECR_Block);
 	CollisionBox->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Block);
+	CollisionBox->SetCollisionResponseToChannel(ECollisionChannel::ECC_EngineTraceChannel2, ECollisionResponse::ECR_Ignore);
 
 	BeamNiagaraMesh = CreateDefaultSubobject<UNiagaraComponent>(TEXT("ProjectileMesh"));
 	BeamNiagaraMesh->SetupAttachment(RootComponent);
@@ -56,16 +57,17 @@ void AProjectileBullet::BeginPlay()
 
 void AProjectileBullet::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NomalImpulse, const FHitResult& Hit)
 {
-	bHit = true;
-
 	APawn* FiringPawn =GetInstigator();
 	AController* FiringController = FiringPawn->GetController();
 	if (FiringPawn && OtherActor!=GetOwner())
 	{
+		bHit = true;
+
 		ACharacterBase* DamagedCharacter=Cast<ACharacterBase>(OtherActor);
 		ABulletHoleWall* DamagedWall = Cast<ABulletHoleWall>(OtherActor);
 		AProjectileBoobyTrap* DamagedTrap = Cast<AProjectileBoobyTrap>(OtherActor);
 		AExplosiveActor* ExplosiveActor = Cast<AExplosiveActor>(OtherActor);
+
 		if(DamagedCharacter)
 			UGameplayStatics::ApplyDamage(DamagedCharacter,Damage,FiringController,FiringPawn,UDamageType::StaticClass());
 		else if (DamagedWall)
@@ -112,10 +114,5 @@ void AProjectileBullet::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	FVector BeamEnd = GetActorLocation();
-	//if (BeamNiagaraMesh)
-	//{
-	//	BeamNiagaraMesh->SetVectorParameter(FName("End"), BeamEnd);
-	//}
 }
 

@@ -69,8 +69,8 @@ protected:
 
 
 public:
-	UPROPERTY(EditAnywhere)
-	TObjectPtr<class UNiagaraSystem> BeamNiagara;
+	//UPROPERTY(EditAnywhere)
+	//TObjectPtr<class UNiagaraSystem> BeamNiagara;
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<class UNiagaraSystem> ImpactNiagara;
 	UPROPERTY(EditAnywhere)

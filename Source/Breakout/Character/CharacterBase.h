@@ -42,8 +42,6 @@ protected:
 	void UpdateCameraBoom(float DeltaTime);
 	void UpdateStamina(float DeltaTime);
 	void SetHUDCrosshair(float DeltaTime);
-	void UpdateHpHUD();
-	void UpdateStaminaHUD();
 	//void UpdateObtainedEscapeTool();
 
 	//캐릭터 상태
@@ -75,6 +73,9 @@ protected:
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<class ULevelSequence> EndGameSine;
 public:
+	void UpdateHpHUD();
+	void UpdateStaminaHUD();
+
 	void SetResetState();
 
 	UAnimMontage* GetDeadMontage() { return DeadMontage; }
@@ -88,7 +89,6 @@ public:
 	bool GetbInRespon() { return bInRespon; }
 	void SetbShowSelect(bool _bShowSelect) {bShowSelectUi = _bShowSelect;}
 	void SetbCanObtainEscapeTool(bool _bCanObtain);
-	void SetHealth(float DamagedHp);
 	void SetbDissolve(bool Dissolve) { bDissolve = Dissolve; }
 	void SetDissolvePersent(float Dissolve) { DissolvePercent = Dissolve; }
 	float GetDissolvePersent() {return DissolvePercent; }
@@ -96,8 +96,10 @@ public:
 	class AWeaponBase* GetWeapon() { return CurWeapon; }
 	class ACharacterController* GetMainController() { return MainController; }
 
-
+	FORCEINLINE void SetHealth(float DamagedHp) { Health = DamagedHp; }
+	FORCEINLINE void SetMaxHealth(float MaxHp) { MaxHealth = MaxHp; }
 	FORCEINLINE float GetHealth() const { return Health; }
+	FORCEINLINE float GetMaxHealth() const { return MaxHealth; }
 	FORCEINLINE bool GetbFfirePressed() const { return bFirePressed; }
 	FORCEINLINE float MaxGetHealth() const { return MaxHealth; }
 	FORCEINLINE float GetStamina() const { return Stamina; }

@@ -215,7 +215,7 @@ void ACharacterBase::UpdateHpHUD()
 	MainController = MainController == nullptr ? Cast<ACharacterController>(Controller) : MainController;
 	if (MainController)
 	{
-		MainController->SetHUDHealth(FMath::Clamp(Health,0.f,100.f), MaxHealth);
+		MainController->SetHUDHealth(FMath::Clamp(Health,0.f, MaxHealth), MaxHealth);
 	}
 }
 
@@ -269,7 +269,7 @@ void ACharacterBase::SetRespawnUi()
 
 void ACharacterBase::SetResetState()
 {
-	Health = 100.f;
+	Health = MaxHealth;
 	Stamina = 100.f;
 	UpdateHpHUD();
 	UpdateStaminaHUD();
@@ -317,12 +317,6 @@ void ACharacterBase::SetWeapon(TSubclassOf<class AWeaponBase> Weapon, FName Sock
 void ACharacterBase::SetbCanObtainEscapeTool(bool _bCanObtain)
 {
 	bCanObtainEscapeTool = _bCanObtain;
-}
-
-
-void ACharacterBase::SetHealth(float Damaged)
-{
-	Health = Damaged;
 }
 
 
@@ -1121,7 +1115,6 @@ void ACharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 
 void ACharacterBase::SendEnd()
 {
-	UE_LOG(LogTemp, Warning, TEXT("END"));
 	if (inst)
 		Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_End_Game_packet(inst->GetPlayerID());
 }
@@ -1129,12 +1122,12 @@ void ACharacterBase::SendEnd()
 void ACharacterBase::SpawnBeam(FVector StartBeam, FVector EndBeam)
 {
 
-	UE_LOG(LogClass, Warning, TEXT("SB %f, EB : %f"), StartBeam.X, EndBeam.X);
-	UNiagaraComponent* Beam = UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), CurWeapon->BeamNiagara, StartBeam);
-	if (Beam)
-	{
-		Beam->SetVectorParameter(FName("End"), EndBeam);
-	}
+	//UE_LOG(LogClass, Warning, TEXT("SB %f, EB : %f"), StartBeam.X, EndBeam.X);
+	//UNiagaraComponent* Beam = UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), CurWeapon->BeamNiagara, StartBeam);
+	//if (Beam)
+	//{
+	//	Beam->SetVectorParameter(FName("End"), EndBeam);
+	//}
 }
 
 void ACharacterBase::SpawnHitImpact(FVector HitLoc, FRotator HitRot)
@@ -1155,11 +1148,6 @@ void ACharacterBase::StartGame()
 	MainController = MainController == nullptr ? Cast<ACharacterController>(Controller) : MainController;
 	if (MainController)
 	{
-		//if (MainHUD)
-		//{
-		//	UE_LOG(LogTemp, Warning, TEXT("ADDTOOLNUM"));
-		//	MainHUD->AddToolNumUi();
-		//}
 		if(inst)
 			inst->m_Socket->Send_Start_game_packet(inst->GetPlayerID());
 		MainController->MainHUD->AddToolNumUi();
