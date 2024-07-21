@@ -1,6 +1,6 @@
 #pragma once
 #define SERVER_PORT		8001
-#define SERVER_IP		"192.168.0.102"
+#define SERVER_IP		"192.168.219.100"
 #define MAX_INFO_SIZE   20
 #include <vector>
 #include <array>
@@ -57,6 +57,7 @@ const char CS_MOPP = 30;
 const char CS_ACCOUNT = 31;
 const char CS_BULLET_WALL = 32;
 const char CS_LIGHT = 33;
+const char CS_ROOM = 34;
 
 const char SC_LOGIN_OK = 1;
 const char SC_OTHER_PLAYER = 2;
@@ -413,7 +414,7 @@ struct SC_TRAVEL_PACKET {
 	unsigned char size;
 	unsigned char type;
 	bool ingame;
-}; 
+};
 struct CS_DISSOLVE_PACKET {
 	unsigned char size;
 	unsigned char type;
@@ -455,5 +456,11 @@ struct SC_LOBBY_PACKET {
 	unsigned char type;
 	int id;
 	bool bLobby;
+};
+struct CS_LOBBY_PACKET {
+	unsigned char size;
+	unsigned char type;
+	int id;
+	int RoomNum;
 };
 #pragma pack(pop)
