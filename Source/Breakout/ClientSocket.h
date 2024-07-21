@@ -436,15 +436,20 @@ public:
 	int MyItemCount;
 	std::queue<std::shared_ptr<CItem>> ItemQueue;
 	queue<FString>Tempname;
+	//--------------
 	int tempid;
 	int tempid2;
 	int Tempcnt;
 	int Tempcnt2;
+	//-------------
 	FString TempPlayerName;
 	bool bAcquire = false;
 	bool bTravel = false;
 	bool bName = false;
 	int MoppType = -1;
+
+	//∑Œ∫Ò∑Î ¿Ãµø
+	bool binLobby = false;
 
 	bool bitemcount = false;
 	inline float get_hp()

@@ -85,6 +85,12 @@ bool ClientSocket::PacketProcess(char* ptr)
 		UE_LOG(LogTemp, Warning, TEXT("MY ID : %d"), packet->id);
 		break;
 	}
+	case SC_LOBBY_ROOM:
+	{
+		SC_LOBBY_PACKET* packet = reinterpret_cast<SC_LOBBY_PACKET*>(ptr);
+		binLobby = packet->bLobby;
+		break;
+	}
 	case SC_ITEM: {
 		SC_ITEM_PACKET* packet = reinterpret_cast<SC_ITEM_PACKET*>(ptr);
 		auto info = make_shared<CItem>();

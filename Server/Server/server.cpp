@@ -491,13 +491,13 @@ void assignClientToRoom(int clientId, int roomNum) {
 	gameRooms[roomNum].players.push_back(clientId);
 	clients[clientId].currentRoom = roomNum;
 	cout << "Client " << clientId << " assigned to room " << roomNum << endl;
-
-	//// 만약 최대 인원에 도달했다면 게임 시작
-	//if (gameRooms[roomNum].players.size() == 2) {
-	//	cout << "Room " << roomNum << " is full. Game starting!" << endl;
-	//	for (int id : gameRooms[roomNum].players)
-	//		SendLobbyPacket(id);
-	//}
+	SendLobbyPacket(clientId);
+	// 만약 최대 인원에 도달했다면 게임 시작
+	/*if (gameRooms[roomNum].players.size() == 2) {
+		cout << "Room " << roomNum << " is full. Game starting!" << endl;
+		for (int id : gameRooms[roomNum].players)
+			SendLobbyPacket(id);
+	}*/
 }
 
 //패킷 판별

@@ -23,26 +23,42 @@ void URoomListUi::SlotOnePress()
 	//패킷 보낼 곳(id, game방 번호)
 	if (Cast<UBOGameInstance>(GetGameInstance())->m_Socket)
 		Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Lobby_Room_pakcet(Cast<UBOGameInstance>(GetGameInstance())->GetPlayerID(), 1);
-	RemoveFromParent();
+	if (Cast<UBOGameInstance>(GetGameInstance())->m_Socket->binLobby)
+	{
+		RemoveFromParent();
+		Cast<UBOGameInstance>(GetGameInstance())->m_Socket->binLobby = false;
+	}
 }
 
 void URoomListUi::SlotTwoPress()
 {
 	if (Cast<UBOGameInstance>(GetGameInstance())->m_Socket)
 		Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Lobby_Room_pakcet(Cast<UBOGameInstance>(GetGameInstance())->GetPlayerID(), 2);
-	RemoveFromParent();
+	if (Cast<UBOGameInstance>(GetGameInstance())->m_Socket->binLobby)
+	{
+		RemoveFromParent();
+		Cast<UBOGameInstance>(GetGameInstance())->m_Socket->binLobby = false;
+	}
 }
 
 void URoomListUi::SlotThreePress()
 {
 	if (Cast<UBOGameInstance>(GetGameInstance())->m_Socket)
 		Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Lobby_Room_pakcet(Cast<UBOGameInstance>(GetGameInstance())->GetPlayerID(), 3);
-	RemoveFromParent();
+	if (Cast<UBOGameInstance>(GetGameInstance())->m_Socket->binLobby)
+	{
+		RemoveFromParent();
+		Cast<UBOGameInstance>(GetGameInstance())->m_Socket->binLobby = false;
+	}
 }
 
 void URoomListUi::SlotFourPress()
 {
 	if (Cast<UBOGameInstance>(GetGameInstance())->m_Socket)
 		Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Lobby_Room_pakcet(Cast<UBOGameInstance>(GetGameInstance())->GetPlayerID(), 4);
-	RemoveFromParent();
+	if (Cast<UBOGameInstance>(GetGameInstance())->m_Socket->binLobby)
+	{
+		RemoveFromParent();
+		Cast<UBOGameInstance>(GetGameInstance())->m_Socket->binLobby = false;
+	}
 }
