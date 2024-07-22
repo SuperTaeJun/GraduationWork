@@ -28,7 +28,7 @@ void AChargePlace::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 
-	if (bInCh && InCh && InCh->GetMainController())
+	if (bInCh && InCh && InCh->GetMainController() && InCh->GetHealth()<100.f)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("CHARGING"));
 		InCh->SetHealth(InCh->GetHealth() + (DeltaTime*0.5f));
