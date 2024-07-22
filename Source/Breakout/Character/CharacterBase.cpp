@@ -438,10 +438,6 @@ void ACharacterBase::SetSpawnGrenade(TSubclassOf<AProjectileBase> Projectile)
 				if (inst)
 					inst->m_Socket->Send_BojoWeapon_packet(inst->GetPlayerID(), StartLocation, ToHitTarget.Rotation(), 1);
 				break;
-			case EBojoMugiType::E_BoobyTrap:
-				if (inst)
-					inst->m_Socket->Send_BojoWeapon_packet(inst->GetPlayerID(), StartLocation, ToHitTarget.Rotation(), 2);
-				break;
 			}
 			
 		}
