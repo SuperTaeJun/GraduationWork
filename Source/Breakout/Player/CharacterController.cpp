@@ -376,9 +376,9 @@ void ACharacterController::Tick(float DeltaTime)
 		SetNum();
 		inst->m_Socket->bAcquire = false;
 	}
-	/*if (MainHUD && inst->m_Socket->bName) {
+	if (MainHUD && inst->m_Socket->bName) {
 		SetChName();
-	}*/
+	}
 
 	if (MainHUD && inst->m_Socket->itemflag) {
 		BaseCharacter->SetEscapeToolNum(inst->m_Socket->MyItemCount);
@@ -469,6 +469,8 @@ bool ACharacterController::UpdateWorld()
 				//inst->m_Socket->Exit();
 				//Cast<ACharacterBase>(GetPawn())->PlayAnimMontage(Cast<ACharacterBase>(GetPawn())->GetDeadMontage());
 				//FGenericPlatformMisc::RequestExit(true);
+				while (!inst->m_Socket->Tempname.empty())
+					inst->m_Socket->Tempname.pop();
 				GetWorld()->ServerTravel(FString("/Game/Maps/GameRoom"), false, true);
 			}
 			//}
