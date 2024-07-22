@@ -942,7 +942,7 @@ void process_packet(int s_id, unsigned char* p)
 		CS_END_GAME_PACKET* packet = reinterpret_cast<CS_END_GAME_PACKET*>(p);
 		CLIENT& cl = clients[packet->id];
 		int RoomNum = cl.currentRoom;
-	//	cout << "´©°¡ ÀÌ±è " << packet->id << endl;
+		cout << "´©°¡ ÀÌ±è " << packet->id << endl;
 		for (auto& other : clients) {
 			if (other._s_id == cl._s_id) continue;
 			other.state_lock.lock();

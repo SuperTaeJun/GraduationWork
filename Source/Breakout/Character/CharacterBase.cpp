@@ -1075,6 +1075,7 @@ void ACharacterBase::Tick(float DeltaTime)
 			}
 		}
 	}
+	
 
 
 	if (/*Cast<UBOGameInstance>(GetWorld()->GetGameInstance())->m_Socket->bAllReady == true &&*/ !bStarted)
@@ -1088,6 +1089,26 @@ void ACharacterBase::Tick(float DeltaTime)
 
 	if (MainController)
 		MainController->SeverHpSync(bAlive, Health, inst->GetPlayerID());
+
+	if (inst->m_Socket->bEndGame == true)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("endgame"));
+		FMovieSceneSequencePlaybackSettings PlaybackSettings;
+		ALevelSequenceActor* SequenceActor;
+		ULevelSequencePlayer* LevelSequencePlayer = ULevelSequencePlayer::CreateLevelSequencePlayer(
+			GetWorld(),
+			EndGameCine,
+			PlaybackSettings,
+			SequenceActor
+		);
+
+		if (LevelSequencePlayer)
+		{
+			LevelSequencePlayer->Play();
+			LevelSequencePlayer->OnFinished.AddDynamic(this, &ACharacterBase::SendEnd);
+		}
+		inst->m_Socket->bEndGame = false;
+	}
 }
 
 void ACharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)

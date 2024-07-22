@@ -451,7 +451,8 @@ public:
 
 	//∑Œ∫Ò∑Î ¿Ãµø
 	bool binLobby = false;
-
+	// endgame
+	bool bEndGame = false;
 	bool bitemcount = false;
 	inline float get_hp()
 	{

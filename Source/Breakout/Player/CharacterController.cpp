@@ -466,31 +466,31 @@ bool ACharacterController::UpdateWorld()
 
 			/*	if (OtherPlayer && OtherPlayer->_SessionId == id)
 				{*/
-			if (info->bEndGame == true)
-			{
-				//inst->m_Socket->Exit();
-				//Cast<ACharacterBase>(GetPawn())->PlayAnimMontage(Cast<ACharacterBase>(GetPawn())->GetDeadMontage());
-				//FGenericPlatformMisc::RequestExit(true);
-				FMovieSceneSequencePlaybackSettings PlaybackSettings;
-				ALevelSequenceActor* SequenceActor;
-				ULevelSequencePlayer* LevelSequencePlayer = ULevelSequencePlayer::CreateLevelSequencePlayer(
-					GetWorld(),
-					EndGameCine,
-					PlaybackSettings,
-					SequenceActor
-				);
+			//if (info->bEndGame == true)
+			//{
+			//	//inst->m_Socket->Exit();
+			//	//Cast<ACharacterBase>(GetPawn())->PlayAnimMontage(Cast<ACharacterBase>(GetPawn())->GetDeadMontage());
+			//	//FGenericPlatformMisc::RequestExit(true);
+			//	FMovieSceneSequencePlaybackSettings PlaybackSettings;
+			//	ALevelSequenceActor* SequenceActor;
+			//	ULevelSequencePlayer* LevelSequencePlayer = ULevelSequencePlayer::CreateLevelSequencePlayer(
+			//		GetWorld(),
+			//		EndGameCine,
+			//		PlaybackSettings,
+			//		SequenceActor
+			//	);
 
-				if (LevelSequencePlayer)
-				{
-					UE_LOG(LogTemp, Warning, TEXT("ENDGAME"));
-					LevelSequencePlayer->Play();
-					LevelSequencePlayer->OnFinished.AddDynamic(this, &ACharacterController::ServerSendEnd);
-				}
-				info->bEndGame = false;
-				/*while (!inst->m_Socket->Tempname.empty())
-					inst->m_Socket->Tempname.pop();
-				*/
-			}
+			//	if (LevelSequencePlayer)
+			//	{
+			//		UE_LOG(LogTemp, Warning, TEXT("ENDGAME"));
+			//		LevelSequencePlayer->Play();
+			//		LevelSequencePlayer->OnFinished.AddDynamic(this, &ACharacterController::ServerSendEnd);
+			//	}
+			//	info->bEndGame = false;
+			//	/*while (!inst->m_Socket->Tempname.empty())
+			//		inst->m_Socket->Tempname.pop();
+			//	*/
+			//}
 			//}
 
 			if (!OtherPlayer || OtherPlayer->_SessionId == -1 || OtherPlayer->_SessionId == id)
