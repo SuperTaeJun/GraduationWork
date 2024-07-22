@@ -29,6 +29,7 @@ public:
 	TArray<RoomInfo> RoomList;
 	int32 CurPageNum = 0;
 
+	TObjectPtr<class UBOGameInstance> Inst;
 
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<class UButton>PrevButton;
@@ -52,4 +53,17 @@ public:
 	UFUNCTION()
 	void SlotFourPress();
 
+	UFUNCTION()
+	void SlotOneHoverd();
+	UFUNCTION()
+	void SlotTwoHoverd();
+	UFUNCTION()
+	void SlotThreeHoverd();
+	UFUNCTION()
+	void SlotFourHoverd();
+
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<class USoundCue> ClickSound;
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<class USoundCue> HoverSound;
 };

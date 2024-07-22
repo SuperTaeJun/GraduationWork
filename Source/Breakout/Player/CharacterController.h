@@ -21,6 +21,30 @@ class UBOGameInstance;
 /**
  *
  */
+struct RotAndLoc
+{
+	FVector Loc;
+	FRotator Rot;
+	RotAndLoc(FVector A, FRotator B)
+	{
+		Loc = A;
+		Rot = B;
+	}
+};
+struct FTreeNode
+{
+	TMap<FString, RotAndLoc> Transform;
+	TArray<FTreeNode> Children;
+
+	FTreeNode() {}
+
+	FTreeNode(TMap<FString, RotAndLoc> InTransform)
+	{
+		Transform = InTransform;
+	}
+};
+
+
 UCLASS()
 class BREAKOUT_API ACharacterController : public APlayerController
 {
@@ -209,8 +233,16 @@ public:
 	void SeverHpSync(bool bAlive, float hp, int myid);
 	void ServerSetDissolve(bool dissolve, class ACharacterBase* player);
 
-	private:
-		UPROPERTY(EditAnywhere)
-		TSubclassOf<class ABulletHoleWall> WallClass;
+private:
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class ABulletHoleWall> WallClass;
 
+	// 트리의 루트 노드
+	FTreeNode RootNode;
+
+	// 트리 초기화 함수
+	void InitializeTree();
+
+	// 랜덤 위치를 반환하는 함수
+	RotAndLoc GetRandomLocation(FTreeNode& Node, const FString& ObjectType);
 };

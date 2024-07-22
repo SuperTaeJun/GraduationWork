@@ -108,7 +108,6 @@ void ACharacterController::BeginPlay()
 		}
 	}
 
-	
 }
 
 void ACharacterController::SetChName()
@@ -1169,10 +1168,49 @@ void ACharacterController::ServerSetDissolve(bool dissolve, ACharacterBase* play
 	}
 }
 
-//void ACharacterController::ServerDeadSync(bool bAlive, int myid)
-//{
-//	if (inst)
-//		inst->m_Socket->Send_My_HP_PACKET(myid, bAlive);
-//}
+void ACharacterController::InitializeTree()
+{
+	// 트리의 루트 노드 초기화
+	RootNode = FTreeNode();
 
 
+	TMap<FString, RotAndLoc> Locations;
+	RotAndLoc Temp(FVector(100, 0, 0), FRotator(0.f, 0.f, 10.f));
+	Locations.Add(TEXT("Type1"), Temp);
+	Locations.Add(TEXT("Type2"), Temp);
+	Locations.Add(TEXT("Type3"), Temp);
+
+	RootNode.Children.Add(FTreeNode(Locations));
+
+}
+
+RotAndLoc ACharacterController::GetRandomLocation(FTreeNode& Node, const FString& ObjectType)
+{
+	// 현재 노드가 리프 노드인지 확인
+	if (Node.Children.Num() == 0)
+	{
+		// 리프 노드라면, 해당 타입의 위치가 있는지 확인
+		if (Node.Transform.Contains(ObjectType))
+		{
+			RotAndLoc Transform = Node.Transform[ObjectType];
+			Node.Transform.Remove(ObjectType);
+			return Transform;
+		}
+		// 해당 타입의 위치가 없는 경우 기본 위치 반환
+		return RotAndLoc(FVector::ZeroVector, FRotator::ZeroRotator);
+	}
+
+	// 자식 노드 중에서 랜덤하게 선택
+	int32 Index = FMath::RandRange(0, Node.Children.Num() - 1);
+	FTreeNode& SelectedNode = Node.Children[Index];
+
+	RotAndLoc Transform = GetRandomLocation(SelectedNode, ObjectType);
+
+	// 선택된 노드가 비어 있으면 트리에서 제거
+	if (SelectedNode.Transform.Num() == 0 && SelectedNode.Children.Num() == 0)
+	{
+		Node.Children.RemoveAt(Index);
+	}
+
+	return Transform;
+}
