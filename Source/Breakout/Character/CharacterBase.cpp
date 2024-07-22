@@ -1092,7 +1092,7 @@ void ACharacterBase::Tick(float DeltaTime)
 
 	if (inst->m_Socket->bEndGame == true)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("endgame"));
+		UE_LOG(LogTemp, Warning, TEXT("endgame1"));
 		FMovieSceneSequencePlaybackSettings PlaybackSettings;
 		ALevelSequenceActor* SequenceActor;
 		ULevelSequencePlayer* LevelSequencePlayer = ULevelSequencePlayer::CreateLevelSequencePlayer(
@@ -1104,6 +1104,7 @@ void ACharacterBase::Tick(float DeltaTime)
 
 		if (LevelSequencePlayer)
 		{
+			UE_LOG(LogTemp, Warning, TEXT("endgame2"));
 			LevelSequencePlayer->Play();
 			LevelSequencePlayer->OnFinished.AddDynamic(this, &ACharacterBase::SendEnd);
 		}
