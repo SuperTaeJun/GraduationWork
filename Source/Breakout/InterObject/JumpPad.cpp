@@ -23,8 +23,8 @@ void AJumpPad::OnBoxOverlap(UPrimitiveComponent* OverlappedComponent, AActor* Ot
 		FVector Impulse = (InCh->GetActorForwardVector() + FVector(0.f, 0.f, 1.f)) * FVector(10.f, 10.f, JumpPowerZ);
 		InCh->GetCharacterMovement()->AddImpulse(Impulse, true);
 		//점프 falling상태로 변경해줘야함
-		if (InCh->GetMainController())
-			InCh->GetCharacterMovement()->SetMovementMode(MOVE_Falling);
+		//if (InCh->GetMainController())
+		InCh->GetCharacterMovement()->SetMovementMode(MOVE_Falling);
 	}
 	if (ImpactNiagara)
 		UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), ImpactNiagara, GetActorLocation());
