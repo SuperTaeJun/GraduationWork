@@ -58,6 +58,7 @@ const char CS_ACCOUNT = 31;
 const char CS_BULLET_WALL = 32;
 const char CS_LIGHT = 33;
 const char CS_ROOM = 34;
+const char CS_HOVER = 35;
 
 const char SC_LOGIN_OK = 1;
 const char SC_OTHER_PLAYER = 2;
@@ -462,5 +463,12 @@ struct CS_LOBBY_PACKET {
 	unsigned char type;
 	int id;
 	int RoomNum;
+};
+struct CS_LOBBY_HOVER {
+	unsigned char size;
+	unsigned char type;
+	int id;
+	int RoomNum;
+	bool bInGame;
 };
 #pragma pack(pop)

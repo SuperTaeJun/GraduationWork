@@ -458,13 +458,13 @@ void send_select_character_type_packet(int _s_id)
 	packet.p_type = clients[_s_id].p_type;
 	clients[_s_id].do_send(sizeof(packet), &packet);
 }
-void SendLobbyPacket(int clientId)
+void SendLobbyPacket(int clientId, bool bintoRoom)
 {
 	SC_LOBBY_PACKET packet;
 	packet.size = sizeof(packet);
 	packet.type = SC_LOBBY_ROOM;
 	packet.id = clientId;
-	packet.bLobby = true;
+	packet.bLobby = bintoRoom;
 	clients[clientId].do_send(sizeof(packet), &packet);
 }
 
@@ -480,25 +480,35 @@ void assignClientToRoom(int clientId, int roomNum) {
 		return;
 	}
 
-	// 지정된 방이 가득 찼는지 확인
-	if (gameRooms[roomNum].players.size() >= ENTER_CLIENT) {  // 방의 최대 인원수는 2명
-		cout << "Room " << roomNum << " is full." << endl;
-		// 못들어간다 패킷 보내기 
-		return;
-	}
-
 	// 클라이언트를 지정된 방에 추가
 	gameRooms[roomNum].players.push_back(clientId);
 	clients[clientId].currentRoom = roomNum;
 	cout << "Client " << clientId << " assigned to room " << roomNum << endl;
-	SendLobbyPacket(clientId);
-	// 만약 최대 인원에 도달했다면 게임 시작
-	/*if (gameRooms[roomNum].players.size() == 2) {
-		cout << "Room " << roomNum << " is full. Game starting!" << endl;
-		for (int id : gameRooms[roomNum].players)
-			SendLobbyPacket(id);
-	}*/
+
 }
+void CanClientToRoom(int clientId, int roomNum) {
+	unique_lock<mutex> lock(mtx);
+
+	// 지정된 방 번호가 유효한지 확인
+	if (roomNum < 0 || roomNum >= gameRooms.size()) {
+		cout << "Invalid room number: " << roomNum << endl;
+		return;
+	}
+
+	// 지정된 방이 가득 찼는지 확인
+	if (gameRooms[roomNum].players.size() >= ENTER_CLIENT) {  // 방의 최대 인원수는 2명
+		cout << "Room " << roomNum << " is full." << endl;
+		SendLobbyPacket(clientId, false);
+		return;
+	}
+	else
+	{
+		SendLobbyPacket(clientId, true);
+	}
+
+
+}
+
 
 //패킷 판별
 void process_packet(int s_id, unsigned char* p)
@@ -547,6 +557,13 @@ void process_packet(int s_id, unsigned char* p)
 		CLIENT& cl = clients[packet->id];
 		cl.currentRoom = packet->RoomNum;
 		assignClientToRoom(cl._s_id, cl.currentRoom);
+		break;
+	}
+	case CS_HOVER:
+	{
+		CS_LOBBY_HOVER* packet = reinterpret_cast<CS_LOBBY_HOVER*>(p);
+		CLIENT& cl = clients[packet->id];
+		CanClientToRoom(cl._s_id, cl.currentRoom);
 		break;
 	}
 	case CS_SELECT_CHAR: {
