@@ -917,7 +917,8 @@ void ACharacterBase::GrandeFire(const FInputActionValue& Value)
 				World->SpawnActor<AProjectileBase>(BoobyTrapClass, SWAimLastLoc, FRotator::ZeroRotator, SpawnParms);
 				BoobyTrapNum -= 1;
 				//여기 부비트랩
-			
+				if (inst)
+					inst->m_Socket->Send_BojoWeapon_packet(inst->GetPlayerID(), SWAimLastLoc, FRotator::ZeroRotator, 2);
 			}
 		}
 		else
