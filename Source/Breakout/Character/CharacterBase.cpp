@@ -910,7 +910,8 @@ void ACharacterBase::GrandeFire(const FInputActionValue& Value)
 				FActorSpawnParameters SpawnParms;
 				SpawnParms.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
 				SpawnParms.Owner = this;
-
+				SpawnParms.Instigator = this;
+				
 				World->SpawnActor<AProjectileBase>(BoobyTrapClass, SWAimLastLoc, FRotator::ZeroRotator, SpawnParms);
 				BoobyTrapNum -= 1;
 				//여기 부비트랩

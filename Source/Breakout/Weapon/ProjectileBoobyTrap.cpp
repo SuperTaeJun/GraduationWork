@@ -3,7 +3,7 @@
 
 #include "Weapon/ProjectileBoobyTrap.h"
 #include "Kismet/GameplayStatics.h"
-
+#include"Character/CharacterBase.h"
 AProjectileBoobyTrap::AProjectileBoobyTrap()
 {
 	Hp = 15.f;
@@ -17,9 +17,10 @@ void AProjectileBoobyTrap::BeginPlay()
 
 void AProjectileBoobyTrap::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NomalImpulse, const FHitResult& Hit)
 {
-	if (OtherActor == GetOwner())
+	ACharacterBase* InCh = Cast<ACharacterBase>(OtherActor);
+	if (InCh && InCh == GetOwner())
 		return;
-	else
+	else if(InCh)
 	{
 		UE_LOG(LogTemp, Log, TEXT("BOOM"));
 		APawn* FiringPawn = GetInstigator();
