@@ -637,6 +637,7 @@ bool ACharacterController::UpdateWorld()
 					info->bojotype = 3;
 				}
 				else if (info->bojotype == 2) {
+					SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
 					GetWorld()->SpawnActor<AProjectileBase>(BoobyTrapRef, HEloc, EffectRot, SpawnParameters);
 					info->bojotype = 3;
 				}

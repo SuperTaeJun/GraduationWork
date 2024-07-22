@@ -908,6 +908,7 @@ void ACharacterBase::GrandeFire(const FInputActionValue& Value)
 			if (World && BoobyTrapNum>0)
 			{
 				FActorSpawnParameters SpawnParms;
+				SpawnParms.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
 				SpawnParms.Owner = this;
 
 				World->SpawnActor<AProjectileBase>(BoobyTrapClass, SWAimLastLoc, FRotator::ZeroRotator, SpawnParms);
