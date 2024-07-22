@@ -266,7 +266,7 @@ bool ClientSocket::PacketProcess(char* ptr)
 	}
 	case SC_END_GAME: {
 		CS_END_GAME_PACKET* packet = reinterpret_cast<CS_END_GAME_PACKET*>(ptr);
-		/*PlayerInfo.players[packet->id].bEndGame = true;*/
+		PlayerInfo.players[packet->id].bEndGame = true;
 		PlayerInfo.players[packet->id].WinnerID = packet->winnerid;
 		bEndGame = packet->bEND;
 		break;
