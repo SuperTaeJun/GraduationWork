@@ -234,6 +234,8 @@ public:
 	void ServerSetDissolve(bool dissolve, class ACharacterBase* player);
 	void ServerSendEnd();
 	
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<class ULevelSequence> EndGameCine;
 private:
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class ABulletHoleWall> WallClass;

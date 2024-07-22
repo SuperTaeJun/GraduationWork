@@ -475,15 +475,14 @@ bool ACharacterController::UpdateWorld()
 				ALevelSequenceActor* SequenceActor;
 				ULevelSequencePlayer* LevelSequencePlayer = ULevelSequencePlayer::CreateLevelSequencePlayer(
 					GetWorld(),
-					OtherPlayer->GetEndGameCine(),
+					EndGameCine,
 					PlaybackSettings,
 					SequenceActor
 				);
 
 				if (LevelSequencePlayer)
 				{
-					if (inst)
-						Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_End_Game_packet(inst->GetPlayerID(), true);
+					UE_LOG(LogTemp, Warning, TEXT("ENDGAME"));
 					LevelSequencePlayer->Play();
 					LevelSequencePlayer->OnFinished.AddDynamic(this, &ACharacterController::ServerSendEnd);
 				}
