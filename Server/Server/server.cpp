@@ -562,8 +562,10 @@ void process_packet(int s_id, unsigned char* p)
 	case CS_HOVER:
 	{
 		CS_LOBBY_HOVER* packet = reinterpret_cast<CS_LOBBY_HOVER*>(p);
+		cout << "hover packet µé¾î¿È " << endl;
 		CLIENT& cl = clients[packet->id];
-		CanClientToRoom(cl._s_id, cl.currentRoom);
+		int RoomNum = packet->RoomNum;
+		CanClientToRoom(cl._s_id, RoomNum);
 		break;
 	}
 	case CS_SELECT_CHAR: {
