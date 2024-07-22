@@ -944,6 +944,7 @@ void process_packet(int s_id, unsigned char* p)
 		int RoomNum = cl.currentRoom;
 	//	cout << "´©°¡ ÀÌ±è " << packet->id << endl;
 		for (auto& other : clients) {
+			if (other._s_id == cl._s_id) continue;
 			other.state_lock.lock();
 			if (ST_INGAME != other._state) {
 				other.state_lock.unlock();

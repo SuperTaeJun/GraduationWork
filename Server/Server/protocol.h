@@ -326,6 +326,7 @@ struct CS_END_GAME_PACKET {
 	unsigned char type;
 	int id;
 	int winnerid;
+	bool bPlay;
 	bool bEND;
 };
 struct CS_ITEM_PACKET {

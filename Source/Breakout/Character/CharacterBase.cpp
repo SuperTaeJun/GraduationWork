@@ -800,13 +800,19 @@ void ACharacterBase::Inter(const FInputActionValue& Value)
 		ALevelSequenceActor* SequenceActor;
 		ULevelSequencePlayer* LevelSequencePlayer = ULevelSequencePlayer::CreateLevelSequencePlayer(
 			GetWorld(),
-			EndGameSine,
+			EndGameCine,
 			PlaybackSettings,
 			SequenceActor
 		);
+
 		if (LevelSequencePlayer)
+		{
+			if (inst)
+				Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_End_Game_packet(inst->GetPlayerID(), true);
 			LevelSequencePlayer->Play();
-		LevelSequencePlayer->OnFinished.AddDynamic(this, &ACharacterBase::SendEnd);
+			LevelSequencePlayer->OnFinished.AddDynamic(this, &ACharacterBase::SendEnd);
+		}
+		
 
 	/*	if (inst)
 			Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_End_Game_packet(inst->GetPlayerID());*/
@@ -1115,8 +1121,7 @@ void ACharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 
 void ACharacterBase::SendEnd()
 {
-	if (inst)
-		Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_End_Game_packet(inst->GetPlayerID());
+	GetWorld()->ServerTravel(FString("/Game/Maps/GameRoom"), false, true);
 }
 
 void ACharacterBase::SpawnBeam(FVector StartBeam, FVector EndBeam)

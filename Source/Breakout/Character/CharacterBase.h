@@ -71,7 +71,7 @@ protected:
 	FTransform StartTransform;
 	bool bSkillUsing = false;
 	UPROPERTY(EditAnywhere)
-	TObjectPtr<class ULevelSequence> EndGameSine;
+	TObjectPtr<class ULevelSequence> EndGameCine;
 public:
 	void UpdateHpHUD();
 	void UpdateStaminaHUD();
@@ -95,6 +95,8 @@ public:
 	class UMaterialInstanceDynamic* GetDynamicMaterial() { return MDynamicDissolveInst; }
 	class AWeaponBase* GetWeapon() { return CurWeapon; }
 	class ACharacterController* GetMainController() { return MainController; }
+
+	class ULevelSequence* GetEndGameCine() { return EndGameCine; }
 
 	FORCEINLINE void SetHealth(float DamagedHp) { Health = DamagedHp; }
 	FORCEINLINE void SetMaxHealth(float MaxHp) { MaxHealth = MaxHp; }

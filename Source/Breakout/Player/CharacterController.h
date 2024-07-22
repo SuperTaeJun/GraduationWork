@@ -232,7 +232,8 @@ public:
 	TArray<class AEscapeTool*> EscapeTools;
 	void SeverHpSync(bool bAlive, float hp, int myid);
 	void ServerSetDissolve(bool dissolve, class ACharacterBase* player);
-
+	void ServerSendEnd();
+	
 private:
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class ABulletHoleWall> WallClass;

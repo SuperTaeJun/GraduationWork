@@ -572,12 +572,13 @@ void ClientSocket::Send_item_info_packet(int objid)
 	packet.objid = objid;
 	SendPacket(&packet);
 }
-void ClientSocket::Send_End_Game_packet(int id)
+void ClientSocket::Send_End_Game_packet(int id, bool bPlay)
 {
 	CS_END_GAME_PACKET packet;
 	packet.size = sizeof(packet);
 	packet.type = CS_END_GAME;
 	packet.id = id;
+	packet.bPlay = bPlay;
 	SendPacket(&packet);
 }
 void ClientSocket::Send_Signal_packet(int id, int num)

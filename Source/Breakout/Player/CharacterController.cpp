@@ -35,6 +35,8 @@
 #include "Game/BOGameMode.h"
 #include "GameProp/BulletHoleWall.h"
 #include "Components/SpotLightComponent.h"
+#include "LevelSequence.h"
+#include "LevelSequencePlayer.h"
 
 ACharacterController::ACharacterController()
 {
@@ -469,9 +471,26 @@ bool ACharacterController::UpdateWorld()
 				//inst->m_Socket->Exit();
 				//Cast<ACharacterBase>(GetPawn())->PlayAnimMontage(Cast<ACharacterBase>(GetPawn())->GetDeadMontage());
 				//FGenericPlatformMisc::RequestExit(true);
-				while (!inst->m_Socket->Tempname.empty())
+				FMovieSceneSequencePlaybackSettings PlaybackSettings;
+				ALevelSequenceActor* SequenceActor;
+				ULevelSequencePlayer* LevelSequencePlayer = ULevelSequencePlayer::CreateLevelSequencePlayer(
+					GetWorld(),
+					OtherPlayer->GetEndGameCine(),
+					PlaybackSettings,
+					SequenceActor
+				);
+
+				if (LevelSequencePlayer)
+				{
+					if (inst)
+						Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_End_Game_packet(inst->GetPlayerID(), true);
+					LevelSequencePlayer->Play();
+					LevelSequencePlayer->OnFinished.AddDynamic(this, &ACharacterController::ServerSendEnd);
+				}
+				info->bEndGame = false;
+				/*while (!inst->m_Socket->Tempname.empty())
 					inst->m_Socket->Tempname.pop();
-				GetWorld()->ServerTravel(FString("/Game/Maps/GameRoom"), false, true);
+				*/
 			}
 			//}
 
@@ -1168,6 +1187,11 @@ void ACharacterController::ServerSetDissolve(bool dissolve, ACharacterBase* play
 			player->GetDynamicMaterial()->SetScalarParameterValue(FName("Dissolve"), player->GetDissolvePersent());
 		}
 	}
+}
+
+void ACharacterController::ServerSendEnd()
+{
+	GetWorld()->ServerTravel(FString("/Game/Maps/GameRoom"), false, true);
 }
 
 void ACharacterController::InitializeTree()
