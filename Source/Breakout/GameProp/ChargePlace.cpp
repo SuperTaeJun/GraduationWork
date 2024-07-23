@@ -28,10 +28,10 @@ void AChargePlace::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 
-	if (bInCh && InCh && InCh->GetMainController() && InCh->GetHealth()<100.f)
+	if (bInCh && InCh && InCh->GetMainController() && InCh->GetHealth()< InCh->GetMaxHealth())
 	{
 		UE_LOG(LogTemp, Warning, TEXT("CHARGING"));
-		InCh->SetHealth(InCh->GetHealth() + (DeltaTime*0.5f));
+		InCh->SetHealth(InCh->GetHealth() + (DeltaTime*1.5f));
 		InCh->UpdateHpHUD();
 	}
 }
