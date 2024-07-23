@@ -5,7 +5,7 @@
 #include <vector>
 #include <array>
 
-enum Login_fail_Type { OVERLAP_ID, WORNG_ID, WORNG_PW, OVERLAP_AC, CREATE_AC };
+enum Login_fail_Type { OVERLAP_ID, WRONG_ID, WRONG_PW, OVERLAP_AC, CREATE_AC };
 
 
 enum PlayerType

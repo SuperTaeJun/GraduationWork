@@ -38,7 +38,11 @@ void ULogin::PressLogin()
 		PlaySound(ClickSound);
 	}
 
-	RemoveFromParent();
+	if (Cast<UBOGameInstance>(GetGameInstance())->m_Socket->bLoginConnect)
+	{
+		RemoveFromParent();
+		Cast<UBOGameInstance>(GetGameInstance())->m_Socket->bLoginConnect = false;
+	}
 }
 
 void ULogin::PressSignUp()

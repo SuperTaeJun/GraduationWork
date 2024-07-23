@@ -517,7 +517,7 @@ void process_packet(int s_id, unsigned char* p)
 	case CS_LOGIN: {
 		CS_LOGIN_PACKET* packet = reinterpret_cast<CS_LOGIN_PACKET*>(p);
 		CLIENT& cl = clients[s_id];
-
+		
 		cout << "[Recv login] ID :" << packet->id << ", PASSWORD : " << packet->pw << endl;
 		if (DB_odbc(packet->id, packet->pw))
 		{
@@ -534,12 +534,12 @@ void process_packet(int s_id, unsigned char* p)
 		{
 			if (DB_id(packet->id) == true) {
 				cout << "플레이어[" << s_id << "]" << " 잘못된 비번" << endl;
-				send_login_fail_packet(s_id, WORNG_PW);
+				send_login_fail_packet(s_id, WRONG_PW);
 				break;
 			}
 			else {
 				cout << "플레이어[" << s_id << "]" << " 잘못된 아이디" << endl;
-				send_login_fail_packet(s_id, WORNG_ID);
+				send_login_fail_packet(s_id, WRONG_ID);
 				break;
 			}
 		}
@@ -556,7 +556,7 @@ void process_packet(int s_id, unsigned char* p)
 		else
 		{
 			save_data(packet->id, packet->pw);
-			send_login_fail_packet(s_id, CREATE_AC);
+			//send_login_fail_packet(s_id, CREATE_AC);
 			cout << "계정 생성 완료" << endl;
 		}
 		

@@ -461,6 +461,7 @@ public:
 	}
 
 	char* IP_addr = nullptr;
+	bool bLoginConnect = false;
 
 private:
 	ACharacterController* MyCharacterController;
