@@ -47,8 +47,6 @@ void AMainHUD::DrawHUD()
 		GEngine->GameViewport->GetViewportSize(ViewportSize);
 		const FVector2D ViewportCenter(ViewportSize.X / 2.f, ViewportSize.Y / 2.f);
 
-		float SpreadScaled = CrosshairSpreadMax * HUDPackage.CrosshairSpread;
-
 		if (HUDPackage.CrosshairCenter)
 		{
 			FVector2D Spread(0.f, 0.f);
@@ -56,22 +54,22 @@ void AMainHUD::DrawHUD()
 		}
 		if (HUDPackage.CrosshairLeft)
 		{
-			FVector2D Spread(-SpreadScaled, 0.f);
+			FVector2D Spread(0.f, 0.f);
 			DrawCrosshair(HUDPackage.CrosshairLeft, ViewportCenter, Spread);
 		}
 		if (HUDPackage.CrosshairRight)
 		{
-			FVector2D Spread(+SpreadScaled, 0.f);
+			FVector2D Spread(0.f, 0.f);
 			DrawCrosshair(HUDPackage.CrosshairRight, ViewportCenter, Spread);
 		}
 		if (HUDPackage.CrosshairTop)
 		{
-			FVector2D Spread(0.f, -SpreadScaled);
+			FVector2D Spread(0.f, 0.f);
 			DrawCrosshair(HUDPackage.CrosshairTop, ViewportCenter, Spread);
 		}
 		if (HUDPackage.CrosshairBottom)
 		{
-			FVector2D Spread(0.f, +SpreadScaled);
+			FVector2D Spread(0.f, 0.f);
 			DrawCrosshair(HUDPackage.CrosshairBottom, ViewportCenter, Spread);
 		}
 
