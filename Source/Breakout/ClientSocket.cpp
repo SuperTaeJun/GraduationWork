@@ -80,9 +80,32 @@ bool ClientSocket::PacketProcess(char* ptr)
 	{
 	case SC_LOGIN_OK: {
 		SC_LOGIN_BACK* packet = reinterpret_cast<SC_LOGIN_BACK*>(ptr);
-		//to_do
 		gameinst->SetPlayerID(packet->id);
-		UE_LOG(LogTemp, Warning, TEXT("MY ID : %d"), packet->id);
+		bLoginConnect = packet->bLogin;
+		break;
+	}
+	case SC_LOGIN_FAIL: {
+		SC_LOGIN_FAIL_PACKET* packet = reinterpret_cast<SC_LOGIN_FAIL_PACKET*>(ptr);
+		switch (packet->failType)
+		{
+		case OVERLAP_ID:
+		{
+			UE_LOG(LogTemp, Warning, TEXT("OVERLAP_ID"));
+			break;
+		}
+		case WRONG_ID:
+		{
+			UE_LOG(LogTemp, Warning, TEXT("WRONG ID"));
+			break;
+		}
+		case WRONG_PW:
+		{
+			UE_LOG(LogTemp, Warning, TEXT("WRONG PW"));
+			break;
+		}
+		default:
+			break;
+		}
 		break;
 	}
 	case SC_LOBBY_ROOM:
