@@ -307,7 +307,7 @@ void ev_timer();
 int get_id();
 void send_select_character_type_packet(int _s_id);
 void send_login_ok_packet(int _s_id);
-void send_login_fail_packet(int _s_id);
+void send_login_fail_packet(int _s_id, int failType);
 void send_move_packet(int _id, int target);
 void send_change_hp(int _s_id);
 void Disconnect(int _s_id);
@@ -436,14 +436,13 @@ void send_login_ok_packet(int _s_id)
 
 	clients[_s_id].do_send(sizeof(packet), &packet);
 }
-void send_login_fail_packet(int _s_id)
+void send_login_fail_packet(int _s_id, int failType)
 {
 	SC_LOGIN_FAIL_PACKET packet;
 	packet.size = sizeof(packet);
 	packet.type = SC_LOGIN_FAIL;
 	packet.id = _s_id;
-	strcpy_s(packet.failreason, "fail");
-
+	packet.failType = failType;
 	clients[_s_id].do_send(sizeof(packet), &packet);
 }
 void send_select_character_type_packet(int _s_id)
@@ -505,8 +504,6 @@ void CanClientToRoom(int clientId, int roomNum) {
 	{
 		SendLobbyPacket(clientId, true);
 	}
-
-
 }
 
 
@@ -519,36 +516,50 @@ void process_packet(int s_id, unsigned char* p)
 	switch (packet_type) {
 	case CS_LOGIN: {
 		CS_LOGIN_PACKET* packet = reinterpret_cast<CS_LOGIN_PACKET*>(p);
-
 		CLIENT& cl = clients[s_id];
+
 		cout << "[Recv login] ID :" << packet->id << ", PASSWORD : " << packet->pw << endl;
-		cl.state_lock.lock();
-		cl._state = ST_INGAME;
-		cl.state_lock.unlock();
-		strcpy_s(cl.name, packet->id);
-		strcpy_s(cl._pw, packet->pw);
-		cl.bLogin = true;
-		cout << "플레이어[" << s_id << "]" << " 로그인 성공" << endl;
-		//if (DB_odbc(packet->id, packet->pw))
-		//{
-		//strcpy_s(cl.name, packet->id);
-		//strcpy_s(cl._pw, packet->pw);
-		//cl.bLogin = true;
-		//send_login_ok_packet(cl._s_id);
-		//cout << "플레이어[" << s_id << "]" << " 로그인 성공" << endl;
-		////matchClientToGameRoom(cl._s_id);
-		//}
-		//else send_login_fail_packet(s_id);
-		send_login_ok_packet(cl._s_id);
-
+		if (DB_odbc(packet->id, packet->pw))
+		{
+			cl.state_lock.lock();
+			cl._state = ST_INGAME;
+			cl.state_lock.unlock();
+			strcpy_s(cl.name, packet->id);
+			strcpy_s(cl._pw, packet->pw);
+			cl.bLogin = true;
+			send_login_ok_packet(cl._s_id);
+			cout << "플레이어[" << s_id << "]" << " 로그인 성공" << endl;
+		}
+		else
+		{
+			if (DB_id(packet->id) == true) {
+				cout << "플레이어[" << s_id << "]" << " 잘못된 비번" << endl;
+				send_login_fail_packet(s_id, WORNG_PW);
+				break;
+			}
+			else {
+				cout << "플레이어[" << s_id << "]" << " 잘못된 아이디" << endl;
+				send_login_fail_packet(s_id, WORNG_ID);
+				break;
+			}
+		}
 		break;
-
 	}
 	case CS_ACCOUNT: {
 		CS_ACCOUNT_PACKET* packet = reinterpret_cast<CS_ACCOUNT_PACKET*>(p);
 		CLIENT& cl = clients[s_id];
-		save_data(packet->id, packet->pw);
-		cout << "계정 생성 완료" << endl;
+		cout << "[Account login] ID :" << packet->id << ", PASSWORD : " << packet->pw << endl;
+		if (DB_id(packet->id) == true) {
+			cout << "플레이어[" << s_id << "] 계정 생성 실패 - " << "중복된 아이디" << endl;
+			send_login_fail_packet(s_id, OVERLAP_ID);
+		}
+		else
+		{
+			save_data(packet->id, packet->pw);
+			send_login_fail_packet(s_id, CREATE_AC);
+			cout << "계정 생성 완료" << endl;
+		}
+		
 		break;
 	}
 	case CS_ROOM:

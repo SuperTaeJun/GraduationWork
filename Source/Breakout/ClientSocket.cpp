@@ -398,6 +398,17 @@ void ClientSocket::Send_Login_Info(char* id, char* pw)
 
 }
 
+void ClientSocket::Send_Account_PACKET(char* id, char* pw)
+{
+	CS_ACCOUNT_PACKET packet;
+	packet.size = sizeof(packet);
+	packet.type = CS_ACCOUNT;
+	strcpy_s(packet.id, id);
+	strcpy_s(packet.pw, pw);
+
+	SendPacket(&packet);
+}
+
 void ClientSocket::Send_Move_Packet(int sessionID, FVector Location, FRotator Rotation, FVector Velocity, float Max_speed, float AO_Yaw, float AO_Pitch)
 {
 	//if (login_cond == true) {

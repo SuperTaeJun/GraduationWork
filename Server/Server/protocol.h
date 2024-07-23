@@ -1,9 +1,12 @@
 #pragma once
 #define SERVER_PORT		8001
-#define SERVER_IP		"192.168.0.102"
+#define SERVER_IP		"192.168.219.101"
 #define MAX_INFO_SIZE   20
 #include <vector>
 #include <array>
+
+enum Login_fail_Type { OVERLAP_ID, WORNG_ID, WORNG_PW, OVERLAP_AC, CREATE_AC };
+
 
 enum PlayerType
 {
@@ -118,7 +121,7 @@ struct SC_LOGIN_FAIL_PACKET {
 	unsigned char size;
 	unsigned char type;
 	int id;
-	char failreason[MAX_INFO_SIZE];
+	int failType;
 };
 struct CS_ACCOUNT_PACKET {
 	unsigned char size;

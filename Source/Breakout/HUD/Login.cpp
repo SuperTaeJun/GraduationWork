@@ -39,3 +39,11 @@ void ULogin::PressLogin()
 	RemoveFromParent();
 }
 
+void ULogin::PressSignUp()
+{
+	FString IDToString = ID->GetText().ToString();
+	FString PasswordToString = Password->GetText().ToString();
+	if (Cast<UBOGameInstance>(GetGameInstance())->m_Socket)
+		Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Account_PACKET(TCHAR_TO_UTF8(*IDToString), TCHAR_TO_UTF8(*PasswordToString));
+}
+
