@@ -11,15 +11,18 @@
 
 void AMainHUD::BeginPlay()
 {
-	AddCharacterOverlay();
+	APlayerController* PlayerController = GetOwningPlayerController();
+	CharacterUi = CreateWidget<UCharacterUi>(PlayerController, CharacterUiClass);
+	EscapeToolNumUi = CreateWidget<UEscapeToolNumUi>(PlayerController, EscapeToolNumUiClass);
+	SelectWeapon = CreateWidget<USelectWeaponUi>(PlayerController, SelectWeaponClass);
+	//AddCharacterOverlay();
 }
 
 void AMainHUD::AddCharacterOverlay()
 {
 	APlayerController* PlayerController = GetOwningPlayerController();
-	if (PlayerController && CharacterUiClass)
+	if (CharacterUiClass)
 	{
-		CharacterUi = CreateWidget<UCharacterUi>(PlayerController, CharacterUiClass);
 		CharacterUi->AddToViewport();
 	}
 }
@@ -81,7 +84,6 @@ void AMainHUD::AddToolNumUi()
 	APlayerController* PlayerController = GetOwningPlayerController();
 	if (PlayerController)
 	{
-		EscapeToolNumUi = CreateWidget<UEscapeToolNumUi>(PlayerController, EscapeToolNumUiClass);
 		if (EscapeToolNumUi)
 			EscapeToolNumUi->AddToViewport();
 	}
@@ -92,7 +94,6 @@ void AMainHUD::AddSelectWeapon()
 	APlayerController* PlayerController = GetOwningPlayerController();
 	if (PlayerController)
 	{
-		SelectWeapon = CreateWidget<USelectWeaponUi>(PlayerController, SelectWeaponClass);
 		if (SelectWeapon)
 			SelectWeapon->AddToViewport();
 	}

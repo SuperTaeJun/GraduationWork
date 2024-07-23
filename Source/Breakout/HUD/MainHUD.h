@@ -53,11 +53,10 @@ public:
 	void RemoveSelectWeapon();
 	void RemoveRespawnSelect();
 	void RemoveMatchingUi();
-
+	void AddCharacterOverlay();
 
 protected:
 	virtual void BeginPlay() override;
-	void AddCharacterOverlay();
 
 private:
 	FCrosshairPackage HUDPackage;

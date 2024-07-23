@@ -72,6 +72,8 @@ protected:
 	bool bSkillUsing = false;
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<class ULevelSequence> EndGameCine;
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<class ULevelSequence> StartGameCine;
 public:
 	void UpdateHpHUD();
 	void UpdateStaminaHUD();
@@ -297,12 +299,15 @@ public:
 	void SpawnHitImpact(FVector HitLoc, FRotator HitRot);
 	bool bStarted;
 	FTimerHandle StartHandle;
+	UFUNCTION()
 	void StartGame();
 	float StartedCnt;
 	bool bDeadAnim = false;
 	class UBOGameInstance* inst;
 	class UCameraComponent* GetCamera() { return FollowCamera; }
 	void Server_PlayDeadAnim();
+
+	bool bCrosshiar = false;
 };
 
 UENUM(BlueprintType)

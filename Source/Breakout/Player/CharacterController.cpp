@@ -292,7 +292,7 @@ void ACharacterController::SetHUDMatchingUi()
 	if (MainHUD)
 	{
 		MainHUD->MatchingUi->ContingText->SetVisibility(ESlateVisibility::Hidden);
-		MainHUD->MatchingUi->WaitingText->SetText(FText::FromString("Waiting for OtherPlayer"));
+		MainHUD->MatchingUi->WaitingText->SetText(FText::FromString("Waiting for Other Player"));
 	}
 }
 
@@ -1154,6 +1154,11 @@ void ACharacterController::OnPossess(APawn* InPawn)
 		bEnableMouseOverEvents = true;
 		showWeaponSelect();
 	}
+}
+
+void ACharacterController::AllHud()
+{
+
 }
 
 void ACharacterController::SeverHpSync(bool bAlive, float hp, int myid)

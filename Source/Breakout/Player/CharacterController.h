@@ -206,6 +206,8 @@ public:
 	void Set_Weapon_Type(EWeaponType Type);
 	//void UpdateWeaponMesh();
 	virtual void OnPossess(APawn* InPawn) override;
+
+	void AllHud();
 public:
 
 	TObjectPtr<class AMainHUD> MainHUD;

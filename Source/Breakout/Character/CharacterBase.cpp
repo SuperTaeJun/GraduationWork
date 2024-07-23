@@ -114,15 +114,15 @@ void ACharacterBase::BeginPlay()
 	}
 	//MainHUD = MainHUD == nullptr ? Cast<AMainHUD>(MainController->GetHUD()) : MainHUD;
 	MainController = MainController == nullptr ? Cast<ACharacterController>(Controller) : MainController;
-	if (MainController)
-	{
-		EnableInput(MainController);
-		FInputModeGameOnly GameInput;
-		MainController->bShowMouseCursor = false;
-		MainController->SetInputMode(GameInput);
-		MainController->ShowMatchingUi();
-		MainController->SetHUDMatchingUi();
-	}
+	//if (MainController)
+	//{
+	//	EnableInput(MainController);
+	//	FInputModeGameOnly GameInput;
+	//	MainController->bShowMouseCursor = false;
+	//	MainController->SetInputMode(GameInput);
+	//	MainController->ShowMatchingUi();
+	//	MainController->SetHUDMatchingUi();
+	//}
 	////무기선택 ui생성
 	//MainController = MainController == nullptr ? Cast<ACharacterController>(Controller) : MainController;
 	//if (MainController)
@@ -146,7 +146,6 @@ void ACharacterBase::BeginPlay()
 
 
 	OnTakeAnyDamage.AddDynamic(this, &ACharacterBase::ReciveDamage);
-
 }
 
 
@@ -1049,7 +1048,8 @@ void ACharacterBase::Tick(float DeltaTime)
 	AimOffset(DeltaTime);
 	AimOffset(DeltaTime);
 
-	SetHUDCrosshair(DeltaTime);
+	if(bCrosshiar)
+		SetHUDCrosshair(DeltaTime);
 	FHitResult HitResult;
 	TraceUnderCrossHiar(HitResult);
 	HitTarget = HitResult.ImpactPoint;
@@ -1077,13 +1077,27 @@ void ACharacterBase::Tick(float DeltaTime)
 	
 
 
-	if (/*Cast<UBOGameInstance>(GetWorld()->GetGameInstance())->m_Socket->bAllReady == true &&*/ !bStarted)
+	if (Cast<UBOGameInstance>(GetWorld()->GetGameInstance())->m_Socket->bAllReady == true && !bStarted)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("StartGame"));
+		//UE_LOG(LogTemp, Warning, TEXT("StartGame"));
 		Cast<UBOGameInstance>(GetWorld()->GetGameInstance())->m_Socket->bAllReady = false;
 		bStarted = true;
-		//DisableInput(UGameplayStatics::GetPlayerController(GetWorld(), 0));
-		GetWorldTimerManager().SetTimer(StartHandle, this, &ACharacterBase::StartGame, 5.f);
+		//MainController->MainHUD->RemoveMatchingUi();
+		DisableInput(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+		FMovieSceneSequencePlaybackSettings PlaybackSettings;
+		ALevelSequenceActor* SequenceActor;
+		ULevelSequencePlayer* LevelSequencePlayer = ULevelSequencePlayer::CreateLevelSequencePlayer(
+			GetWorld(),
+			StartGameCine,
+			PlaybackSettings,
+			SequenceActor
+		);
+
+		if (LevelSequencePlayer)
+		{
+			LevelSequencePlayer->Play();
+			LevelSequencePlayer->OnFinished.AddDynamic(this, &ACharacterBase::StartGame);
+		}
 	}
 
 	if (MainController)
@@ -1169,7 +1183,8 @@ void ACharacterBase::SpawnHitImpact(FVector HitLoc, FRotator HitRot)
 
 void ACharacterBase::StartGame()
 {
-
+	bCrosshiar = true;
+	UE_LOG(LogTemp, Warning, TEXT("STARTGAME"));
 	Movement->Velocity = FVector::ZeroVector;
 	MainController = MainController == nullptr ? Cast<ACharacterController>(Controller) : MainController;
 	if (MainController)
@@ -1181,10 +1196,10 @@ void ACharacterBase::StartGame()
 		MainController->SetNum();
 		MainController->SetChName();
 		SetActorTransform(StartTransform);
-		MainController->MainHUD->RemoveMatchingUi();
 		//bStarted = false;
 		EnableInput(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 		SetWeaponUi();
+		MainController->MainHUD->AddCharacterOverlay();
 		if (inst)
 			inst->m_Socket->bName = true;
 	}
