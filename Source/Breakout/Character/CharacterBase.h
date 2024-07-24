@@ -308,6 +308,7 @@ public:
 	void Server_PlayDeadAnim();
 
 	bool bCrosshiar = false;
+	bool bStamina = true;
 };
 
 UENUM(BlueprintType)

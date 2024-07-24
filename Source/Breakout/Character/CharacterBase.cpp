@@ -792,6 +792,10 @@ void ACharacterBase::Inter(const FInputActionValue& Value)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("endgame"));
 		FMovieSceneSequencePlaybackSettings PlaybackSettings;
+		PlaybackSettings.bHideHud = true;
+		PlaybackSettings.bHidePlayer = true;
+		PlaybackSettings.bDisableMovementInput = true;
+		PlaybackSettings.bDisableLookAtInput = true;
 		ALevelSequenceActor* SequenceActor;
 		ULevelSequencePlayer* LevelSequencePlayer = ULevelSequencePlayer::CreateLevelSequencePlayer(
 			GetWorld(),
@@ -799,11 +803,17 @@ void ACharacterBase::Inter(const FInputActionValue& Value)
 			PlaybackSettings,
 			SequenceActor
 		);
-
+	
 		if (LevelSequencePlayer)
 		{
 			if (inst)
 				Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_End_Game_packet(inst->GetPlayerID(), true);
+			bCrosshiar = false;
+			bStamina = false;
+			MainController->MainHUD->RemoveToolNumUi();
+			MainController->MainHUD->RemoveCharacterOverlay();
+			MainController->ShowMatchingUi();
+			MainController->SetHUDMatchingUi(true);
 			LevelSequencePlayer->Play();
 			LevelSequencePlayer->OnFinished.AddDynamic(this, &ACharacterBase::SendEnd);
 		}
@@ -1043,8 +1053,8 @@ void ACharacterBase::Tick(float DeltaTime)
 	{
 		CanJump = true;
 	}
-
-	UpdateStamina(DeltaTime);
+	if(bStamina)
+		UpdateStamina(DeltaTime);
 	AimOffset(DeltaTime);
 	AimOffset(DeltaTime);
 
@@ -1085,6 +1095,10 @@ void ACharacterBase::Tick(float DeltaTime)
 		//MainController->MainHUD->RemoveMatchingUi();
 		DisableInput(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 		FMovieSceneSequencePlaybackSettings PlaybackSettings;
+		PlaybackSettings.bHideHud = true;
+		PlaybackSettings.bHidePlayer = true;
+		PlaybackSettings.bDisableMovementInput = true;
+		PlaybackSettings.bDisableLookAtInput = true;
 		ALevelSequenceActor* SequenceActor;
 		ULevelSequencePlayer* LevelSequencePlayer = ULevelSequencePlayer::CreateLevelSequencePlayer(
 			GetWorld(),
@@ -1103,9 +1117,8 @@ void ACharacterBase::Tick(float DeltaTime)
 	if (MainController)
 		MainController->SeverHpSync(bAlive, Health, inst->GetPlayerID());
 
-	if (inst->m_Socket->bEndGame == true)
+	/*if (inst->m_Socket->bEndGame == true)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("endgame1"));
 		FMovieSceneSequencePlaybackSettings PlaybackSettings;
 		ALevelSequenceActor* SequenceActor;
 		ULevelSequencePlayer* LevelSequencePlayer = ULevelSequencePlayer::CreateLevelSequencePlayer(
@@ -1118,11 +1131,12 @@ void ACharacterBase::Tick(float DeltaTime)
 		if (LevelSequencePlayer)
 		{
 			UE_LOG(LogTemp, Warning, TEXT("endgame2"));
+			bCrosshiar = false;
 			LevelSequencePlayer->Play();
 			LevelSequencePlayer->OnFinished.AddDynamic(this, &ACharacterBase::SendEnd);
 		}
 		inst->m_Socket->bEndGame = false;
-	}
+	}*/
 }
 
 void ACharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)

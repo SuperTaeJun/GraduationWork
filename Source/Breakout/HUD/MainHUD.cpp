@@ -27,6 +27,12 @@ void AMainHUD::AddCharacterOverlay()
 	}
 }
 
+void AMainHUD::RemoveCharacterOverlay()
+{
+	if (CharacterUi)
+		CharacterUi->RemoveFromViewport();
+}
+
 void AMainHUD::DrawCrosshair(UTexture2D* Texture, FVector2D ViewportCenter, FVector2D Spread)
 {
 	const float TextureWidth = Texture->GetSizeX();
@@ -85,6 +91,12 @@ void AMainHUD::AddToolNumUi()
 		if (EscapeToolNumUi)
 			EscapeToolNumUi->AddToViewport();
 	}
+}
+
+void AMainHUD::RemoveToolNumUi()
+{
+	if (EscapeToolNumUi)
+		EscapeToolNumUi->RemoveFromViewport();
 }
 
 void AMainHUD::AddSelectWeapon()
