@@ -1006,6 +1006,11 @@ void ACharacterBase::LightOnOff(const FInputActionValue& Value)
 	}
 }
 
+void ACharacterBase::Quit(const FInputActionValue& Value)
+{
+	UKismetSystemLibrary::QuitGame(MainController,MainController, EQuitPreference::Quit, true);
+}
+
 void ACharacterBase::Detect_S(const FInputActionValue& Value)
 {
 	//quick_exit(0);
@@ -1165,6 +1170,7 @@ void ACharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 		EnhancedInputComponent->BindAction(DetectAction, ETriggerEvent::Triggered, this, &ACharacterBase::Detect_S);
 		EnhancedInputComponent->BindAction(DetectAction, ETriggerEvent::Completed, this, &ACharacterBase::Detect_E);
 		EnhancedInputComponent->BindAction(LightAction, ETriggerEvent::Started, this, &ACharacterBase::LightOnOff);
+		EnhancedInputComponent->BindAction(QuitAction, ETriggerEvent::Started, this, &ACharacterBase::Quit);
 	}
 }
 
