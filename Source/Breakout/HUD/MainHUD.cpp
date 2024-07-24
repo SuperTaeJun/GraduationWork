@@ -104,6 +104,7 @@ void AMainHUD::AddSelectWeapon()
 	APlayerController* PlayerController = GetOwningPlayerController();
 	if (PlayerController)
 	{
+		SelectWeapon = CreateWidget<USelectWeaponUi>(PlayerController, SelectWeaponClass);
 		if (SelectWeapon)
 			SelectWeapon->AddToViewport();
 	}
