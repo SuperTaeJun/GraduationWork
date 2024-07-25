@@ -292,6 +292,7 @@ bool ClientSocket::PacketProcess(char* ptr)
 		PlayerInfo.players[packet->id].bEndGame = true;
 		PlayerInfo.players[packet->id].WinnerID = packet->winnerid;
 		bEndGame = packet->bEND;
+		bName = false;
 		break;
 	}
 	case SC_MYITEM_COUNT:{
