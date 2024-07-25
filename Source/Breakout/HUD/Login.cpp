@@ -41,12 +41,12 @@ void ULogin::PressLogin()
 {
 
 	////로그인실패하면
-	if (Fail && !Cast<UBOGameInstance>(GetGameInstance())->m_Socket->bLoginConnect)
-	{
-		Fail->SetVisibility(ESlateVisibility::Visible);
-	}
+	//if (Fail && !Cast<UBOGameInstance>(GetGameInstance())->m_Socket->bLoginConnect)
+	//{
+	//	Fail->SetVisibility(ESlateVisibility::Visible);
+	//}
 
-	if(Cast<UBOGameInstance>(GetGameInstance())->m_Socket->bLoginConnect)
+	//if(Cast<UBOGameInstance>(GetGameInstance())->m_Socket->bLoginConnect)
 		RemoveFromParent();
 
 

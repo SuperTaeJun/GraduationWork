@@ -166,20 +166,20 @@ void ACharacterBase::UpdateStamina(float DeltaTime)
 	{
 		if (CharacterState == ECharacterState::ECS_SPRINT && Stamina >= 0.f)
 		{
-			Stamina -= 0.4f;
+			Stamina -= DeltaTime*8.f;
 			if (Stamina <= 0.f)
 				StaminaExhaustionState = true;
 		}
 		else 	if ((CharacterState == ECharacterState::ECS_RUN || CharacterState == ECharacterState::ECS_IDLE) && Stamina < MaxStamina)
 		{
-			Stamina += 0.2f;
+			Stamina += DeltaTime * 10.f;
 		}
 	}
 	else	if (StaminaExhaustionState == true)
 	{
 		if (Stamina < 50.f)
 		{
-			Stamina += 0.2f;
+			Stamina += DeltaTime * 10.f;
 		}
 		else if (Stamina >= 50.f)
 		{
@@ -331,22 +331,18 @@ void ACharacterBase::GrandeThrow()
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 	Cast<UBOAnimInstance>(AnimInstance)->bUseLeftHand = false;
 	//PlayAnimMontage(GrenadeMontage, 2.f, FName("Fire"));
-
-
-
-
 }
 void ACharacterBase::GrandeAim()
 {
 	CurWeapon->SetActorHiddenInGame(true);
 	Grenade->bHiddenInGame = false;
 
-	const USkeletalMeshSocket* WeaponSocket = GetMesh()->GetSocketByName(FName("LeftHandSocket"));
+	//const USkeletalMeshSocket* WeaponSocket = GetMesh()->GetSocketByName(FName("LeftHandSocket"));
 
-	if (WeaponSocket && CurWeapon)
-	{
-		WeaponSocket->AttachActor(CurWeapon, GetMesh());
-	}
+	//if (WeaponSocket && CurWeapon)
+	//{
+	//	WeaponSocket->AttachActor(CurWeapon, GetMesh());
+	//}
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 	// ¼ö·ùÅº ÅõÃ´ ¾Ö´Ï¸ÞÀÌ¼Ç
 	if (AnimInstance && GrenadeMontage)
@@ -931,8 +927,12 @@ void ACharacterBase::GrandeFire(const FInputActionValue& Value)
 			}
 		}
 		else
-			GrandeAim();
+		{
+			//UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+			//Cast<UBOAnimInstance>(AnimInstance)->bUseLeftHand = false;
 
+			GrandeAim();
+		}
 	}
 }
 
@@ -1012,6 +1012,18 @@ void ACharacterBase::LightOnOff(const FInputActionValue& Value)
 void ACharacterBase::Quit(const FInputActionValue& Value)
 {
 	UKismetSystemLibrary::QuitGame(MainController,MainController, EQuitPreference::Quit, true);
+}
+
+void ACharacterBase::OnDebug(const FInputActionValue& Value)
+{
+	if (CurWeapon)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("DEBUG"));
+		if(CurWeapon->bDebug)
+			CurWeapon->bDebug = false;
+		else
+			CurWeapon->bDebug = true;
+	}
 }
 
 void ACharacterBase::Detect_S(const FInputActionValue& Value)
@@ -1174,6 +1186,7 @@ void ACharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 		EnhancedInputComponent->BindAction(DetectAction, ETriggerEvent::Completed, this, &ACharacterBase::Detect_E);
 		EnhancedInputComponent->BindAction(LightAction, ETriggerEvent::Started, this, &ACharacterBase::LightOnOff);
 		EnhancedInputComponent->BindAction(QuitAction, ETriggerEvent::Started, this, &ACharacterBase::Quit);
+		EnhancedInputComponent->BindAction(DebugAction, ETriggerEvent::Started, this, &ACharacterBase::OnDebug);
 	}
 }
 
