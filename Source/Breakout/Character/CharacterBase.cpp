@@ -734,6 +734,8 @@ void ACharacterBase::Sprint_S(const FInputActionValue& Value)
 		//bUseControllerRotationYaw = true;
 		SetRun();
 	}
+
+	//UpdateStamina(GetWorld()->GetDeltaSeconds());
 }
 void ACharacterBase::Sprint_E(const FInputActionValue& Value)
 {
@@ -1204,6 +1206,7 @@ void ACharacterBase::SpawnHitImpact(FVector HitLoc, FRotator HitRot)
 void ACharacterBase::StartGame()
 {
 	bCrosshiar = true;
+	bStamina = true;
 	UE_LOG(LogTemp, Warning, TEXT("STARTGAME"));
 	Movement->Velocity = FVector::ZeroVector;
 	MainController = MainController == nullptr ? Cast<ACharacterController>(Controller) : MainController;

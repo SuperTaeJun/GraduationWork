@@ -23,7 +23,7 @@ void AMainHUD::AddCharacterOverlay()
 	APlayerController* PlayerController = GetOwningPlayerController();
 	if (CharacterUiClass)
 	{
-		CharacterUi->RemoveFromParent();
+		CharacterUi->AddToViewport();
 	}
 }
 

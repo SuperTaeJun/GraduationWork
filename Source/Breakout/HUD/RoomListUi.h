@@ -62,8 +62,8 @@ public:
 	UFUNCTION()
 	void SlotFourHoverd();
 
+private:
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<class USoundCue> ClickSound;
-	UPROPERTY(EditAnywhere)
-	TObjectPtr<class USoundCue> HoverSound;
+
 };

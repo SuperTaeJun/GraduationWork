@@ -5,6 +5,7 @@
 #include "Components/Button.h"
 #include "Game/BOGameInstance.h"
 #include "ClientSocket.h"
+#include "Sound/SoundCue.h"
 void URoomListUi::NativeConstruct()
 {
 	if (SlotOne)
@@ -40,6 +41,10 @@ void URoomListUi::SlotOnePress()
 
 		RemoveFromParent();
 	}
+	if (ClickSound)
+	{
+		PlaySound(ClickSound);
+	}
 }
 
 void URoomListUi::SlotTwoPress()
@@ -50,6 +55,10 @@ void URoomListUi::SlotTwoPress()
 			Inst->m_Socket->Send_Lobby_Room_pakcet(Inst->GetPlayerID(), 2);
 
 		RemoveFromParent();
+	}
+	if (ClickSound)
+	{
+		PlaySound(ClickSound);
 	}
 }
 
@@ -62,6 +71,10 @@ void URoomListUi::SlotThreePress()
 
 		RemoveFromParent();
 	}
+	if (ClickSound)
+	{
+		PlaySound(ClickSound);
+	}
 }
 
 void URoomListUi::SlotFourPress()
@@ -72,6 +85,10 @@ void URoomListUi::SlotFourPress()
 			Inst->m_Socket->Send_Lobby_Room_pakcet(Inst->GetPlayerID(), 4);
 
 		RemoveFromParent();
+	}
+	if (ClickSound)
+	{
+		PlaySound(ClickSound);
 	}
 }
 
