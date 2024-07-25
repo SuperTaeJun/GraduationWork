@@ -32,10 +32,10 @@ void ULogin::HoverLog()
 	FString IDToString = ID->GetText().ToString();
 	FString PasswordToString = Password->GetText().ToString();
 	FString IDToIP = IP->GetText().ToString();
-
-	if (Cast<UBOGameInstance>(GetGameInstance())->m_Socket)
-		Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Login_Info(TCHAR_TO_UTF8(*IDToString), TCHAR_TO_UTF8(*PasswordToString));
-
+	if (!Cast<UBOGameInstance>(GetGameInstance())->m_Socket->bLoginConnect) {
+		if (Cast<UBOGameInstance>(GetGameInstance())->m_Socket)
+			Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Login_Info(TCHAR_TO_UTF8(*IDToString), TCHAR_TO_UTF8(*PasswordToString));
+	}
 }
 void ULogin::PressLogin()
 {
@@ -47,8 +47,8 @@ void ULogin::PressLogin()
 	}
 	///////////////////////////////////////////////}	
 	// 
-	//로그인 성공하면
-	//RemoveFromParent();
+	if(Cast<UBOGameInstance>(GetGameInstance())->m_Socket->bLoginConnect)
+		RemoveFromParent();
 	////////////////////////////////
 
 

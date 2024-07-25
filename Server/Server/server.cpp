@@ -517,15 +517,9 @@ void process_packet(int s_id, unsigned char* p)
 	case CS_LOGIN: {
 		CS_LOGIN_PACKET* packet = reinterpret_cast<CS_LOGIN_PACKET*>(p);
 		CLIENT& cl = clients[s_id];
-		cl.state_lock.lock();
-		cl._state = ST_INGAME;
-		cl.state_lock.unlock();
-		strcpy_s(cl.name, packet->id);
-		strcpy_s(cl._pw, packet->pw);
-		cl.bLogin = true;
-		send_login_ok_packet(cl._s_id);
+		
 		cout << "[Recv login] ID :" << packet->id << ", PASSWORD : " << packet->pw << endl;
-		/*if (DB_odbc(packet->id, packet->pw))
+		if (DB_odbc(packet->id, packet->pw))
 		{
 			cl.state_lock.lock();
 			cl._state = ST_INGAME;
@@ -548,7 +542,7 @@ void process_packet(int s_id, unsigned char* p)
 				send_login_fail_packet(s_id, WRONG_ID);
 				break;
 			}
-		}*/
+		}
 		break;
 	}
 	case CS_ACCOUNT: {
