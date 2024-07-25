@@ -23,14 +23,14 @@ void AMainHUD::AddCharacterOverlay()
 	APlayerController* PlayerController = GetOwningPlayerController();
 	if (CharacterUiClass)
 	{
-		CharacterUi->AddToViewport();
+		CharacterUi->RemoveFromParent();
 	}
 }
 
 void AMainHUD::RemoveCharacterOverlay()
 {
 	if (CharacterUi)
-		CharacterUi->RemoveFromViewport();
+		CharacterUi->RemoveFromParent();
 }
 
 void AMainHUD::DrawCrosshair(UTexture2D* Texture, FVector2D ViewportCenter, FVector2D Spread)
