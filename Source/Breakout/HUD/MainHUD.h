@@ -46,14 +46,18 @@ public:
 
 	virtual void DrawHUD() override;
 
-	void AddToolNumUi();
 	void AddSelectWeapon();
 	void AddSelectRespawn();
 	void AddMatchingUi();
 	void RemoveSelectWeapon();
 	void RemoveRespawnSelect();
 	void RemoveMatchingUi();
+
+	void AddToolNumUi();
+	void RemoveToolNumUi();
+
 	void AddCharacterOverlay();
+	void RemoveCharacterOverlay();
 
 protected:
 	virtual void BeginPlay() override;

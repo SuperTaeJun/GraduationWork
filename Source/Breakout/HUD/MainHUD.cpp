@@ -27,6 +27,12 @@ void AMainHUD::AddCharacterOverlay()
 	}
 }
 
+void AMainHUD::RemoveCharacterOverlay()
+{
+	if (CharacterUi)
+		CharacterUi->RemoveFromParent();
+}
+
 void AMainHUD::DrawCrosshair(UTexture2D* Texture, FVector2D ViewportCenter, FVector2D Spread)
 {
 	const float TextureWidth = Texture->GetSizeX();
@@ -87,11 +93,18 @@ void AMainHUD::AddToolNumUi()
 	}
 }
 
+void AMainHUD::RemoveToolNumUi()
+{
+	if (EscapeToolNumUi)
+		EscapeToolNumUi->RemoveFromViewport();
+}
+
 void AMainHUD::AddSelectWeapon()
 {
 	APlayerController* PlayerController = GetOwningPlayerController();
 	if (PlayerController)
 	{
+		SelectWeapon = CreateWidget<USelectWeaponUi>(PlayerController, SelectWeaponClass);
 		if (SelectWeapon)
 			SelectWeapon->AddToViewport();
 	}

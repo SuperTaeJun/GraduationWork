@@ -16,6 +16,7 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "Components/PostProcessComponent.h"
+#include "Components/SpotLightComponent.h"
 ACharacter3::ACharacter3()
 {
 
@@ -33,7 +34,7 @@ ACharacter3::ACharacter3()
 	//OldMaterial = ConstructorHelpers::FObjectFinder<UMaterialInstance>(TEXT("/Script/Engine.MaterialInstanceConstant'/Game/Niagara/SKill/Skill3/M_Character3_Inst.M_Character3_Inst'")).Object;
 
 	SetSprint();
-	//MDissolveInst = ConstructorHelpers::FObjectFinder<UMaterialInstance>(TEXT("/Game/BreakoutAsset/Character/Character3/MI_Character3_Dissolve.MI_Character3_Dissolve")).Object;
+	MDissolveInst = ConstructorHelpers::FObjectFinder<UMaterialInstance>(TEXT("/Game/BreakoutAsset/Character/Character3/MI_Character3_Dissolve.MI_Character3_Dissolve")).Object;
 
 
 }
@@ -123,6 +124,7 @@ void ACharacter3::GhostStart()
 
 		GetMesh()->SetVisibility(false);
 		CurWeapon->GetWeaponMesh()->SetVisibility(false);
+
 		//MovementComp->MaxWalkSpeed = 1500;
 		//MovementComp->MaxAcceleration = 10000000.f;
 
@@ -148,6 +150,12 @@ void ACharacter3::GhostEnd()
 		NiagaraComp->Deactivate();
 		GetMesh()->SetVisibility(true, true);
 		CurWeapon->GetWeaponMesh()->SetVisibility(true);
+
+		if (bCurLight)
+			CurWeapon->GetSpotLight()->SetVisibility(true);
+		else
+			CurWeapon->GetSpotLight()->SetVisibility(false);
+
 		//MovementComp->MaxWalkSpeed = OldMaxWalkSpeed;
 		//MovementComp->MaxAcceleration = OldMaxAcceleration;
 		if (inst)
@@ -162,6 +170,7 @@ void ACharacter3::ServerGhostStart()
 	NiagaraComp->Activate();
 	GetMesh()->SetVisibility(false);
 	CurWeapon->GetWeaponMesh()->SetVisibility(false);
+
 	//MovementComp->MaxWalkSpeed = 1500;
 	//MovementComp->MaxAcceleration = 10000000.f;
 
@@ -175,6 +184,13 @@ void ACharacter3::ServerGhostEnd()
 	NiagaraComp->Deactivate();
 	GetMesh()->SetVisibility(true, true);
 	CurWeapon->GetWeaponMesh()->SetVisibility(true);
+
+	if (bCurLight)
+		CurWeapon->GetSpotLight()->SetVisibility(true);
+	else
+		CurWeapon->GetSpotLight()->SetVisibility(false);
+
+
 	//MovementComp->MaxWalkSpeed = OldMaxWalkSpeed;
 	//MovementComp->MaxAcceleration = OldMaxAcceleration;
 

@@ -734,6 +734,8 @@ void ACharacterBase::Sprint_S(const FInputActionValue& Value)
 		//bUseControllerRotationYaw = true;
 		SetRun();
 	}
+
+	//UpdateStamina(GetWorld()->GetDeltaSeconds());
 }
 void ACharacterBase::Sprint_E(const FInputActionValue& Value)
 {
@@ -792,6 +794,10 @@ void ACharacterBase::Inter(const FInputActionValue& Value)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("endgame"));
 		FMovieSceneSequencePlaybackSettings PlaybackSettings;
+		PlaybackSettings.bHideHud = true;
+		PlaybackSettings.bHidePlayer = true;
+		PlaybackSettings.bDisableMovementInput = true;
+		PlaybackSettings.bDisableLookAtInput = true;
 		ALevelSequenceActor* SequenceActor;
 		ULevelSequencePlayer* LevelSequencePlayer = ULevelSequencePlayer::CreateLevelSequencePlayer(
 			GetWorld(),
@@ -799,11 +805,17 @@ void ACharacterBase::Inter(const FInputActionValue& Value)
 			PlaybackSettings,
 			SequenceActor
 		);
-
+	
 		if (LevelSequencePlayer)
 		{
 			if (inst)
 				Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_End_Game_packet(inst->GetPlayerID(), true);
+			bCrosshiar = false;
+			bStamina = false;
+			MainController->MainHUD->RemoveToolNumUi();
+			MainController->MainHUD->RemoveCharacterOverlay();
+			MainController->ShowMatchingUi();
+			MainController->SetHUDMatchingUi(true);
 			LevelSequencePlayer->Play();
 			LevelSequencePlayer->OnFinished.AddDynamic(this, &ACharacterBase::SendEnd);
 		}
@@ -985,15 +997,21 @@ void ACharacterBase::LightOnOff(const FInputActionValue& Value)
 			if (inst)
 				inst->m_Socket->Send_Light_On_packet(inst->GetPlayerID(), false);
 			CurWeapon->GetSpotLight()->SetVisibility(false);
-
+			bCurLight = false;
 		}
 		else
 		{			//라이트 패킷 ID,랑true보내기 그 후 컨트롤러에서 밑에줄 실행
 			if (inst)
 				inst->m_Socket->Send_Light_On_packet(inst->GetPlayerID(), true);
 			CurWeapon->GetSpotLight()->SetVisibility(true);
+			bCurLight = true;
 		}
 	}
+}
+
+void ACharacterBase::Quit(const FInputActionValue& Value)
+{
+	UKismetSystemLibrary::QuitGame(MainController,MainController, EQuitPreference::Quit, true);
 }
 
 void ACharacterBase::Detect_S(const FInputActionValue& Value)
@@ -1043,8 +1061,8 @@ void ACharacterBase::Tick(float DeltaTime)
 	{
 		CanJump = true;
 	}
-
-	UpdateStamina(DeltaTime);
+	if(bStamina)
+		UpdateStamina(DeltaTime);
 	AimOffset(DeltaTime);
 	AimOffset(DeltaTime);
 
@@ -1085,6 +1103,10 @@ void ACharacterBase::Tick(float DeltaTime)
 		//MainController->MainHUD->RemoveMatchingUi();
 		DisableInput(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 		FMovieSceneSequencePlaybackSettings PlaybackSettings;
+		PlaybackSettings.bHideHud = true;
+		PlaybackSettings.bHidePlayer = true;
+		PlaybackSettings.bDisableMovementInput = true;
+		PlaybackSettings.bDisableLookAtInput = true;
 		ALevelSequenceActor* SequenceActor;
 		ULevelSequencePlayer* LevelSequencePlayer = ULevelSequencePlayer::CreateLevelSequencePlayer(
 			GetWorld(),
@@ -1103,9 +1125,8 @@ void ACharacterBase::Tick(float DeltaTime)
 	if (MainController)
 		MainController->SeverHpSync(bAlive, Health, inst->GetPlayerID());
 
-	if (inst->m_Socket->bEndGame == true)
+	/*if (inst->m_Socket->bEndGame == true)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("endgame1"));
 		FMovieSceneSequencePlaybackSettings PlaybackSettings;
 		ALevelSequenceActor* SequenceActor;
 		ULevelSequencePlayer* LevelSequencePlayer = ULevelSequencePlayer::CreateLevelSequencePlayer(
@@ -1118,11 +1139,12 @@ void ACharacterBase::Tick(float DeltaTime)
 		if (LevelSequencePlayer)
 		{
 			UE_LOG(LogTemp, Warning, TEXT("endgame2"));
+			bCrosshiar = false;
 			LevelSequencePlayer->Play();
 			LevelSequencePlayer->OnFinished.AddDynamic(this, &ACharacterBase::SendEnd);
 		}
 		inst->m_Socket->bEndGame = false;
-	}
+	}*/
 }
 
 void ACharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -1151,6 +1173,7 @@ void ACharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 		EnhancedInputComponent->BindAction(DetectAction, ETriggerEvent::Triggered, this, &ACharacterBase::Detect_S);
 		EnhancedInputComponent->BindAction(DetectAction, ETriggerEvent::Completed, this, &ACharacterBase::Detect_E);
 		EnhancedInputComponent->BindAction(LightAction, ETriggerEvent::Started, this, &ACharacterBase::LightOnOff);
+		EnhancedInputComponent->BindAction(QuitAction, ETriggerEvent::Started, this, &ACharacterBase::Quit);
 	}
 }
 
@@ -1184,6 +1207,7 @@ void ACharacterBase::SpawnHitImpact(FVector HitLoc, FRotator HitRot)
 void ACharacterBase::StartGame()
 {
 	bCrosshiar = true;
+	bStamina = true;
 	UE_LOG(LogTemp, Warning, TEXT("STARTGAME"));
 	Movement->Velocity = FVector::ZeroVector;
 	MainController = MainController == nullptr ? Cast<ACharacterController>(Controller) : MainController;

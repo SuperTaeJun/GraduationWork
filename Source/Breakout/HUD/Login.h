@@ -31,12 +31,19 @@ public:
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<class UEditableText>IP;
 
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<class UButton>Fail;
+
+	UFUNCTION()
+	void HoverLog();
 
 	UFUNCTION()
 	void PressLogin();
-
 	UFUNCTION()
 	void PressSignUp();
+
+	UFUNCTION()
+	void PressFail();
 private:
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<class USoundCue> ClickSound;

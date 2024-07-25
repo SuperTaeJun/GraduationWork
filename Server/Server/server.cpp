@@ -87,6 +87,8 @@ public:
 	bool bGetWeapon = false;
 	bool bCancel;
 	bool bEndGame = false;
+	// 충전
+	bool bRecharge = false;
 	// bAlive
 	bool bAlive = true;
 	// 라이트 온/오프
@@ -1357,6 +1359,30 @@ void process_packet(int s_id, unsigned char* p)
 			packet.size = sizeof(packet);
 			packet.type = SC_LIGHT;
 			packet.bLight = cl.bLightOn;
+			other.do_send(sizeof(packet), &packet);
+		}
+		break;
+	}
+	case CS_RECHARGE: {
+		CS_RECHARGE_PACKET* packet = reinterpret_cast<CS_RECHARGE_PACKET*>(p);
+		CLIENT& cl = clients[packet->id];
+		cl.bRecharge = packet->bRecharge;
+		cout << "recharge" << endl;
+		for (auto& other : clients) {
+			if (other._s_id == cl._s_id) continue;
+			other.state_lock.lock();
+			if (ST_INGAME != other._state) {
+				other.state_lock.unlock();
+				continue;
+			}
+			else other.state_lock.unlock();
+			if (other.currentRoom != cl.currentRoom)
+				continue;
+			CS_RECHARGE_PACKET packet;
+			packet.size = sizeof(packet);
+			packet.type = SC_RECHARGE;
+			packet.id = cl._s_id;
+			packet.bRecharge = cl.bRecharge;
 			other.do_send(sizeof(packet), &packet);
 		}
 		break;

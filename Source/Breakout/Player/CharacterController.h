@@ -160,9 +160,8 @@ public:
 	//skill2 대쉬포인트
 	void SetHUDCool(int32 Cool);
 	void SetHUDCoolVisibility(bool bVisibility);
-	void SetHUDMatchingUi();
+	void SetHUDMatchingUi(bool bVictory);
 	float StartCnt = 5.f;
-	void SetHUDMatchingUi(float Time);
 	void showWeaponSelect();
 	void ShowRespawnSelect();
 	void ShowMatchingUi();
@@ -234,6 +233,7 @@ public:
 	TArray<class AEscapeTool*> EscapeTools;
 	void SeverHpSync(bool bAlive, float hp, int myid);
 	void ServerSetDissolve(bool dissolve, class ACharacterBase* player);
+	UFUNCTION()
 	void ServerSendEnd();
 	
 	UPROPERTY(EditAnywhere)

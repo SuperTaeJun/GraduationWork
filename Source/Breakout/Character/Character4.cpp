@@ -14,6 +14,7 @@
 #include "ClientSocket.h"
 #include "EnhancedInputSubsystems.h"
 #include "FX/Skill4Actor.h"
+#include "Components/SpotLightComponent.h"
 ACharacter4::ACharacter4()
 {
 	NiagaraComp = CreateDefaultSubobject<UNiagaraComponent>(TEXT("NiagaraComp"));
@@ -110,6 +111,11 @@ void ACharacter4::SetLocation()
 
 	NiagaraComp->Deactivate();
 	GetMesh()->SetVisibility(true, true);
+
+	if (bCurLight)
+		CurWeapon->GetSpotLight()->SetVisibility(true);
+	else
+		CurWeapon->GetSpotLight()->SetVisibility(false);
 
 	Temp->Destroy();
 	if (inst)

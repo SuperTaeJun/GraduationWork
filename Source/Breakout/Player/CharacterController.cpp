@@ -287,23 +287,15 @@ void ACharacterController::SetHUDCoolVisibility(bool bVisibility)
 	}
 }
 
-void ACharacterController::SetHUDMatchingUi()
+void ACharacterController::SetHUDMatchingUi(bool bVictory)
 {
 	if (MainHUD)
 	{
 		MainHUD->MatchingUi->ContingText->SetVisibility(ESlateVisibility::Hidden);
-		MainHUD->MatchingUi->WaitingText->SetText(FText::FromString("Waiting for Other Player"));
-	}
-}
-
-void ACharacterController::SetHUDMatchingUi(float Time)
-{
-	if (MainHUD)
-	{
-		MainHUD->MatchingUi->WaitingText->SetVisibility(ESlateVisibility::Hidden);
-		MainHUD->MatchingUi->ContingText->SetVisibility(ESlateVisibility::Visible);
-		FString CountText = FString::Printf(TEXT("%d"), FMath::FloorToInt(Time) + 1);
-		MainHUD->MatchingUi->ContingText->SetText(FText::FromString(CountText));
+		if(bVictory)
+			MainHUD->MatchingUi->WaitingText->SetText(FText::FromString("Victory"));
+		else
+			MainHUD->MatchingUi->WaitingText->SetText(FText::FromString("Defeat"));
 	}
 }
 
@@ -378,9 +370,9 @@ void ACharacterController::Tick(float DeltaTime)
 		SetNum();
 		inst->m_Socket->bAcquire = false;
 	}
-	/*if (MainHUD && inst->m_Socket->bName) {
+	if (MainHUD && inst->m_Socket->bName) {
 		SetChName();
-	}*/
+	}
 
 	if (MainHUD && inst->m_Socket->itemflag) {
 		BaseCharacter->SetEscapeToolNum(inst->m_Socket->MyItemCount);
@@ -469,7 +461,13 @@ bool ACharacterController::UpdateWorld()
 			if (info->bEndGame == true)
 			{
 				info->bEndGame = false;
+				OtherPlayer->bCrosshiar = false;
+				OtherPlayer->bStamina = false;
 				FMovieSceneSequencePlaybackSettings PlaybackSettings;
+				PlaybackSettings.bHideHud = true;
+				PlaybackSettings.bHidePlayer = true;
+				PlaybackSettings.bDisableMovementInput = true;
+				PlaybackSettings.bDisableLookAtInput = true;
 				ALevelSequenceActor* SequenceActor;
 				ULevelSequencePlayer* LevelSequencePlayer = ULevelSequencePlayer::CreateLevelSequencePlayer(
 					GetWorld(),
@@ -481,6 +479,11 @@ bool ACharacterController::UpdateWorld()
 				if (LevelSequencePlayer)
 				{
 					UE_LOG(LogTemp, Warning, TEXT("ENDGAME"));
+
+					MainHUD->RemoveToolNumUi();
+					MainHUD->RemoveCharacterOverlay();
+					ShowMatchingUi();
+					SetHUDMatchingUi(false);
 					LevelSequencePlayer->Play();
 					LevelSequencePlayer->OnFinished.AddDynamic(this, &ACharacterController::ServerSendEnd);
 				}
@@ -647,16 +650,16 @@ bool ACharacterController::UpdateWorld()
 				OtherPlayer->PlayAnimMontage(GrenadeMontage, 1.5f);
 				info->bojoanimtype = 1;
 			}
+			if (info->bRecharge)
+			{
+				// ¿©±â¼­ ÇÏ¸é µÊ, PlayerLocation ¾²¸é µÊ
+			}
 			FVector Vshotgun;
 			FRotator Rshotgun;
 			FRotator Rshotgun1;
 			FRotator Rshotgun2;
 			FRotator Rshotgun3;
 			FRotator Rshotgun4;
-			FRotator Rshotgun5;
-			FRotator Rshotgun6;
-			FRotator Rshotgun7;
-			FRotator Rshotgun8;
 			Vshotgun.X = info->sSshot.X;
 			Vshotgun.Y = info->sSshot.Y;
 			Vshotgun.Z = info->sSshot.Z;
