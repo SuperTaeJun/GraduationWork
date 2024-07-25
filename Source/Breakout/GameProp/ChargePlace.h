@@ -24,6 +24,9 @@ private:
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<class UBoxComponent> CollisionBox;
 
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<class UNiagaraSystem>ChargeNiagara;
+
 	UFUNCTION()
 	virtual void OnBoxOverlap
 	(
@@ -45,4 +48,6 @@ private:
 
 	bool bInCh = false;
 	TObjectPtr<class ACharacterBase> InCh;
+
+	float ChargeNum = 0.f;
 };

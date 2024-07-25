@@ -2,7 +2,7 @@
 #include "GameProp/ChargePlace.h"
 #include "Components/BoxComponent.h"
 #include "Character/CharacterBase.h"
-
+#include "NiagaraFunctionLibrary.h"
 AChargePlace::AChargePlace()
 {
 
@@ -33,6 +33,17 @@ void AChargePlace::Tick(float DeltaTime)
 		UE_LOG(LogTemp, Warning, TEXT("CHARGING"));
 		InCh->SetHealth(InCh->GetHealth() + (DeltaTime*1.5f));
 		InCh->UpdateHpHUD();
+
+		ChargeNum += DeltaTime;
+		if (ChargeNum >=1.f)
+		{
+			if (ChargeNiagara)
+			{
+				//여기서 패킷 전송, 플레이어id랑  InCh->GetActorLocation()
+				UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), ChargeNiagara, InCh->GetActorLocation());
+			}
+			ChargeNum = 0.f;
+		}
 	}
 }
 
