@@ -997,13 +997,14 @@ void ACharacterBase::LightOnOff(const FInputActionValue& Value)
 			if (inst)
 				inst->m_Socket->Send_Light_On_packet(inst->GetPlayerID(), false);
 			CurWeapon->GetSpotLight()->SetVisibility(false);
-
+			bCurLight = false;
 		}
 		else
 		{			//라이트 패킷 ID,랑true보내기 그 후 컨트롤러에서 밑에줄 실행
 			if (inst)
 				inst->m_Socket->Send_Light_On_packet(inst->GetPlayerID(), true);
 			CurWeapon->GetSpotLight()->SetVisibility(true);
+			bCurLight = true;
 		}
 	}
 }

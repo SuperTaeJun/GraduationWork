@@ -312,6 +312,7 @@ public:
 
 	bool bCrosshiar = false;
 	bool bStamina = false;
+	bool bCurLight = false;
 };
 
 UENUM(BlueprintType)

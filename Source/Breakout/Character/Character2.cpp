@@ -11,7 +11,7 @@
 #include "EnhancedInputSubsystems.h"
 #include "Camera/CameraComponent.h"
 #include "Weapon/WeaponBase.h"
-
+#include "Components/SpotLightComponent.h"
 ACharacter2::ACharacter2()
 {
 	FXroc = CreateDefaultSubobject<UArrowComponent>(TEXT("FXroc"));
@@ -124,6 +124,10 @@ void ACharacter2::DashFinishSetup()
 	MovementComp->RotationRate = OldRotationRate;
 	GetMesh()->SetVisibility(true);
 	CurWeapon->GetWeaponMesh()->SetVisibility(true);
+	if (bCurLight)
+		CurWeapon->GetSpotLight()->SetVisibility(true);
+	else
+		CurWeapon->GetSpotLight()->SetVisibility(false);
 	CanJump = true;
 	bSkillUsing = false;
 	//EnableInput(UGameplayStatics::GetPlayerController(GetWorld(), 0));
