@@ -50,4 +50,5 @@ private:
 	TObjectPtr<class ACharacterBase> InCh;
 
 	float ChargeNum = 0.f;
+	class UBOGameInstance* inst;
 };

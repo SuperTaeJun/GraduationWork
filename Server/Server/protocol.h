@@ -62,6 +62,7 @@ const char CS_BULLET_WALL = 32;
 const char CS_LIGHT = 33;
 const char CS_ROOM = 34;
 const char CS_HOVER = 35;
+const char CS_RECHARGE = 36;
 
 const char SC_LOGIN_OK = 1;
 const char SC_OTHER_PLAYER = 2;
@@ -101,6 +102,7 @@ const char SC_LOGIN_FAIL = 35;
 const char SC_WALL = 36;
 const char SC_LIGHT = 37;
 const char SC_LOBBY_ROOM = 38;
+const char SC_RECHARGE = 39;
 
 #pragma pack (push, 1)
 struct CS_LOGIN_PACKET
@@ -474,5 +476,11 @@ struct CS_LOBBY_HOVER {
 	int id;
 	int RoomNum;
 	bool bInGame;
+};
+struct CS_RECHARGE_PACKET {
+	unsigned char size;
+	unsigned char type;
+	int id;
+	bool bRecharge;
 };
 #pragma pack(pop)

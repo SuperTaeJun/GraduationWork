@@ -650,16 +650,16 @@ bool ACharacterController::UpdateWorld()
 				OtherPlayer->PlayAnimMontage(GrenadeMontage, 1.5f);
 				info->bojoanimtype = 1;
 			}
+			if (info->bRecharge)
+			{
+				// ¿©±â¼­ ÇÏ¸é µÊ, PlayerLocation ¾²¸é µÊ
+			}
 			FVector Vshotgun;
 			FRotator Rshotgun;
 			FRotator Rshotgun1;
 			FRotator Rshotgun2;
 			FRotator Rshotgun3;
 			FRotator Rshotgun4;
-			FRotator Rshotgun5;
-			FRotator Rshotgun6;
-			FRotator Rshotgun7;
-			FRotator Rshotgun8;
 			Vshotgun.X = info->sSshot.X;
 			Vshotgun.Y = info->sSshot.Y;
 			Vshotgun.Z = info->sSshot.Z;

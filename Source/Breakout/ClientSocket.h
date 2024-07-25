@@ -218,6 +218,8 @@ public:
 	WeaponType w_type;
 	///-----------------
 	FVector CH1NiaLoc;
+	//------------------
+	bool	bRecharge = false;
 	friend ostream& operator<<(ostream& stream, CPlayer& info)
 	{
 		stream << info.Id << endl;
@@ -408,6 +410,7 @@ public:
 	void Send_Light_On_packet(int id, bool bLight);
 	void Send_Lobby_Room_pakcet(int id, int RoomNum);
 	void Send_Hovered_packet(int id, int RoomNum);
+	void Send_Recharge_packet(int id, bool bRecharge);
 	virtual bool Init() override;
 	virtual uint32 Run() override;
 	virtual void Stop() override;

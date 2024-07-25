@@ -3,6 +3,9 @@
 #include "Components/BoxComponent.h"
 #include "Character/CharacterBase.h"
 #include "NiagaraFunctionLibrary.h"
+#include "Game/BOGameInstance.h"
+#include "ClientSocket.h"
+
 AChargePlace::AChargePlace()
 {
 
@@ -18,7 +21,7 @@ AChargePlace::AChargePlace()
 void AChargePlace::BeginPlay()
 {
 	Super::BeginPlay();
-
+	inst = Cast<UBOGameInstance>(GetGameInstance());
 	CollisionBox->OnComponentBeginOverlap.AddDynamic(this, &AChargePlace::OnBoxOverlap);
 	CollisionBox->OnComponentEndOverlap.AddDynamic(this, &AChargePlace::OnBoxEndOverlap);
 }
@@ -39,7 +42,8 @@ void AChargePlace::Tick(float DeltaTime)
 		{
 			if (ChargeNiagara)
 			{
-				//여기서 패킷 전송, 플레이어id랑  InCh->GetActorLocation()
+				if (inst)
+					inst->m_Socket->Send_Recharge_packet(inst->GetPlayerID(), true);
 				UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), ChargeNiagara, InCh->GetActorLocation());
 			}
 			ChargeNum = 0.f;

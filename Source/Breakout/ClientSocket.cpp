@@ -400,6 +400,11 @@ bool ClientSocket::PacketProcess(char* ptr)
 		PlayerInfo.players[packet->id].bLightOn = packet->bLight;
 		break;
 	}
+	case SC_RECHARGE: {
+		CS_RECHARGE_PACKET* packet = reinterpret_cast<CS_RECHARGE_PACKET*>(ptr);
+		PlayerInfo.players[packet->id].bRecharge = packet->bRecharge;
+		break;
+	}
 	default:
 		break;
 	}
@@ -794,6 +799,16 @@ void ClientSocket::Send_Hovered_packet(int id, int RoomNum)
 	packet.type = CS_HOVER;
 	packet.id = id;
 	packet.RoomNum = RoomNum;
+	SendPacket(&packet);
+}
+
+void ClientSocket::Send_Recharge_packet(int id, bool bRecharge)
+{
+	CS_RECHARGE_PACKET packet;
+	packet.size = sizeof(packet);
+	packet.type = CS_RECHARGE;
+	packet.id = id;
+	packet.bRecharge = bRecharge;
 	SendPacket(&packet);
 }
 
