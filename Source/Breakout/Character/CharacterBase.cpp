@@ -139,7 +139,6 @@ void ACharacterBase::BeginPlay()
 		UpdateStaminaHUD();
 		UpdateObtainedEscapeTool();
 		MainController->SetHUDBojoImage(BojoMugiType);
-
 	}
 	if(Aim)
 		Aim->SetAutoActivate(false);
@@ -1025,6 +1024,8 @@ void ACharacterBase::OnDebug(const FInputActionValue& Value)
 		else
 			CurWeapon->bDebug = true;
 	}
+
+	SetEscapeToolNum(2);
 }
 
 void ACharacterBase::Detect_S(const FInputActionValue& Value)
@@ -1229,7 +1230,9 @@ void ACharacterBase::StartGame()
 	{
 		if(inst)
 			inst->m_Socket->Send_Start_game_packet(inst->GetPlayerID());
-		MainController->MainHUD->AddToolNumUi();
+		//MainController->MainHUD->AddToolNumUi();
+		//MainController->MainHUD->AddCharacterOverlay();
+		MainController->MainHUD->StartSetVisibility();
 		// num 계수, name 처리 
 		MainController->SetNum();
 		MainController->SetChName();
@@ -1237,7 +1240,6 @@ void ACharacterBase::StartGame()
 		//bStarted = false;
 		EnableInput(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 		SetWeaponUi();
-		MainController->MainHUD->AddCharacterOverlay();
 		if (inst)
 			inst->m_Socket->bName = true;
 	}
