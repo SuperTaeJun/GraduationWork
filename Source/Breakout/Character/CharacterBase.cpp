@@ -789,6 +789,8 @@ void ACharacterBase::Inter(const FInputActionValue& Value)
 	if (bCanEscape)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("endgame"));
+		bCrosshiar = false;
+		bStamina = false;
 		FMovieSceneSequencePlaybackSettings PlaybackSettings;
 		PlaybackSettings.bHideHud = true;
 		PlaybackSettings.bHidePlayer = true;
@@ -806,8 +808,7 @@ void ACharacterBase::Inter(const FInputActionValue& Value)
 		{
 			if (inst)
 				Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_End_Game_packet(inst->GetPlayerID(), true);
-			bCrosshiar = false;
-			bStamina = false;
+
 			MainController->MainHUD->RemoveToolNumUi();
 			MainController->MainHUD->RemoveCharacterOverlay();
 			MainController->ShowMatchingUi();

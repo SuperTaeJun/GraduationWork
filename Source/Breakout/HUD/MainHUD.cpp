@@ -30,7 +30,8 @@ void AMainHUD::AddCharacterOverlay()
 void AMainHUD::RemoveCharacterOverlay()
 {
 	if (CharacterUi)
-		CharacterUi->RemoveFromParent();
+		CharacterUi->SetVisibility(ESlateVisibility::Collapsed);
+		//CharacterUi->RemoveFromParent();
 }
 
 void AMainHUD::DrawCrosshair(UTexture2D* Texture, FVector2D ViewportCenter, FVector2D Spread)
@@ -96,7 +97,11 @@ void AMainHUD::AddToolNumUi()
 void AMainHUD::RemoveToolNumUi()
 {
 	if (EscapeToolNumUi)
-		EscapeToolNumUi->RemoveFromViewport();
+	{
+		//EscapeToolNumUi->RemoveFromParent();
+		EscapeToolNumUi->SetVisibility(ESlateVisibility::Collapsed);
+		//EscapeToolNumUi->
+	}
 }
 
 void AMainHUD::AddSelectWeapon()
