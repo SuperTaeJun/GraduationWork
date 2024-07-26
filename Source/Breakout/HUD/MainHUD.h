@@ -59,6 +59,7 @@ public:
 	void AddCharacterOverlay();
 	void RemoveCharacterOverlay();
 
+	void StartSetVisibility();
 protected:
 	virtual void BeginPlay() override;
 
