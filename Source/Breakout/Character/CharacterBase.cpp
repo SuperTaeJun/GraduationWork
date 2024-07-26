@@ -139,7 +139,6 @@ void ACharacterBase::BeginPlay()
 		UpdateStaminaHUD();
 		UpdateObtainedEscapeTool();
 		MainController->SetHUDBojoImage(BojoMugiType);
-
 	}
 	if(Aim)
 		Aim->SetAutoActivate(false);
@@ -166,20 +165,20 @@ void ACharacterBase::UpdateStamina(float DeltaTime)
 	{
 		if (CharacterState == ECharacterState::ECS_SPRINT && Stamina >= 0.f)
 		{
-			Stamina -= 0.4f;
+			Stamina -= DeltaTime*8.f;
 			if (Stamina <= 0.f)
 				StaminaExhaustionState = true;
 		}
 		else 	if ((CharacterState == ECharacterState::ECS_RUN || CharacterState == ECharacterState::ECS_IDLE) && Stamina < MaxStamina)
 		{
-			Stamina += 0.2f;
+			Stamina += DeltaTime * 10.f;
 		}
 	}
 	else	if (StaminaExhaustionState == true)
 	{
 		if (Stamina < 50.f)
 		{
-			Stamina += 0.2f;
+			Stamina += DeltaTime * 10.f;
 		}
 		else if (Stamina >= 50.f)
 		{
@@ -331,22 +330,18 @@ void ACharacterBase::GrandeThrow()
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 	Cast<UBOAnimInstance>(AnimInstance)->bUseLeftHand = false;
 	//PlayAnimMontage(GrenadeMontage, 2.f, FName("Fire"));
-
-
-
-
 }
 void ACharacterBase::GrandeAim()
 {
 	CurWeapon->SetActorHiddenInGame(true);
 	Grenade->bHiddenInGame = false;
 
-	const USkeletalMeshSocket* WeaponSocket = GetMesh()->GetSocketByName(FName("LeftHandSocket"));
+	//const USkeletalMeshSocket* WeaponSocket = GetMesh()->GetSocketByName(FName("LeftHandSocket"));
 
-	if (WeaponSocket && CurWeapon)
-	{
-		WeaponSocket->AttachActor(CurWeapon, GetMesh());
-	}
+	//if (WeaponSocket && CurWeapon)
+	//{
+	//	WeaponSocket->AttachActor(CurWeapon, GetMesh());
+	//}
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 	// 수류탄 투척 애니메이션
 	if (AnimInstance && GrenadeMontage)
@@ -793,6 +788,8 @@ void ACharacterBase::Inter(const FInputActionValue& Value)
 	if (bCanEscape)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("endgame"));
+		bCrosshiar = false;
+		bStamina = false;
 		FMovieSceneSequencePlaybackSettings PlaybackSettings;
 		PlaybackSettings.bHideHud = true;
 		PlaybackSettings.bHidePlayer = true;
@@ -810,8 +807,7 @@ void ACharacterBase::Inter(const FInputActionValue& Value)
 		{
 			if (inst)
 				Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_End_Game_packet(inst->GetPlayerID(), true);
-			bCrosshiar = false;
-			bStamina = false;
+
 			MainController->MainHUD->RemoveToolNumUi();
 			MainController->MainHUD->RemoveCharacterOverlay();
 			MainController->ShowMatchingUi();
@@ -931,8 +927,12 @@ void ACharacterBase::GrandeFire(const FInputActionValue& Value)
 			}
 		}
 		else
-			GrandeAim();
+		{
+			//UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+			//Cast<UBOAnimInstance>(AnimInstance)->bUseLeftHand = false;
 
+			GrandeAim();
+		}
 	}
 }
 
@@ -1012,6 +1012,20 @@ void ACharacterBase::LightOnOff(const FInputActionValue& Value)
 void ACharacterBase::Quit(const FInputActionValue& Value)
 {
 	UKismetSystemLibrary::QuitGame(MainController,MainController, EQuitPreference::Quit, true);
+}
+
+void ACharacterBase::OnDebug(const FInputActionValue& Value)
+{
+	if (CurWeapon)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("DEBUG"));
+		if(CurWeapon->bDebug)
+			CurWeapon->bDebug = false;
+		else
+			CurWeapon->bDebug = true;
+	}
+
+	SetEscapeToolNum(2);
 }
 
 void ACharacterBase::Detect_S(const FInputActionValue& Value)
@@ -1174,6 +1188,7 @@ void ACharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 		EnhancedInputComponent->BindAction(DetectAction, ETriggerEvent::Completed, this, &ACharacterBase::Detect_E);
 		EnhancedInputComponent->BindAction(LightAction, ETriggerEvent::Started, this, &ACharacterBase::LightOnOff);
 		EnhancedInputComponent->BindAction(QuitAction, ETriggerEvent::Started, this, &ACharacterBase::Quit);
+		EnhancedInputComponent->BindAction(DebugAction, ETriggerEvent::Started, this, &ACharacterBase::OnDebug);
 	}
 }
 
@@ -1215,7 +1230,9 @@ void ACharacterBase::StartGame()
 	{
 		if(inst)
 			inst->m_Socket->Send_Start_game_packet(inst->GetPlayerID());
-		MainController->MainHUD->AddToolNumUi();
+		//MainController->MainHUD->AddToolNumUi();
+		//MainController->MainHUD->AddCharacterOverlay();
+		MainController->MainHUD->StartSetVisibility();
 		// num 계수, name 처리 
 		MainController->SetNum();
 		MainController->SetChName();
@@ -1223,7 +1240,6 @@ void ACharacterBase::StartGame()
 		//bStarted = false;
 		EnableInput(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 		SetWeaponUi();
-		MainController->MainHUD->AddCharacterOverlay();
 		if (inst)
 			inst->m_Socket->bName = true;
 	}

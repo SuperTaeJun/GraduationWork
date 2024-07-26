@@ -10,14 +10,6 @@
  * 
  */
 
-struct RoomInfo
-{
-	int32 PageNum = 0;
-	int32 NumOfUser = 0;
-	FString RoomName = "EMPTY";
-	bool bCanEnter = true;
-};
-
 UCLASS()
 class BREAKOUT_API URoomListUi : public UUserWidget
 {
@@ -26,15 +18,9 @@ class BREAKOUT_API URoomListUi : public UUserWidget
 	
 public:
 	virtual void NativeConstruct() override;
-	TArray<RoomInfo> RoomList;
-	int32 CurPageNum = 0;
 
 	TObjectPtr<class UBOGameInstance> Inst;
 
-	UPROPERTY(meta = (BindWidget))
-	TObjectPtr<class UButton>PrevButton;
-	UPROPERTY(meta = (BindWidget))
-	TObjectPtr<class UButton>NextButton;
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<class UButton>SlotOne;
 	UPROPERTY(meta = (BindWidget))

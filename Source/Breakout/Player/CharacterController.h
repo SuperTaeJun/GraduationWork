@@ -132,6 +132,8 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Combat System", meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<class AWeaponBase> Lancher;
 
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<class UNiagaraSystem>ChargeNiagara;
 public:
 	ACharacterController();
 	CPlayer initplayer;

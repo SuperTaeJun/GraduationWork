@@ -15,12 +15,16 @@ void AMainHUD::BeginPlay()
 	CharacterUi = CreateWidget<UCharacterUi>(PlayerController, CharacterUiClass);
 	EscapeToolNumUi = CreateWidget<UEscapeToolNumUi>(PlayerController, EscapeToolNumUiClass);
 	SelectWeapon = CreateWidget<USelectWeaponUi>(PlayerController, SelectWeaponClass);
-	//AddCharacterOverlay();
+	AddCharacterOverlay();
+	CharacterUi->SetVisibility(ESlateVisibility::Collapsed);
+	AddToolNumUi();
+	EscapeToolNumUi->SetVisibility(ESlateVisibility::Collapsed);
 }
 
 void AMainHUD::AddCharacterOverlay()
 {
 	APlayerController* PlayerController = GetOwningPlayerController();
+
 	if (CharacterUiClass)
 	{
 		CharacterUi->AddToViewport();
@@ -30,7 +34,17 @@ void AMainHUD::AddCharacterOverlay()
 void AMainHUD::RemoveCharacterOverlay()
 {
 	if (CharacterUi)
-		CharacterUi->RemoveFromParent();
+		CharacterUi->SetVisibility(ESlateVisibility::Collapsed);
+		//CharacterUi->RemoveFromParent();
+}
+
+void AMainHUD::StartSetVisibility()
+{
+	if (CharacterUi && EscapeToolNumUi) 
+	{
+		CharacterUi->SetVisibility(ESlateVisibility::Visible);
+		EscapeToolNumUi->SetVisibility(ESlateVisibility::Visible);
+	}
 }
 
 void AMainHUD::DrawCrosshair(UTexture2D* Texture, FVector2D ViewportCenter, FVector2D Spread)
@@ -96,7 +110,11 @@ void AMainHUD::AddToolNumUi()
 void AMainHUD::RemoveToolNumUi()
 {
 	if (EscapeToolNumUi)
-		EscapeToolNumUi->RemoveFromViewport();
+	{
+		//EscapeToolNumUi->RemoveFromParent();
+		EscapeToolNumUi->SetVisibility(ESlateVisibility::Collapsed);
+		//EscapeToolNumUi->
+	}
 }
 
 void AMainHUD::AddSelectWeapon()

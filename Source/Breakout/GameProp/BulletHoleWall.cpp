@@ -82,6 +82,7 @@ void ABulletHoleWall::ReciveDamage(AActor* DamagedActor, float Damage, const UDa
 				MeshSculptures[i]->CreateMeshSection_LinearColor(0, MeshDataStorage[i].Verts, MeshDataStorage[i].Tris, MeshDataStorage[i].Normals, MeshDataStorage[i].UVs, MeshDataStorage[i].Colors, Tangents, true);
 				//ProceduralMesh->DestroyComponent();
 				ProceduralMesh->SetHiddenInGame(true);
+				ProceduralMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 			}
 		}
 		GetWorldTimerManager().SetTimer
@@ -396,6 +397,7 @@ void ABulletHoleWall::AllDestroy()
 	Hp = 50.f;
 	SetActorLocation(FVector(0.f, 0.f, -1000.f));
 	ProceduralMesh->SetHiddenInGame(false);
+	ProceduralMesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 	MeshDataA = ResetMeshData;
 	TArray<FProcMeshTangent> Tangents = {};
 	ProceduralMesh->CreateMeshSection_LinearColor(0, MeshDataA.Verts, MeshDataA.Tris, MeshDataA.Normals, MeshDataA.UVs, MeshDataA.Colors, Tangents, true);

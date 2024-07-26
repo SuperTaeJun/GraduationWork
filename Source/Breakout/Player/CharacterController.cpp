@@ -653,6 +653,9 @@ bool ACharacterController::UpdateWorld()
 			if (info->bRecharge)
 			{
 				// ¿©±â¼­ ÇÏ¸é µÊ, PlayerLocation ¾²¸é µÊ
+				if(ChargeNiagara)
+					UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), ChargeNiagara, PlayerLocation);
+				info->bRecharge = false;
 			}
 			FVector Vshotgun;
 			FRotator Rshotgun;

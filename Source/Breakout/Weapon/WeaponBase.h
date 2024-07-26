@@ -30,6 +30,8 @@ public:
 	FVector EndBeam;
 
 	class USoundCue* GetReloadSound() { return ReloadSound; }
+
+	bool bDebug = false;
 protected:
 	UPROPERTY(EditAnywhere, Category = "Weapon Properties")
 	TObjectPtr<class USkeletalMeshComponent> WeaponMesh;
