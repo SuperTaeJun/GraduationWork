@@ -1,6 +1,6 @@
 #pragma once
 #define SERVER_PORT		8001
-#define SERVER_IP		"10.30.1.19"
+#define SERVER_IP		"192.168.102.168"
 #define MAX_INFO_SIZE   20
 #include <vector>
 #include <array>
