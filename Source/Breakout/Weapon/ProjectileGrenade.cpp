@@ -39,7 +39,7 @@ void AProjectileGrenade::DestroyTimerFinished()
 		AController* FiringController = FiringPawn->GetController();
 		if (FiringController)
 		{
-			UGameplayStatics::ApplyRadialDamageWithFalloff(
+			bool check=UGameplayStatics::ApplyRadialDamageWithFalloff(
 				this, // World context object
 				Damage, // BaseDamage
 				10.f, // MinimumDamage
@@ -52,6 +52,15 @@ void AProjectileGrenade::DestroyTimerFinished()
 				this, // DamageCauser
 				FiringController // InstigatorController
 			);
+
+			if (check)
+			{
+				UE_LOG(LogTemp, Warning, TEXT("True"));
+			}
+			else
+			{
+				UE_LOG(LogTemp, Warning, TEXT("False"));
+			}
 		}
 	}
 	if (ImpactNiagara)

@@ -603,6 +603,12 @@ void ACharacterBase::Fire()
 
 		UGameplayStatics::GetPlayerCameraManager(GetWorld(), 0)->StartCameraShake(UShoot::StaticClass());
 
+		//ÃÑ±â ¹Ýµ¿ ¹è±× ½ºÅíÀÏ
+		//if(CurWeaponType == EWeaponType::E_Rifle)
+			AddControllerPitchInput(-1.f);
+		//else
+		//	AddControllerPitchInput(-5.f);
+
 		CurWeapon->CurAmmo -= 1;
 		MainController->SetHUDAmmo(CurWeapon->CurAmmo );
 
