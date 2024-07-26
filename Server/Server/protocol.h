@@ -1,10 +1,6 @@
 #pragma once
 #define SERVER_PORT		8001
-<<<<<<< Updated upstream
-#define SERVER_IP		"192.168.0.102"
-=======
 #define SERVER_IP		"10.30.1.19"
->>>>>>> Stashed changes
 #define MAX_INFO_SIZE   20
 #include <vector>
 #include <array>
