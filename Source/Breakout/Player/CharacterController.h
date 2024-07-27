@@ -107,7 +107,7 @@ protected:
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<class UNiagaraSystem> TimeReplayNiagaraRef;
 	UPROPERTY(EditAnywhere)
-	TSubclassOf<class ANiagaraActor> NiagaraActorRef;
+	TSubclassOf<class AActor> NiagaraActorRef;
 
 	// 보조무기 생산 시 애니메이션 동기화 용
 	UPROPERTY(EditAnywhere, Category = Animation)
@@ -227,7 +227,7 @@ public:
 	char data[BUFSIZE] = { 0 };
 	int remainData = 0;
 	bool login_cond;
-	class ANiagaraActor* ServerTemp;
+	class AActor* ServerTemp;
 	UBOGameInstance* inst;
 	bool bSync = false;
 	class ABOGameMode* m_GameMode;

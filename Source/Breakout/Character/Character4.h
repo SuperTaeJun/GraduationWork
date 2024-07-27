@@ -21,18 +21,16 @@ public:
 	virtual void Tick(float DeltaTime);
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent);
 
-	class UNiagaraComponent* GetNiagaraComp() { return NiagaraComp; }
+	class UNiagaraSystem* GetImpactNiagara() { return ImpactNiagara; }
 protected:
 	virtual void Skill_S(const FInputActionValue& Value) override;
 	virtual void Skill_E(const FInputActionValue& Value) override;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TObjectPtr<class UNiagaraComponent> NiagaraComp;
-
 	UPROPERTY(EditAnywhere)
-	TSubclassOf<class ANiagaraActor> NiagaraActor;
-
-	class ANiagaraActor* Temp;
+	TSubclassOf<class ASkill4StartActor> StartActor;
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<class UNiagaraSystem>ImpactNiagara;
+	class AActor* Temp;
 private:
 	FTimerHandle TelpoTimer;
 	FVector SavedLocation;

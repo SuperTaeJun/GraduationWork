@@ -37,7 +37,7 @@
 #include "Components/SpotLightComponent.h"
 #include "LevelSequence.h"
 #include "LevelSequencePlayer.h"
-
+#include "FX/Skill4StartActor.h"
 ACharacterController::ACharacterController()
 {
 	//c_socket = ClientSocket::GetSingleton();
@@ -761,7 +761,8 @@ bool ACharacterController::UpdateWorld()
 					ch4skill.X = info->CH1NiaLoc.X;
 					ch4skill.Y = info->CH1NiaLoc.Y;
 					ch4skill.Z = info->CH1NiaLoc.Z;
-					ServerTemp = GetWorld()->SpawnActor<ANiagaraActor>(NiagaraActorRef, ch4skill, FRotator::ZeroRotator, SpawnParameters);
+					ServerTemp = GetWorld()->SpawnActor<AActor>(NiagaraActorRef, Niagaraplayer->GetActorLocation() + FVector(0.f, 0.f, -90.f), Niagaraplayer->GetActorRotation() + FRotator(0.f, -90.f, 0.f), SpawnParameters);
+					Cast<ASkill4StartActor>(ServerTemp)->Init(Niagaraplayer->GetMesh());
 					info->skilltype = -1;
 				}
 
@@ -769,7 +770,7 @@ bool ACharacterController::UpdateWorld()
 			else if (info->p_type == PlayerType::Character4 && info->skilltype == 1) {
 				if (Cast<ACharacter4>(OtherPlayer)) {
 					ACharacter4* Niagaraplayer = Cast<ACharacter4>(OtherPlayer);
-					Niagaraplayer->GetNiagaraComp()->Activate();
+					UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, Niagaraplayer->GetImpactNiagara(), Niagaraplayer->GetActorLocation());
 					Niagaraplayer->GetMesh()->SetVisibility(false, false);
 					Niagaraplayer->GetCurWeapon()->GetWeaponMesh()->SetVisibility(false);
 					info->skilltype = -1;
@@ -778,7 +779,6 @@ bool ACharacterController::UpdateWorld()
 			}
 			if (info->p_type == PlayerType::Character4 && info->skilltype == 2) {
 				ACharacter4* Niagaraplayer = Cast<ACharacter4>(OtherPlayer);
-				Niagaraplayer->GetNiagaraComp()->Deactivate();
 				Niagaraplayer->GetMesh()->SetVisibility(true, false);
 				Niagaraplayer->GetCurWeapon()->GetWeaponMesh()->SetVisibility(true);
 				info->bch4end = false;
