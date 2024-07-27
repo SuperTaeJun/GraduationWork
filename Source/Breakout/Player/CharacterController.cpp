@@ -487,6 +487,9 @@ bool ACharacterController::UpdateWorld()
 					LevelSequencePlayer->Play();
 					LevelSequencePlayer->OnFinished.AddDynamic(this, &ACharacterController::ServerSendEnd);
 				}
+				while (!inst->m_Socket->Tempname.empty()) {
+					inst->m_Socket->Tempname.pop();
+				}
 			}
 
 
