@@ -61,7 +61,7 @@ void USelectWeaponUi::ShotgunButtonPressed()
 	Controller->bShowMouseCursor = false;
 	Controller->bEnableMouseOverEvents = false;
 	Character->EnableInput(MyCharacterController);
-	Character->SetWeaponType(EWeaponType::E_Rifle);
+	Character->SetWeaponType(EWeaponType::E_Shotgun);
 	FName ShotguSocketName = FName("ShotgunSocket");
 
 	Character->SetWeapon(ShotGun,ShotguSocketName);
@@ -85,7 +85,7 @@ void USelectWeaponUi::LancherButtonPressed()
 	Controller->bShowMouseCursor = false;
 	Controller->bEnableMouseOverEvents = false;
 	Character->EnableInput(MyCharacterController);
-	Character->SetWeaponType(EWeaponType::E_Rifle);
+	Character->SetWeaponType(EWeaponType::E_Launcher);
 	FName LancherSocketName = FName("LancherSocket");
 
 	Character->SetWeapon(Lancher, LancherSocketName);

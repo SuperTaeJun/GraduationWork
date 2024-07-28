@@ -612,10 +612,10 @@ void ACharacterBase::Fire()
 		//ÃÑ±â ¹Ýµ¿ ¹è±× ½ºÅíÀÏ
 		if (CurWeaponType == EWeaponType::E_Rifle)
 			AddControllerPitchInput(-0.7);
-		else if (CurWeaponType == EWeaponType::E_Rifle)
-			AddControllerPitchInput(-10.f);
+		else if (CurWeaponType == EWeaponType::E_Shotgun)
+			AddControllerPitchInput(-2.f);
 		else
-			AddControllerPitchInput(-30.f);
+			AddControllerPitchInput(-5.f);
 
 		CurWeapon->CurAmmo -= 1;
 		MainController->SetHUDAmmo(CurWeapon->CurAmmo );
