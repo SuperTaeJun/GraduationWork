@@ -759,6 +759,7 @@ void ACharacterBase::Fire_S(const FInputActionValue& Value)
 {
 	if (CurWeapon)
 	{
+		CurWeapon->SetActorHiddenInGame(false);
 		if (CurWeapon->CurAmmo <= 0)
 		{
 			bFirePressed = false;
