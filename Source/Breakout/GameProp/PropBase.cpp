@@ -146,10 +146,11 @@ void APropBase::InterpMeshData(FMeshData& Data, FMeshData& DataA, FMeshData& Dat
 		//버전3
 		//Data.Verts[x] = WaveCustomLerp(DataA.Verts[x], DataB.Verts[y], Alpha,20.f,3.f);
 		//버전4
-		Data.Verts[x] = SpiralCustomLerp(DataA.Verts[x], DataB.Verts[y], Alpha, 3.f, 20.f);
+		Data.Verts[x] = SpiralCustomLerp(DataA.Verts[x], DataB.Verts[y], Alpha, 3.f, 30.f);
 		if (hasNormals) 
 		{
-			Data.Normals[x] = FMath::Lerp(DataA.Normals[x], DataB.Normals[y], Alpha);
+			//Data.Normals[x] = FMath::Lerp(DataA.Normals[x], DataB.Normals[y], Alpha);
+			Data.Normals[x] = SpiralCustomLerp(DataA.Normals[x], DataB.Normals[y], Alpha,3.f,30.f);
 			Data.Normals[x].Normalize();
 		}
 		if (hasColors) 

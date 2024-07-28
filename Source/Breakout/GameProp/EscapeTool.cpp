@@ -90,8 +90,8 @@ void AEscapeTool::TransformMesh(float DeltaTime, bool Clamp, bool TransformRever
 
 	Cur = FMath::Clamp	(Time,0.f,1.f);
 
-	if (Cur > 1.f) Cur = 1.f;
-	else if (Cur < 0.f) Cur = 0.f;
+	//if (Cur > 1.f) Cur = 1.f;
+	//else if (Cur < 0.f) Cur = 0.f;
 	DynamicMaterial->SetScalarParameterValue(FName("Alpha"), Cur);
 	InterpMeshData(InterpData, Data1, Data2, Cur, Clamp);
 
