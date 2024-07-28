@@ -279,6 +279,10 @@ void ACharacterBase::SetResetState()
 	GetMesh()->SetMaterial(0, MDynamicDissolveInst);
 	MDynamicDissolveInst->SetScalarParameterValue(FName("Dissolve"), DissolvePercent);
 
+	GrendeNum = 3;
+	WallGrendeNum = 3;
+	BoobyTrapNum = 3;
+
 	//여기서 패킷
 	if (inst)
 		inst->m_Socket->Send_Remove_Weapon(inst->GetPlayerID(), true);
@@ -350,6 +354,8 @@ void ACharacterBase::GrandeAim()
 		if (inst)
 			inst->m_Socket->Send_BojoAnim_packet(inst->GetPlayerID(), 0);
 		PlayAnimMontage(GrenadeMontage, 1.5f);
+		//bUsingThrowMontage = true;
+		bCanFire = false;
 	}
 }
 void ACharacterBase::GrandeThrowFinish()
@@ -360,7 +366,8 @@ void ACharacterBase::GrandeThrowFinish()
 	const USkeletalMeshSocket* WeaponSocket = GetMesh()->GetSocketByName(RightSocketName);
 
 	CurWeapon->SetActorHiddenInGame(false);
-
+	//bUsingThrowMontage = false;
+	bCanFire = true;
 	if (WeaponSocket && CurWeapon)
 	{
 		WeaponSocket->AttachActor(CurWeapon, GetMesh());
@@ -759,7 +766,7 @@ void ACharacterBase::Fire_S(const FInputActionValue& Value)
 {
 	if (CurWeapon)
 	{
-		CurWeapon->SetActorHiddenInGame(false);
+		//CurWeapon->SetActorHiddenInGame(false);
 		if (CurWeapon->CurAmmo <= 0)
 		{
 			bFirePressed = false;

@@ -215,7 +215,7 @@ protected:
 	bool bInRespon;
 	bool bShowSelectUi;
 	bool bCanObtainEscapeTool;
-
+	bool bUsingThrowMontage = false;
 	//¡∂¡ÿº±
 	UPROPERTY(EditAnywhere, Category = Crosshair)
 	TObjectPtr<class UTexture2D> CrosshairsCenter;
