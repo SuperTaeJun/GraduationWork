@@ -804,8 +804,10 @@ bool ACharacterController::UpdateWorld()
 				ServerSetDissolve(true, OtherPlayer);
 				//info->dissolve = 2;
 			}
-			// Á×À» ¶§ µðÁ¹ºê
-			
+			if (info->bHitAnim == true) {
+				OtherPlayer->PlayAnimMontage(SyncHitMontage, 1.f);
+				info->bHitAnim = false;
+			}
 			if (info->bServerReload == true)
 			{
 				OtherPlayer->PlayAnimMontage(SyncReloadMontageCh3);

@@ -94,6 +94,9 @@ protected:
 	UPROPERTY(EditAnywhere, Category = Animation)
 	TObjectPtr<class UAnimMontage> SyncInterMontage;
 
+	UPROPERTY(EditAnywhere, Category = Animation)
+	TObjectPtr<class UAnimMontage> SyncHitMontage;
+
 	// 플레이어 동기화 용
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<UClass> Anim1;

@@ -408,6 +408,11 @@ bool ClientSocket::PacketProcess(char* ptr)
 		PlayerInfo.players[packet->id].bRecharge = packet->bRecharge;
 		break;
 	}
+	case SC_HIT_ANIM: {
+		CS_HIT_ANIM_PACKET* packet = reinterpret_cast<CS_HIT_ANIM_PACKET*>(ptr);
+		PlayerInfo.players[packet->id].bHitAnim = packet->bHitAnim;
+		break;
+	}
 	default:
 		break;
 	}
@@ -815,6 +820,16 @@ void ClientSocket::Send_Recharge_packet(int id, bool bRecharge)
 	SendPacket(&packet);
 }
 
+void ClientSocket::Send_Hit_Anim_packet(int id, bool bHitAnim)
+{
+	CS_HIT_ANIM_PACKET packet;
+	packet.size = sizeof(packet);
+	packet.type = CS_HIT_ANIM;
+	packet.id = id;
+	packet.bHitAnim = bHitAnim;
+	SendPacket(&packet);
+}
+
 
 bool ClientSocket::Init()
 {
@@ -825,19 +840,12 @@ uint32 ClientSocket::Run()
 {
 	// 언리얼 엔진 로그 출력
 	FPlatformProcess::Sleep(0.03);
-	//	Concurrency::concurrent_queue<char> buffer;
-		////Connect();
+
 	Iocp = CreateIoCompletionPort(INVALID_HANDLE_VALUE, NULL, NULL, 0);
 	CreateIoCompletionPort(reinterpret_cast<HANDLE>(ServerSocket), Iocp, 0, 0);
 
 	RecvPacket();
 
-	//Send_LoginPacket();
-
-	SleepEx(0, true);
-	//StopTaskCounter.GetValue() == 0
-	// recv while loop 시작
-	// StopTaskCounter 클래스 변수를 사용해 Thread Safety하게 해줌
 	while (StopTaskCounter.GetValue() == 0)
 	{
 		DWORD num_byte;
@@ -878,7 +886,6 @@ uint32 ClientSocket::Run()
 			}
 
 			RecvPacket();
-			SleepEx(0, true);
 			break;
 		}
 		case IO_SEND: {

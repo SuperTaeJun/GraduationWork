@@ -93,6 +93,9 @@ public:
 	bool bAlive = true;
 	// 라이트 온/오프
 	bool bLightOn = false;
+
+	// hitAnim
+	bool bHitAnim = false;
 	WeaponType w_type;
 	PlayerType p_type;
 	float s_x, s_y, s_z;
@@ -1383,6 +1386,30 @@ void process_packet(int s_id, unsigned char* p)
 			packet.type = SC_RECHARGE;
 			packet.id = cl._s_id;
 			packet.bRecharge = cl.bRecharge;
+			other.do_send(sizeof(packet), &packet);
+		}
+		break;
+	}
+	case CS_HIT_ANIM: {
+		CS_HIT_ANIM_PACKET* packet = reinterpret_cast<CS_HIT_ANIM_PACKET*>(p);
+		CLIENT& cl = clients[packet->id];
+		cl.bHitAnim = packet->bHitAnim;
+		cout << "recharge" << endl;
+		for (auto& other : clients) {
+			if (other._s_id == cl._s_id) continue;
+			other.state_lock.lock();
+			if (ST_INGAME != other._state) {
+				other.state_lock.unlock();
+				continue;
+			}
+			else other.state_lock.unlock();
+			if (other.currentRoom != cl.currentRoom)
+				continue;
+			CS_HIT_ANIM_PACKET packet;
+			packet.size = sizeof(packet);
+			packet.type = SC_HIT_ANIM;
+			packet.id = cl._s_id;
+			packet.bHitAnim = cl.bHitAnim;
 			other.do_send(sizeof(packet), &packet);
 		}
 		break;
