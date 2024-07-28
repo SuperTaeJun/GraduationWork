@@ -443,8 +443,9 @@ void ACharacterBase::ReciveDamage(AActor* DamagedActor, float Damage, const UDam
 {
 	Health = FMath::Clamp(Health - Damage, 0.f, MaxHealth);
 	
-	PlayAnimMontage(HitMontage);
-	
+	PlayAnimMontage(HitMontage, 2.f);
+	if (inst)
+		inst->m_Socket->Send_Hit_Anim_packet(inst->GetPlayerID(), true);
 	UpdateHpHUD();
 	ACharacterBase* DamageInsigatorCh= Cast<ACharacterBase>(DamageCauser);
 
