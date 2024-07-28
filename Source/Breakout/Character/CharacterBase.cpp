@@ -104,6 +104,7 @@ void ACharacterBase::BeginPlay()
 
 	StartTransform = GetActorTransform();
 	inst = Cast<UBOGameInstance>(GetGameInstance());
+	inst->bNoUI = true;
 	if (APlayerController* PlayerController = Cast<APlayerController>(GetController()))
 	{
 		//입력시스템 매핑

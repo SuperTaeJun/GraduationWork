@@ -36,4 +36,5 @@ public:
 	bool connect;
 	int playerID;
 	
+	bool bNoUI = false;
 };
