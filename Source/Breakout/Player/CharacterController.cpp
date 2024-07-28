@@ -805,7 +805,7 @@ bool ACharacterController::UpdateWorld()
 				//info->dissolve = 2;
 			}
 			if (info->bHitAnim == true) {
-				OtherPlayer->PlayAnimMontage(SyncHitMontage, 2.f);
+				OtherPlayer->PlayAnimMontage(SyncHitMontage, 1.f);
 				info->bHitAnim = false;
 			}
 			if (info->bServerReload == true)
