@@ -1394,7 +1394,7 @@ void process_packet(int s_id, unsigned char* p)
 		CS_HIT_ANIM_PACKET* packet = reinterpret_cast<CS_HIT_ANIM_PACKET*>(p);
 		CLIENT& cl = clients[packet->id];
 		cl.bHitAnim = packet->bHitAnim;
-		cout << "recharge" << endl;
+		cout << "hit_anim " << endl;
 		for (auto& other : clients) {
 			if (other._s_id == cl._s_id) continue;
 			other.state_lock.lock();
