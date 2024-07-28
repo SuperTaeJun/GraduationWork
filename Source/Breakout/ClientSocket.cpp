@@ -91,15 +91,18 @@ bool ClientSocket::PacketProcess(char* ptr)
 		case OVERLAP_ID:
 		{
 			UE_LOG(LogTemp, Warning, TEXT("OVERLAP_ID"));
+			failType = 0;
 			break;
 		}
 		case WRONG_ID:
 		{
 			UE_LOG(LogTemp, Warning, TEXT("WRONG ID"));
+			failType = 1;
 			break;
 		}
 		case WRONG_PW:
 		{
+			failType = 2;
 			UE_LOG(LogTemp, Warning, TEXT("WRONG PW"));
 			break;
 		}

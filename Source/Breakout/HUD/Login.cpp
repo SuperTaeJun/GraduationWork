@@ -41,12 +41,26 @@ void ULogin::PressLogin()
 {
 
 	////로그인실패하면
-	//if (Fail && !Cast<UBOGameInstance>(GetGameInstance())->m_Socket->bLoginConnect)
-	//{
-	//	Fail->SetVisibility(ESlateVisibility::Visible);
-	//}
+	if (Fail && !Cast<UBOGameInstance>(GetGameInstance())->m_Socket->bLoginConnect)
+	{
+		if (Cast<UBOGameInstance>(GetGameInstance())->m_Socket->failType == 0)
+		{
+			FString Text = "Overlap ID";
+			Fail->SetVisibility(ESlateVisibility::Visible);
+		}
+		else if (Cast<UBOGameInstance>(GetGameInstance())->m_Socket->failType == 1)
+		{
+			FString Text = "Wrong ID";
+			Fail->SetVisibility(ESlateVisibility::Visible);
+		}
+		else if (Cast<UBOGameInstance>(GetGameInstance())->m_Socket->failType == 2)
+		{
+			FString Text = "Wrong PW";
+			Fail->SetVisibility(ESlateVisibility::Visible);
+		}
+	}
 
-	//if(Cast<UBOGameInstance>(GetGameInstance())->m_Socket->bLoginConnect)
+	if(Cast<UBOGameInstance>(GetGameInstance())->m_Socket->bLoginConnect)
 		RemoveFromParent();
 
 

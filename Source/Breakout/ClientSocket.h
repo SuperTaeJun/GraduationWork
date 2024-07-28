@@ -453,6 +453,8 @@ public:
 	bool bName = false;
 	int MoppType = -1;
 
+	// failtype
+	int failType = -1;
 	//∑Œ∫Ò∑Î ¿Ãµø
 	bool binLobby = false;
 	// endgame
