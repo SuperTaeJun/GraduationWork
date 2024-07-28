@@ -8,6 +8,8 @@
 #include "Game/BOGameInstance.h"
 #include "ClientSocket.h"
 #include "Sound/SoundCue.h"
+#include "Components/TextBlock.h"
+
 void ULogin::NativeConstruct()
 {
 	Super::NativeConstruct();
@@ -46,16 +48,19 @@ void ULogin::PressLogin()
 		if (Cast<UBOGameInstance>(GetGameInstance())->m_Socket->failType == 0)
 		{
 			FString Text = "Overlap ID";
+			FailText->SetText(FText::FromString(Text));
 			Fail->SetVisibility(ESlateVisibility::Visible);
 		}
 		else if (Cast<UBOGameInstance>(GetGameInstance())->m_Socket->failType == 1)
 		{
 			FString Text = "Wrong ID";
+			FailText->SetText(FText::FromString(Text));
 			Fail->SetVisibility(ESlateVisibility::Visible);
 		}
 		else if (Cast<UBOGameInstance>(GetGameInstance())->m_Socket->failType == 2)
 		{
 			FString Text = "Wrong PW";
+			FailText->SetText(FText::FromString(Text));
 			Fail->SetVisibility(ESlateVisibility::Visible);
 		}
 	}

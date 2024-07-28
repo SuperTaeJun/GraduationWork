@@ -11,10 +11,9 @@ void AGameRoomHUD::BeginPlay()
 {
 
 	AddSelectCharacter();
-
+	AddRoomListUi();
 	if (!Cast<UBOGameInstance>(GetGameInstance())->bNoUI)
 	{
-		AddRoomListUi();
 		AddLoginUi();
 	}
 }

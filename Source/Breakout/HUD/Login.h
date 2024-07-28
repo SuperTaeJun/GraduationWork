@@ -33,6 +33,8 @@ public:
 
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<class UButton>Fail;
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<class UTextBlock>FailText;
 
 	UFUNCTION()
 	void HoverLog();

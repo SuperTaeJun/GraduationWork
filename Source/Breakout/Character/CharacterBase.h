@@ -80,6 +80,8 @@ public:
 
 	void SetResetState();
 
+	void SetWeaponType(EWeaponType Type) {CurWeaponType = Type;}
+
 	UAnimMontage* GetDeadMontage() { return DeadMontage; }
 	void SetbCanEscape(bool _bCanEscape) { bCanEscape = _bCanEscape; }
 	int32 GetEscapeToolNum(){ return ObtainedEscapeToolNum; }
