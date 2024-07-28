@@ -408,6 +408,11 @@ bool ClientSocket::PacketProcess(char* ptr)
 		PlayerInfo.players[packet->id].bRecharge = packet->bRecharge;
 		break;
 	}
+	case SC_HIT_ANIM: {
+		CS_HIT_ANIM_PACKET* packet = reinterpret_cast<CS_HIT_ANIM_PACKET*>(ptr);
+		PlayerInfo.players[packet->id].bHitAnim = packet->bHitAnim;
+		break;
+	}
 	default:
 		break;
 	}
@@ -812,6 +817,16 @@ void ClientSocket::Send_Recharge_packet(int id, bool bRecharge)
 	packet.type = CS_RECHARGE;
 	packet.id = id;
 	packet.bRecharge = bRecharge;
+	SendPacket(&packet);
+}
+
+void ClientSocket::Send_Hit_Anim_packet(int id, bool bHitAnim)
+{
+	CS_HIT_ANIM_PACKET packet;
+	packet.size = sizeof(packet);
+	packet.type = CS_HIT_ANIM;
+	packet.id = id;
+	packet.bHitAnim = bHitAnim;
 	SendPacket(&packet);
 }
 

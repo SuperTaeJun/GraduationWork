@@ -185,6 +185,8 @@ public:
 	bool  bEndGame = false;
 	bool  bServerReload = false;
 	bool  bFinishSkill = false;
+	// HitAnim
+	bool  bHitAnim = false;
 	// ³ªÀÌ¾Æ°¡¶ó ½¸ ÀÌÆÑÆ®
 	FVector Sshot;
 	FVector Eshot;
@@ -411,6 +413,7 @@ public:
 	void Send_Lobby_Room_pakcet(int id, int RoomNum);
 	void Send_Hovered_packet(int id, int RoomNum);
 	void Send_Recharge_packet(int id, bool bRecharge);
+	void Send_Hit_Anim_packet(int id, bool bHitAnim);
 	virtual bool Init() override;
 	virtual uint32 Run() override;
 	virtual void Stop() override;
