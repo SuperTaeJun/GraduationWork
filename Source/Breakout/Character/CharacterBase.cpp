@@ -836,6 +836,9 @@ void ACharacterBase::Inter(const FInputActionValue& Value)
 			MainController->SetHUDMatchingUi(true);
 			LevelSequencePlayer->Play();
 			LevelSequencePlayer->OnFinished.AddDynamic(this, &ACharacterBase::SendEnd);
+			while (!inst->m_Socket->Tempname.empty()) {
+				inst->m_Socket->Tempname.pop();
+			}
 		}
 		
 
