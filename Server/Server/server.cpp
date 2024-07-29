@@ -110,6 +110,7 @@ public:
 	int dissolve;
 	// 입장한 게임룸 번호
 	int currentRoom = -1;
+	int jumpType = -1;
 	unordered_set   <int>  viewlist; // 시야 안 오브젝트
 	mutex vl;
 	mutex hp_lock;
@@ -623,7 +624,7 @@ void process_packet(int s_id, unsigned char* p)
 		cl.Max_Speed = packet->Max_speed;
 		cl.AO_PITCH = packet->AO_pitch;
 		cl.AO_YAW = packet->AO_yaw;
-
+		cl.jumpType = packet->jumpType;
 		for (auto& other : clients) {
 			if (other._s_id == s_id)
 				continue;
@@ -1536,6 +1537,7 @@ void send_move_packet(int _id, int target)
 	packet.Max_speed = clients[target].Max_Speed;
 	packet.AO_pitch = clients[target].AO_PITCH;
 	packet.AO_yaw = clients[target].AO_YAW;
+	packet.jumpType = clients[target].jumpType;
 	clients[_id].do_send(sizeof(packet), &packet);
 }
 

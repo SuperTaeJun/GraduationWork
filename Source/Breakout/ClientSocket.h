@@ -151,6 +151,9 @@ public:
 	int bojoanimtype = 2;
 	// 아이템 개수
 	int itemCount = 0;
+	
+	int jumpType = -1;
+
 	// 아이디 비번
 	FString    userId = {};
 	FString    userPw = {};
@@ -381,7 +384,7 @@ public:
 	bool PacketProcess(char* ptr);
 	void Send_Login_Info(char* id, char* pw);
 	void Send_Account_PACKET(char* id, char* pw);
-	void Send_Move_Packet(int sessionID, FVector Location, FRotator Rotation, FVector Velocity, float Max_speed, float AO_Yaw, float AO_Pitch);
+	void Send_Move_Packet(int sessionID, FVector Location, FRotator Rotation, FVector Velocity, float Max_speed, float AO_Yaw, float AO_Pitch, int JumpType);
 	void Send_Character_Type(PlayerType type, int id);
 	void Send_Weapon_Type(WeaponType type, int id);
 	void Send_Ready_Packet(bool ready, int id);

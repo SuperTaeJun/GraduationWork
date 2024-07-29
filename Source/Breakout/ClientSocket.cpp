@@ -157,6 +157,7 @@ bool ClientSocket::PacketProcess(char* ptr)
 		PlayerInfo.players[packet->id].Max_Speed = packet->Max_speed;
 		PlayerInfo.players[packet->id].AO_PITCH = packet->AO_pitch;
 		PlayerInfo.players[packet->id].AO_YAW = packet->AO_yaw;
+		PlayerInfo.players[packet->id].jumpType = packet->jumpType;
 		break;
 	}
 	case SC_CHAR_BACK: {
@@ -446,7 +447,7 @@ void ClientSocket::Send_Account_PACKET(char* id, char* pw)
 	SendPacket(&packet);
 }
 
-void ClientSocket::Send_Move_Packet(int sessionID, FVector Location, FRotator Rotation, FVector Velocity, float Max_speed, float AO_Yaw, float AO_Pitch)
+void ClientSocket::Send_Move_Packet(int sessionID, FVector Location, FRotator Rotation, FVector Velocity, float Max_speed, float AO_Yaw, float AO_Pitch, int JumpType)
 {
 	//if (login_cond == true) {
 	CS_MOVE_PACKET packet;
@@ -463,7 +464,7 @@ void ClientSocket::Send_Move_Packet(int sessionID, FVector Location, FRotator Ro
 	packet.Max_speed = Max_speed;
 	packet.AO_yaw = AO_Yaw;
 	packet.AO_pitch = AO_Pitch;
-
+	packet.jumpType = JumpType;
 	//Send(packet.size, &packet);
 	SendPacket(&packet);
 	//UE_LOG(LogClass, Warning, TEXT("send move"));

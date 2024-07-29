@@ -598,6 +598,53 @@ bool ACharacterController::UpdateWorld()
 			OtherPlayer->AddMovementInput(PlayerVelocity);
 			OtherPlayer->SetActorRotation(PlayerRotation);
 			OtherPlayer->SetActorLocation(PlayerLocation);
+			EMovementMode G;
+			switch (info->jumpType)
+			{
+			case 0:
+			{
+				G = EMovementMode::MOVE_None;
+				break;
+			}
+			case 1:
+			{
+				G = EMovementMode::MOVE_Walking;
+				break;
+			}
+			case 2:
+			{
+				G = EMovementMode::MOVE_NavWalking;
+				break;
+			}
+			case 3:
+			{
+				G = EMovementMode::MOVE_Falling;
+				break;
+			}
+			case 4:
+			{
+				G = EMovementMode::MOVE_Swimming;
+				break;
+			}
+			case 5:
+			{
+				G = EMovementMode::MOVE_Flying;
+				break;
+			}
+			case 6:
+			{
+				G = EMovementMode::MOVE_Custom;
+				break;
+			}
+			case 7:
+			{
+				G = EMovementMode::MOVE_MAX;
+				break;
+			}
+			default:
+				break;
+			}
+			OtherPlayer->GetCharacterMovement()->SetMovementMode(G);
 			OtherPlayer->SetAO_PITCH(AO_PITCH);
 			OtherPlayer->SetAO_YAW(AO_YAW);
 			OtherPlayer->GetCharacterMovement()->MaxWalkSpeed = info->Max_Speed;
@@ -1123,8 +1170,9 @@ void ACharacterController::UpdatePlayer()
 	auto AO_Pitch = m_Player->GetAO_Pitch();
 	FVector MyCameraLocation;
 	FRotator MyCameraRotation;
+	int Type = m_Player->GetCharacterMovement()->MovementMode;
 	m_Player->GetActorEyesViewPoint(MyCameraLocation, MyCameraRotation);
-	inst->m_Socket->Send_Move_Packet(id, MyLocation, MyRotation, MyVelocity, max_speed , AO_Yaw, AO_Pitch);
+	inst->m_Socket->Send_Move_Packet(id, MyLocation, MyRotation, MyVelocity, max_speed , AO_Yaw, AO_Pitch, Type);
 	//UE_LOG(LogClass, Warning, TEXT("send move packet"));
 }
 

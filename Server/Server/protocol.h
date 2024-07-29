@@ -149,6 +149,7 @@ struct CS_MOVE_PACKET
 	float vx, vy, vz;
 	float yaw;
 	float AO_yaw, AO_pitch;
+	int jumpType;
 };
 struct SC_PLAYER_SYNC {
 	unsigned char size;
