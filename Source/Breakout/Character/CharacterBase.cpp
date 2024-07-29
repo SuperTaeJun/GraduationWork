@@ -449,13 +449,6 @@ void ACharacterBase::SetSpawnGrenade(TSubclassOf<AProjectileBase> Projectile)
 void ACharacterBase::ReciveDamage(AActor* DamagedActor, float Damage, const UDamageType* DamageType, class AController* InstigatorController, AActor* DamageCauser)
 {
 	Health = FMath::Clamp(Health - Damage, 0.f, MaxHealth);
-	
-	if (Health > 0 && MainController) 
-	{
-		PlayAnimMontage(HitMontage, 1.f);
-		if (inst)
-			inst->m_Socket->Send_Hit_Anim_packet(inst->GetPlayerID(), true);
-	}
 
 	UpdateHpHUD();
 	ACharacterBase* DamageInsigatorCh= Cast<ACharacterBase>(DamageCauser);
@@ -506,6 +499,12 @@ void ACharacterBase::ReciveDamage(AActor* DamagedActor, float Damage, const UDam
 			if (inst)
 				Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Alive_packet(inst->GetPlayerID(), 0);
 		}
+	}
+	else if (Health > 0 && MainController)
+	{
+		PlayAnimMontage(HitMontage, 1.f);
+		if (inst)
+			inst->m_Socket->Send_Hit_Anim_packet(inst->GetPlayerID(), true);
 	}
 }
 
