@@ -2,9 +2,7 @@
 #define SERVER_PORT		8001
 #define SERVER_IP		"192.168.77.5"
 #define MAX_INFO_SIZE   20
-#include <vector>
-#include <array>
-
+#define ENTER_CLIENT	2
 enum Login_fail_Type { OVERLAP_ID, WRONG_ID, WRONG_PW, OVERLAP_AC, CREATE_AC };
 
 
@@ -22,6 +20,8 @@ enum WeaponType
 	SHOTGUN,
 	LAUNCHER
 };
+
+
 
 constexpr int BUFSIZE = 1048;
 const int  MAX_NAME_SIZE = 20;

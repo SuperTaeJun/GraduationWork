@@ -1,8 +1,6 @@
 #pragma once
-#include <windows.h>
-#include <sqlext.h>
-#include <iostream>
-#include <string>
+#include "pch.h"
+
 
 void show_err();
 void printSQLError(SQLHANDLE handle, SQLSMALLINT type);

@@ -127,11 +127,17 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="CLIENT.cpp" />
     <ClCompile Include="DB.cpp" />
+    <ClCompile Include="Overlap.cpp" />
+    <ClCompile Include="pch.cpp" />
     <ClCompile Include="server.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CLIENT.h" />
     <ClInclude Include="DB.h" />
+    <ClInclude Include="Enum.h" />
+    <ClInclude Include="Overlap.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="protocol.h" />
   </ItemGroup>

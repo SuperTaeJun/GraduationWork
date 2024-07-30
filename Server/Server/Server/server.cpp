@@ -1,180 +1,4 @@
 #include "pch.h"
-#include "DB.h"
-enum EVENT_TYPE { ET_RELOAD, ET_HEAL };
-enum IO_type
-{
-	IO_RECV,
-	IO_SEND,
-	IO_ACCEPT,
-	IO_RELOAD_WEAPON,
-	IO_HEAL_HP
-};
-enum CL_STATE { ST_FREE, ST_ACCEPT, ST_INGAME, ST_LOBBY };
-
-void error_display(int err_no)
-{
-	WCHAR* lpMsgBuf;
-	FormatMessage(
-		FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM,
-		NULL, err_no,
-		MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
-		(LPTSTR)&lpMsgBuf, 0, 0);
-	wcout << lpMsgBuf << endl;
-	//while (true);
-	LocalFree(lpMsgBuf);
-}
-
-class Overlap {
-public:
-	WSAOVERLAPPED   _wsa_over;
-	IO_type         _op;
-	WSABUF         _wsa_buf;
-	unsigned		 char   _net_buf[2047];
-	int            _target;
-public:
-	Overlap(IO_type _op, char num_bytes, void* mess) : _op(_op)
-	{
-		ZeroMemory(&_wsa_over, sizeof(_wsa_over));
-		_wsa_buf.buf = reinterpret_cast<char*>(_net_buf);
-		_wsa_buf.len = num_bytes;
-		memcpy(_net_buf, mess, num_bytes);
-	}
-
-	Overlap(IO_type _op) : _op(_op) {}
-
-	Overlap()
-	{
-		_op = IO_RECV;
-	}
-
-	~Overlap()
-	{
-	}
-};
-
-class CLIENT
-{
-public:
-	int _s_id; //플레이어 배열 넘버
-	char name[MAX_NAME_SIZE]; //플레이어 nick
-	char _pw[MAX_NAME_SIZE];  // pw
-	//로그인 상태
-	bool bLogin = false;
-	// 위치
-	float	x;
-	float	y;
-	float	z;
-	// 회전값
-	// 아이템 획득 카운트
-	int myItemCount;
-	bool connected = false;
-	bool selectweapon = false;
-	float	Yaw;
-	float	Pitch;
-	float	Roll;
-	float   Speed;
-	// 에임 오프셋
-	float AO_YAW, AO_PITCH;
-	// 속도
-	float VX;
-	float VY;
-	float VZ;
-	float Max_Speed;
-
-	float _hp; // 체력
-	int damage;
-	bool is_bone = false;
-	bool bGetWeapon = false;
-	bool bCancel;
-	bool bEndGame = false;
-	// 충전
-	bool bRecharge = false;
-	// bAlive
-	bool bAlive = true;
-	// 라이트 온/오프
-	bool bLightOn = false;
-	//	Reload
-	bool bReload = false;
-	// hitAnim
-	bool bHitAnim = false;
-	WeaponType w_type;
-	PlayerType p_type;
-	float s_x, s_y, s_z;
-	float e_x, e_y, e_z;
-	int wtype;
-	//보조무기 애니메이션 상태
-	int bojoanimtype;
-	//--------------------
-	//죽는 애니메이션 타입
-	int deadtype;
-	// 디졸브 타입
-	int dissolve;
-	// 입장한 게임룸 번호
-	int currentRoom = -1;
-	int jumpType = -1;
-	unordered_set   <int>  viewlist; // 시야 안 오브젝트
-
-
-	mutex state_lock;
-	CL_STATE _state;
-	atomic_bool  _is_active = false;
-
-	int num;
-	int itemAnimNum;
-	atomic_int  _count;
-	int      _type;
-	//-------------
-	float pitch0, yaw0, roll0;
-	float pitch1, yaw1, roll1;
-	float pitch2, yaw2, roll2;
-	float pitch3, yaw3, roll3;
-	float pitch4, yaw4, roll4;
-	//-------------
-	Overlap _recv_over;
-	SOCKET  _socket;
-	int      _prev_size;
-	int      last_move_time;
-
-public:
-	CLIENT() : _state(ST_FREE), _prev_size(0)
-	{
-		_hp = 100.f;
-		myItemCount = 0;
-	}
-
-	~CLIENT()
-	{
-		closesocket(_socket);
-	}
-
-	void do_recv()
-	{
-		DWORD recv_flag = 0;
-		ZeroMemory(&_recv_over._wsa_over, sizeof(_recv_over._wsa_over));
-		_recv_over._wsa_buf.buf = reinterpret_cast<char*>(_recv_over._net_buf + _prev_size);
-		_recv_over._wsa_buf.len = sizeof(_recv_over._net_buf) - _prev_size;
-		int ret = WSARecv(_socket, &_recv_over._wsa_buf, 1, 0, &recv_flag, &_recv_over._wsa_over, NULL);
-		if (SOCKET_ERROR == ret) {
-			int error_num = WSAGetLastError();
-			if (ERROR_IO_PENDING != error_num)
-				error_display(error_num);
-		}
-	}
-
-	void do_send(int num_bytes, void* mess)
-	{
-		Overlap* ex_over = new Overlap(IO_SEND, num_bytes, mess);
-		int ret = WSASend(_socket, &ex_over->_wsa_buf, 1, 0, 0, &ex_over->_wsa_over, NULL);
-		if (SOCKET_ERROR == ret) {
-			int error_num = WSAGetLastError();
-			if (ERROR_IO_PENDING != error_num)
-				error_display(error_num);
-		}
-	}
-
-};
-
-
 
 struct timer_ev {
 
@@ -187,6 +11,7 @@ struct timer_ev {
 		return (start_t > _Left.start_t);
 	}
 };
+
 
 class EscapeObject
 {
@@ -324,7 +149,7 @@ void send_item_packet(int _s_id, int item_index);
 void send_myitem_packet(int _s_id);
 void send_bullet_wall(int _s_id, int wall_index);
 void worker_thread();
-void SendLobbyPacket(int clientId);
+void SendLobbyPacket(int clientId, bool bintoRoom);
 
 int main()
 {

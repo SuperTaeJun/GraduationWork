@@ -1,6 +1,5 @@
 #include "pch.h"
 #include "DB.h"
-#include <sqlext.h>
 
 #define NAME_LEN 20 
 
@@ -166,8 +165,7 @@ bool DB_id(const char* login_id)
 	SQLHDBC hdbc;
 	SQLHSTMT hstmt = 0;
 	SQLRETURN retcode;
-	//cout <<"ID" << name << endl;
-	//cout << "PW" << pw << endl;
+	
 
 	char temp[BUFSIZE] = {};
 	sprintf_s(temp, sizeof(temp), "EXEC [GraduationWork].[dbo].check_player_id %s", login_id);
