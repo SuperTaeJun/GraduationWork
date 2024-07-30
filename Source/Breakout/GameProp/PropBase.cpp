@@ -186,7 +186,7 @@ void APropBase::GetMeshDataFromStaticMesh(UStaticMesh* Mesh, UPARAM(ref) FMeshDa
 		const FStaticMeshLODResources& LOD = Mesh->GetRenderData()->LODResources[LODIndex];
 		if (!LOD.Sections.IsValidIndex(SectionIndex)) 
 		{
-			Data.CountSections(); return; 
+			return; 
 		}
 		TMap<int32, int32> MeshToSectionVertMap = {};
 		uint32 i = 0,
@@ -229,8 +229,7 @@ void APropBase::GetMeshDataFromStaticMesh(UStaticMesh* Mesh, UPARAM(ref) FMeshDa
 
 		if (!GetAllSections)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("NotUNIFY NUM : %d"), Data.Verts.Num());
-			Data.CountSections(); return;
+			return;
 		}
 		SectionIndex += 1;
 		sec += 1;

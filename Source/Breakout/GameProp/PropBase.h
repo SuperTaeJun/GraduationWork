@@ -54,25 +54,6 @@ struct FMeshData
 		NumSections = 0;
 	}
 
-	FORCEINLINE void CountSections() {
-		int sum = 0;
-		for (const int& i : SectSizes) {
-			sum += i;
-		}
-		int vl = Verts.Num();
-		if (sum != vl && Sects.Num() >= vl) {
-			int x = 0, n = 0;
-			SectSizes = {};
-			for (x = 0; x < vl; ++x) {
-				const int& s = Sects[x];
-				while (s >= n) { SectSizes.Add(0); ++n; }
-				++SectSizes[s];
-			}
-			NumSections = n;
-			if (NumSections <= 0) { NumSections = 1; }
-		}
-	}
-
 };
 
 UCLASS()
