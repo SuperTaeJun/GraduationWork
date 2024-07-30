@@ -93,7 +93,8 @@ public:
 	bool bAlive = true;
 	// 라이트 온/오프
 	bool bLightOn = false;
-
+	//	Reload
+	bool bReload = false;
 	// hitAnim
 	bool bHitAnim = false;
 	WeaponType w_type;
@@ -112,9 +113,7 @@ public:
 	int currentRoom = -1;
 	int jumpType = -1;
 	unordered_set   <int>  viewlist; // 시야 안 오브젝트
-	mutex vl;
-	mutex hp_lock;
-	mutex lua_lock;
+
 
 	mutex state_lock;
 	CL_STATE _state;
@@ -463,6 +462,7 @@ void send_select_character_type_packet(int _s_id)
 	packet.p_type = clients[_s_id].p_type;
 	clients[_s_id].do_send(sizeof(packet), &packet);
 }
+
 void SendLobbyPacket(int clientId, bool bintoRoom)
 {
 	SC_LOBBY_PACKET packet;
@@ -605,7 +605,7 @@ void process_packet(int s_id, unsigned char* p)
 				if (player.currentRoom != cl.currentRoom)
 					continue;
 				send_ready_packet(player._s_id);
-				//cout << "보낼 플레이어" << player._s_id << endl;
+				
 
 			}
 		}
@@ -762,8 +762,6 @@ void process_packet(int s_id, unsigned char* p)
 			packet.yaw = cl.Yaw;
 			packet.Max_speed = cl.Max_Speed;
 			packet.p_type = cl.p_type;
-			//printf_s("[Send put object] id : %d, location : (%f,%f,%f), yaw : %f\n", packet.id, packet.x, packet.y, packet.z, packet.yaw);
-			//cout << "이거 누구한테 감 :  ?" << other._s_id << endl;
 			other.do_send(sizeof(packet), &packet);
 		}
 		break;
@@ -778,7 +776,6 @@ void process_packet(int s_id, unsigned char* p)
 		cl.Yaw = packet->r_yaw;
 		cl.Roll = packet->r_roll;
 		cl.wtype = packet->wep_type;
-		//cout << "weptype : " << cl.wtype << endl;
 		for (auto& other : clients) {
 			if (other._s_id == cl._s_id) continue;
 			other.state_lock.lock();
@@ -816,7 +813,6 @@ void process_packet(int s_id, unsigned char* p)
 		cl.Yaw = packet->r_yaw;
 		cl.Roll = packet->r_roll;
 		cl.wtype = packet->wep_type;
-		cout << "id : " << packet->attack_id << "weptype : " << cl.wtype << endl;
 		for (auto& other : clients) {
 			if (other._s_id == cl._s_id) continue;
 			other.state_lock.lock();
@@ -844,7 +840,6 @@ void process_packet(int s_id, unsigned char* p)
 		break;
 	}
 	case CS_NiAGARA: {
-		//cout << "나이아가라 들어옴?" << endl;
 		CS_NIAGARA_SYNC_PACKET* packet = reinterpret_cast<CS_NIAGARA_SYNC_PACKET*>(p);
 		CLIENT& cl = clients[packet->id];
 		cl.p_type = packet->playertype;
@@ -865,7 +860,6 @@ void process_packet(int s_id, unsigned char* p)
 			packet.type = SC_NiAGARA;
 			packet.playertype = cl.p_type;
 			packet.num = cl.num;
-			//cout << "이거 누구한테 감 :  ?" << other._s_id << endl;
 			other.do_send(sizeof(packet), &packet);
 
 		}
@@ -874,7 +868,6 @@ void process_packet(int s_id, unsigned char* p)
 	case CS_NiAGARA_CANCEL: {
 		CS_NIAGARA_CANCEL_PACKET* packet = reinterpret_cast<CS_NIAGARA_CANCEL_PACKET*>(p);
 		CLIENT& cl = clients[packet->id];
-
 		cl.bCancel = packet->cancel;
 		cl.num = packet->num;
 		for (auto& other : clients) {
@@ -931,7 +924,6 @@ void process_packet(int s_id, unsigned char* p)
 		break;
 	}
 	case CS_SIGNAl: {
-		//cout << "aaaaa들어옴?" << endl;
 		CS_SIGNAL_PACKET* packet = reinterpret_cast<CS_SIGNAL_PACKET*>(p);
 		CLIENT& cl = clients[packet->id];
 		cl.num = packet->num;
@@ -985,12 +977,10 @@ void process_packet(int s_id, unsigned char* p)
 	}
 	case CS_GETITEM: {
 		CS_ITEM_PACKET* packet = reinterpret_cast<CS_ITEM_PACKET*>(p);
-		cout << "getitempacket->id" << packet->id << endl;
 		CLIENT& cl = clients[packet->id];
 		cl.myItemCount = packet->itemCount;
 		//send_myitem_packet(cl._s_id);
 
-	//	cout << "내가 획득한 아이템 개수" << cl._s_id << " : " << cl.myItemCount << endl;
 		for (auto& other : clients) {
 			if (other._s_id == cl._s_id) continue;
 			other.state_lock.lock();
@@ -1014,7 +1004,6 @@ void process_packet(int s_id, unsigned char* p)
 	}
 	case CS_ALIVE: {
 		CS_ALIVE_PACKET* packet = reinterpret_cast<CS_ALIVE_PACKET*>(p);
-	//	cout << "packet->id : " << packet->id << endl;
 		CLIENT& cl = clients[packet->id];
 		cl.deadtype = packet->deadtype;
 		for (auto& other : clients) {
@@ -1070,7 +1059,6 @@ void process_packet(int s_id, unsigned char* p)
 		CS_REMOVE_ITEM_PACKET* packet = reinterpret_cast<CS_REMOVE_ITEM_PACKET*>(p);
 		CLIENT& cl = clients[packet->id];
 		cl.myItemCount += 1;
-		cout << "리무브packet->id" << packet->id << endl;
 		int itemid = packet->itemid;
 		for (auto& other : clients) {
 			if (other._s_id == cl._s_id) continue;
@@ -1096,9 +1084,7 @@ void process_packet(int s_id, unsigned char* p)
 		CS_INCREASE_ITEM_PACKET* packet = reinterpret_cast<CS_INCREASE_ITEM_PACKET*>(p);
 		CLIENT& cl = clients[packet->Increaseid];
 		cl.myItemCount += packet->itemCount;
-		cout << "packet->id : " << packet->Increaseid << "packet->itemcount" << cl.myItemCount << endl;
 		send_myitem_count_packet(cl._s_id);
-
 		for (auto& other : clients) {
 			if (other._s_id == cl._s_id) continue;
 			other.state_lock.lock();
@@ -1146,15 +1132,12 @@ void process_packet(int s_id, unsigned char* p)
 	case CS_ITEM_INFO: {
 		CS_ITEM_INFO_PACKET* packet = reinterpret_cast<CS_ITEM_INFO_PACKET*> (p);
 		CLIENT& cl = clients[s_id];
-
-		//sen
-		// d_item_packet(cl._s_id, packet->objid);
+		//send_item_packet(cl._s_id, packet->objid);
 		break;
 	}
 	case CS_BULLET_WALL: {
 		CS_WALL_PACKET* packet = reinterpret_cast<CS_WALL_PACKET*> (p);
 		CLIENT& cl = clients[packet->id];
-		cout << "wall id : " << packet->wall_id << endl;
 		walls[packet->wall_id].ob_id = packet->wall_id;
 		walls[packet->wall_id].x = packet->lx;
 		walls[packet->wall_id].y = packet->ly;
@@ -1179,7 +1162,7 @@ void process_packet(int s_id, unsigned char* p)
 	case CS_RELOAD: {
 		CS_RELOAD_PACKET* packet = reinterpret_cast<CS_RELOAD_PACKET*>(p);
 		CLIENT& cl = clients[packet->id];
-
+		cl.bReload = packet->bReload;
 		for (auto& other : clients) {
 			if (other._s_id == cl._s_id) continue;
 			other.state_lock.lock();
@@ -1194,7 +1177,7 @@ void process_packet(int s_id, unsigned char* p)
 			packet.size = sizeof(packet);
 			packet.type = SC_RELOAD;
 			packet.id = cl._s_id;
-			packet.bReload = true;
+			packet.bReload = cl.bReload;
 			other.do_send(sizeof(packet), &packet);
 		}
 		break;
@@ -1203,7 +1186,6 @@ void process_packet(int s_id, unsigned char* p)
 		CS_ITEM_ANIM_PACKET* packet = reinterpret_cast<CS_ITEM_ANIM_PACKET*>(p);
 		CLIENT& cl = clients[packet->id];
 		cl.itemAnimNum = packet->num;
-		cout << "애님packet->id" << packet->id << endl;
 		for (auto& other : clients) {
 			if (other._s_id == cl._s_id) continue;
 			other.state_lock.lock();
@@ -1276,7 +1258,6 @@ void process_packet(int s_id, unsigned char* p)
 		CLIENT& cl = clients[packet->id];
 		cl._hp = packet->hp;
 		cl.bAlive = packet->bAlive;
-		//cout << " cl.s_id : " << cl._s_id << "cl.hp : " << cl._hp << endl;
 		for (auto& other : clients) {
 			if (other._s_id == cl._s_id) continue;
 			other.state_lock.lock();
@@ -1324,7 +1305,6 @@ void process_packet(int s_id, unsigned char* p)
 		CLIENT& cl = clients[packet->id];
 		int itemid = packet->itemid;
 		int mopptype = packet->mopptype;
-		cout << "mopptype : " << mopptype << endl;
 		for (auto& other : clients) {
 			if (other._s_id == cl._s_id) continue;
 			other.state_lock.lock();
@@ -1371,7 +1351,6 @@ void process_packet(int s_id, unsigned char* p)
 		CS_RECHARGE_PACKET* packet = reinterpret_cast<CS_RECHARGE_PACKET*>(p);
 		CLIENT& cl = clients[packet->id];
 		cl.bRecharge = packet->bRecharge;
-		cout << "recharge" << endl;
 		for (auto& other : clients) {
 			if (other._s_id == cl._s_id) continue;
 			other.state_lock.lock();
@@ -1395,7 +1374,6 @@ void process_packet(int s_id, unsigned char* p)
 		CS_HIT_ANIM_PACKET* packet = reinterpret_cast<CS_HIT_ANIM_PACKET*>(p);
 		CLIENT& cl = clients[packet->id];
 		cl.bHitAnim = packet->bHitAnim;
-		cout << "hit_anim " << endl;
 		for (auto& other : clients) {
 			if (other._s_id == cl._s_id) continue;
 			other.state_lock.lock();
