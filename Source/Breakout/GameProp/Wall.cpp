@@ -18,7 +18,7 @@ AWall::AWall()
 void AWall::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
 }
 
 void AWall::Tick(float DeltaTime)

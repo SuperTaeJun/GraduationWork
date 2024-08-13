@@ -94,7 +94,7 @@ ACharacterBase::ACharacterBase()
 	bCanEscape = false;
 
 	//MDissolveInst= ConstructorHelpers::FObjectFinder<UMaterialInstance>
-	MDissolveInst =ConstructorHelpers::FObjectFinder<UMaterialInstance>(TEXT("/Game/BreakoutAsset/Character/Character1/Material/MI_Ch1Material_Dissolve.MI_Ch1Material_Dissolve")).Object;
+	MDissolveInst = ConstructorHelpers::FObjectFinder<UMaterialInstance>(TEXT("/Game/BreakoutAsset/Character/Character1/Material/MI_Ch1Material_Dissolve.MI_Ch1Material_Dissolve")).Object;
 }
 
 void ACharacterBase::BeginPlay()
@@ -141,7 +141,7 @@ void ACharacterBase::BeginPlay()
 		UpdateObtainedEscapeTool();
 		MainController->SetHUDBojoImage(BojoMugiType);
 	}
-	if(Aim)
+	if (Aim)
 		Aim->SetAutoActivate(false);
 
 
@@ -166,7 +166,7 @@ void ACharacterBase::UpdateStamina(float DeltaTime)
 	{
 		if (CharacterState == ECharacterState::ECS_SPRINT && Stamina >= 0.f)
 		{
-			Stamina -= DeltaTime*8.f;
+			Stamina -= DeltaTime * 8.f;
 			if (Stamina <= 0.f)
 				StaminaExhaustionState = true;
 		}
@@ -214,7 +214,7 @@ void ACharacterBase::UpdateHpHUD()
 	MainController = MainController == nullptr ? Cast<ACharacterController>(Controller) : MainController;
 	if (MainController)
 	{
-		MainController->SetHUDHealth(FMath::Clamp(Health,0.f, MaxHealth), MaxHealth);
+		MainController->SetHUDHealth(FMath::Clamp(Health, 0.f, MaxHealth), MaxHealth);
 	}
 }
 
@@ -223,7 +223,7 @@ void ACharacterBase::UpdateStaminaHUD()
 	MainController = MainController == nullptr ? Cast<ACharacterController>(Controller) : MainController;
 	if (MainController)
 	{
-		MainController->SetHUDStamina(FMath::Clamp(Stamina, 0.f, 100.f) , MaxStamina);
+		MainController->SetHUDStamina(FMath::Clamp(Stamina, 0.f, 100.f), MaxStamina);
 	}
 }
 
@@ -325,8 +325,8 @@ void ACharacterBase::SetbCanObtainEscapeTool(bool _bCanObtain)
 
 void ACharacterBase::PlayFireActionMontage()
 {
-	if(FireActionMontage)
-		PlayAnimMontage(FireActionMontage,1.5f);
+	if (FireActionMontage)
+		PlayAnimMontage(FireActionMontage, 1.5f);
 
 }
 
@@ -398,9 +398,9 @@ void ACharacterBase::SpawnGrenade()
 			WallGrendeNum -= 1;
 		}
 		break;
-	//case EBojoMugiType::E_BoobyTrap:
-	//	SetSpawnGrenade(BoobyTrapClass);
-	//	break;
+		//case EBojoMugiType::E_BoobyTrap:
+		//	SetSpawnGrenade(BoobyTrapClass);
+		//	break;
 	case EBojoMugiType::ECS_DEFAULT:
 		SetSpawnGrenade(GrenadeClass);
 		break;
@@ -441,7 +441,7 @@ void ACharacterBase::SetSpawnGrenade(TSubclassOf<AProjectileBase> Projectile)
 					inst->m_Socket->Send_BojoWeapon_packet(inst->GetPlayerID(), StartLocation, ToHitTarget.Rotation(), 1);
 				break;
 			}
-			
+
 		}
 	}
 }
@@ -451,9 +451,9 @@ void ACharacterBase::ReciveDamage(AActor* DamagedActor, float Damage, const UDam
 	Health = FMath::Clamp(Health - Damage, 0.f, MaxHealth);
 
 	UpdateHpHUD();
-	ACharacterBase* DamageInsigatorCh= Cast<ACharacterBase>(DamageCauser);
+	ACharacterBase* DamageInsigatorCh = Cast<ACharacterBase>(DamageCauser);
 
-	
+
 	if (Health <= 0.0f)
 	{
 		bDissolve = true;
@@ -473,9 +473,9 @@ void ACharacterBase::ReciveDamage(AActor* DamagedActor, float Damage, const UDam
 					Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Decrease_item_count_packet(inst->GetPlayerID(), ObtainedEscapeToolNum);
 					//UE_LOG(LogTemp, Warning, TEXT("packet"));
 				}
-			
+
 			}
-			else if (10 <= ObtainedEscapeToolNum)
+			else if (10 <= ObtainedEscapeToolNum) 
 			{
 				DamageInsigatorCh->SetEscapeToolNum(DamageInsigatorCh->ObtainedEscapeToolNum + 4);
 				ObtainedEscapeToolNum -= 4;
@@ -485,10 +485,10 @@ void ACharacterBase::ReciveDamage(AActor* DamagedActor, float Damage, const UDam
 				}
 			}
 		}
-		if(CurWeapon)
+		if (CurWeapon)
 			CurWeapon->CurAmmo = 0;
 		GetWorld()->GetTimerManager().SetTimer(DeadTimer, this, &ACharacterBase::Dead, DeadTime, false);
-		if(MainController)
+		if (MainController)
 			DisableInput(MainController);
 		UpdateObtainedEscapeTool();
 
@@ -607,7 +607,7 @@ void ACharacterBase::Fire()
 	if (bCanFire == true)
 	{
 		bCanFire = false;
-		if (CurWeapon) 
+		if (CurWeapon)
 		{
 			//UE_LOG(LogTemp, Warning, TEXT("FIRE"));
 			CurWeapon->Fire(HitTarget);
@@ -625,7 +625,7 @@ void ACharacterBase::Fire()
 			AddControllerPitchInput(-5.f);
 
 		CurWeapon->CurAmmo -= 1;
-		MainController->SetHUDAmmo(CurWeapon->CurAmmo );
+		MainController->SetHUDAmmo(CurWeapon->CurAmmo);
 
 		StartFireTimer();
 	}
@@ -633,7 +633,7 @@ void ACharacterBase::Fire()
 
 void ACharacterBase::FirePressd(bool _Pressd)
 {
-	if (_Pressd && CharacterState!= ECharacterState::ECS_SPRINT && CurWeapon)
+	if (_Pressd && CharacterState != ECharacterState::ECS_SPRINT && CurWeapon)
 	{
 		Fire();
 	}
@@ -689,7 +689,7 @@ void ACharacterBase::TraceUnderCrossHiar(FHitResult& TraceHitResult)
 			}
 		}
 	}
-	
+
 }
 void ACharacterBase::SetSprint()
 {
@@ -709,7 +709,7 @@ void ACharacterBase::Move(const FInputActionValue& Value)
 	const FVector2D MovementVector = Value.Get<FVector2D>();
 	/*if (MovementVector.Length() != 0)
 	{
-		
+
 		ACharacterController* PlayerController = Cast<ACharacterController>(GetController());
 		PlayerController->UpdatePlayer(Move_Player);
 	}*/
@@ -824,7 +824,7 @@ void ACharacterBase::Inter(const FInputActionValue& Value)
 			PlaybackSettings,
 			SequenceActor
 		);
-	
+
 		if (LevelSequencePlayer)
 		{
 			if (inst)
@@ -840,33 +840,33 @@ void ACharacterBase::Inter(const FInputActionValue& Value)
 				inst->m_Socket->Tempname.pop();
 			}
 		}
-		
 
-	/*	if (inst)
-			Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_End_Game_packet(inst->GetPlayerID());*/
-		//GetWorld()->ServerTravel(FString("/Game/Maps/GameRoom"), false,true);
+
+		/*	if (inst)
+				Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_End_Game_packet(inst->GetPlayerID());*/
+				//GetWorld()->ServerTravel(FString("/Game/Maps/GameRoom"), false,true);
 	}
 }
 void ACharacterBase::Inter_Start(const FInputActionValue& Value)
 {
-		if (!bCanObtainEscapeTool && OverlappingEscapeTool)
-		{
-			UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
-			Cast<UBOAnimInstance>(AnimInstance)->bUseLeftHand = false;
-			if (InterMontage) {
-				PlayAnimMontage(InterMontage);
-				if (inst && MainController) {
-					inst->m_Socket->Send_item_Anim_packet(inst->GetPlayerID(), 0);
-					inst->m_Socket->Send_Mopp_Sync_packet(OverlappingEscapeTool->ItemID, 1, inst->GetPlayerID());
-				}
+	if (!bCanObtainEscapeTool && OverlappingEscapeTool)
+	{
+		UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+		Cast<UBOAnimInstance>(AnimInstance)->bUseLeftHand = false;
+		if (InterMontage) {
+			PlayAnimMontage(InterMontage);
+			if (inst && MainController) {
+				inst->m_Socket->Send_item_Anim_packet(inst->GetPlayerID(), 0);
+				inst->m_Socket->Send_Mopp_Sync_packet(OverlappingEscapeTool->ItemID, 1, inst->GetPlayerID());
 			}
 		}
+	}
 }
 void ACharacterBase::Inter_End(const FInputActionValue& Value)
 {
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 	Cast<UBOAnimInstance>(AnimInstance)->bUseLeftHand = true;
-	if (InterMontage) 
+	if (InterMontage)
 		StopAnimMontage(InterMontage);
 	if (OverlappingEscapeTool)
 	{
@@ -882,7 +882,7 @@ void ACharacterBase::EToolTranfrom(const FInputActionValue& Value)
 {
 	//if (OverlappingEscapeTool)
 	//{
-	OverlappingEscapeTool->TransformMesh(GetWorld()->GetDeltaSeconds(),false,false);
+	OverlappingEscapeTool->TransformMesh(GetWorld()->GetDeltaSeconds(), false, false);
 	//}
 
 }
@@ -937,13 +937,13 @@ void ACharacterBase::GrandeFire(const FInputActionValue& Value)
 		if (BojoMugiType == EBojoMugiType::E_BoobyTrap)
 		{
 			TObjectPtr<UWorld> World = GetWorld();
-			if (World && BoobyTrapNum>0)
+			if (World && BoobyTrapNum > 0)
 			{
 				FActorSpawnParameters SpawnParms;
 				SpawnParms.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
 				SpawnParms.Owner = this;
 				SpawnParms.Instigator = this;
-				
+
 				World->SpawnActor<AProjectileBase>(BoobyTrapClass, SWAimLastLoc, FRotator::ZeroRotator, SpawnParms);
 				BoobyTrapNum -= 1;
 				//여기 부비트랩
@@ -1036,7 +1036,7 @@ void ACharacterBase::LightOnOff(const FInputActionValue& Value)
 
 void ACharacterBase::Quit(const FInputActionValue& Value)
 {
-	UKismetSystemLibrary::QuitGame(MainController,MainController, EQuitPreference::Quit, true);
+	UKismetSystemLibrary::QuitGame(MainController, MainController, EQuitPreference::Quit, true);
 }
 
 void ACharacterBase::OnDebug(const FInputActionValue& Value)
@@ -1044,7 +1044,7 @@ void ACharacterBase::OnDebug(const FInputActionValue& Value)
 	if (CurWeapon)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("DEBUG"));
-		if(CurWeapon->bDebug)
+		if (CurWeapon->bDebug)
 			CurWeapon->bDebug = false;
 		else
 			CurWeapon->bDebug = true;
@@ -1100,12 +1100,12 @@ void ACharacterBase::Tick(float DeltaTime)
 	{
 		CanJump = true;
 	}
-	if(bStamina)
+	if (bStamina)
 		UpdateStamina(DeltaTime);
 	AimOffset(DeltaTime);
 	AimOffset(DeltaTime);
 
-	if(bCrosshiar)
+	if (bCrosshiar)
 		SetHUDCrosshair(DeltaTime);
 	FHitResult HitResult;
 	TraceUnderCrossHiar(HitResult);
@@ -1117,7 +1117,7 @@ void ACharacterBase::Tick(float DeltaTime)
 	}
 
 	//캐릭터 디졸브
-	if (bDissolve && Health<=0.f)
+	if (bDissolve && Health <= 0.f)
 	{
 
 		if (MDissolveInst)
@@ -1131,7 +1131,7 @@ void ACharacterBase::Tick(float DeltaTime)
 			}
 		}
 	}
-	
+
 
 
 	if (Cast<UBOGameInstance>(GetWorld()->GetGameInstance())->m_Socket->bAllReady == true && !bStarted)
@@ -1253,7 +1253,7 @@ void ACharacterBase::StartGame()
 	MainController = MainController == nullptr ? Cast<ACharacterController>(Controller) : MainController;
 	if (MainController)
 	{
-		if(inst)
+		if (inst)
 			inst->m_Socket->Send_Start_game_packet(inst->GetPlayerID());
 		//MainController->MainHUD->AddToolNumUi();
 		//MainController->MainHUD->AddCharacterOverlay();

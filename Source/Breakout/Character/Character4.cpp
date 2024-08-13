@@ -28,7 +28,7 @@ void ACharacter4::BeginPlay()
 	Super::BeginPlay();
 	TelepoChargeTime = true;
 	inst = Cast<UBOGameInstance>(GetGameInstance());
-	if(MainController)
+	if (MainController)
 		MainController->SetHUDCoolVisibility(false);
 }
 
@@ -63,20 +63,20 @@ void ACharacter4::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 
 void ACharacter4::Skill_S(const FInputActionValue& Value)
 {
-	if (!bSaved&& TelepoChargeTime)
+	if (!bSaved && TelepoChargeTime)
 	{
 
 		SaveCurLocation();
 		FActorSpawnParameters SpawnParameters;
 		//Temp = GetWorld()->SpawnActor<ANiagaraActor>(NiagaraActor, GetActorLocation(), GetActorRotation(), SpawnParameters);
-		Temp = GetWorld()->SpawnActor<ASkill4StartActor>(StartActor, GetActorLocation()+FVector(0.f,0.f,-90.f), GetActorRotation() + FRotator(0.f, -90.f, 0.f), SpawnParameters);
+		Temp = GetWorld()->SpawnActor<ASkill4StartActor>(StartActor, GetActorLocation() + FVector(0.f, 0.f, -90.f), GetActorRotation() + FRotator(0.f, -90.f, 0.f), SpawnParameters);
 		Cast<ASkill4StartActor>(Temp)->Init(GetMesh());
 		if (inst)
 			Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Niagara_packetch1(_SessionId, PlayerType::Character4, GetActorLocation(), 0);
 	}
-	else if(bSaved)
+	else if (bSaved)
 	{
-		UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ImpactNiagara,GetActorLocation());
+		UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ImpactNiagara, GetActorLocation());
 
 		GetMesh()->SetVisibility(false, true);
 		GetWorld()->GetTimerManager().SetTimer(TelpoTimer, this, &ACharacter4::SetLocation, 0.5f, false);
@@ -96,7 +96,7 @@ void ACharacter4::SaveCurLocation()
 
 	SavedLocation = GetActorLocation();
 	bSaved = true;
-	
+
 }
 
 void ACharacter4::SetLocation()

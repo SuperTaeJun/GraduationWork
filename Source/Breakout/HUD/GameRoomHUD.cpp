@@ -43,7 +43,7 @@ void AGameRoomHUD::AddSelectCharacter()
 
 		FInputModeUIOnly UiGameInput;
 		PlayerController->SetInputMode(UiGameInput);
-		if(SelectCharacter)
+		if (SelectCharacter)
 			SelectCharacter->AddToViewport();
 	}
 }

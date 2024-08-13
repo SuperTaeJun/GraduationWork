@@ -39,10 +39,6 @@ void ABulletHoleWall::BeginPlay()
 }
 void ABulletHoleWall::ReciveDamage(AActor* DamagedActor, float Damage, const UDamageType* DamageType, AController* InstigatorController, AActor* DamageCauser)
 {
-	//AProjectileBase* Causer = Cast<AProjectileBase>(DamageCauser);
-	//if (Causer)
-	//	Damage = 99999.f;
-
 	Hp -= Damage;
 
 	UE_LOG(LogTemp, Warning, TEXT("HP: %f"), Hp);
@@ -72,7 +68,7 @@ void ABulletHoleWall::ReciveDamage(AActor* DamagedActor, float Damage, const UDa
 			FTransform AddTransform;
 			MeshSculptures[i] = Cast<UProceduralMeshComponent>(AddComponentByClass(UProceduralMeshComponent::StaticClass(), false, AddTransform, false));
 			AddInstanceComponent(MeshSculptures[i]);
-			if ( MeshSculptures[i])
+			if (MeshSculptures[i])
 			{
 				TArray<FProcMeshTangent> Tangents = {};
 
@@ -124,10 +120,10 @@ void ABulletHoleWall::SetBulletHole(const FVector SweepResult)
 	BTransform.SetRotation(ProceduralMesh->GetRelativeRotation().Quaternion());
 	BTransform.SetScale3D(FVector(60.f, 0.2f, 0.2f));
 
-	MeshDataA =MeshBoolean(MeshDataA, ATransform, SetRandomVertex(MeshDataB, -20.f, 20.f, 0.001), BTransform,true);
+	MeshDataA = MeshBoolean(MeshDataA, ATransform, SetRandomVertex(MeshDataB, -20.f, 20.f, 0.001), BTransform, true);
 
 	TArray<FProcMeshTangent> Tangents = {};
-	ProceduralMesh->CreateMeshSection_LinearColor(0, MeshDataA.Verts, MeshDataA.Tris, MeshDataA.Normals, MeshDataA.UVs, MeshDataA.Colors,Tangents, true);
+	ProceduralMesh->CreateMeshSection_LinearColor(0, MeshDataA.Verts, MeshDataA.Tris, MeshDataA.Normals, MeshDataA.UVs, MeshDataA.Colors, Tangents, true);
 }
 
 FMeshData ABulletHoleWall::MeshBoolean(UPARAM(ref)FMeshData DataA, FTransform TransformA, UPARAM(ref)FMeshData DataB, FTransform TransformB, bool OptionType)
@@ -150,9 +146,9 @@ FMeshData ABulletHoleWall::MeshBoolean(UPARAM(ref)FMeshData DataA, FTransform Tr
 	UE::Geometry::FDynamicMesh3 DMeshB = ConvertToFDynamicMesh3(DataB);
 
 	//MESH BOOLEAN 결과를 BooleanOutput에 저장
-	UE::Geometry::FMeshBoolean Boolean(&DMeshA, ConvertedTransformA, 
-																	&DMeshB, ConvertedTransformB, 
-																	&BooleanOutput,Option);
+	UE::Geometry::FMeshBoolean Boolean(&DMeshA, ConvertedTransformA,
+		&DMeshB, ConvertedTransformB,
+		&BooleanOutput, Option);
 
 	Boolean.bCollapseDegenerateEdgesOnCut = true;
 	Boolean.bPreserveOverlayUVs = true;
@@ -213,13 +209,13 @@ UE::Geometry::FDynamicMesh3 ABulletHoleWall::ConvertToFDynamicMesh3(FMeshData& D
 
 	}
 	UE::Geometry::FIndex3i ResultTri;
-	for (int x = 0; x < Data.Tris.Num(); x+=3)
+	for (int x = 0; x < Data.Tris.Num(); x += 3)
 	{
 		if (x + 2 < Data.Tris.Num())
 		{
 			ResultTri.A = Data.Tris[x];
-			ResultTri.B = Data.Tris[x+1];
-			ResultTri.C = Data.Tris[x+2];
+			ResultTri.B = Data.Tris[x + 1];
+			ResultTri.C = Data.Tris[x + 2];
 
 			Result.AppendTriangle(ResultTri);
 		}
@@ -241,7 +237,7 @@ FMeshData ABulletHoleWall::ConverToFMeshData(UE::Geometry::FDynamicMesh3& Input,
 	Result.Colors.SetNumUninitialized(VertexNum);
 	Result.Sects.SetNumUninitialized(VertexNum);
 
-	Result.Tris.SetNumUninitialized(TriNum*3);
+	Result.Tris.SetNumUninitialized(TriNum * 3);
 
 	FVector3d vertex1, vertex2, vertex3;
 	int x = 0;
@@ -249,7 +245,7 @@ FMeshData ABulletHoleWall::ConverToFMeshData(UE::Geometry::FDynamicMesh3& Input,
 	int z = 0;
 	for (auto TriID : Data->TriangleIndicesItr())
 	{
-		y = x + 1; 
+		y = x + 1;
 		z = y + 1;
 
 		UE::Geometry::FIndex3i TriVerts = Data->GetTriangle(TriID);
@@ -263,7 +259,7 @@ FMeshData ABulletHoleWall::ConverToFMeshData(UE::Geometry::FDynamicMesh3& Input,
 		Result.Sects[x] = 0; 	Result.Sects[y] = 0; 	Result.Sects[z] = 0;
 
 		//노멀추가
-		if (Data->HasVertexNormals()) 
+		if (Data->HasVertexNormals())
 		{
 			Result.Normals[x] = (FVector)Data->GetVertexNormal(TriVerts.A);
 			Result.Normals[y] = (FVector)Data->GetVertexNormal(TriVerts.B);
@@ -318,10 +314,10 @@ FTransform3d ABulletHoleWall::ConvertToFTransform3d(FTransform Input)
 	const FVector& Location = Input.GetLocation();
 	const FVector& Scale = Input.GetScale3D();
 
-	return FTransform3d(FQuat(Input.GetRotation()), 
-									FVector3d(Location.X, Location.Y, Location.Z),
-									FVector3d(Scale.X, Scale.Y, Scale.Z)
-									);
+	return FTransform3d(FQuat(Input.GetRotation()),
+		FVector3d(Location.X, Location.Y, Location.Z),
+		FVector3d(Scale.X, Scale.Y, Scale.Z)
+	);
 }
 
 FMeshData ABulletHoleWall::TransformMeshData(UPARAM(ref) FMeshData& Data, FTransform Transform, bool InPlace, FVector Pivot)
@@ -341,38 +337,39 @@ FMeshData ABulletHoleWall::TransformMeshData(UPARAM(ref) FMeshData& Data, FTrans
 	bool hasNormals = (nl >= l);
 	for (x = 0; x < l; ++x) {
 		FVector& v = res.Verts[x];
-		if (skippiv) 
-		{ 
-			if (skipscale) 
+		if (skippiv)
+		{
+			if (skipscale)
 			{
-				if (skiprot) 
+				if (skiprot)
 				{
-					v += loc; 
-				} 
-				else 
+					v += loc;
+				}
+				else
 				{
-					v = rot.RotateVector(v) + loc; 
+					v = rot.RotateVector(v) + loc;
 				}
 			}
-			else 
+			else
 			{
-				v = rot.RotateVector(v * scale) + loc; 
-			} 
+				v = rot.RotateVector(v * scale) + loc;
+			}
 		}
 		else
 		{
 			if (skipscale)
 			{
-				v = rot.RotateVector((v - Pivot)) + Pivot + loc; 
+				v = rot.RotateVector((v - Pivot)) + Pivot + loc;
 			}
-			else 
+			else
 			{
-				v = rot.RotateVector(((v - Pivot) * scale)) + Pivot + loc; 
+				v = rot.RotateVector(((v - Pivot) * scale)) + Pivot + loc;
 			}
 		}
-		if (hasNormals) 
+		if (hasNormals)
 		{
-			if (!skiprot) { FVector& n = res.Normals[x]; n = rot.RotateVector(n); 
+			if (!skiprot) {
+				FVector& n = res.Normals[x]; n = rot.RotateVector(n);
 			}
 		}
 	}
@@ -483,20 +480,20 @@ FMeshData ABulletHoleWall::SetRandomVertex(UPARAM(ref)FMeshData& MeshData, float
 	Tolerance = 1.0f / Tolerance;
 	FVector tCoord;
 
-	for (int x = 0; x < MeshData.Verts.Num(); ++x) 
+	for (int x = 0; x < MeshData.Verts.Num(); ++x)
 	{
 		tCoord = FVector(Result.Verts[x].X * Tolerance, Result.Verts[x].Y * Tolerance, Result.Verts[x].Z * Tolerance);
-		if (Already.Contains(tCoord)) 
+		if (Already.Contains(tCoord))
 		{
 			Result.Verts[x] = Already[tCoord];
 		}
-		else 
+		else
 		{
-			if (MeshData.Normals.IsValidIndex(x)) 
+			if (MeshData.Normals.IsValidIndex(x))
 			{
 				Result.Verts[x] = MeshData.Verts[x] + MeshData.Normals[x] * FMath::RandRange(Min, Max) + FMath::VRand() * FMath::RandRange(Min, Max);
 			}
-			else 
+			else
 			{
 				Result.Verts[x] = MeshData.Verts[x] + FMath::VRand() * FMath::RandRange(Min, Max);
 			}

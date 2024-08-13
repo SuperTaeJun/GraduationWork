@@ -7,13 +7,13 @@
 #include "BOGameMode.generated.h"
 
 /**
- * 
+ *
  */
 UCLASS()
 class BREAKOUT_API ABOGameMode : public AGameMode
 {
 	GENERATED_BODY()
-	
+
 public:
 	ABOGameMode();
 	virtual void BeginPlay() override;
@@ -30,7 +30,7 @@ public:
 	virtual UClass* GetDefaultPawnClassForController_Implementation(AController* InController) override;
 	//맨처음 캐릭터 시작위치 지정
 	virtual AActor* ChoosePlayerStart_Implementation(AController* Player) override;
-	
+
 	TSubclassOf<class ACharacterBase>Character1;
 	TSubclassOf<class ACharacterBase>Character2;
 	TSubclassOf<class ACharacterBase>Character3;

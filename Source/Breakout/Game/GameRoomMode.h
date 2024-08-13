@@ -7,7 +7,7 @@
 #include "GameRoomMode.generated.h"
 
 /**
- * 
+ *
  */
 UCLASS()
 class BREAKOUT_API AGameRoomMode : public AGameMode

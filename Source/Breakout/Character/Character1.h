@@ -7,13 +7,13 @@
 #include "Character1.generated.h"
 
 /**
- * 
+ *
  */
 UCLASS()
 class BREAKOUT_API ACharacter1 : public ACharacterBase
 {
 	GENERATED_BODY()
-	
+
 public:
 	ACharacter1();
 	virtual void BeginPlay() override;
@@ -30,7 +30,7 @@ protected:
 
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<class UNiagaraSystem> TimeReplayNiagara;
-	float NiagaraSpawnRate=0.15;
+	float NiagaraSpawnRate = 0.15;
 	float NiagaraSpawnSavedTime;
 	//최대 저장시간
 	UPROPERTY(EditAnywhere)
@@ -58,7 +58,7 @@ private:
 	float RecordedCoolTime = 0.f;
 
 	void UpdateHUDCool(float Cool, float MaxCool);
-	
+
 
 };
 

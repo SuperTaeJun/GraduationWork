@@ -31,14 +31,14 @@ void AChargePlace::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 
-	if (bInCh && InCh && InCh->GetMainController() && InCh->GetHealth()< InCh->GetMaxHealth())
+	if (bInCh && InCh && InCh->GetMainController() && InCh->GetHealth() < InCh->GetMaxHealth())
 	{
 		UE_LOG(LogTemp, Warning, TEXT("CHARGING"));
-		InCh->SetHealth(InCh->GetHealth() + (DeltaTime*1.5f));
+		InCh->SetHealth(InCh->GetHealth() + (DeltaTime * 1.5f));
 		InCh->UpdateHpHUD();
 
 		ChargeNum += DeltaTime;
-		if (ChargeNum >=1.f)
+		if (ChargeNum >= 1.f)
 		{
 			if (ChargeNiagara)
 			{
@@ -53,7 +53,7 @@ void AChargePlace::Tick(float DeltaTime)
 
 void AChargePlace::OnBoxOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	ACharacterBase* Temp= Cast<ACharacterBase>(OtherActor);
+	ACharacterBase* Temp = Cast<ACharacterBase>(OtherActor);
 	if (Temp)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("TEMP"));

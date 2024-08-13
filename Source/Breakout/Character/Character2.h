@@ -8,7 +8,7 @@
 
 
 /**
- * 
+ *
  */
 UCLASS()
 class BREAKOUT_API ACharacter2 : public ACharacterBase

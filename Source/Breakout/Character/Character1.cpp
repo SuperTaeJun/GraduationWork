@@ -26,7 +26,7 @@ void ACharacter1::BeginPlay()
 {
 	Super::BeginPlay();
 	inst = Cast<UBOGameInstance>(GetGameInstance());
-	if(MainController)
+	if (MainController)
 		MainController->SetHUDCoolVisibility(false);
 	MaxSaveTime = 15.f;
 }
@@ -38,9 +38,9 @@ void ACharacter1::Tick(float DeltaTime)
 	if (!bCoolTimeFinish && MainController)
 	{
 		RecordedCoolTime += DeltaTime;
-		UpdateHUDCool(RecordedCoolTime,15.f);
+		UpdateHUDCool(RecordedCoolTime, 15.f);
 
-		if(RecordedCoolTime >=15.f)
+		if (RecordedCoolTime >= 15.f)
 		{
 			bCoolTimeFinish = true;
 			RecordedCoolTime = 0.f;

@@ -96,7 +96,7 @@ void ABOGameMode::SetDamageInsigator(ACharacterBase* DamageInsigatorCh)
 
 void ABOGameMode::Respawn(ACharacter* RespawnedCh, AController* RespawnedController, FName TagName)
 {
-	ACharacterBase* MyCharacter=Cast<ACharacterBase>(RespawnedCh);
+	ACharacterBase* MyCharacter = Cast<ACharacterBase>(RespawnedCh);
 	//if (DamageInsigator)
 	//{
 	//	if (MyCharacter->GetEscapeToolNum() >= 10)
@@ -116,9 +116,9 @@ void ABOGameMode::Respawn(ACharacter* RespawnedCh, AController* RespawnedControl
 		MyCharacter->bAlive = true;
 		FName Tagname = TagName;
 		AActor* PlayerStarts;
-		PlayerStarts=FindPlayerStart(MyCharacter->GetController(), *Tagname.ToString());
+		PlayerStarts = FindPlayerStart(MyCharacter->GetController(), *Tagname.ToString());
 		MyCharacter->SetResetState();
-	
+
 		MyCharacter->SetActorTransform(PlayerStarts->GetActorTransform());
 		//ÆÐÅ¶ BOOL °ª
 		if (inst)
@@ -168,7 +168,7 @@ AActor* ABOGameMode::ChoosePlayerStart_Implementation(AController* Player)
 	switch (Cast<UBOGameInstance>(GetGameInstance())->CharacterType)
 	{
 	case ECharacterType::ECharacter1:
-		if(PlayerStarts1) return PlayerStarts1;
+		if (PlayerStarts1) return PlayerStarts1;
 		break;
 	case ECharacterType::ECharacter2:
 		if (PlayerStarts2) return PlayerStarts2;

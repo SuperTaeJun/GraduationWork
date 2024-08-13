@@ -22,7 +22,7 @@ AEscapePlace::AEscapePlace()
 void AEscapePlace::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
 	CollisionBox->OnComponentBeginOverlap.AddDynamic(this, &AEscapePlace::OnBoxOverlap);
 	CollisionBox->OnComponentEndOverlap.AddDynamic(this, &AEscapePlace::OnBoxEndOverlap);
 }
@@ -37,7 +37,7 @@ void AEscapePlace::Tick(float DeltaTime)
 void AEscapePlace::OnBoxOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	ACharacterBase* InPlaceCh = Cast<ACharacterBase>(OtherActor);
-	if (InPlaceCh && InPlaceCh->GetEscapeToolNum()>= VICTORYNUM)
+	if (InPlaceCh && InPlaceCh->GetEscapeToolNum() >= VICTORYNUM)
 	{
 		InPlaceCh->SetbCanEscape(true);
 	}

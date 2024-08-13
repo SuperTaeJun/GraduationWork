@@ -8,13 +8,13 @@
 #include "Character3.generated.h"
 
 /**
- * 
+ *
  */
 UCLASS()
 class BREAKOUT_API ACharacter3 : public ACharacterBase
 {
 	GENERATED_BODY()
-	
+
 public:
 	ACharacter3();
 	virtual void BeginPlay() override;
@@ -33,7 +33,7 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TObjectPtr<class UMaterialInstance> OldMaterial;
 
-	
+
 private:
 	TObjectPtr<class UCharacterMovementComponent> MovementComp;
 	float OldMaxWalkSpeed;

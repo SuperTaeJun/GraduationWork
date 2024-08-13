@@ -13,7 +13,6 @@ enum class ECharacterType : uint8
 	ECharacter2 UMETA(DisplayName = "Character2"),
 	ECharacter3 UMETA(DisplayName = "Character3"),
 	ECharacter4 UMETA(DisplayName = "Character4"),
-
 };
 
 
@@ -35,6 +34,6 @@ public:
 	class ClientSocket* m_Socket;
 	bool connect;
 	int playerID;
-	
+
 	bool bNoUI = false;
 };

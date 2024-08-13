@@ -24,7 +24,7 @@ void USelectWeaponUi::NativeConstruct()
 void USelectWeaponUi::RifleButtonPressed()
 {
 	UE_LOG(LogTemp, Log, TEXT("RifleButtonPressed"));
-	ACharacterBase* Character=Cast<ACharacterBase>(GetOwningPlayerPawn());
+	ACharacterBase* Character = Cast<ACharacterBase>(GetOwningPlayerPawn());
 	ACharacterController* Controller = Cast<ACharacterController>(Character->Controller);
 	AMainHUD* MainHUD = Cast<AMainHUD>(Controller->GetHUD());
 	/*WeaponType type = RIFLE;
@@ -64,7 +64,7 @@ void USelectWeaponUi::ShotgunButtonPressed()
 	Character->SetWeaponType(EWeaponType::E_Shotgun);
 	FName ShotguSocketName = FName("ShotgunSocket");
 
-	Character->SetWeapon(ShotGun,ShotguSocketName);
+	Character->SetWeapon(ShotGun, ShotguSocketName);
 	Controller->SetHUDAmmo(5);
 
 	MyCharacterController->Set_Weapon_Type(EWeaponType::E_Shotgun);

@@ -69,7 +69,7 @@ void UBOAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 		{
 			bCurWeapon = true;
 		}
-		else if(!BaseCharacter->GetCurWeapon())
+		else if (!BaseCharacter->GetCurWeapon())
 		{
 			bCurWeapon = false;
 		}

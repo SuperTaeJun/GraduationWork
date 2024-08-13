@@ -65,7 +65,7 @@ void ULogin::PressLogin()
 		}
 	}
 
-	if(Cast<UBOGameInstance>(GetGameInstance())->m_Socket->bLoginConnect)
+	if (Cast<UBOGameInstance>(GetGameInstance())->m_Socket->bLoginConnect)
 		RemoveFromParent();
 
 

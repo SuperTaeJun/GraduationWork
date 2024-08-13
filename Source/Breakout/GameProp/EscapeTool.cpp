@@ -46,14 +46,14 @@ void AEscapeTool::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if (bOverlap==2 && Cur>0.f)
+	if (bOverlap == 2 && Cur > 0.f)
 	{
-		TransformMesh(DeltaTime, false,true);
+		TransformMesh(DeltaTime, true, true);
 		UpdatePercent(Cur);
 	}
 	else 	if (bOverlap == 1)
 	{
-		TransformMesh(DeltaTime, false, false);
+		TransformMesh(DeltaTime, true, false);
 		UpdatePercent(Cur);
 	}
 
@@ -88,7 +88,7 @@ void AEscapeTool::TransformMesh(float DeltaTime, bool Clamp, bool TransformRever
 		}
 	}
 
-	Cur = FMath::Clamp	(Time,0.f,1.f);
+	Cur = FMath::Clamp(Time, 0.f, 1.f);
 
 	//if (Cur > 1.f) Cur = 1.f;
 	//else if (Cur < 0.f) Cur = 0.f;
@@ -105,20 +105,6 @@ void AEscapeTool::TransformMesh(float DeltaTime, bool Clamp, bool TransformRever
 	{
 		Time = Time + (DeltaTime * MorphingSpeed);
 	}
-	//InterpMeshData(InterpData, Data1, Data2, Cur, Clamp);
-
-	//ProceduralMesh->UpdateMeshSection_LinearColor(0, InterpData.Verts, InterpData.Normals, InterpData.UVs, InterpData.Colors, TArray<FProcMeshTangent>());
-
-	//if (TransformReverse)
-	//{
-	//	Time = Time - (DeltaTime * MorphingSpeed);
-	//	DynamicMaterial->SetScalarParameterValue(FName("Alpha"), Time);
-	//}
-	//else
-	//{
-	//	Time = Time + (DeltaTime * MorphingSpeed);
-	//	DynamicMaterial->SetScalarParameterValue(FName("Alpha"), Time);
-	//}
 
 	UpdatePercent(Cur);
 }

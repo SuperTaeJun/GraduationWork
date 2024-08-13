@@ -8,13 +8,13 @@
 #include "BOAnimInstance.generated.h"
 
 /**
- * 
+ *
  */
 UCLASS()
 class BREAKOUT_API UBOAnimInstance : public UAnimInstance
 {
 	GENERATED_BODY()
-	
+
 public:
 	virtual void NativeInitializeAnimation() override;
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override;

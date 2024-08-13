@@ -30,42 +30,42 @@ void APropBase::UnifyTri(UPARAM(ref) FMeshData& Data)
 
 	TMap<int, int> Visited = {};
 	int vl = Data.Verts.Num();
-	FVector vec; 
-	FVector2D uv; 
-	FLinearColor col; 
-	int sect; 
+	FVector vec;
+	FVector2D uv;
+	FLinearColor col;
+	int sect;
 	bool hasNormals = Data.Normals.Num() >= vl;
 	bool	hasUVs = Data.UVs.Num() >= vl;
 	bool	hasColors = Data.Colors.Num() >= vl;
 	bool	hasSects = Data.Sects.Num() >= vl;
 	int x = 0, l = Data.Tris.Num();
 
-	for (x = 0; x < l; ++x) 
+	for (x = 0; x < l; ++x)
 	{
-		if (!Visited.Contains(Data.Tris[x])) 
+		if (!Visited.Contains(Data.Tris[x]))
 		{
 			Visited.Emplace(Data.Tris[x], 1);
 
 		}
-		else 
+		else
 		{
-			vec = Data.Verts[Data.Tris[x]]; 
+			vec = Data.Verts[Data.Tris[x]];
 			Data.Verts.Emplace(vec);
-			if (hasNormals) 
-				 vec = Data.Normals[Data.Tris[x]]; 
-			Data.Normals.Emplace(vec); 
+			if (hasNormals)
+				vec = Data.Normals[Data.Tris[x]];
+			Data.Normals.Emplace(vec);
 
 			if (hasUVs)
-				 uv = Data.UVs[Data.Tris[x]]; 
-			Data.UVs.Emplace(uv); 
+				uv = Data.UVs[Data.Tris[x]];
+			Data.UVs.Emplace(uv);
 
-			if (hasColors) 
-				 col = Data.Colors[Data.Tris[x]]; 
-			Data.Colors.Emplace(col); 
+			if (hasColors)
+				col = Data.Colors[Data.Tris[x]];
+			Data.Colors.Emplace(col);
 
 			if (hasSects)
-				 sect = Data.Sects[Data.Tris[x]]; 
-			Data.Sects.Emplace(sect); 
+				sect = Data.Sects[Data.Tris[x]];
+			Data.Sects.Emplace(sect);
 
 			Data.Tris[x] = vl;
 			++vl;
@@ -91,35 +91,38 @@ void APropBase::UnifyTri(UPARAM(ref) FMeshData& Data)
 	Data.Colors = {};
 	x = 0;
 	l = oldtris.Num();
-	for (x = 0; x < l; ++x) 
+	for (x = 0; x < l; ++x)
 	{
 		Data.Verts.Emplace(oldverts[oldtris[x]]);
-		if (hasNormals) 
+		if (hasNormals)
 			Data.Normals.Emplace(oldnorm[oldtris[x]]);
-		if (hasUVs) 
-			 Data.UVs.Emplace(olduvs[oldtris[x]]); 
+		if (hasUVs)
+			Data.UVs.Emplace(olduvs[oldtris[x]]);
 		if (hasColors)
-			 Data.Colors.Emplace(oldcolors[oldtris[x]]); 
+			Data.Colors.Emplace(oldcolors[oldtris[x]]);
 		Data.Tris.Emplace(x);
 	}
-	UE_LOG(LogTemp, Warning, TEXT("UNIFY NUM : %d"), Data.Verts.Num());
+	//UE_LOG(LogTemp, Warning, TEXT("UNIFY NUM : %d"), Data.Verts.Num());
 }
 
 void APropBase::InterpMeshData(FMeshData& Data, FMeshData& DataA, FMeshData& DataB, float Alpha, bool Clamp)
 {
-	int x = 0, l = Data.Verts.Num(),/*DataA버텍스 갯수*/ al = DataA.Verts.Num(), /*DataB버텍스 갯수*/bl = DataB.Verts.Num();
+	int x = 0;
+	int l = Data.Verts.Num();
+	int al = DataA.Verts.Num();/*DataA버텍스 갯수*/
+	int bl = DataB.Verts.Num();/*DataB버텍스 갯수*/
 	if (l <= 0 || al <= 0 || bl <= 0)
 	{
-		return; 
+		return;
 	}
-	if (Clamp) 
+	if (Clamp)
 	{
-		if (Alpha <= 0.0f) 
+		if (Alpha <= 0.0f)
 		{
 			if (Data.Verts[0] != DataA.Verts[0]) { Data = DataA; }
 			return;
 		}
-		if (Alpha >= 1.0f) 
+		if (Alpha >= 1.0f)
 		{
 			if (Data.Verts[0] != DataB.Verts[0]) { Data = DataB; }
 			return;
@@ -132,12 +135,12 @@ void APropBase::InterpMeshData(FMeshData& Data, FMeshData& DataA, FMeshData& Dat
 	const bool hasUVs = (Data.UVs.Num() >= ml && DataA.UVs.Num() >= ml && DataB.UVs.Num() >= ml);
 	const bool hasColors = (Data.Colors.Num() >= ml && DataA.Colors.Num() >= ml && DataB.Colors.Num() >= ml);
 	int y = 0;
-	for (x = 0; x < l; ++x) 
+	for (x = 0; x < l; ++x)
 	{
 		y = x;
-		if (bl < l && y >= bl) 
+		if (bl < l && y >= bl)
 		{
-			y = (y % bl) / 3; 
+			y = (y % bl) / 3;
 		}
 		//기본버전
 		//Data.Verts[x] = FMath::Lerp(DataA.Verts[x], DataB.Verts[y], Alpha);
@@ -147,17 +150,17 @@ void APropBase::InterpMeshData(FMeshData& Data, FMeshData& DataA, FMeshData& Dat
 		//Data.Verts[x] = WaveCustomLerp(DataA.Verts[x], DataB.Verts[y], Alpha,20.f,3.f);
 		//버전4
 		Data.Verts[x] = SpiralCustomLerp(DataA.Verts[x], DataB.Verts[y], Alpha, 3.f, 30.f);
-		if (hasNormals) 
+		if (hasNormals)
 		{
 			//Data.Normals[x] = FMath::Lerp(DataA.Normals[x], DataB.Normals[y], Alpha);
-			Data.Normals[x] = SpiralCustomLerp(DataA.Normals[x], DataB.Normals[y], Alpha,3.f,30.f);
+			Data.Normals[x] = SpiralCustomLerp(DataA.Normals[x], DataB.Normals[y], Alpha, 3.f, 30.f);
 			Data.Normals[x].Normalize();
 		}
-		if (hasColors) 
+		if (hasColors)
 		{
 			Data.UVs[x] = FMath::Lerp(DataA.UVs[x], DataB.UVs[y], Alpha);
 		}
-		if (hasColors) 
+		if (hasColors)
 		{
 			Data.Colors[x] = FMath::Lerp(DataA.Colors[x], DataB.Colors[y], Alpha);
 		}
@@ -175,7 +178,7 @@ void APropBase::GetMeshDataFromStaticMesh(UStaticMesh* Mesh, UPARAM(ref) FMeshDa
 
 	//이미 사용한 버텍스인지아닌지 판정
 	int32* NewIndexPtr = nullptr;
-	if (Mesh == nullptr || Mesh->GetRenderData() == nullptr || !Mesh->GetRenderData()->LODResources.IsValidIndex(LODIndex)) 
+	if (Mesh == nullptr || Mesh->GetRenderData() == nullptr || !Mesh->GetRenderData()->LODResources.IsValidIndex(LODIndex))
 	{
 		return;
 	}
@@ -184,39 +187,39 @@ void APropBase::GetMeshDataFromStaticMesh(UStaticMesh* Mesh, UPARAM(ref) FMeshDa
 	while (true)
 	{
 		const FStaticMeshLODResources& LOD = Mesh->GetRenderData()->LODResources[LODIndex];
-		if (!LOD.Sections.IsValidIndex(SectionIndex)) 
+		if (!LOD.Sections.IsValidIndex(SectionIndex))
 		{
-			return; 
+			return;
 		}
 		TMap<int32, int32> MeshToSectionVertMap = {};
 		uint32 i = 0,
-		is = LOD.Sections[SectionIndex].FirstIndex,
-		l = is + LOD.Sections[SectionIndex].NumTriangles * 3;
+			is = LOD.Sections[SectionIndex].FirstIndex,
+			l = is + LOD.Sections[SectionIndex].NumTriangles * 3;
 		FIndexArrayView Indices = LOD.IndexBuffer.GetArrayView();
 		uint32 il = Indices.Num();
 		const bool hasColors = LOD.VertexBuffers.ColorVertexBuffer.GetNumVertices() >= LOD.VertexBuffers.PositionVertexBuffer.GetNumVertices();
-		for (i = is; i < l; ++i) 
+		for (i = is; i < l; ++i)
 		{
-			if (i < il) 
+			if (i < il)
 			{
 				vi = Indices[i];
 				//UE_LOG(LogTemp, Warning, TEXT("Indices %d : %d"),i, Indices[i]);
 				NewIndexPtr = MeshToSectionVertMap.Find(vi);
 				if (NewIndexPtr != nullptr)
-				{ 
+				{
 					//이미 있는 버텍스
-					svi = *NewIndexPtr; 
+					svi = *NewIndexPtr;
 				}
-				else 
+				else
 				{
 					//없는 버텍스
 					Data.Verts.Emplace(LOD.VertexBuffers.PositionVertexBuffer.VertexPosition(vi));
 					Data.Normals.Emplace(LOD.VertexBuffers.StaticMeshVertexBuffer.VertexTangentZ(vi));
 					Data.UVs.Emplace(LOD.VertexBuffers.StaticMeshVertexBuffer.GetVertexUV(vi, 0));
 					Data.Sects.Emplace(sec);
-					if (hasColors) 
+					if (hasColors)
 					{
-						Data.Colors.Emplace(LOD.VertexBuffers.ColorVertexBuffer.VertexColor(vi)); 
+						Data.Colors.Emplace(LOD.VertexBuffers.ColorVertexBuffer.VertexColor(vi));
 					}
 					svi = n;
 					MeshToSectionVertMap.Emplace(vi, n);
@@ -303,7 +306,7 @@ FVector APropBase::SpiralCustomLerp(FVector& A, FVector& B, float& Alpha, float 
 
 double APropBase::DegSin(double A)
 {
-	return FMath::Sin(3.141592/ (180.0) * A);
+	return FMath::Sin(3.141592 / (180.0) * A);
 }
 
 void APropBase::Tick(float DeltaTime)

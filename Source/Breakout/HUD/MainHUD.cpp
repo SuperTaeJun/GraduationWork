@@ -35,12 +35,12 @@ void AMainHUD::RemoveCharacterOverlay()
 {
 	if (CharacterUi)
 		CharacterUi->SetVisibility(ESlateVisibility::Collapsed);
-		//CharacterUi->RemoveFromParent();
+	//CharacterUi->RemoveFromParent();
 }
 
 void AMainHUD::StartSetVisibility()
 {
-	if (CharacterUi && EscapeToolNumUi) 
+	if (CharacterUi && EscapeToolNumUi)
 	{
 		CharacterUi->SetVisibility(ESlateVisibility::Visible);
 		EscapeToolNumUi->SetVisibility(ESlateVisibility::Visible);

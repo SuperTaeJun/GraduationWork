@@ -49,7 +49,7 @@ void ACharacter3::BeginPlay()
 	//	GetMesh()->SetMaterial(0, DynamicMaterial);
 	//	DynamicMaterial->SetScalarParameterValue(FName("Alpha"), 0.f);
 	//}
-	if(MainController)
+	if (MainController)
 		MainController->SetHUDCoolVisibility(false);
 }
 
@@ -62,7 +62,7 @@ void ACharacter3::Tick(float DeltaTime)
 	if (!bCoolTimeFinish && MainController)
 	{
 		GhostCoolChargeTime += DeltaTime;
-		MainController->SetHUDCool(GhostCoolChargeTime,10.f);
+		MainController->SetHUDCool(GhostCoolChargeTime, 10.f);
 		if (GhostCoolChargeTime >= 10.f)
 		{
 			bCoolTimeFinish = true;
@@ -94,7 +94,7 @@ void ACharacter3::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 
 void ACharacter3::Skill_S(const FInputActionValue& Value)
 {
-	if(CurWeapon)
+	if (CurWeapon)
 		GhostStart();
 	////ÆÐÅ¶ 
 	//if (inst)
@@ -110,7 +110,7 @@ void ACharacter3::Skill_E(const FInputActionValue& Value)
 		//if (inst)
 		//	Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Niagara_cancel(bCancel, _SessionId, 1);
 	}
-	
+
 }
 
 void ACharacter3::GhostStart()

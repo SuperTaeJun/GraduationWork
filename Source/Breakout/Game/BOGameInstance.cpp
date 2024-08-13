@@ -11,7 +11,7 @@ void UBOGameInstance::Init()
 	Super::Init();
 	//ACharacterController* ChController = Cast<ACharacterController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 	m_Socket = ClientSocket::GetSingleton();
-	
+
 	m_Socket->SetGameInstance(this);
 	connect = m_Socket->Connect();
 	if (connect)
@@ -20,7 +20,10 @@ void UBOGameInstance::Init()
 
 		UE_LOG(LogClass, Warning, TEXT("IOCP Server connect success!"));
 	}
-	else { UE_LOG(LogClass, Warning, TEXT("IOCP Server connect fail!")) };
+	else
+	{
+		UE_LOG(LogClass, Warning, TEXT("IOCP Server connect fail!"))
+	};
 
 
 }

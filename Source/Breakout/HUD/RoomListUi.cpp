@@ -93,8 +93,8 @@ void URoomListUi::SlotFourPress()
 }
 
 void URoomListUi::SlotOneHoverd()
-{	
-	if(Inst)
+{
+	if (Inst)
 		Inst->m_Socket->Send_Hovered_packet(Inst->GetPlayerID(), 1);
 }
 
