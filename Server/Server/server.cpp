@@ -55,83 +55,28 @@ public:
 		//삭제되었을 때 배열을 밀지말고 돌려야함 삭제된 아이템 정보를 상대들에게 동기화
 	}
 };
-
-template<typename T>
-class LockQueue
-{
-public:
-	LockQueue() { }
-
-	LockQueue(const LockQueue&) = delete;
-	LockQueue& operator=(const LockQueue&) = delete;
-
-	void Push(T value)
-	{
-		lock_guard<mutex> lock(_mutex);
-		_queue.push(std::move(value));
-		_condVar.notify_one();
-	}
-
-	bool TryPop(T& value)
-	{
-		lock_guard<mutex> lock(_mutex);
-		if (_queue.empty())
-			return false;
-
-		value = std::move(_queue.front());
-		_queue.pop();
-		return true;
-	}
-
-	void WaitPop(T& value)
-	{
-		unique_lock<mutex> lock(_mutex);
-		_condVar.wait(lock, [this] { return _queue.empty() == false; });
-		value = std::move(_queue.front());
-		_queue.pop();
-	}
-
-	void Clear()
-	{
-		unique_lock<mutex> lock(_mutex);
-		if (_queue.empty() == false)
-		{
-			queue<T> _empty;
-			swap(_queue, _empty);
-		}
-	}
-	bool Empty()
-	{
-		lock_guard<mutex> lock(_mutex);
-		return _queue.empty();
-	}
-private:
-	queue<T> _queue;
-	mutex _mutex;
-	condition_variable _condVar;
-};
-
-struct GameRoom {
-	vector<int> players;  // 게임룸 내 클라이언트 ID 목록
-
-	void clear() {
-		players.clear();
-	}
-};
+//class  GameRoom {
+//public:
+//	vector<int> players;  // 게임룸 내 클라이언트 ID 목록
+//public:
+//	void clear() {
+//		players.clear();
+//	}
+//};
+//vector<GameRoom> gameRooms(4); // 게임룸 컨테이너 
 
 HANDLE g_h_iocp;
 HANDLE g_timer;
 SOCKET sever_socket;
+condition_variable cv;
+atomic<int> ready_count;
+atomic<int> ingamecount;
+
+
 LockQueue<timer_ev> timer_q;
-array <CLIENT, MAX_USER> clients;
 array<EscapeObject, 8> objects;
 array<BulletWall, 9> walls;
-condition_variable cv;
-atomic<int> ready_count = 0;
-atomic<int> ingamecount = 0;
-
 mutex mtx;
-vector<GameRoom> gameRooms(4); // 게임룸 컨테이너 
 
 void ev_timer();
 int get_id();
@@ -178,10 +123,8 @@ int main()
 	AcceptEx(sever_socket, c_socket, accept_buf, 0, sizeof(SOCKADDR_IN) + 16,
 		sizeof(SOCKADDR_IN) + 16, NULL, &accept_ex._wsa_over);
 
-	for (int i = 0; i < 4; ++i) {
-		gameRooms.emplace_back();
-	}
 
+	//cout << gameRooms.size() << endl;
 	for (int i = 0; i < MAX_USER; ++i)
 		clients[i]._s_id = i;
 
@@ -300,42 +243,42 @@ void SendLobbyPacket(int clientId, bool bintoRoom)
 
 
 
-// 클라이언트를 지정된 게임룸에 매칭
-void assignClientToRoom(int clientId, int roomNum) {
-	unique_lock<mutex> lock(mtx);
-
-	// 지정된 방 번호가 유효한지 확인
-	if (roomNum < 0 || roomNum >= gameRooms.size()) {
-		cout << "Invalid room number: " << roomNum << endl;
-		return;
-	}
-
-	// 클라이언트를 지정된 방에 추가
-	gameRooms[roomNum].players.push_back(clientId);
-	clients[clientId].currentRoom = roomNum;
-	cout << "Client " << clientId << " assigned to room " << roomNum << endl;
-
-}
-void CanClientToRoom(int clientId, int roomNum) {
-	unique_lock<mutex> lock(mtx);
-
-	// 지정된 방 번호가 유효한지 확인
-	if (roomNum < 0 || roomNum >= gameRooms.size()) {
-		cout << "Invalid room number: " << roomNum << endl;
-		return;
-	}
-
-	// 지정된 방이 가득 찼는지 확인
-	if (gameRooms[roomNum].players.size() >= ENTER_CLIENT) {  // 방의 최대 인원수는 2명
-		cout << "Room " << roomNum << " is full." << endl;
-		SendLobbyPacket(clientId, false);
-		return;
-	}
-	else
-	{
-		SendLobbyPacket(clientId, true);
-	}
-}
+//// 클라이언트를 지정된 게임룸에 매칭
+//void assignClientToRoom(int clientId, int roomNum) {
+//	unique_lock<mutex> lock(mtx);
+//
+//	// 지정된 방 번호가 유효한지 확인
+//	if (roomNum < 0 || roomNum >= gameRooms.size()) {
+//		cout << "Invalid room number: " << roomNum << endl;
+//		return;
+//	}
+//
+//	// 클라이언트를 지정된 방에 추가
+//	gameRooms[roomNum].players.push_back(clientId);
+//	clients[clientId].currentRoom = roomNum;
+//	cout << "Client " << clientId << " assigned to room " << roomNum << endl;
+//
+//}
+//void CanClientToRoom(int clientId, int roomNum) {
+//	unique_lock<mutex> lock(mtx);
+//
+//	// 지정된 방 번호가 유효한지 확인
+//	if (roomNum < 0 || roomNum >= gameRooms.size()) {
+//		cout << "Invalid room number: " << roomNum << endl;
+//		return;
+//	}
+//
+//	// 지정된 방이 가득 찼는지 확인
+//	if (gameRooms[roomNum].players.size() >= ENTER_CLIENT) {  // 방의 최대 인원수는 2명
+//		cout << "Room " << roomNum << " is full." << endl;
+//		SendLobbyPacket(clientId, false);
+//		return;
+//	}
+//	else
+//	{
+//		SendLobbyPacket(clientId, true);
+//	}
+//}
 
 
 //패킷 판별
@@ -398,7 +341,7 @@ void process_packet(int s_id, unsigned char* p)
 		CS_LOBBY_PACKET* packet = reinterpret_cast<CS_LOBBY_PACKET*>(p);
 		CLIENT& cl = clients[packet->id];
 		cl.currentRoom = packet->RoomNum;
-		assignClientToRoom(cl._s_id, cl.currentRoom);
+		//assignClientToRoom(cl._s_id, cl.currentRoom);
 		break;
 	}
 	case CS_HOVER:
@@ -407,7 +350,7 @@ void process_packet(int s_id, unsigned char* p)
 		cout << "hover packet 들어옴 " << endl;
 		CLIENT& cl = clients[packet->id];
 		int RoomNum = packet->RoomNum;
-		CanClientToRoom(cl._s_id, RoomNum);
+		//CanClientToRoom(cl._s_id, RoomNum);
 		break;
 	}
 	case CS_SELECT_CHAR: {
@@ -797,7 +740,7 @@ void process_packet(int s_id, unsigned char* p)
 			packet.bEND = true;
 			other.do_send(sizeof(packet), &packet);
 		}
-		gameRooms[RoomNum].clear();
+		//gameRooms[RoomNum].clear();
 		break;
 	}
 	case CS_GETITEM: {

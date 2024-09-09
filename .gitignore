@@ -43,6 +43,9 @@
 *.sdf
 *.VC.db
 *.VC.opendb
+*.vcxproj
+*.vcxproj.filters
+*.vcxproj.user
 
 # Precompiled Assets
 SourceArt/**/*.png

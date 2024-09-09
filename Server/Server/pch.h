@@ -30,7 +30,11 @@ using namespace std;
 #include "Overlap.h"
 #include "DB.h"
 #include "CLIENT.h"
+#include "LockQueue.h"
+#include "Room.h"
 
 
 
 void error_display(int err_no);
+
+extern array <CLIENT, MAX_USER> clients;

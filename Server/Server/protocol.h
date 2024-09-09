@@ -1,8 +1,9 @@
 #pragma once
 #define SERVER_PORT		8001
-#define SERVER_IP		"192.168.77.5"
+#define SERVER_IP		"192.168.101.194"
 #define MAX_INFO_SIZE   20
 #define ENTER_CLIENT	2
+#define MAX_ROOMS		4
 enum Login_fail_Type { OVERLAP_ID, WRONG_ID, WRONG_PW, OVERLAP_AC, CREATE_AC };
 
 

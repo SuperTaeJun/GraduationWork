@@ -18,11 +18,23 @@
     <Filter Include="DB">
       <UniqueIdentifier>{6873e93a-571c-49bf-9779-1225cc86f424}</UniqueIdentifier>
     </Filter>
+    <Filter Include="PacketHandler">
+      <UniqueIdentifier>{bc7be2fd-3b04-4cfe-be2d-7d482b294137}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="IOCP">
+      <UniqueIdentifier>{b1d500b3-0ded-431e-b37b-8685fb08f840}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Timer">
+      <UniqueIdentifier>{ae6caddd-be46-4db6-a18d-12081ea7eb47}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="LockQueue">
+      <UniqueIdentifier>{ec489a8e-ad7b-4b15-ba48-468923b1f011}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Room">
+      <UniqueIdentifier>{f0bd6d9e-cb3b-4568-ad6d-33b701e620bc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="server.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="pch.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
@@ -34,6 +46,21 @@
     </ClCompile>
     <ClCompile Include="DB.cpp">
       <Filter>DB</Filter>
+    </ClCompile>
+    <ClCompile Include="server.cpp">
+      <Filter>IOCP</Filter>
+    </ClCompile>
+    <ClCompile Include="LockQueue.cpp">
+      <Filter>LockQueue</Filter>
+    </ClCompile>
+    <ClCompile Include="IOCPServer.cpp">
+      <Filter>IOCP</Filter>
+    </ClCompile>
+    <ClCompile Include="Room.cpp">
+      <Filter>Room</Filter>
+    </ClCompile>
+    <ClCompile Include="RoomManager.cpp">
+      <Filter>Room</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -54,6 +81,18 @@
     </ClInclude>
     <ClInclude Include="DB.h">
       <Filter>DB</Filter>
+    </ClInclude>
+    <ClInclude Include="LockQueue.h">
+      <Filter>LockQueue</Filter>
+    </ClInclude>
+    <ClInclude Include="IOCPServer.h">
+      <Filter>IOCP</Filter>
+    </ClInclude>
+    <ClInclude Include="Room.h">
+      <Filter>Room</Filter>
+    </ClInclude>
+    <ClInclude Include="RoomManager.h">
+      <Filter>Room</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -1,5 +1,7 @@
 #include "pch.h"
 
+array <CLIENT, MAX_USER> clients;
+
 void error_display(int err_no)
 {
 	WCHAR* lpMsgBuf;
@@ -11,4 +13,3 @@ void error_display(int err_no)
 	wcout << lpMsgBuf << endl;
 	LocalFree(lpMsgBuf);
 }
-
