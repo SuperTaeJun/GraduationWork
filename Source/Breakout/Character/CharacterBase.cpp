@@ -93,7 +93,6 @@ ACharacterBase::ACharacterBase()
 	StartedCnt = 5.f;
 	bCanEscape = false;
 
-	//MDissolveInst= ConstructorHelpers::FObjectFinder<UMaterialInstance>
 	MDissolveInst = ConstructorHelpers::FObjectFinder<UMaterialInstance>(TEXT("/Game/BreakoutAsset/Character/Character1/Material/MI_Ch1Material_Dissolve.MI_Ch1Material_Dissolve")).Object;
 }
 
@@ -1036,7 +1035,13 @@ void ACharacterBase::LightOnOff(const FInputActionValue& Value)
 
 void ACharacterBase::Quit(const FInputActionValue& Value)
 {
-	UKismetSystemLibrary::QuitGame(MainController, MainController, EQuitPreference::Quit, true);
+	inst->m_Socket->CloseSocket();
+	if (inst->m_Socket)
+	{
+		delete inst->m_Socket;
+		inst->m_Socket = nullptr;
+	}
+	UKismetSystemLibrary::QuitGame(GetWorld(), nullptr, EQuitPreference::Quit, true);
 }
 
 void ACharacterBase::OnDebug(const FInputActionValue& Value)
