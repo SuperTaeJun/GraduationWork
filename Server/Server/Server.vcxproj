@@ -127,23 +127,29 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="BulletWall.cpp" />
     <ClCompile Include="CLIENT.cpp" />
     <ClCompile Include="DB.cpp" />
+    <ClCompile Include="EscapeObject.cpp" />
     <ClCompile Include="IOCPServer.cpp" />
     <ClCompile Include="LockQueue.cpp" />
     <ClCompile Include="Overlap.cpp" />
+    <ClCompile Include="PacketManager.cpp" />
     <ClCompile Include="pch.cpp" />
     <ClCompile Include="Room.cpp" />
     <ClCompile Include="RoomManager.cpp" />
     <ClCompile Include="server.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BulletWall.h" />
     <ClInclude Include="CLIENT.h" />
     <ClInclude Include="DB.h" />
     <ClInclude Include="Enum.h" />
+    <ClInclude Include="EscapeObject.h" />
     <ClInclude Include="IOCPServer.h" />
     <ClInclude Include="LockQueue.h" />
     <ClInclude Include="Overlap.h" />
+    <ClInclude Include="PacketManager.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="protocol.h" />
     <ClInclude Include="Room.h" />

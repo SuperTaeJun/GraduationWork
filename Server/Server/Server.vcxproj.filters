@@ -33,11 +33,11 @@
     <Filter Include="Room">
       <UniqueIdentifier>{f0bd6d9e-cb3b-4568-ad6d-33b701e620bc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Objects">
+      <UniqueIdentifier>{6f607afb-64e4-47e5-8cd1-bede36316f93}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="pch.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="Overlap.cpp">
       <Filter>OVERLAP</Filter>
     </ClCompile>
@@ -53,14 +53,26 @@
     <ClCompile Include="LockQueue.cpp">
       <Filter>LockQueue</Filter>
     </ClCompile>
-    <ClCompile Include="IOCPServer.cpp">
-      <Filter>IOCP</Filter>
-    </ClCompile>
     <ClCompile Include="Room.cpp">
       <Filter>Room</Filter>
     </ClCompile>
     <ClCompile Include="RoomManager.cpp">
       <Filter>Room</Filter>
+    </ClCompile>
+    <ClCompile Include="PacketManager.cpp">
+      <Filter>PacketHandler</Filter>
+    </ClCompile>
+    <ClCompile Include="pch.cpp">
+      <Filter>헤더 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="IOCPServer.cpp">
+      <Filter>IOCP</Filter>
+    </ClCompile>
+    <ClCompile Include="BulletWall.cpp">
+      <Filter>Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="EscapeObject.cpp">
+      <Filter>Objects</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -93,6 +105,15 @@
     </ClInclude>
     <ClInclude Include="RoomManager.h">
       <Filter>Room</Filter>
+    </ClInclude>
+    <ClInclude Include="PacketManager.h">
+      <Filter>PacketHandler</Filter>
+    </ClInclude>
+    <ClInclude Include="BulletWall.h">
+      <Filter>Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="EscapeObject.h">
+      <Filter>Objects</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
