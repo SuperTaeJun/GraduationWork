@@ -5,6 +5,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Components/BoxComponent.h"
+#include "Components/SphereComponent.h"
 #include "NiagaraFunctionLibrary.h"
 #include "NiagaraComponent.h"
 
@@ -17,6 +18,21 @@ AProjectileGrenade::AProjectileGrenade()
 	ProjectileMovementComponent->bShouldBounce = true;
 	ProjectileMovementComponent->Bounciness = 0.5;
 	ProjectileMovementComponent->Friction = 0.3;
+
+	//CollisionBox->DestroyComponent();
+	//CollisionBox->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	CollisionShpere= CreateDefaultSubobject<USphereComponent>(TEXT("CollisionShpere"));
+	SetRootComponent(CollisionShpere);
+
+	CollisionBox->SetupAttachment(CollisionShpere);
+	ProjectileMesh->SetupAttachment(CollisionShpere);
+	ProjectileMesh->SetCollisionObjectType(ECollisionChannel::ECC_WorldDynamic);
+	ProjectileMesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	ProjectileMesh->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
+	ProjectileMesh->SetCollisionResponseToChannel(ECollisionChannel::ECC_Visibility, ECollisionResponse::ECR_Block);
+	ProjectileMesh->SetCollisionResponseToChannel(ECollisionChannel::ECC_WorldStatic, ECollisionResponse::ECR_Block);
+	ProjectileMesh->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Block);
+
 
 	DestroyTime = 5.f;
 }

@@ -333,19 +333,12 @@ void ACharacterBase::GrandeThrow()
 {
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 	Cast<UBOAnimInstance>(AnimInstance)->bUseLeftHand = false;
-	//PlayAnimMontage(GrenadeMontage, 2.f, FName("Fire"));
 }
 void ACharacterBase::GrandeAim()
 {
 	CurWeapon->SetActorHiddenInGame(true);
 	Grenade->bHiddenInGame = false;
 
-	//const USkeletalMeshSocket* WeaponSocket = GetMesh()->GetSocketByName(FName("LeftHandSocket"));
-
-	//if (WeaponSocket && CurWeapon)
-	//{
-	//	WeaponSocket->AttachActor(CurWeapon, GetMesh());
-	//}
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 	// ¼ö·ùÅº ÅõÃ´ ¾Ö´Ï¸ÞÀÌ¼Ç
 	if (AnimInstance && GrenadeMontage)
@@ -511,16 +504,7 @@ void ACharacterBase::Dead()
 {
 	bCanFire = true;
 	SetRespawnUi();
-	//ABOGameMode* GameMode = GetWorld()->GetAuthGameMode<ABOGameMode>();
-	//if (GameMode)
-	//{
-	//if (CurWeapon)
-	//{
-	//	CurWeapon->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
-	//	CurWeapon->Destroy();
-	//}
-	//	GameMode->Respawn(this, MainController);
-	//}
+
 }
 
 
@@ -602,26 +586,24 @@ void ACharacterBase::Fire()
 	if (CurWeapon->CurAmmo <= 0)
 		bCanFire = false;
 
-	//UE_LOG(LogTemp, Log, TEXT("FIRE"));
 	if (bCanFire == true)
 	{
 		bCanFire = false;
 		if (CurWeapon)
 		{
-			//UE_LOG(LogTemp, Warning, TEXT("FIRE"));
 			CurWeapon->Fire(HitTarget);
 		}
 		PlayFireActionMontage();
 
 		UGameplayStatics::GetPlayerCameraManager(GetWorld(), 0)->StartCameraShake(UShoot::StaticClass());
 
-		//ÃÑ±â ¹Ýµ¿ ¹è±× ½ºÅíÀÏ
+		//ÃÑ±â ¹Ýµ¿ ¹è±×
 		if (CurWeaponType == EWeaponType::E_Rifle)
 			AddControllerPitchInput(-0.7);
 		else if (CurWeaponType == EWeaponType::E_Shotgun)
-			AddControllerPitchInput(-2.f);
+			AddControllerPitchInput(-3.f);
 		else
-			AddControllerPitchInput(-5.f);
+			AddControllerPitchInput(-6.f);
 
 		CurWeapon->CurAmmo -= 1;
 		MainController->SetHUDAmmo(CurWeapon->CurAmmo);
@@ -706,12 +688,7 @@ enum Move {
 void ACharacterBase::Move(const FInputActionValue& Value)
 {
 	const FVector2D MovementVector = Value.Get<FVector2D>();
-	/*if (MovementVector.Length() != 0)
-	{
 
-		ACharacterController* PlayerController = Cast<ACharacterController>(GetController());
-		PlayerController->UpdatePlayer(Move_Player);
-	}*/
 	const FRotator Rotation = Controller->GetControlRotation();
 	const FRotator YawRotaion(0.f, Rotation.Yaw, 0.f);
 
@@ -737,27 +714,22 @@ void ACharacterBase::Sprint_S(const FInputActionValue& Value)
 	if (!StaminaExhaustionState && CurWeapon)
 	{
 		CharacterState = ECharacterState::ECS_SPRINT;
-		//Movement->bOrientRotationToMovement = true;
-		//bUseControllerRotationYaw = false;
 
 		SetSprint();
 	}
 	else
 	{
 		CharacterState = ECharacterState::ECS_RUN;
-		//Movement->bOrientRotationToMovement = false;
-		//bUseControllerRotationYaw = true;
+
 		SetRun();
 	}
 
-	//UpdateStamina(GetWorld()->GetDeltaSeconds());
 }
 void ACharacterBase::Sprint_E(const FInputActionValue& Value)
 {
 	CharacterState = ECharacterState::ECS_RUN;
 	Movement->MaxWalkSpeed = 400;
-	//Movement->bOrientRotationToMovement = false;
-	//bUseControllerRotationYaw = true;
+
 	SetRun();
 }
 void ACharacterBase::Fire_S(const FInputActionValue& Value)
@@ -1060,7 +1032,6 @@ void ACharacterBase::OnDebug(const FInputActionValue& Value)
 
 void ACharacterBase::Detect_S(const FInputActionValue& Value)
 {
-	//quick_exit(0);
 	if (CurWeapon)
 	{
 		CurWeapon->DetectTool(HitTarget);

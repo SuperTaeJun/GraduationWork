@@ -26,6 +26,9 @@ protected:
 	virtual void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NomalImpulse, const FHitResult& Hit) override;
 
 public:
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<class USphereComponent> CollisionShpere;
+
 	UFUNCTION()
 	void OnBounce(const FHitResult& ImpactResult, const FVector& ImpactVelocity);
 	//virtual void OnHit
