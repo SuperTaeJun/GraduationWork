@@ -1,4 +1,6 @@
+#include "pch.h"
 #include "PacketManager.h"
+
 
 void PacketManager::ProcessPacket(int s_id, unsigned char* p)
 {
@@ -59,7 +61,7 @@ void PacketManager::ProcessPacket(int s_id, unsigned char* p)
 		CS_LOBBY_PACKET* packet = reinterpret_cast<CS_LOBBY_PACKET*>(p);
 		CLIENT& cl = clients[packet->id];
 		cl.currentRoom = packet->RoomNum;
-		//assignClientToRoom(cl._s_id, cl.currentRoom);
+		roomManager.AssignClientToRoom(cl._s_id, cl.currentRoom);
 		break;
 	}
 	case CS_HOVER:
@@ -68,33 +70,42 @@ void PacketManager::ProcessPacket(int s_id, unsigned char* p)
 		cout << "hover packet 들어옴 " << endl;
 		CLIENT& cl = clients[packet->id];
 		int RoomNum = packet->RoomNum;
-		//CanClientToRoom(cl._s_id, RoomNum);
+		roomManager.CanClientEnterRoom(cl._s_id, RoomNum);
+		//CanClientToRoom();
 		break;
 	}
 	case CS_SELECT_CHAR: {
+		CS_SELECT_CHARACTER* packet = reinterpret_cast<CS_SELECT_CHARACTER*>(p);
+		CLIENT& cl = clients[packet->id];
+		int roomNum = cl.currentRoom;
 
-		//CS_SELECT_CHARACTER* packet = reinterpret_cast<CS_SELECT_CHARACTER*>(p);
-		//CLIENT& cl = clients[packet->id];
-		//cl.x = packet->x;
-		//cl.y = packet->y;
-		//cl.z = packet->z;
-		//cl.p_type = packet->p_type;
-		//cl.connected = true;
-		////ingamecount++;
-		//send_select_character_type_packet(cl._s_id);
+		cl.x = packet->x;
+		cl.y = packet->y;
+		cl.z = packet->z;
+		cl.p_type = packet->p_type;
+		cl.connected = true;
 
-		//if (ingamecount >= ENTER_CLIENT)
-		//{
-		//	for (auto& player : clients) {
-		//		if (ST_INGAME != player._state)
-		//			continue;
-		//		if (player.currentRoom != cl.currentRoom)
-		//			continue;
-		//		send_ready_packet(player._s_id);
-		//		
+		if (roomManager.IsValidRoomNumber(roomNum)) {
+			Room& room = roomManager.GetRoom(roomNum);
+			room.IncrementInGameCount();  // 현재 방의 ingamecount 증가
+			send_select_character_type_packet(cl._s_id);
 
-		//	}
-		//}
+			if (room.GetInGameCount() >= ENTER_CLIENT) {
+				for (auto& player : clients) {
+					if (ST_INGAME != player._state)
+						continue;
+					if (player.currentRoom != cl.currentRoom)
+						continue;
+
+					// 준비 완료 패킷 전송
+					send_ready_packet(player._s_id);
+				}
+			}
+		}
+		else {
+			std::cout << "Invalid room number: " << roomNum << std::endl;
+		}
+
 		break;
 	}
 	case CS_MOVE_Packet: {
@@ -149,20 +160,30 @@ void PacketManager::ProcessPacket(int s_id, unsigned char* p)
 		break;
 	}
 	case CS_READY: {
-		//CS_READY_PACKET* packet = reinterpret_cast<CS_READY_PACKET*>(p);
-		//CLIENT& cl = clients[packet->id];
-		////ready_count++;
-		//if (ready_count >= ENTER_CLIENT)
-		//{
-		//	for (auto& player : clients) {
-		//		if (ST_INGAME != player._state)
-		//			continue;
-		//		if (player.currentRoom != cl.currentRoom)
-		//			continue;
-		//		send_travel_ready_packet(player._s_id);
-		//	}
-		//	ready_count = 0;
-		//}
+		CS_READY_PACKET* packet = reinterpret_cast<CS_READY_PACKET*>(p);
+		CLIENT& cl = clients[packet->id];
+		int roomNum = cl.currentRoom;
+
+		if (roomManager.IsValidRoomNumber(roomNum)) {
+			Room& room = roomManager.GetRoom(roomNum);
+			room.IncrementReadyCount();  // 현재 방의 ready_count 증가
+
+			if (room.GetReadyCount() >= ENTER_CLIENT) {
+				for (auto& player : clients) {
+					if (ST_INGAME != player._state)
+						continue;
+					if (player.currentRoom != cl.currentRoom)
+						continue;
+					// 준비 상태 완료 패킷 전송
+					send_travel_ready_packet(player._s_id);
+				}
+				room.ResetReadyCount();  // ready_count 초기화
+			}
+		}
+		else {
+			std::cout << "Invalid room number: " << roomNum << std::endl;
+		}
+
 		break;
 	}
 	case CS_SHOTGUN_BEAM: {

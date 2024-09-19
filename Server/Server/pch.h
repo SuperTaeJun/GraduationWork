@@ -35,7 +35,7 @@ using namespace std;
 #include "PacketManager.h"
 #include "BulletWall.h"
 #include "EscapeObject.h"
-
+#include "IOCPServer.h"
 struct timer_ev {
 
 	int this_id{};
@@ -56,6 +56,7 @@ extern atomic<int> ready_count;
 extern atomic<int> ingamecount;
 extern array<EscapeObject, 8> objects;
 extern array<BulletWall, 9> walls;
+extern RoomManager roomManager;
 
 void send_select_character_type_packet(int _s_id);
 void send_login_ok_packet(int _s_id);
@@ -70,3 +71,6 @@ void send_myitem_count_packet(int _s_id);
 void send_item_packet(int _s_id, int item_index);
 void send_bullet_wall(int _s_id, int wall_index);
 void SendLobbyPacket(int clientId, bool bintoRoom);
+
+#include "RoomManager.h"
+#include "Room.h"

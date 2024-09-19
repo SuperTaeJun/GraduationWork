@@ -22,11 +22,13 @@ public:
         gameRooms[roomNum].AddClient(clientId);
         clients[clientId].currentRoom = roomNum;
         std::cout << "Client " << clientId << " assigned to room " << roomNum << std::endl;
+
+        //gameRooms[roomNum].IncrementReadyCount();  // 클라이언트가 방에 들어오면 준비 상태 카운트 증가
     }
 
     void CanClientEnterRoom(int clientId, int roomNum) {
         std::unique_lock<std::mutex> lock(mtx);
-
+        
         if (!IsValidRoomNumber(roomNum)) {
             std::cout << "Invalid room number: " << roomNum << std::endl;
             return;
@@ -62,15 +64,18 @@ public:
             other.currentRoom = -1;
         }
 
-        // 방 비우기
+        // 방 비우기 및 ready_count, ingamecount 초기화
         gameRooms[roomNum].Clear();
     }
 
-private:
-    bool IsValidRoomNumber(int roomNum) const {
-        return roomNum >= 0 && roomNum < gameRooms.size();
+    Room& GetRoom(int roomNum) {
+        return gameRooms[roomNum];
     }
 
+    bool IsValidRoomNumber(int roomNum) const {
+        return roomNum >= 0 && roomNum <= gameRooms.size();
+    }
+private:
     std::vector<Room> gameRooms;
     std::mutex mtx;
 };

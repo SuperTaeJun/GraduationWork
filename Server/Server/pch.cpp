@@ -5,6 +5,8 @@ atomic<int> ready_count;
 atomic<int> ingamecount; 
 array<EscapeObject, 8> objects;
 array<BulletWall, 9> walls;
+RoomManager roomManager;
+
 
 void error_display(int err_no)
 {

@@ -1,7 +1,30 @@
-﻿  server.cpp
-C:\Users\sejin\Downloads\GraduationWork\Server\Server\Room.h(25,28): warning C4267: 'return': 'size_t'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+﻿  BulletWall.cpp
+C:\Users\sejin\Downloads\GraduationWork\Server\Server\Room.h(74,28): warning C4267: 'return': 'size_t'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  CLIENT.cpp
+C:\Users\sejin\Downloads\GraduationWork\Server\Server\Room.h(74,28): warning C4267: 'return': 'size_t'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  DB.cpp
+C:\Users\sejin\Downloads\GraduationWork\Server\Server\Room.h(74,28): warning C4267: 'return': 'size_t'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  EscapeObject.cpp
+C:\Users\sejin\Downloads\GraduationWork\Server\Server\Room.h(74,28): warning C4267: 'return': 'size_t'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  IOCPServer.cpp
+C:\Users\sejin\Downloads\GraduationWork\Server\Server\Room.h(74,28): warning C4267: 'return': 'size_t'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\sejin\Downloads\GraduationWork\Server\Server\IOCPServer.cpp(23,11): warning C4101: 'dwBytes' :참조되지 않은 지역 변수입니다.
+  LockQueue.cpp
+C:\Users\sejin\Downloads\GraduationWork\Server\Server\Room.h(74,28): warning C4267: 'return': 'size_t'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  Overlap.cpp
+C:\Users\sejin\Downloads\GraduationWork\Server\Server\Room.h(74,28): warning C4267: 'return': 'size_t'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  PacketManager.cpp
+C:\Users\sejin\Downloads\GraduationWork\Server\Server\Room.h(74,28): warning C4267: 'return': 'size_t'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  pch.cpp
+C:\Users\sejin\Downloads\GraduationWork\Server\Server\Room.h(74,28): warning C4267: 'return': 'size_t'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  Room.cpp
+C:\Users\sejin\Downloads\GraduationWork\Server\Server\Room.h(74,28): warning C4267: 'return': 'size_t'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  RoomManager.cpp
+C:\Users\sejin\Downloads\GraduationWork\Server\Server\Room.h(74,28): warning C4267: 'return': 'size_t'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  server.cpp
+C:\Users\sejin\Downloads\GraduationWork\Server\Server\Room.h(74,28): warning C4267: 'return': 'size_t'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
   코드를 생성하고 있습니다.
-  0 of 322 functions ( 0.0%) were compiled, the rest were copied from previous compilation.
+  0 of 533 functions ( 0.0%) were compiled, the rest were copied from previous compilation.
     0 functions were new in current compilation
     0 functions had inline decision re-evaluated but remain unchanged
   코드를 생성했습니다.

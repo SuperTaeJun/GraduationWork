@@ -9,6 +9,9 @@ IOCPServer::IOCPServer() //: ready_count(0), ingamecount(0), gameRooms(4), clien
 
 IOCPServer::~IOCPServer()
 {
+	CloseHandle(g_h_iocp);
+	CloseHandle(g_timer); 
+	closesocket(server_socket);
 }
 
 void IOCPServer::Initialize()

@@ -2,6 +2,8 @@
 #include "pch.h"
 
 class IOCPServer;
+class Room;
+class RoomManager;
 
 class PacketManager
 {
