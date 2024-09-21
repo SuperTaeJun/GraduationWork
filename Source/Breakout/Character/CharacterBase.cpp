@@ -441,6 +441,7 @@ void ACharacterBase::SetSpawnGrenade(TSubclassOf<AProjectileBase> Projectile)
 void ACharacterBase::ReciveDamage(AActor* DamagedActor, float Damage, const UDamageType* DamageType, class AController* InstigatorController, AActor* DamageCauser)
 {
 	Health = FMath::Clamp(Health - Damage, 0.f, MaxHealth);
+	//Health -= Damage;
 
 	UpdateHpHUD();
 	ACharacterBase* DamageInsigatorCh = Cast<ACharacterBase>(DamageCauser);
@@ -476,16 +477,15 @@ void ACharacterBase::ReciveDamage(AActor* DamagedActor, float Damage, const UDam
 					Cast<UBOGameInstance>(GetGameInstance())->m_Socket->Send_Decrease_item_count_packet(inst->GetPlayerID(), ObtainedEscapeToolNum);
 				}
 			}
+			UpdateObtainedEscapeTool();
 		}
 		if (CurWeapon)
 			CurWeapon->CurAmmo = 0;
-		GetWorld()->GetTimerManager().SetTimer(DeadTimer, this, &ACharacterBase::Dead, DeadTime, false);
-		if (MainController)
-			DisableInput(MainController);
-		UpdateObtainedEscapeTool();
 
 		if (bAlive && MainController)
 		{
+			DisableInput(MainController);
+			GetWorld()->GetTimerManager().SetTimer(DeadTimer, this, &ACharacterBase::Dead, DeadTime, false);
 			bAlive = false;
 			PlayAnimMontage(DeadMontage);
 			if (inst)
@@ -495,8 +495,8 @@ void ACharacterBase::ReciveDamage(AActor* DamagedActor, float Damage, const UDam
 	else if (Health > 0 && MainController)
 	{
 		PlayAnimMontage(HitMontage, 1.f);
-		if (inst)
-			inst->m_Socket->Send_Hit_Anim_packet(inst->GetPlayerID(), true);
+		//if (inst)
+		//	inst->m_Socket->Send_Hit_Anim_packet(inst->GetPlayerID(), true);
 	}
 }
 
@@ -1160,6 +1160,7 @@ void ACharacterBase::Tick(float DeltaTime)
 		}
 		inst->m_Socket->bEndGame = false;
 	}*/
+
 }
 
 void ACharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)

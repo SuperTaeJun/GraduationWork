@@ -19,5 +19,5 @@ public:
 	virtual void Fire(const FVector& HitTarget) override;
 private:
 	UPROPERTY(EditAnywhere, Category = "Weapon Scatter")
-	uint32 NumberOfPellets = 5;
+	uint32 NumberOfPellets = 6;
 };

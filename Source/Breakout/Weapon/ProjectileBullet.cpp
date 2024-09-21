@@ -68,8 +68,11 @@ void AProjectileBullet::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherAc
 		AProjectileBoobyTrap* DamagedTrap = Cast<AProjectileBoobyTrap>(OtherActor);
 		AExplosiveActor* ExplosiveActor = Cast<AExplosiveActor>(OtherActor);
 
-		if(DamagedCharacter)
-			UGameplayStatics::ApplyDamage(DamagedCharacter,Damage,FiringController,FiringPawn,UDamageType::StaticClass());
+		if (DamagedCharacter && DamagedCharacter->GetHealth() > 0 && DamagedCharacter->GetMainController())
+		{
+			//UE_LOG(LogTemp, Warning, TEXT("HITHITHIT"));
+			UGameplayStatics::ApplyDamage(DamagedCharacter, Damage, FiringController, FiringPawn, UDamageType::StaticClass());
+		}
 		else if (DamagedWall)
 		{
 			DamagedWall->SetBulletHole(Hit.ImpactPoint);

@@ -846,6 +846,7 @@ bool ACharacterController::UpdateWorld()
 				ServerSetDissolve(false, OtherPlayer);
 			}
 			else if (info->deadtype == 0) {
+				UE_LOG(LogTemp, Warning, TEXT("DAED"));
 				OtherPlayer->PlayAnimMontage(SyncDeadMontage);
 				info->deadtype = 2;
 				ServerSetDissolve(true, OtherPlayer);
@@ -1236,7 +1237,6 @@ void ACharacterController::ServerSetDissolve(bool dissolve, ACharacterBase* play
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("WWWWWWWWW"));
 		if (player->GetDynamicMaterial())
 		{
 			player->SetbDissolve(false);
