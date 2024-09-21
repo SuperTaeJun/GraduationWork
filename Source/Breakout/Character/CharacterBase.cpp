@@ -1008,11 +1008,6 @@ void ACharacterBase::LightOnOff(const FInputActionValue& Value)
 void ACharacterBase::Quit(const FInputActionValue& Value)
 {
 	inst->m_Socket->CloseSocket();
-	if (inst->m_Socket)
-	{
-		delete inst->m_Socket;
-		inst->m_Socket = nullptr;
-	}
 	UKismetSystemLibrary::QuitGame(GetWorld(), nullptr, EQuitPreference::Quit, true);
 }
 

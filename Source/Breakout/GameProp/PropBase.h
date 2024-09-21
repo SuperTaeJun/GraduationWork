@@ -43,7 +43,7 @@ struct FMeshData
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<int32> Sects = {};
 
-	FORCEINLINE void Clear() {
+	void Clear() {
 		Verts = {};
 		Tris = {};
 		Normals = {};

@@ -30,7 +30,6 @@ void ABulletHoleWall::BeginPlay()
 	Super::BeginPlay();
 
 	OnTakeAnyDamage.AddDynamic(this, &ABulletHoleWall::ReciveDamage);
-	UE_LOG(LogTemp, Warning, TEXT("HP: %f"), Hp);
 	Hp = 50.f;
 	bDestroyed = false;
 	ResetMeshData = MeshDataA;
@@ -41,7 +40,6 @@ void ABulletHoleWall::ReciveDamage(AActor* DamagedActor, float Damage, const UDa
 {
 	Hp -= Damage;
 
-	UE_LOG(LogTemp, Warning, TEXT("HP: %f"), Hp);
 	if (Hp <= 0.f && !bDestroyed)
 	{
 		//저장 부셔진 조각들 계산해서 여기는 수정해야함
@@ -398,57 +396,65 @@ void ABulletHoleWall::AllDestroy()
 	ProceduralMesh->CreateMeshSection_LinearColor(0, MeshDataA.Verts, MeshDataA.Tris, MeshDataA.Normals, MeshDataA.UVs, MeshDataA.Colors, Tangents, true);
 	bUsing = true;
 }
-
 void ABulletHoleWall::GetMeshDataFromStaticMesh(UStaticMesh* Mesh, UPARAM(ref) FMeshData& Data, int32 LODIndex, int32 SectionIndex, bool GetAllSections)
 {
-	int32 n = 0, svi = 0, vi = 0, sec = 0;
+	int32 VertexCount = 0, SectionVertexIndex = 0, VertexIndex = 0, SectionID = 0;
+
 	int32* NewIndexPtr = nullptr;
 	if (Mesh == nullptr || Mesh->GetRenderData() == nullptr || !Mesh->GetRenderData()->LODResources.IsValidIndex(LODIndex))
 	{
 		return;
 	}
-	if (!Mesh->bAllowCPUAccess)
-	{
-
-	}
 	Data.Clear();
 
 	while (true)
 	{
+		// 현재 LOD에 대한 리소스를 가져옴
 		const FStaticMeshLODResources& LOD = Mesh->GetRenderData()->LODResources[LODIndex];
+
 		if (!LOD.Sections.IsValidIndex(SectionIndex))
 		{
 			return;
 		}
+
+		// 버텍스 재사용을 위한 맵 생성
 		TMap<int32, int32> MeshToSectionVertMap = {};
-		uint32 i = 0, is = LOD.Sections[SectionIndex].FirstIndex, l = LOD.Sections[SectionIndex].FirstIndex + LOD.Sections[SectionIndex].NumTriangles * 3;
+		uint32 TriangleIndex = 0;
+		uint32	FirstIndex = LOD.Sections[SectionIndex].FirstIndex;
+		uint32	LastIndex = FirstIndex + LOD.Sections[SectionIndex].NumTriangles * 3;
+
 		FIndexArrayView Indices = LOD.IndexBuffer.GetArrayView();
 		uint32 il = Indices.Num();
 		const bool hasColors = LOD.VertexBuffers.ColorVertexBuffer.GetNumVertices() >= LOD.VertexBuffers.PositionVertexBuffer.GetNumVertices();
-		for (i = is; i < l; ++i) {
-			if (i < il)
+		for (TriangleIndex = FirstIndex; TriangleIndex < LastIndex; ++TriangleIndex)
+		{
+			if (TriangleIndex < il)
 			{
-				vi = Indices[i];
-				NewIndexPtr = MeshToSectionVertMap.Find(vi);
+				VertexIndex = Indices[TriangleIndex];
+				NewIndexPtr = MeshToSectionVertMap.Find(VertexIndex);
 				if (NewIndexPtr != nullptr)
 				{
-					svi = *NewIndexPtr;
+					// 이미 매핑된 버텍스 인덱스 사용
+					SectionVertexIndex = *NewIndexPtr;
 				}
 				else
 				{
-					Data.Verts.Emplace(LOD.VertexBuffers.PositionVertexBuffer.VertexPosition(vi));
-					Data.Normals.Emplace(LOD.VertexBuffers.StaticMeshVertexBuffer.VertexTangentZ(vi));
-					Data.UVs.Emplace(LOD.VertexBuffers.StaticMeshVertexBuffer.GetVertexUV(vi, 0));
-					Data.Sects.Emplace(sec);
+					// 새로운 버텍스 데이터를 수집
+					Data.Verts.Emplace(LOD.VertexBuffers.PositionVertexBuffer.VertexPosition(VertexIndex));
+					Data.Normals.Emplace(LOD.VertexBuffers.StaticMeshVertexBuffer.VertexTangentZ(VertexIndex));
+					Data.UVs.Emplace(LOD.VertexBuffers.StaticMeshVertexBuffer.GetVertexUV(VertexIndex, 0));
+					Data.Sects.Emplace(SectionID);
 					if (hasColors)
 					{
-						Data.Colors.Emplace(LOD.VertexBuffers.ColorVertexBuffer.VertexColor(vi));
+						Data.Colors.Emplace(LOD.VertexBuffers.ColorVertexBuffer.VertexColor(VertexIndex));
 					}
-					svi = n;
-					MeshToSectionVertMap.Emplace(vi, n);
-					++n;
+
+					// 새 버텍스 매핑 추가
+					SectionVertexIndex = VertexCount;
+					MeshToSectionVertMap.Emplace(VertexIndex, VertexCount);
+					++VertexCount;
 				}
-				Data.Tris.Emplace(svi);
+				Data.Tris.Emplace(SectionVertexIndex);
 			}
 
 		}
@@ -458,10 +464,11 @@ void ABulletHoleWall::GetMeshDataFromStaticMesh(UStaticMesh* Mesh, UPARAM(ref) F
 			return;
 		}
 		SectionIndex += 1;
-		sec += 1;
+		SectionID += 1;
 		Data.NumSections += 1;
 	}
 }
+
 void ABulletHoleWall::SetColorData(UPARAM(ref) FMeshData& Data, FLinearColor Color)
 {
 	Data.Colors = {};

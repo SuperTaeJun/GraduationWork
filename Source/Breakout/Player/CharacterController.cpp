@@ -61,7 +61,7 @@ void ACharacterController::BeginPlay()
 
 	inst = Cast<UBOGameInstance>(GetGameInstance());
 	inst->m_Socket->SetPlayerController(this);
-	UE_LOG(LogTemp, Warning, TEXT("BEGIN"));
+
 	if (inst)
 	{
 		id = inst->GetPlayerID();

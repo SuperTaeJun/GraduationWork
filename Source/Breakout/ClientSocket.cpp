@@ -571,7 +571,6 @@ void ClientSocket::Send_ShotGun_packet(int attack_id, FVector ServerBeamStart, T
 }
 void ClientSocket::Send_Niagara_packet(int clientid, PlayerType type, int num)
 {
-	UE_LOG(LogClass, Warning, TEXT("BNIAGAR "));
 	CS_NIAGARA_SYNC_PACKET packet;
 	packet.size = sizeof(packet);
 	packet.type = CS_NiAGARA;

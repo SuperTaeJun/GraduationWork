@@ -23,160 +23,146 @@ void APropBase::BeginPlay()
 	Super::BeginPlay();
 
 }
-
-void APropBase::UnifyTri(UPARAM(ref) FMeshData& Data)
+void APropBase::UnifyTri(UPARAM(ref) FMeshData& MeshData)
 {
-	//UE_LOG(LogTemp, Log, TEXT("%d"), Data1.Tris.Num());
+	// 방문한 정점을 추적
+	TMap<int, int> VisitedVertices = {};
+	int CurVertexCount = MeshData.Verts.Num();
 
-	TMap<int, int> Visited = {};
-	int vl = Data.Verts.Num();
-	FVector vec;
-	FVector2D uv;
-	FLinearColor col;
-	int sect;
-	bool hasNormals = Data.Normals.Num() >= vl;
-	bool	hasUVs = Data.UVs.Num() >= vl;
-	bool	hasColors = Data.Colors.Num() >= vl;
-	bool	hasSects = Data.Sects.Num() >= vl;
-	int x = 0, l = Data.Tris.Num();
+	// 정점 속성 여부 체크
+	bool bHasNormals = MeshData.Normals.Num() >= CurVertexCount;
+	bool bHasUVs = MeshData.UVs.Num() >= CurVertexCount;
+	bool bHasColors = MeshData.Colors.Num() >= CurVertexCount;
+	bool bHasSections = MeshData.Sects.Num() >= CurVertexCount;
 
-	for (x = 0; x < l; ++x)
+	for (int TriangleIndex = 0; TriangleIndex < MeshData.Tris.Num(); ++TriangleIndex)
 	{
-		if (!Visited.Contains(Data.Tris[x]))
-		{
-			Visited.Emplace(Data.Tris[x], 1);
+		int VertexIndex = MeshData.Tris[TriangleIndex];
 
+		// 중복된 정점 처리
+		if (!VisitedVertices.Contains(VertexIndex))
+		{
+			VisitedVertices.Emplace(VertexIndex, 1);
 		}
 		else
 		{
-			vec = Data.Verts[Data.Tris[x]];
-			Data.Verts.Emplace(vec);
-			if (hasNormals)
-				vec = Data.Normals[Data.Tris[x]];
-			Data.Normals.Emplace(vec);
+			// 중복된 정점을 복제
+			MeshData.Verts.Emplace(MeshData.Verts[VertexIndex]);
 
-			if (hasUVs)
-				uv = Data.UVs[Data.Tris[x]];
-			Data.UVs.Emplace(uv);
+			if (bHasNormals)
+				MeshData.Normals.Emplace(MeshData.Normals[VertexIndex]);
+			if (bHasUVs)
+				MeshData.UVs.Emplace(MeshData.UVs[VertexIndex]);
+			if (bHasColors)
+				MeshData.Colors.Emplace(MeshData.Colors[VertexIndex]);
+			if (bHasSections)
+				MeshData.Sects.Emplace(MeshData.Sects[VertexIndex]);
 
-			if (hasColors)
-				col = Data.Colors[Data.Tris[x]];
-			Data.Colors.Emplace(col);
-
-			if (hasSects)
-				sect = Data.Sects[Data.Tris[x]];
-			Data.Sects.Emplace(sect);
-
-			Data.Tris[x] = vl;
-			++vl;
-
+			MeshData.Tris[TriangleIndex] = CurVertexCount++;
 		}
 	}
 
-	//기존 정보를 저장하고 다시 트라이앵글 기준으로 정렬
-	TArray<FVector> oldverts = Data.Verts;
-	TArray<FVector> oldnorm = Data.Normals;
-	TArray<FVector2D> olduvs = Data.UVs;
-	TArray<FLinearColor> oldcolors = Data.Colors;
-	TArray<int32> oldtris = Data.Tris;
+	// 기존 데이터 저장해두기
+	TArray<FVector> OriginalVerts = MeshData.Verts;
+	TArray<FVector> OriginalNormals = MeshData.Normals;
+	TArray<FVector2D> OriginalUVs = MeshData.UVs;
+	TArray<FLinearColor> OriginalColors = MeshData.Colors;
+	TArray<int32> OriginalTris = MeshData.Tris;
 
-	vl = Data.Verts.Num();
-	hasNormals = (Data.Normals.Num() >= vl);
-	hasUVs = (Data.UVs.Num() >= vl);
-	hasColors = (Data.Colors.Num() >= vl);
-	Data.Verts = {};
-	Data.Tris = {};
-	Data.Normals = {};
-	Data.UVs = {};
-	Data.Colors = {};
-	x = 0;
-	l = oldtris.Num();
-	for (x = 0; x < l; ++x)
+	// 정점 데이터 재정렬
+	MeshData.Verts.Empty();
+	MeshData.Tris.Empty();
+	MeshData.Normals.Empty();
+	MeshData.UVs.Empty();
+	MeshData.Colors.Empty();
+
+	for (int TriangleIndex = 0; TriangleIndex < OriginalTris.Num(); ++TriangleIndex)
 	{
-		Data.Verts.Emplace(oldverts[oldtris[x]]);
-		if (hasNormals)
-			Data.Normals.Emplace(oldnorm[oldtris[x]]);
-		if (hasUVs)
-			Data.UVs.Emplace(olduvs[oldtris[x]]);
-		if (hasColors)
-			Data.Colors.Emplace(oldcolors[oldtris[x]]);
-		Data.Tris.Emplace(x);
+		MeshData.Verts.Emplace(OriginalVerts[OriginalTris[TriangleIndex]]);
+
+		if (bHasNormals)
+			MeshData.Normals.Emplace(OriginalNormals[OriginalTris[TriangleIndex]]);
+		if (bHasUVs)
+			MeshData.UVs.Emplace(OriginalUVs[OriginalTris[TriangleIndex]]);
+		if (bHasColors)
+			MeshData.Colors.Emplace(OriginalColors[OriginalTris[TriangleIndex]]);
+
+		MeshData.Tris.Emplace(TriangleIndex);
 	}
-	//UE_LOG(LogTemp, Warning, TEXT("UNIFY NUM : %d"), Data.Verts.Num());
 }
 
-void APropBase::InterpMeshData(FMeshData& Data, FMeshData& DataA, FMeshData& DataB, float Alpha, bool Clamp)
+void APropBase::InterpMeshData(FMeshData& OutData, FMeshData& SourceDataA, FMeshData& SourceDataB, float Alpha, bool bClamp)
 {
-	int x = 0;
-	int l = Data.Verts.Num();
-	int al = DataA.Verts.Num();/*DataA버텍스 갯수*/
-	int bl = DataB.Verts.Num();/*DataB버텍스 갯수*/
-	if (l <= 0 || al <= 0 || bl <= 0)
+	int VertexCount = 0;
+	int CurrentVertexCount = OutData.Verts.Num();
+	int SourceVertexCountA = SourceDataA.Verts.Num();
+	int SourceVertexCountB = SourceDataB.Verts.Num();
+
+	if (CurrentVertexCount <= 0 || SourceVertexCountA <= 0 || SourceVertexCountB <= 0)
 	{
 		return;
 	}
-	if (Clamp)
+
+	// Alpha 값이 클램프 범위에 있는지 확인
+	if (bClamp)
 	{
 		if (Alpha <= 0.0f)
 		{
-			if (Data.Verts[0] != DataA.Verts[0]) { Data = DataA; }
+			// Alpha가 0 이하일 경우 SourceDataA 사용
+			if (OutData.Verts[0] != SourceDataA.Verts[0]) { OutData = SourceDataA; }
 			return;
 		}
 		if (Alpha >= 1.0f)
 		{
-			if (Data.Verts[0] != DataB.Verts[0]) { Data = DataB; }
+			// Alpha가 1 이상일 경우 SourceDataB 사용
+			if (OutData.Verts[0] != SourceDataB.Verts[0]) { OutData = SourceDataB; }
 			return;
 		}
 	}
-	int ml = l;
-	ml = std::min(l, al);
-	ml = std::min(ml, bl);
-	const bool hasNormals = (Data.Normals.Num() >= ml && DataA.Normals.Num() >= ml && DataB.Normals.Num() >= ml);
-	const bool hasUVs = (Data.UVs.Num() >= ml && DataA.UVs.Num() >= ml && DataB.UVs.Num() >= ml);
-	const bool hasColors = (Data.Colors.Num() >= ml && DataA.Colors.Num() >= ml && DataB.Colors.Num() >= ml);
-	int y = 0;
-	for (x = 0; x < l; ++x)
+
+	// 보간할 최대 버텍스 수 결정
+	int MaxLerpCount = std::min(CurrentVertexCount, std::min(SourceVertexCountA, SourceVertexCountB));
+	const bool bHasNormals = (OutData.Normals.Num() >= MaxLerpCount && SourceDataA.Normals.Num() >= MaxLerpCount && SourceDataB.Normals.Num() >= MaxLerpCount);
+	const bool bHasUVs = (OutData.UVs.Num() >= MaxLerpCount && SourceDataA.UVs.Num() >= MaxLerpCount && SourceDataB.UVs.Num() >= MaxLerpCount);
+	const bool bHasColors = (OutData.Colors.Num() >= MaxLerpCount && SourceDataA.Colors.Num() >= MaxLerpCount && SourceDataB.Colors.Num() >= MaxLerpCount);
+
+	// 각 버텍스에 대해 보간 수행
+	for (int VertexIndex = 0; VertexIndex < CurrentVertexCount; ++VertexIndex)
 	{
-		y = x;
-		if (bl < l && y >= bl)
+		int SourceIndexB = VertexIndex;
+
+		// SourceDataB의 인덱스가 유효하지 않은 경우 조정
+		if (SourceVertexCountB < CurrentVertexCount && SourceIndexB >= SourceVertexCountB)
 		{
-			y = (y % bl) / 3;
+			SourceIndexB = (SourceIndexB % SourceVertexCountB) / 3; 
 		}
-		//기본버전
-		//Data.Verts[x] = FMath::Lerp(DataA.Verts[x], DataB.Verts[y], Alpha);
-		//버전2
-		//Data.Verts[x] = CustomLerp(DataA.Verts[x], DataB.Verts[y], Alpha);
-		//버전3
-		//Data.Verts[x] = WaveCustomLerp(DataA.Verts[x], DataB.Verts[y], Alpha,20.f,3.f);
-		//버전4
-		Data.Verts[x] = SpiralCustomLerp(DataA.Verts[x], DataB.Verts[y], Alpha, 3.f, 30.f);
-		if (hasNormals)
+
+		OutData.Verts[VertexIndex] = SpiralCustomLerp(SourceDataA.Verts[VertexIndex], SourceDataB.Verts[SourceIndexB], Alpha, 3.f, 30.f);
+		if (bHasNormals)
 		{
-			//Data.Normals[x] = FMath::Lerp(DataA.Normals[x], DataB.Normals[y], Alpha);
-			Data.Normals[x] = SpiralCustomLerp(DataA.Normals[x], DataB.Normals[y], Alpha, 3.f, 30.f);
-			Data.Normals[x].Normalize();
+			OutData.Normals[VertexIndex] = SpiralCustomLerp(SourceDataA.Normals[VertexIndex], SourceDataB.Normals[SourceIndexB], Alpha, 3.f, 30.f);
+			OutData.Normals[VertexIndex].Normalize();
 		}
-		if (hasColors)
+		if (bHasUVs)
 		{
-			Data.UVs[x] = FMath::Lerp(DataA.UVs[x], DataB.UVs[y], Alpha);
+			OutData.UVs[VertexIndex] = FMath::Lerp(SourceDataA.UVs[VertexIndex], SourceDataB.UVs[SourceIndexB], Alpha);
 		}
-		if (hasColors)
+		if (bHasColors)
 		{
-			Data.Colors[x] = FMath::Lerp(DataA.Colors[x], DataB.Colors[y], Alpha);
+			OutData.Colors[VertexIndex] = FMath::Lerp(SourceDataA.Colors[VertexIndex], SourceDataB.Colors[SourceIndexB], Alpha);
 		}
 	}
 
-	if (Alpha <= 0.f)
-	{
-		Data = DataA;
-	}
+	//if (Alpha <= 0.f)
+	//{
+	//	OutData = SourceDataA;
+	//}
 }
 
 void APropBase::GetMeshDataFromStaticMesh(UStaticMesh* Mesh, UPARAM(ref) FMeshData& Data, int32 LODIndex, int32 SectionIndex, bool GetAllSections)
 {
-	int32 n = 0, svi = 0, vi = 0, sec = 0;
+	int32 VertexCount = 0, SectionVertexIndex = 0, VertexIndex = 0, SectionID = 0;
 
-	//이미 사용한 버텍스인지아닌지 판정
 	int32* NewIndexPtr = nullptr;
 	if (Mesh == nullptr || Mesh->GetRenderData() == nullptr || !Mesh->GetRenderData()->LODResources.IsValidIndex(LODIndex))
 	{
@@ -186,46 +172,52 @@ void APropBase::GetMeshDataFromStaticMesh(UStaticMesh* Mesh, UPARAM(ref) FMeshDa
 
 	while (true)
 	{
+		// 현재 LOD에 대한 리소스를 가져옴
 		const FStaticMeshLODResources& LOD = Mesh->GetRenderData()->LODResources[LODIndex];
+
 		if (!LOD.Sections.IsValidIndex(SectionIndex))
 		{
 			return;
 		}
+
+		// 버텍스 재사용을 위한 맵 생성
 		TMap<int32, int32> MeshToSectionVertMap = {};
-		uint32 i = 0,
-			is = LOD.Sections[SectionIndex].FirstIndex,
-			l = is + LOD.Sections[SectionIndex].NumTriangles * 3;
+		uint32 TriangleIndex = 0;
+		uint32	FirstIndex = LOD.Sections[SectionIndex].FirstIndex;
+		uint32	LastIndex = FirstIndex + LOD.Sections[SectionIndex].NumTriangles * 3;
+
 		FIndexArrayView Indices = LOD.IndexBuffer.GetArrayView();
 		uint32 il = Indices.Num();
 		const bool hasColors = LOD.VertexBuffers.ColorVertexBuffer.GetNumVertices() >= LOD.VertexBuffers.PositionVertexBuffer.GetNumVertices();
-		for (i = is; i < l; ++i)
+		for (TriangleIndex = FirstIndex; TriangleIndex < LastIndex; ++TriangleIndex)
 		{
-			if (i < il)
+			if (TriangleIndex < il)
 			{
-				vi = Indices[i];
-				//UE_LOG(LogTemp, Warning, TEXT("Indices %d : %d"),i, Indices[i]);
-				NewIndexPtr = MeshToSectionVertMap.Find(vi);
+				VertexIndex = Indices[TriangleIndex];
+				NewIndexPtr = MeshToSectionVertMap.Find(VertexIndex);
 				if (NewIndexPtr != nullptr)
 				{
-					//이미 있는 버텍스
-					svi = *NewIndexPtr;
+					// 이미 매핑된 버텍스 인덱스 사용
+					SectionVertexIndex = *NewIndexPtr;
 				}
 				else
 				{
-					//없는 버텍스
-					Data.Verts.Emplace(LOD.VertexBuffers.PositionVertexBuffer.VertexPosition(vi));
-					Data.Normals.Emplace(LOD.VertexBuffers.StaticMeshVertexBuffer.VertexTangentZ(vi));
-					Data.UVs.Emplace(LOD.VertexBuffers.StaticMeshVertexBuffer.GetVertexUV(vi, 0));
-					Data.Sects.Emplace(sec);
+					// 새로운 버텍스 데이터를 수집
+					Data.Verts.Emplace(LOD.VertexBuffers.PositionVertexBuffer.VertexPosition(VertexIndex));
+					Data.Normals.Emplace(LOD.VertexBuffers.StaticMeshVertexBuffer.VertexTangentZ(VertexIndex));
+					Data.UVs.Emplace(LOD.VertexBuffers.StaticMeshVertexBuffer.GetVertexUV(VertexIndex, 0));
+					Data.Sects.Emplace(SectionID);
 					if (hasColors)
 					{
-						Data.Colors.Emplace(LOD.VertexBuffers.ColorVertexBuffer.VertexColor(vi));
+						Data.Colors.Emplace(LOD.VertexBuffers.ColorVertexBuffer.VertexColor(VertexIndex));
 					}
-					svi = n;
-					MeshToSectionVertMap.Emplace(vi, n);
-					++n;
+
+					// 새 버텍스 매핑 추가
+					SectionVertexIndex = VertexCount;
+					MeshToSectionVertMap.Emplace(VertexIndex, VertexCount);
+					++VertexCount;
 				}
-				Data.Tris.Emplace(svi);
+				Data.Tris.Emplace(SectionVertexIndex);
 			}
 
 		}
@@ -235,10 +227,9 @@ void APropBase::GetMeshDataFromStaticMesh(UStaticMesh* Mesh, UPARAM(ref) FMeshDa
 			return;
 		}
 		SectionIndex += 1;
-		sec += 1;
+		SectionID += 1;
 		Data.NumSections += 1;
 	}
-
 }
 
 void APropBase::SetColorData(UPARAM(ref) FMeshData& Data, FLinearColor Color)

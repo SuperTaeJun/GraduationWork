@@ -77,7 +77,6 @@ void AEscapeTool::TransformMesh(float DeltaTime, bool Clamp, bool TransformRever
 	{
 		if (Cur >= 1.f)
 		{
-			//UE_LOG(LogTemp, Log, TEXT("CUR 1.F"));
 			OverlapedCharacter->SetbCanObtainEscapeTool(true);
 			PercentBar->SetVisibility(false);
 			bOverlap = 0;
@@ -90,8 +89,6 @@ void AEscapeTool::TransformMesh(float DeltaTime, bool Clamp, bool TransformRever
 
 	Cur = FMath::Clamp(Time, 0.f, 1.f);
 
-	//if (Cur > 1.f) Cur = 1.f;
-	//else if (Cur < 0.f) Cur = 0.f;
 	DynamicMaterial->SetScalarParameterValue(FName("Alpha"), Cur);
 	InterpMeshData(InterpData, Data1, Data2, Cur, Clamp);
 
@@ -111,7 +108,6 @@ void AEscapeTool::TransformMesh(float DeltaTime, bool Clamp, bool TransformRever
 
 void AEscapeTool::SetHideMesh()
 {
-	UE_LOG(LogTemp, Log, TEXT("TEST"));
 	ProceduralMesh->SetHiddenInGame(true);
 	Destroy();
 }
