@@ -65,10 +65,27 @@ bool ClientSocket::Connect()
 	return true;
 }
 
-
 void ClientSocket::CloseSocket()
 {
+	if (Thread)
+	{
+		Stop();
+
+		// 스레드가 정상적으로 종료될 때까지 대기
+		Thread->WaitForCompletion();
+
+		delete Thread;
+		Thread = nullptr;
+		StopTaskCounter.Reset();
+	}
+
+	// 소켓 종료 전에 shutdown()으로 데이터 전송을 모두 종료
+	shutdown(ServerSocket, SD_BOTH);  // 전송 및 수신 모두 중지
+
+	// 소켓 닫기
 	closesocket(ServerSocket);
+
+	// Winsock 종료
 	WSACleanup();
 }
 
@@ -827,6 +844,15 @@ void ClientSocket::Send_Hit_Anim_packet(int id, bool bHitAnim)
 	packet.type = CS_HIT_ANIM;
 	packet.id = id;
 	packet.bHitAnim = bHitAnim;
+	SendPacket(&packet);
+}
+
+void ClientSocket::Send_Logout_packet(int id)
+{
+	CS_LOGOUT_PACKET packet;
+	packet.size = sizeof(packet);
+	packet.type = CS_LOGOUT;
+	packet.id = id;
 	SendPacket(&packet);
 }
 

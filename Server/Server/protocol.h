@@ -1,8 +1,8 @@
 #pragma once
 #define SERVER_PORT		8001
-#define SERVER_IP		"172.30.1.34"
+#define SERVER_IP		"192.168.103.25"
 #define MAX_INFO_SIZE   20
-#define ENTER_CLIENT	2
+#define ENTER_CLIENT	3
 #define MAX_ROOMS		4
 enum Login_fail_Type { OVERLAP_ID, WRONG_ID, WRONG_PW, OVERLAP_AC, CREATE_AC };
 
@@ -65,6 +65,7 @@ const char CS_ROOM = 34;
 const char CS_HOVER = 35;
 const char CS_RECHARGE = 36;
 const char CS_HIT_ANIM = 37;
+const char CS_LOGOUT = 38;
 
 
 const char SC_LOGIN_OK = 1;
@@ -107,6 +108,7 @@ const char SC_LIGHT = 37;
 const char SC_LOBBY_ROOM = 38;
 const char SC_RECHARGE = 39;
 const char SC_HIT_ANIM = 40;
+const char SC_LOGOUT = 41;
 
 #pragma pack (push, 1)
 struct CS_LOGIN_PACKET
@@ -493,5 +495,10 @@ struct CS_HIT_ANIM_PACKET {
 	unsigned char type;
 	int id;
 	bool bHitAnim;
+};
+struct CS_LOGOUT_PACKET {
+	unsigned char size;
+	unsigned char type;
+	int id;
 };
 #pragma pack(pop)

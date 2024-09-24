@@ -998,8 +998,12 @@ void ACharacterBase::LightOnOff(const FInputActionValue& Value)
 
 void ACharacterBase::Quit(const FInputActionValue& Value)
 {
-	inst->m_Socket->CloseSocket();
+	if (inst) {
+		inst->m_Socket->Send_Logout_packet(inst->GetPlayerID());
+		inst->m_Socket->CloseSocket();
+	}
 	UKismetSystemLibrary::QuitGame(GetWorld(), nullptr, EQuitPreference::Quit, true);
+
 }
 
 void ACharacterBase::OnDebug(const FInputActionValue& Value)
