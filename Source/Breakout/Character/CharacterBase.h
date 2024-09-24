@@ -294,8 +294,8 @@ protected:
 	void SelectTrap(const FInputActionValue& Value);
 	void StartJump(const FInputActionValue& Value);
 	void StopJump(const FInputActionValue& Value);
-	virtual void Skill_S(const FInputActionValue& Value);
-	virtual void Skill_E(const FInputActionValue& Value);
+	virtual void Skill_S(const FInputActionValue& Value) {};
+	virtual void Skill_E(const FInputActionValue& Value) {};
 	void Detect_S(const FInputActionValue& Value);
 	void Detect_E(const FInputActionValue& Value);
 	void LightOnOff(const FInputActionValue& Value);

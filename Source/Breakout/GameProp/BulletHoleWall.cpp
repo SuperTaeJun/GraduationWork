@@ -28,7 +28,6 @@ ABulletHoleWall::ABulletHoleWall()
 void ABulletHoleWall::BeginPlay()
 {
 	Super::BeginPlay();
-
 	OnTakeAnyDamage.AddDynamic(this, &ABulletHoleWall::ReciveDamage);
 	Hp = 50.f;
 	bDestroyed = false;
@@ -75,8 +74,11 @@ void ABulletHoleWall::ReciveDamage(AActor* DamagedActor, float Damage, const UDa
 				MeshSculptures[i]->AddCollisionConvexMesh(MeshDataStorage[i].Verts);
 				MeshSculptures[i]->CreateMeshSection_LinearColor(0, MeshDataStorage[i].Verts, MeshDataStorage[i].Tris, MeshDataStorage[i].Normals, MeshDataStorage[i].UVs, MeshDataStorage[i].Colors, Tangents, true);
 				//ProceduralMesh->DestroyComponent();
-				ProceduralMesh->SetHiddenInGame(true);
-				ProceduralMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+				if (i == 0)
+				{
+					ProceduralMesh->SetHiddenInGame(true);
+					ProceduralMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+				};
 			}
 		}
 		GetWorldTimerManager().SetTimer
@@ -331,7 +333,9 @@ FMeshData ABulletHoleWall::TransformMeshData(UPARAM(ref) FMeshData& Data, FTrans
 	bool skiprot = (rot == FRotator(0.0f, 0.0f, 0.0f));
 	bool skipscale = (scale == FVector(1.0f, 1.0f, 1.0f));
 	bool skippiv = (Pivot == FVector(0.0f, 0.0f, 0.0f));
-	int x = 0, l = res.Verts.Num(), nl = res.Normals.Num();
+	int x = 0;
+	int l = res.Verts.Num();
+	int nl = res.Normals.Num();
 	bool hasNormals = (nl >= l);
 	for (x = 0; x < l; ++x) {
 		FVector& v = res.Verts[x];
@@ -422,7 +426,7 @@ void ABulletHoleWall::GetMeshDataFromStaticMesh(UStaticMesh* Mesh, UPARAM(ref) F
 		uint32 TriangleIndex = 0;
 		uint32	FirstIndex = LOD.Sections[SectionIndex].FirstIndex;
 		uint32	LastIndex = FirstIndex + LOD.Sections[SectionIndex].NumTriangles * 3;
-
+		
 		FIndexArrayView Indices = LOD.IndexBuffer.GetArrayView();
 		uint32 il = Indices.Num();
 		const bool hasColors = LOD.VertexBuffers.ColorVertexBuffer.GetNumVertices() >= LOD.VertexBuffers.PositionVertexBuffer.GetNumVertices();
@@ -490,6 +494,8 @@ FMeshData ABulletHoleWall::SetRandomVertex(UPARAM(ref)FMeshData& MeshData, float
 	for (int x = 0; x < MeshData.Verts.Num(); ++x)
 	{
 		tCoord = FVector(Result.Verts[x].X * Tolerance, Result.Verts[x].Y * Tolerance, Result.Verts[x].Z * Tolerance);
+
+		//이미 했던건지 확인
 		if (Already.Contains(tCoord))
 		{
 			Result.Verts[x] = Already[tCoord];
@@ -504,6 +510,7 @@ FMeshData ABulletHoleWall::SetRandomVertex(UPARAM(ref)FMeshData& MeshData, float
 			{
 				Result.Verts[x] = MeshData.Verts[x] + FMath::VRand() * FMath::RandRange(Min, Max);
 			}
+			//안했던거는 맵에 추가
 			Already.Emplace(tCoord, Result.Verts[x]);
 		}
 	}

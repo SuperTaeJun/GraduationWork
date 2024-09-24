@@ -15,7 +15,6 @@ APropBase::APropBase()
 
 	ProceduralMesh = CreateDefaultSubobject<UProceduralMeshComponent>(TEXT("ProceduralMesh"));
 	ProceduralMesh->SetupAttachment(RootComponent);
-
 }
 
 void APropBase::BeginPlay()
@@ -174,7 +173,6 @@ void APropBase::GetMeshDataFromStaticMesh(UStaticMesh* Mesh, UPARAM(ref) FMeshDa
 	{
 		// 현재 LOD에 대한 리소스를 가져옴
 		const FStaticMeshLODResources& LOD = Mesh->GetRenderData()->LODResources[LODIndex];
-
 		if (!LOD.Sections.IsValidIndex(SectionIndex))
 		{
 			return;

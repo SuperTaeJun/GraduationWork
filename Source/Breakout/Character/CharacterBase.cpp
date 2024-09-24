@@ -965,15 +965,6 @@ void ACharacterBase::StopJump(const FInputActionValue& Value)
 	Super::StopJumping();
 }
 
-void ACharacterBase::Skill_S(const FInputActionValue& Value)
-{
-
-}
-
-void ACharacterBase::Skill_E(const FInputActionValue& Value)
-{
-}
-
 void ACharacterBase::Detect_E(const FInputActionValue& Value)
 {
 	if (CurWeapon)
