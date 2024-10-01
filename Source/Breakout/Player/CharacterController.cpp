@@ -141,11 +141,11 @@ void ACharacterController::SetNum()
 {
 	if (MainHUD)
 	{
-		if (MainHUD->EscapeToolNumUi->Player1Ch->Text.ToString() == inst->m_Socket->TempPlayerName) {
+		if (MainHUD->EscapeToolNumUi->Player1Ch->GetText().ToString() == inst->m_Socket->TempPlayerName) {
 			FString Player1 = FString::Printf(TEXT("%d"), inst->m_Socket->Tempcnt2);
 			MainHUD->EscapeToolNumUi->Player1->SetText(FText::FromString(Player1));
 		}
-		else if (MainHUD->EscapeToolNumUi->Player2Ch->Text.ToString() == inst->m_Socket->TempPlayerName) {
+		else if (MainHUD->EscapeToolNumUi->Player2Ch->GetText().ToString() == inst->m_Socket->TempPlayerName) {
 			FString Player2 = FString::Printf(TEXT("%d"), inst->m_Socket->Tempcnt2);
 			MainHUD->EscapeToolNumUi->Player2->SetText(FText::FromString(Player2));
 		}

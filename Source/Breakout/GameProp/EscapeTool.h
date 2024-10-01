@@ -28,6 +28,19 @@ public:
 
 	void SetbDetected(bool _bDetected) { bDetected = _bDetected; }
 private:
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<UStaticMesh> MeshA;
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<UStaticMesh> MeshB;
+
+	int32 LoopNum = 0;
+	int32 RandNum = 0;
+
+	MeshData DataA;
+	MeshData DataB;
+	MeshData InterpData;
+
+
 	bool bDetected;
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<class UMaterialInstance> OldMaterial;

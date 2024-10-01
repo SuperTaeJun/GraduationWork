@@ -12,6 +12,7 @@
 #include "HUD/ETPercentBar.h"
 #include "Components/SphereComponent.h"
 #include "Materials/MaterialInstanceDynamic.h"
+#include "Kismet/KismetMathLibrary.h"
 
 AEscapeTool::AEscapeTool()
 {
@@ -20,6 +21,52 @@ AEscapeTool::AEscapeTool()
 
 	AreaSphere->SetCollisionResponseToChannel(ECollisionChannel::ECC_Visibility, ECollisionResponse::ECR_Block);
 	bDetected = false;
+	MeshA = ConstructorHelpers::FObjectFinder<UStaticMesh>(TEXT("/Game/Maps/MapAsset/oilDrum_2.oilDrum_2")).Object;
+	ProcMeshUtillity->GetMeshDataFromStaticMesh(MeshA, DataA, 0, 0, false);
+	ProcMeshUtillity->UnifyTri(DataA);
+	MeshB = ConstructorHelpers::FObjectFinder<UStaticMesh>(TEXT("/Game/Maps/MapAsset/jem.jem")).Object;
+	ProcMeshUtillity->GetMeshDataFromStaticMesh(MeshB, DataB, 0, 0, false);
+	ProcMeshUtillity->UnifyTri(DataB);
+
+
+	//부족하면 추가해주기
+	if (DataB.Verts.Num() > DataA.Verts.Num())
+	{
+		LoopNum = DataB.Verts.Num() - DataA.Verts.Num();
+
+		for (int i = 0; i < (LoopNum/3.0) ; ++i)
+		{
+			RandNum = UKismetMathLibrary::RandomIntegerInRange(0, DataA.Verts.Num()-1);
+			MeshData TempMeshData = DataA;
+			for (int j = 0; j < 3; ++j)
+			{
+				DataA.Tris.Add(TempMeshData.Verts.Num());
+				DataA.Verts.Add(TempMeshData.Verts[RandNum]);
+				DataA.Normals.Add(FVector(0.f, 0.f, 1.f));
+				DataA.UVs.Add(FVector2D(0.f, 0.f));
+				DataA.Colors.Add(FLinearColor::Black);
+			}
+		}
+	}
+
+	ProcMeshUtillity->SetColorData(DataA, FLinearColor::Black);
+	ProcMeshUtillity->SetColorData(DataB, FLinearColor::Black);
+
+	InterpData = DataA;
+
+	TArray<FProcMeshTangent> Temp{};
+	ProceduralMesh->CreateMeshSection_LinearColor
+	(
+		0,
+		InterpData.Verts,
+		InterpData.Tris,
+		InterpData.Normals,
+		InterpData.UVs,
+		InterpData.Colors,
+		Temp,
+		true
+	);
+	ProceduralMesh->SetMaterial(0, OldMaterial);
 }
 
 void AEscapeTool::BeginPlay()
@@ -38,6 +85,10 @@ void AEscapeTool::BeginPlay()
 		AreaSphere->OnComponentEndOverlap.AddDynamic(this, &AEscapeTool::OnSphereEndOverlap);
 	}
 	PercentBar->SetVisibility(false);
+
+	UE_LOG(LogTemp, Warning, TEXT("DATA A : %d"), DataA.Verts.Num());
+	UE_LOG(LogTemp, Warning, TEXT("DATA B : %d"), DataB.Verts.Num());
+	UE_LOG(LogTemp, Warning, TEXT("DATA Interp : %d"), InterpData.Verts.Num());
 
 	UpdatePercent(Cur);
 }
@@ -90,8 +141,8 @@ void AEscapeTool::TransformMesh(float DeltaTime, bool Clamp, bool TransformRever
 	Cur = FMath::Clamp(Time, 0.f, 1.f);
 
 	DynamicMaterial->SetScalarParameterValue(FName("Alpha"), Cur);
-	InterpMeshData(InterpData, Data1, Data2, Cur, Clamp);
-
+	//InterpMeshData(InterpData, Data1, Data2, Cur, Clamp);
+	ProcMeshUtillity->InterpMeshData(InterpData, DataA, DataB, Cur, Clamp);
 	ProceduralMesh->UpdateMeshSection_LinearColor(0, InterpData.Verts, InterpData.Normals, InterpData.UVs, InterpData.Colors, TArray<FProcMeshTangent>());
 
 	if (TransformReverse)

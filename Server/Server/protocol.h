@@ -1,6 +1,6 @@
 #pragma once
 #define SERVER_PORT		8001
-#define SERVER_IP		"192.168.103.25"
+#define SERVER_IP		"192.168.123.142"
 #define MAX_INFO_SIZE   20
 #define ENTER_CLIENT	3
 #define MAX_ROOMS		4

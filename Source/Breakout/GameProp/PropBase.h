@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "ProceduralMeshUtility.h"
 #include "MeshDescription.h"
 #include "PropBase.generated.h"
 
@@ -66,8 +67,8 @@ public:
 	virtual void Tick(float DeltaTime) override;
 protected:
 	virtual void BeginPlay() override;
-	UFUNCTION(BlueprintCallable)
-	void UnifyTri(UPARAM(ref) FMeshData& Data);
+	//UFUNCTION(BlueprintCallable)
+	//void UnifyTri(UPARAM(ref) FMeshData& Data);
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite,Category = "Mesh")
@@ -75,14 +76,16 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category = "Mesh")
 	TObjectPtr<class USphereComponent>AreaSphere;
+	TObjectPtr<class UProceduralMeshUtility> ProcMeshUtillity;
 
 
-	UPROPERTY(BlueprintReadWrite)
-	FMeshData Data1;
-	UPROPERTY(BlueprintReadWrite)
-	FMeshData Data2;
-	UPROPERTY(BlueprintReadWrite)
-	FMeshData InterpData;
+
+	//UPROPERTY(BlueprintReadWrite)
+	//FMeshData Data1;
+	//UPROPERTY(BlueprintReadWrite)
+	//FMeshData Data2;
+	//UPROPERTY(BlueprintReadWrite)
+	//FMeshData InterpData;
 
 	float Time = 0.f;
 	float MorphingSpeed = 0.3f;
@@ -90,16 +93,16 @@ protected:
 	int32 RandValue;
 	double DegSin(double A);
 
-	void InterpMeshData(FMeshData& Data, FMeshData& DataA,FMeshData& DataB, float Alpha, bool Clamp);
-	UFUNCTION(BlueprintCallable)
-	void GetMeshDataFromStaticMesh(UStaticMesh* Mesh, UPARAM(ref) FMeshData& Data, int32 LODIndex, int32 SectionIndex, bool GetAllSections);
-	UFUNCTION(BlueprintCallable)
-	void SetColorData(UPARAM(ref) FMeshData& Data, FLinearColor Color);
+	//void InterpMeshData(FMeshData& Data, FMeshData& DataA,FMeshData& DataB, float Alpha, bool Clamp);
+	//UFUNCTION(BlueprintCallable)
+	//void GetMeshDataFromStaticMesh(UStaticMesh* Mesh, UPARAM(ref) FMeshData& Data, int32 LODIndex, int32 SectionIndex, bool GetAllSections);
+	//UFUNCTION(BlueprintCallable)
+	//void SetColorData(UPARAM(ref) FMeshData& Data, FLinearColor Color);
 
-	FVector CustomLerp(FVector& A, FVector& B, float& Alpha);
+	//FVector CustomLerp(FVector& A, FVector& B, float& Alpha);
 
-	FVector WaveCustomLerp(FVector& A, FVector& B, float& Alpha, float Amplitude, float Frequency);
-	FVector SpiralCustomLerp(FVector& A, FVector& B, float& Alpha, float SpiralTurns, float Radius);
+	//FVector WaveCustomLerp(FVector& A, FVector& B, float& Alpha, float Amplitude, float Frequency);
+	//FVector SpiralCustomLerp(FVector& A, FVector& B, float& Alpha, float SpiralTurns, float Radius);
 	//float Amplitude = 20.0f;
 	//float Frequency = 3.0f;
 };
