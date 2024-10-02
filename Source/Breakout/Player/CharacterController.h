@@ -243,6 +243,9 @@ public:
 	
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<class ULevelSequence> EndGameCine;
+
+	// 이동 패킷 주기 설정
+	FTimerHandle FMovePacketTimer;
 private:
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class ABulletHoleWall> WallClass;

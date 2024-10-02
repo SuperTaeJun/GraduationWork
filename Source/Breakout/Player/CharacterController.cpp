@@ -109,6 +109,10 @@ void ACharacterController::BeginPlay()
 			EscapeTools[i]->ItemID = i;
 		}
 	}
+	// 패킷 주기 설정(interpolation)
+	const float Interval = 1.0f / 30.0f;
+	GetWorld()->GetTimerManager().SetTimer(FMovePacketTimer, this,
+		&ACharacterController::UpdatePlayer, Interval, true);
 
 }
 
@@ -347,7 +351,7 @@ void ACharacterController::Tick(float DeltaTime)
 
 	UpdateWorld();
 	//UE_LOG(LogTemp, Warning, TEXT("HHHHHH : %s"), *GetOwner()->GetVelocity().ToString());
-	UpdatePlayer();
+	//UpdatePlayer();
 	//SleepEx(0, true);
 	ACharacterBase* BaseCharacter = Cast<ACharacterBase>(GetPawn());
 	if (BaseCharacter)
@@ -497,16 +501,17 @@ bool ACharacterController::UpdateWorld()
 			{
 				continue;
 			}
+			//위치
 			FVector PlayerLocation;
 			PlayerLocation.X = info->X;
 			PlayerLocation.Y = info->Y;
 			PlayerLocation.Z = info->Z;
-
+			//회전
 			FRotator PlayerRotation;
 			PlayerRotation.Yaw = info->Yaw;
 			PlayerRotation.Pitch = 0.0f;
 			PlayerRotation.Roll = 0.0f;
-
+			//aim_offset
 			float AO_YAW = info->AO_YAW;
 			float AO_PITCH = info->AO_PITCH;
 			//속도
@@ -514,6 +519,61 @@ bool ACharacterController::UpdateWorld()
 			PlayerVelocity.X = info->VeloX;
 			PlayerVelocity.Y = info->VeloY;
 			PlayerVelocity.Z = info->VeloZ;
+
+			OtherPlayer->SetActorRotation(PlayerRotation);
+			OtherPlayer->SetActorLocation(PlayerLocation);
+			OtherPlayer->AddMovementInput(PlayerVelocity);
+			OtherPlayer->SetAO_PITCH(AO_PITCH);
+			OtherPlayer->SetAO_YAW(AO_YAW);
+			OtherPlayer->GetCharacterMovement()->MaxWalkSpeed = info->Max_Speed;
+			EMovementMode G;
+			switch (info->jumpType)
+			{
+			case 0:
+			{
+				G = EMovementMode::MOVE_None;
+				break;
+			}
+			case 1:
+			{
+				G = EMovementMode::MOVE_Walking;
+				break;
+			}
+			case 2:
+			{
+				G = EMovementMode::MOVE_NavWalking;
+				break;
+			}
+			case 3:
+			{
+				G = EMovementMode::MOVE_Falling;
+				break;
+			}
+			case 4:
+			{
+				G = EMovementMode::MOVE_Swimming;
+				break;
+			}
+			case 5:
+			{
+				G = EMovementMode::MOVE_Flying;
+				break;
+			}
+			case 6:
+			{
+				G = EMovementMode::MOVE_Custom;
+				break;
+			}
+			case 7:
+			{
+				G = EMovementMode::MOVE_MAX;
+				break;
+			}
+			default:
+				break;
+			}
+			OtherPlayer->GetCharacterMovement()->SetMovementMode(G);
+
 			// 나이아가라 레이저
 			FVector Firegun;
 			FRotator EFiregun;
@@ -594,61 +654,7 @@ bool ACharacterController::UpdateWorld()
 				}
 				info->bselectweapon = false;
 			}
-
-			OtherPlayer->AddMovementInput(PlayerVelocity);
-			OtherPlayer->SetActorRotation(PlayerRotation);
-			OtherPlayer->SetActorLocation(PlayerLocation);
-			EMovementMode G;
-			switch (info->jumpType)
-			{
-			case 0:
-			{
-				G = EMovementMode::MOVE_None;
-				break;
-			}
-			case 1:
-			{
-				G = EMovementMode::MOVE_Walking;
-				break;
-			}
-			case 2:
-			{
-				G = EMovementMode::MOVE_NavWalking;
-				break;
-			}
-			case 3:
-			{
-				G = EMovementMode::MOVE_Falling;
-				break;
-			}
-			case 4:
-			{
-				G = EMovementMode::MOVE_Swimming;
-				break;
-			}
-			case 5:
-			{
-				G = EMovementMode::MOVE_Flying;
-				break;
-			}
-			case 6:
-			{
-				G = EMovementMode::MOVE_Custom;
-				break;
-			}
-			case 7:
-			{
-				G = EMovementMode::MOVE_MAX;
-				break;
-			}
-			default:
-				break;
-			}
-			OtherPlayer->GetCharacterMovement()->SetMovementMode(G);
-			OtherPlayer->SetAO_PITCH(AO_PITCH);
-			OtherPlayer->SetAO_YAW(AO_YAW);
-			OtherPlayer->GetCharacterMovement()->MaxWalkSpeed = info->Max_Speed;
-			
+			//체력
 			OtherPlayer->SetHealth(SyncHP);
 			OtherPlayer->bAlive = info->bAlive;
 
