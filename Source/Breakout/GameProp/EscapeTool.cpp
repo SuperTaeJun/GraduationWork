@@ -170,12 +170,10 @@ void AEscapeTool::SetHideMesh()
 
 void AEscapeTool::SetProcMesh()
 {
-	ProcMeshUtillity->GetMeshDataFromStaticMesh(MeshA, DataA);
+	ProcMeshUtillity->GetMeshDataFromStaticMesh(MeshA, DataA,0);
 	ProcMeshUtillity->UnifyTri(DataA);
-	ProcMeshUtillity->GetMeshDataFromStaticMesh(MeshB, DataB);
+	ProcMeshUtillity->GetMeshDataFromStaticMesh(MeshB, DataB,0);
 	ProcMeshUtillity->UnifyTri(DataB);
-
-
 	//부족하면 추가해주기
 	if (DataB.Verts.Num() > DataA.Verts.Num())
 	{

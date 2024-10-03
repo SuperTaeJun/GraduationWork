@@ -12,16 +12,10 @@ struct MeshData
 	MeshData(TArray<FVector> v = {}, TArray<int32> t = {}, TArray<FVector> n = {}, TArray<FVector2D> u = {}, TArray<FLinearColor> c = {}) : Verts(v), Tris(t), Normals(n), UVs(u), Colors(c) {}
 
 	TArray<FVector> Verts = {};
-
 	TArray<int32> Tris = {};
-
 	TArray<FVector> Normals = {};
-
 	TArray<FVector2D> UVs = {};
-
 	TArray<FLinearColor> Colors = {};
-
-
 	TArray<int32> Sects = {};
 
 	void Clear() 

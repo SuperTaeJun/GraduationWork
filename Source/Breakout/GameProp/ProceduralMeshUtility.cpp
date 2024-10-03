@@ -45,16 +45,18 @@ void UProceduralMeshUtility::UnifyTri(MeshData& MeshData)
 	{
 		int VertexIndex = MeshData.Tris[TriangleIndex];
 
-		// 중복된 정점 처리
+		// 현재 정점이 이미 방문되었는지 체크
 		if (!VisitedVertices.Contains(VertexIndex))
 		{
+			// 방문되지 않은 정점은 VisitedVertices에 추가
 			VisitedVertices.Emplace(VertexIndex, 1);
 		}
 		else
 		{
-			// 중복된 정점을 복제
+			// 중복된 정점 발견 시 해당 정점을 복제하여 새로운 정점으로 저장
 			MeshData.Verts.Emplace(MeshData.Verts[VertexIndex]);
 
+			// 정점 복사 시 필요한 속성들도 함께 복제
 			if (bHasNormals)
 				MeshData.Normals.Emplace(MeshData.Normals[VertexIndex]);
 			if (bHasUVs)
@@ -227,11 +229,13 @@ void UProceduralMeshUtility::InterpMeshData(MeshData& OutData, MeshData& SourceD
 			SourceIndexB = (SourceIndexB % SourceVertexCountB) / 3;
 		}
 
-		OutData.Verts[VertexIndex] = SpiralCustomLerp(SourceDataA.Verts[VertexIndex], SourceDataB.Verts[SourceIndexB], Alpha, 3.f, 30.f);
+		//OutData.Verts[VertexIndex] = SpiralCustomLerp(SourceDataA.Verts[VertexIndex], SourceDataB.Verts[SourceIndexB], Alpha, 3.f, 30.f);
+		OutData.Verts[VertexIndex] = FMath::Lerp(SourceDataA.Verts[VertexIndex], SourceDataB.Verts[SourceIndexB], Alpha);
 		if (bHasNormals)
 		{
-			OutData.Normals[VertexIndex] = SpiralCustomLerp(SourceDataA.Normals[VertexIndex], SourceDataB.Normals[SourceIndexB], Alpha, 3.f, 30.f);
-			OutData.Normals[VertexIndex].Normalize();
+			OutData.Normals[VertexIndex] = FMath::Lerp(SourceDataA.Normals[VertexIndex], SourceDataB.Normals[SourceIndexB], Alpha);
+			//OutData.Normals[VertexIndex] = SpiralCustomLerp(SourceDataA.Normals[VertexIndex], SourceDataB.Normals[SourceIndexB], Alpha, 3.f, 30.f);
+			//OutData.Normals[VertexIndex].Normalize();
 		}
 		if (bHasUVs)
 		{
