@@ -109,6 +109,7 @@ void PacketManager::ProcessPacket(int s_id, unsigned char* p)
 		break;
 	}
 	case CS_MOVE_Packet: {
+		cout << "move packet" << endl;
 		CS_MOVE_PACKET* packet = reinterpret_cast<CS_MOVE_PACKET*>(p);
 		CLIENT& cl = clients[packet->id];
 		cl.x = packet->x;

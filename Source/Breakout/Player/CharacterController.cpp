@@ -110,7 +110,7 @@ void ACharacterController::BeginPlay()
 		}
 	}
 	// 패킷 주기 설정(interpolation)
-	const float Interval = 1.0f / 30.0f;
+	const float Interval = 0.1f;
 	GetWorld()->GetTimerManager().SetTimer(FMovePacketTimer, this,
 		&ACharacterController::UpdatePlayer, Interval, true);
 
@@ -495,37 +495,61 @@ bool ACharacterController::UpdateWorld()
 					inst->m_Socket->Tempname.pop();
 				}
 			}
+			if (!OtherPlayer || OtherPlayer->_SessionId == -1 || OtherPlayer->_SessionId == id) continue;
+			
+			// 현재 위치 및 회전
+			FVector CurrentLocation = OtherPlayer->GetActorLocation();
+			FRotator CurrentRotation = OtherPlayer->GetActorRotation();
 
+			// 목표 위치 및 회전
+			FVector TargetLocation(info->X, info->Y, info->Z);
+			FRotator TargetRotation(0.0f, info->Yaw, 0.0f);
+			// 보간 계수
+			float InterpSpeed = 5.0f;  // 보간 속도 (값을 조절하여 부드러움을 설정)
+			float DeltaTime = UGameplayStatics::GetWorldDeltaSeconds(world);
 
-			if (!OtherPlayer || OtherPlayer->_SessionId == -1 || OtherPlayer->_SessionId == id)
-			{
-				continue;
-			}
-			//위치
-			FVector PlayerLocation;
-			PlayerLocation.X = info->X;
-			PlayerLocation.Y = info->Y;
-			PlayerLocation.Z = info->Z;
-			//회전
-			FRotator PlayerRotation;
-			PlayerRotation.Yaw = info->Yaw;
-			PlayerRotation.Pitch = 0.0f;
-			PlayerRotation.Roll = 0.0f;
-			//aim_offset
-			float AO_YAW = info->AO_YAW;
-			float AO_PITCH = info->AO_PITCH;
+			// 위치와 회전 Lerp 적용
+			FVector InterpolatedLocation = FMath::VInterpTo(CurrentLocation, TargetLocation, DeltaTime, InterpSpeed);
+			FRotator InterpolatedRotation = FMath::RInterpTo(CurrentRotation, TargetRotation, DeltaTime, InterpSpeed);
+
+			// 부드럽게 이동 및 회전 적용
+			OtherPlayer->SetActorLocation(InterpolatedLocation);
+			OtherPlayer->SetActorRotation(InterpolatedRotation);
+			////위치
+			//FVector PlayerLocation;
+			//PlayerLocation.X = info->X;
+			//PlayerLocation.Y = info->Y;
+			//PlayerLocation.Z = info->Z;
+			////회전
+			//FRotator PlayerRotation;
+			//PlayerRotation.Yaw = info->Yaw;
+			//PlayerRotation.Pitch = 0.0f;
+			//PlayerRotation.Roll = 0.0f;
+	
+			//OtherPlayer->SetActorRotation(PlayerRotation);
+			//OtherPlayer->SetActorLocation(PlayerLocation);
 			//속도
-			FVector PlayerVelocity;
-			PlayerVelocity.X = info->VeloX;
-			PlayerVelocity.Y = info->VeloY;
-			PlayerVelocity.Z = info->VeloZ;
-
-			OtherPlayer->SetActorRotation(PlayerRotation);
-			OtherPlayer->SetActorLocation(PlayerLocation);
+			FVector PlayerVelocity(info->VeloX, info->VeloY, info->VeloZ);
 			OtherPlayer->AddMovementInput(PlayerVelocity);
-			OtherPlayer->SetAO_PITCH(AO_PITCH);
-			OtherPlayer->SetAO_YAW(AO_YAW);
 			OtherPlayer->GetCharacterMovement()->MaxWalkSpeed = info->Max_Speed;
+			
+			// 현재 조준 방향
+			float CurrentYaw = OtherPlayer->GetAO_Yaw();
+			float CurrentPitch = OtherPlayer->GetAO_Pitch();
+
+			// 새로운 조준 방향
+			float NewYaw = info->AO_YAW;
+			float NewPitch = info->AO_PITCH;
+			float InterpolatedYaw = FMath::FInterpTo(CurrentYaw, NewYaw, DeltaTime, InterpSpeed);
+			float InterpolatedPitch = FMath::FInterpTo(CurrentPitch, NewPitch, DeltaTime, InterpSpeed);
+			OtherPlayer->SetAO_YAW(InterpolatedYaw);
+			OtherPlayer->SetAO_PITCH(InterpolatedPitch);
+			////aim_offset
+			//float AO_YAW = info->AO_YAW;
+			//float AO_PITCH = info->AO_PITCH;
+			//OtherPlayer->SetAO_PITCH(AO_PITCH);
+			//OtherPlayer->SetAO_YAW(AO_YAW);
+
 			EMovementMode G;
 			switch (info->jumpType)
 			{
@@ -710,7 +734,7 @@ bool ACharacterController::UpdateWorld()
 			{
 				// 여기서 하면 됨, PlayerLocation 쓰면 됨
 				if(ChargeNiagara)
-					UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), ChargeNiagara, PlayerLocation);
+					UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), ChargeNiagara, InterpolatedLocation);
 				info->bRecharge = false;
 			}
 			FVector Vshotgun;
