@@ -4,38 +4,34 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "DynamicMesh/DynamicMesh3.h"
 #include "ProceduralMeshUtility.generated.h"
 
 struct MeshData
 {
 	MeshData(TArray<FVector> v = {}, TArray<int32> t = {}, TArray<FVector> n = {}, TArray<FVector2D> u = {}, TArray<FLinearColor> c = {}) : Verts(v), Tris(t), Normals(n), UVs(u), Colors(c) {}
-	UPROPERTY(BlueprintReadWrite)
+
 	TArray<FVector> Verts = {};
-	UPROPERTY(BlueprintReadWrite)
+
 	TArray<int32> Tris = {};
-	UPROPERTY(BlueprintReadWrite)
+
 	TArray<FVector> Normals = {};
-	UPROPERTY(BlueprintReadWrite)
+
 	TArray<FVector2D> UVs = {};
-	UPROPERTY(BlueprintReadWrite)
+
 	TArray<FLinearColor> Colors = {};
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TArray<int32> SectSizes = {};
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int32 NumSections = 0;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+
 	TArray<int32> Sects = {};
 
-	void Clear() {
+	void Clear() 
+	{
 		Verts = {};
 		Tris = {};
 		Normals = {};
 		UVs = {};
 		Colors = {};
 		Sects = {};
-		SectSizes = {};
-		NumSections = 0;
 	}
 };
 
@@ -52,10 +48,19 @@ public:
 
 public:	
 	void UnifyTri(MeshData& Data);
-	void GetMeshDataFromStaticMesh(UStaticMesh* Mesh, MeshData& Data, int32 LODIndex, int32 SectionIndex, bool GetAllSections);
+	void GetMeshDataFromStaticMesh(UStaticMesh* Mesh, MeshData& Data, int32 SectionIndex);
 	void SetColorData(MeshData& Data, FLinearColor Color);
-
 	void InterpMeshData(MeshData& OutData, MeshData& SourceDataA, MeshData& SourceDataB, float Alpha, bool bClamp);
 
+	MeshData MeshBoolean(MeshData DataA, FTransform TransformA, MeshData DataB, FTransform TransformB, bool OptionType);
+	MeshData SetRandomVertex(MeshData& MeshData, float Min, float Max, float Tolerance);
+	MeshData TransformMeshData(MeshData& Data, FTransform Transform, bool InPlace, FVector Pivot);
+private:
 	FVector SpiralCustomLerp(FVector& A, FVector& B, float& Alpha, float SpiralTurns, float Radius);
+
+	UE::Geometry::FDynamicMesh3 ConvertToFDynamicMesh3(MeshData& Data);
+	MeshData ConverToMeshData(UE::Geometry::FDynamicMesh3& Input, MeshData& Output);
+
+	FTransform3d ConvertToFTransform3d(FTransform Input);
+
 };

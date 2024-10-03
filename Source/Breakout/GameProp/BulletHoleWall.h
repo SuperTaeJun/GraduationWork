@@ -6,6 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "PropBase.h"
 #include "DynamicMesh/DynamicMesh3.h"
+#include "ProceduralMeshComponent.h"
 #include "BulletHoleWall.generated.h"
 
 UCLASS()
@@ -19,14 +20,8 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void SetBulletHole(const FVector SweepResult);
-	//void SetBulletHole(const FHitResult& SweepResult);
-	UFUNCTION(BlueprintCallable)
-	FMeshData MeshBoolean(UPARAM(ref)FMeshData DataA, FTransform TransformA, UPARAM(ref)FMeshData DataB, FTransform TransformB,bool OptionType);
 
-	UE::Geometry::FDynamicMesh3 ConvertToFDynamicMesh3(FMeshData& Data);
-	FMeshData ConverToFMeshData(UE::Geometry::FDynamicMesh3& Input, FMeshData& Output);
-
-	FTransform3d ConvertToFTransform3d(FTransform Input);
+	TObjectPtr<UProceduralMeshUtility> ProcMeshUtillity;
 
 	bool bUsing = true;
 
@@ -42,35 +37,33 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite,Category = "Mesh")
 	TObjectPtr<class UStaticMeshComponent > Sphere;
 
-	UPROPERTY(EditAnywhere,BlueprintReadWrite)
-	FMeshData MeshDataA;
-	UPROPERTY(EditAnywhere,BlueprintReadWrite)
-	FMeshData MeshDataB;
-	UPROPERTY(EditAnywhere,BlueprintReadWrite)
-	FMeshData SculptureData;
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<UStaticMesh> MeshA;
 
-	FMeshData ResetMeshData;
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<UStaticMesh> MeshB;
+
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<UStaticMesh> SculptureMesh;
+
+private:
+	MeshData MeshDataA;
+	MeshData MeshDataB;
+	MeshData SculptureData;
+
+	MeshData ResetMeshData;
 
 	FVector HitLoc;
 	FVector HitNomal;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FVector DirWorld;
 
 private:
-	UFUNCTION(BlueprintCallable)
-	void GetMeshDataFromStaticMesh(UStaticMesh* Mesh, UPARAM(ref) FMeshData& Data, int32 LODIndex, int32 SectionIndex, bool GetAllSections);
-	UFUNCTION(BlueprintCallable)
-	void SetColorData(UPARAM(ref) FMeshData& Data, FLinearColor Color);
-	UFUNCTION(BlueprintCallable)
-	FMeshData SetRandomVertex(UPARAM(ref)FMeshData& MeshData, float Min, float Max, float Tolerance);
-	UFUNCTION(BlueprintCallable)
-	FMeshData TransformMeshData(UPARAM(ref) FMeshData& Data, FTransform Transform, bool InPlace, FVector Pivot);
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<class UMaterialInstance> CurMaterial;
 	TObjectPtr<class UMaterialInstanceDynamic> DynamicMaterial;
 	float Hp = 50.f;
 	bool bDestroyed = false;
-	TArray<FMeshData> MeshDataStorage;
+	TArray<MeshData> MeshDataStorage;
 	FTimerHandle DestroyTimer;
 
 	//µðÁ¹ºê

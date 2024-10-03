@@ -41,10 +41,17 @@ private:
 	MeshData InterpData;
 
 
+	float Time = 0.f;
+	float MorphingSpeed = 0.3f;
+	float Cur = 0.f;
+
 	bool bDetected;
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<class UMaterialInstance> OldMaterial;
 	TObjectPtr<class UMaterialInstanceDynamic> DynamicMaterial;
+
+	void SetProcMesh();
+
 	UFUNCTION()
 	virtual void OnSphereOverlap
 	(

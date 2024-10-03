@@ -21,58 +21,63 @@ AEscapeTool::AEscapeTool()
 
 	AreaSphere->SetCollisionResponseToChannel(ECollisionChannel::ECC_Visibility, ECollisionResponse::ECR_Block);
 	bDetected = false;
-	MeshA = ConstructorHelpers::FObjectFinder<UStaticMesh>(TEXT("/Game/Maps/MapAsset/oilDrum_2.oilDrum_2")).Object;
-	ProcMeshUtillity->GetMeshDataFromStaticMesh(MeshA, DataA, 0, 0, false);
-	ProcMeshUtillity->UnifyTri(DataA);
-	MeshB = ConstructorHelpers::FObjectFinder<UStaticMesh>(TEXT("/Game/Maps/MapAsset/jem.jem")).Object;
-	ProcMeshUtillity->GetMeshDataFromStaticMesh(MeshB, DataB, 0, 0, false);
-	ProcMeshUtillity->UnifyTri(DataB);
+
+	////MeshA = ConstructorHelpers::FObjectFinder<UStaticMesh>(TEXT("/Game/Maps/MapAsset/oilDrum_2.oilDrum_2")).Object;
+	//ProcMeshUtillity->GetMeshDataFromStaticMesh(MeshA, DataA, 0, 0, false);
+	//ProcMeshUtillity->UnifyTri(DataA);
+	////MeshB = ConstructorHelpers::FObjectFinder<UStaticMesh>(TEXT("/Game/Maps/MapAsset/jem.jem")).Object;
+	//ProcMeshUtillity->GetMeshDataFromStaticMesh(MeshB, DataB, 0, 0, false);
+	//ProcMeshUtillity->UnifyTri(DataB);
 
 
-	//부족하면 추가해주기
-	if (DataB.Verts.Num() > DataA.Verts.Num())
-	{
-		LoopNum = DataB.Verts.Num() - DataA.Verts.Num();
+	////부족하면 추가해주기
+	//if (DataB.Verts.Num() > DataA.Verts.Num())
+	//{
+	//	LoopNum = DataB.Verts.Num() - DataA.Verts.Num();
 
-		for (int i = 0; i < (LoopNum/3.0) ; ++i)
-		{
-			RandNum = UKismetMathLibrary::RandomIntegerInRange(0, DataA.Verts.Num()-1);
-			MeshData TempMeshData = DataA;
-			for (int j = 0; j < 3; ++j)
-			{
-				DataA.Tris.Add(TempMeshData.Verts.Num());
-				DataA.Verts.Add(TempMeshData.Verts[RandNum]);
-				DataA.Normals.Add(FVector(0.f, 0.f, 1.f));
-				DataA.UVs.Add(FVector2D(0.f, 0.f));
-				DataA.Colors.Add(FLinearColor::Black);
-			}
-		}
-	}
+	//	for (int i = 0; i < (LoopNum/3.0) ; ++i)
+	//	{
+	//		RandNum = UKismetMathLibrary::RandomIntegerInRange(0, DataA.Verts.Num()-1);
+	//		MeshData TempMeshData = DataA;
+	//		for (int j = 0; j < 3; ++j)
+	//		{
+	//			DataA.Tris.Add(TempMeshData.Verts.Num());
+	//			DataA.Verts.Add(TempMeshData.Verts[RandNum]);
+	//			DataA.Normals.Add(FVector(0.f, 0.f, 1.f));
+	//			DataA.UVs.Add(FVector2D(0.f, 0.f));
+	//			DataA.Colors.Add(FLinearColor::Black);
+	//		}
+	//	}
+	//}
 
-	ProcMeshUtillity->SetColorData(DataA, FLinearColor::Black);
-	ProcMeshUtillity->SetColorData(DataB, FLinearColor::Black);
+	//ProcMeshUtillity->SetColorData(DataA, FLinearColor::Black);
+	//ProcMeshUtillity->SetColorData(DataB, FLinearColor::Black);
 
-	InterpData = DataA;
+	//InterpData = DataA;
 
-	TArray<FProcMeshTangent> Temp{};
-	ProceduralMesh->CreateMeshSection_LinearColor
-	(
-		0,
-		InterpData.Verts,
-		InterpData.Tris,
-		InterpData.Normals,
-		InterpData.UVs,
-		InterpData.Colors,
-		Temp,
-		true
-	);
-	ProceduralMesh->SetMaterial(0, OldMaterial);
+	//TArray<FProcMeshTangent> Temp{};
+	//ProceduralMesh->CreateMeshSection_LinearColor
+	//(
+	//	0,
+	//	InterpData.Verts,
+	//	InterpData.Tris,
+	//	InterpData.Normals,
+	//	InterpData.UVs,
+	//	InterpData.Colors,
+	//	Temp,
+	//	true
+	//);
+	//ProceduralMesh->SetMaterial(0, OldMaterial);
 }
 
 void AEscapeTool::BeginPlay()
 {
 	Super::BeginPlay();
 	inst = Cast<UBOGameInstance>(GetGameInstance());
+
+	//생성자가 아니라 BEGINPLAY에서 지연처리하면 잘 읽어와짐 
+	SetProcMesh();
+
 	DynamicMaterial = UMaterialInstanceDynamic::Create(OldMaterial, this);
 	if (DynamicMaterial)
 	{
@@ -161,6 +166,55 @@ void AEscapeTool::SetHideMesh()
 {
 	ProceduralMesh->SetHiddenInGame(true);
 	Destroy();
+}
+
+void AEscapeTool::SetProcMesh()
+{
+	ProcMeshUtillity->GetMeshDataFromStaticMesh(MeshA, DataA);
+	ProcMeshUtillity->UnifyTri(DataA);
+	ProcMeshUtillity->GetMeshDataFromStaticMesh(MeshB, DataB);
+	ProcMeshUtillity->UnifyTri(DataB);
+
+
+	//부족하면 추가해주기
+	if (DataB.Verts.Num() > DataA.Verts.Num())
+	{
+		LoopNum = DataB.Verts.Num() - DataA.Verts.Num();
+
+		for (int i = 0; i < (LoopNum / 3.0); ++i)
+		{
+			RandNum = UKismetMathLibrary::RandomIntegerInRange(0, DataA.Verts.Num() - 1);
+			MeshData TempMeshData = DataA;
+			for (int j = 0; j < 3; ++j)
+			{
+				DataA.Tris.Add(TempMeshData.Verts.Num());
+				DataA.Verts.Add(TempMeshData.Verts[RandNum]);
+				TempMeshData.Verts.SetNum(DataA.Verts.Num());
+				DataA.Normals.Add(FVector(0.f, 0.f, 1.f));
+				DataA.UVs.Add(FVector2D(0.f, 0.f));
+				DataA.Colors.Add(FLinearColor::Black);
+			}
+		}
+	}
+
+	ProcMeshUtillity->SetColorData(DataA, FLinearColor::Black);
+	ProcMeshUtillity->SetColorData(DataB, FLinearColor::Black);
+
+	InterpData = DataA;
+
+	TArray<FProcMeshTangent> Temp{};
+	ProceduralMesh->CreateMeshSection_LinearColor
+	(
+		0,
+		InterpData.Verts,
+		InterpData.Tris,
+		InterpData.Normals,
+		InterpData.UVs,
+		InterpData.Colors,
+		Temp,
+		true
+	);
+	ProceduralMesh->SetMaterial(0, OldMaterial);
 }
 
 void AEscapeTool::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
