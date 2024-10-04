@@ -110,7 +110,7 @@ void ACharacterController::BeginPlay()
 		}
 	}
 	// 패킷 주기 설정(interpolation)
-	const float Interval = 0.1f;
+	const float Interval = 0.05f;
 	GetWorld()->GetTimerManager().SetTimer(FMovePacketTimer, this,
 		&ACharacterController::UpdatePlayer, Interval, true);
 
@@ -435,16 +435,11 @@ bool ACharacterController::UpdateWorld()
 	if (world == nullptr)
 		return false;
 	if (PlayerInfo == nullptr) return false;
-	if (PlayerInfo->players.size() == 1)
-	{
-		return false;
-	}
+	if (PlayerInfo->players.size() == 1){return false;}
 	TArray<AActor*> SpawnPlayer;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACharacterBase::StaticClass(), SpawnPlayer);
-	//UE_LOG(LogTemp, Warning, TEXT("Before loop"));
 	if (p_cnt == -1)
 	{
-		//UE_LOG(LogTemp, Warning, TEXT("Inside loop"));
 		p_cnt = PlayerInfo->players.size();
 		UE_LOG(LogTemp, Warning, TEXT("The value of size_: %d"), p_cnt);
 		return false;
@@ -454,14 +449,11 @@ bool ACharacterController::UpdateWorld()
 		for (auto& player : SpawnPlayer)
 		{
 			ACharacterBase* OtherPlayer = Cast<ACharacterBase>(player);
-			//UE_LOG(LogTemp, Warning, TEXT("Updating player info for ID %d"), OtherPlayer->p_id);
-
+	
 			CPlayer* info = &PlayerInfo->players[OtherPlayer->_SessionId];
 
 			if (!info->IsAlive) continue;
 
-			/*	if (OtherPlayer && OtherPlayer->_SessionId == id)
-				{*/
 			if (info->bEndGame == true)
 			{
 				info->bEndGame = false;
@@ -514,19 +506,7 @@ bool ACharacterController::UpdateWorld()
 
 			OtherPlayer->SetActorLocation(InterpolatedLocation);
 			OtherPlayer->SetActorRotation(InterpolatedRotation);
-			////위치
-			//FVector PlayerLocation;
-			//PlayerLocation.X = info->X;
-			//PlayerLocation.Y = info->Y;
-			//PlayerLocation.Z = info->Z;
-			////회전
-			//FRotator PlayerRotation;
-			//PlayerRotation.Yaw = info->Yaw;
-			//PlayerRotation.Pitch = 0.0f;
-			//PlayerRotation.Roll = 0.0f;
-	
-			//OtherPlayer->SetActorRotation(PlayerRotation);
-			//OtherPlayer->SetActorLocation(PlayerLocation);
+			
 			//속도
 			FVector PlayerVelocity(info->VeloX, info->VeloY, info->VeloZ);
 			OtherPlayer->AddMovementInput(PlayerVelocity);
