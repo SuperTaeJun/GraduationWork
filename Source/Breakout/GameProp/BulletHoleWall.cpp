@@ -23,23 +23,6 @@ ABulletHoleWall::ABulletHoleWall()
 
 	ProcMeshUtillity = CreateDefaultSubobject<UProceduralMeshUtility>(TEXT("ProcMeshUtillity"));
 
-	//부셔진후 조각
-	SculptureMesh = ConstructorHelpers::FObjectFinder<UStaticMesh>(TEXT("/Game/BreakoutAsset/BulletHole/SM_Scul.SM_Scul")).Object;
-	ProcMeshUtillity->GetMeshDataFromStaticMesh(SculptureMesh, SculptureData,0);
-	ProcMeshUtillity->SetColorData(SculptureData, FLinearColor::Black);
-
-	//벽
-	MeshA = ConstructorHelpers::FObjectFinder<UStaticMesh>(TEXT("/Game/BP/GameProp/block3.block3")).Object;
-	ProcMeshUtillity->GetMeshDataFromStaticMesh(MeshA, MeshDataA,0);
-	ProcMeshUtillity->SetColorData(MeshDataA, FLinearColor::Black);
-
-	UE_LOG(LogTemp, Warning, TEXT("MeshA Num : %d"), MeshDataA.Verts.Num());
-
-	//구멍 모양
-	MeshB = ConstructorHelpers::FObjectFinder<UStaticMesh>(TEXT("/Game/BreakoutAsset/BulletHole/SM_BulletHole.SM_BulletHole")).Object;
-	ProcMeshUtillity->GetMeshDataFromStaticMesh(MeshB, MeshDataB,0);
-	ProcMeshUtillity->SetColorData(MeshDataB, FLinearColor::Black);
-
 	Hp = 50.f;
 	bDestroyed = false;
 }
@@ -48,6 +31,23 @@ void ABulletHoleWall::BeginPlay()
 {
 	Super::BeginPlay();
 	OnTakeAnyDamage.AddDynamic(this, &ABulletHoleWall::ReciveDamage);
+
+	//부셔진후 조각
+	//SculptureMesh = ConstructorHelpers::FObjectFinder<UStaticMesh>(TEXT("/Game/BreakoutAsset/BulletHole/SM_Scul.SM_Scul")).Object;
+	ProcMeshUtillity->GetMeshDataFromStaticMesh(SculptureMesh, SculptureData, 0);
+	ProcMeshUtillity->SetColorData(SculptureData, FLinearColor::Black);
+
+	//벽
+	//MeshA = ConstructorHelpers::FObjectFinder<UStaticMesh>(TEXT("/Game/BreakoutAsset/BulletHole/block.block")).Object;
+	ProcMeshUtillity->GetMeshDataFromStaticMesh(MeshA, MeshDataA, 0);
+	ProcMeshUtillity->SetColorData(MeshDataA, FLinearColor::Black);
+
+	UE_LOG(LogTemp, Warning, TEXT("MeshA Num : %d"), MeshDataA.Verts.Num());
+
+	//구멍 모양
+	//MeshB = ConstructorHelpers::FObjectFinder<UStaticMesh>(TEXT("/Game/BreakoutAsset/BulletHole/SM_BulletHole.SM_BulletHole")).Object;
+	ProcMeshUtillity->GetMeshDataFromStaticMesh(MeshB, MeshDataB, 0);
+	ProcMeshUtillity->SetColorData(MeshDataB, FLinearColor::Black);
 
 	TArray<FProcMeshTangent> Temp{};
 	ProceduralMesh->CreateMeshSection_LinearColor
