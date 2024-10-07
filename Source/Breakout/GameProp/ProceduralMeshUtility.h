@@ -47,7 +47,7 @@ public:
 	void InterpMeshData(MeshData& OutData, MeshData& SourceDataA, MeshData& SourceDataB, float Alpha, bool bClamp);
 
 	MeshData MeshBoolean(MeshData DataA, FTransform TransformA, MeshData DataB, FTransform TransformB, bool OptionType);
-	MeshData SetRandomVertex(MeshData& MeshData, float Min, float Max, float Tolerance);
+	MeshData SetRandomVertex(MeshData& MeshData, float Min, float Max, float DistanceThreshold);
 	MeshData TransformMeshData(MeshData& Data, FTransform Transform, bool InPlace, FVector Pivot);
 private:
 	FVector SpiralCustomLerp(FVector& A, FVector& B, float& Alpha, float SpiralTurns, float Radius);

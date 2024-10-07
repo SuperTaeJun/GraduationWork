@@ -290,36 +290,81 @@ MeshData UProceduralMeshUtility::MeshBoolean(MeshData DataA, FTransform Transfor
 	return 	ConverToMeshData(BooleanOutput, DataA);
 }
 
-MeshData UProceduralMeshUtility::SetRandomVertex(MeshData& Data, float Min, float Max, float Tolerance)
+//MeshData UProceduralMeshUtility::SetRandomVertex(MeshData& Data, float Min, float Max, float Tolerance)
+//{
+//	MeshData Result = Data;
+//	TMap<FVector, FVector> Already = {};
+//	Tolerance = 1.0f / Tolerance;
+//	FVector tCoord;
+//
+//	for (int x = 0; x < Data.Verts.Num(); ++x)
+//	{
+//		tCoord = FVector(Result.Verts[x].X * Tolerance, Result.Verts[x].Y * Tolerance, Result.Verts[x].Z * Tolerance);
+//
+//		if (Already.Contains(tCoord))
+//		{
+//			Result.Verts[x] = Already[tCoord];
+//		}
+//		else
+//		{
+//			if (Data.Normals.IsValidIndex(x))
+//			{
+//				Result.Verts[x] = Data.Verts[x] + Data.Normals[x] * FMath::RandRange(Min, Max) + FMath::VRand() * FMath::RandRange(Min, Max);
+//			}
+//			else
+//			{
+//				Result.Verts[x] = Data.Verts[x] + FMath::VRand() * FMath::RandRange(Min, Max);
+//			}
+//			Already.Emplace(tCoord, Result.Verts[x]);
+//		}
+//	}
+//	return Result;
+//}
+MeshData UProceduralMeshUtility::SetRandomVertex(MeshData& Data, float Min, float Max, float DistanceThreshold)
 {
 	MeshData Result = Data;
-	TMap<FVector, FVector> Already = {};
-	Tolerance = 1.0f / Tolerance;
-	FVector tCoord;
 
-	for (int x = 0; x < Data.Verts.Num(); ++x)
+	// 이미 변형된 좌표를 기록하기 위한 맵
+	TMap<FVector, FVector> AlreadyModifiedVertices = {};
+
+	DistanceThreshold = 1.0f / DistanceThreshold;
+
+	//임시로 저장
+	FVector ApproximateCoord;
+
+	for (int VertexIndex = 0; VertexIndex < Data.Verts.Num(); ++VertexIndex)
 	{
-		tCoord = FVector(Result.Verts[x].X * Tolerance, Result.Verts[x].Y * Tolerance, Result.Verts[x].Z * Tolerance);
+		ApproximateCoord = FVector
+		(
+			Result.Verts[VertexIndex].X * DistanceThreshold,
+			Result.Verts[VertexIndex].Y * DistanceThreshold,
+			Result.Verts[VertexIndex].Z * DistanceThreshold
+		);
 
-		//이미 했던건지 확인
-		if (Already.Contains(tCoord))
+		// 이미 변형된 좌표인지 확인
+		if (AlreadyModifiedVertices.Contains(ApproximateCoord))
 		{
-			Result.Verts[x] = Already[tCoord];
+			// 이미 변형된 좌표라면 기존 값을 재사용
+			Result.Verts[VertexIndex] = AlreadyModifiedVertices[ApproximateCoord];
 		}
 		else
 		{
-			if (Data.Normals.IsValidIndex(x))
+			if (Data.Normals.IsValidIndex(VertexIndex))
 			{
-				Result.Verts[x] = Data.Verts[x] + Data.Normals[x] * FMath::RandRange(Min, Max) + FMath::VRand() * FMath::RandRange(Min, Max);
+				Result.Verts[VertexIndex] = Data.Verts[VertexIndex]
+					+ Data.Normals[VertexIndex] * FMath::RandRange(Min, Max)  // 노멀 방향 변형
+					+ FMath::VRand() * FMath::RandRange(Min, Max);           // 무작위 방향 변형
 			}
 			else
 			{
-				Result.Verts[x] = Data.Verts[x] + FMath::VRand() * FMath::RandRange(Min, Max);
+				Result.Verts[VertexIndex] = Data.Verts[VertexIndex] + FMath::VRand() * FMath::RandRange(Min, Max);
 			}
-			//안했던거는 맵에 추가
-			Already.Emplace(tCoord, Result.Verts[x]);
+
+			// 맵에 추가
+			AlreadyModifiedVertices.Emplace(ApproximateCoord, Result.Verts[VertexIndex]);
 		}
 	}
+
 	return Result;
 }
 
